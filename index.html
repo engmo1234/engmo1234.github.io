@@ -40,7 +40,7 @@
             font-family: 'Amiri', serif;
         }
         .qr-container {
-          animation: rotateQR 10s linear infinite;
+          animation: rotateQR 27s linear infinite;
         position: relative;
         transition: transform 0.3s ease;
         }
@@ -93,24 +93,32 @@
     div::-webkit-scrollbar {
       display: none;
     }
+    </style><style>
+    div::-webkit-scrollbar {
+      height: 8px;
+    }
+    div::-webkit-scrollbar-thumb {
+      background: #22c55e;
+      border-radius: 4px;
+    }
+    div::-webkit-scrollbar-track {
+      background: rgba(255,255,255,0.1);
+    }
     </style></head>
 <body>
 <canvas id="canvas"></canvas>
-<div class="relative min-h-screen flex flex-col items-center justify-center px-4 py-12 z-10">
-<div class="mb-12 flex items-center space-x-6">
-<h1 class="text-4xl md:text-6xl font-bold text-white glow-text tracking-wider">ENGMO1234</h1>
+<div class="relative min-h-screen flex flex-col items-center justify-center px-4 py-12 z-10" style="; overflow-x: auto; white-space: nowrap;">
+<div class="mb-12 flex flex-col items-center space-y-2"><p class="text-2xl md:text-3xl text-white arabic-text glow-text" data-lang="ar" style="display: block; text-align: center;">بسم الله</p>
+<h1 class="text-4xl md:text-6xl font-bold text-white glow-text tracking-wider" data-lang="en" style="display: block;">ENGMO1234</h1><h1 class="text-4xl md:text-6xl font-bold text-white glow-text tracking-wider" data-lang="ar" style="display: none;">إنجمو١٢٣٤</h1>
 </div>
-<p class="text-2xl text-white arabic-text mb-4" style="text-align: center;">بسم الله</p>
-<div style="display: flex; flex-direction: row; justify-content: center; align-items: center; flex-wrap: nowrap; gap: 40px; margin-top: 40px; overflow-x: auto; padding: 20px; scrollbar-width: none;"><div style="display: flex; flex-direction: column; gap: 16px; align-items: flex-end;"><a href="topvip.html" onmouseout="this.style.transform='scale(1)'" onmouseover="this.style.transform='scale(1.05)'" style="padding: 12px 24px; background-color: #22c55e; color: white; font-weight: bold; border-radius: 10px; text-decoration: none; text-align: center; transition: transform 0.2s; width: 150px;">Top VIP</a><a href="test.html" onmouseout="this.style.transform='scale(1)'" onmouseover="this.style.transform='scale(1.05)'" style="padding: 12px 24px; background-color: #22c55e; color: white; font-weight: bold; border-radius: 10px; text-decoration: none; text-align: center; transition: transform 0.2s; width: 150px;">Test</a></div><a class="qr-container bg-white/10 backdrop-blur-md p-4 rounded-2xl" href="https://opensea.io/Mo3nor" target="_blank">
+<div style="display: flex; flex-direction: row; justify-content: center; align-items: center; flex-wrap: nowrap; gap: 40px; margin-top: 40px; overflow-x: auto; padding: 20px; scrollbar-width: none;"><div style="display: flex; flex-direction: column; gap: 16px; align-items: flex-end;"><a href="topvip.html" onmouseout="this.style.transform='scale(1)'" onmouseover="this.style.transform='scale(1.05)'" style="padding: 12px 24px; background-color: #22c55e; color: white; font-weight: bold; border-radius: 10px; text-decoration: none; text-align: center; transition: transform 0.2s; width: 150px;"></a><a href="test.html" onmouseout="this.style.transform='scale(1)'" onmouseover="this.style.transform='scale(1.05)'" style="padding: 12px 24px; background-color: #22c55e; color: white; font-weight: bold; border-radius: 10px; text-decoration: none; text-align: center; transition: transform 0.2s; width: 150px;"></a></div><a class="qr-container bg-white/10 backdrop-blur-md p-4 rounded-2xl" href="https://opensea.io/Mo3nor" target="_blank">
 <div class="pulse"></div>
 <div class="relative w-64 h-64 md:w-72 md:h-72 flex items-center justify-center bg-white/5 rounded-xl overflow-hidden"><div style="display: flex; justify-content: center; align-items: center; width: 100%; height: 100%;"><div class="flex items-center justify-center" id="qrcode"></div></div></div>
 <div class="mt-4 text-center">
-<p class="text-white text-sm">Scan or click to visit</p>
-<p class="text-white/80 text-xs mt-1">https://opensea.io/Mo3nor</p>
 </div>
 <p style="color: white; text-align: center; margin-top: 20px; white-space: pre-line;">By clicking, you agree to the
 Terms and Conditions.
-Signature Press.</p></a><div style="display: flex; flex-direction: column; gap: 16px; align-items: flex-start;"><a href="basic.html" onmouseout="this.style.transform='scale(1)'" onmouseover="this.style.transform='scale(1.05)'" style="padding: 12px 24px; background-color: #22c55e; color: white; font-weight: bold; border-radius: 10px; text-decoration: none; text-align: center; transition: transform 0.2s; width: 150px;">Basic</a><a href="terms_green_organized.html" onmouseout="this.style.transform='scale(1)'" onmouseover="this.style.transform='scale(1.05)'" style="padding: 12px 24px; background-color: #22c55e; color: white; font-weight: bold; border-radius: 10px; text-decoration: none; text-align: center; transition: transform 0.2s; width: 150px;">Terms &amp; Conditions</a></div></div></div>
+اذا قرات الشروط وموافق امسح أو اضغط للزيارة.</p><p class="text-white text-center mt-4" data-lang="en" style="display: block;">You can bid what you can afford for any art piece.</p><p class="text-white text-center mt-4" data-lang="ar" style="display: block;">يمكنك المزايدة بما تستطيع تحمله لأي قطعة فنية.</p><p class="text-white text-sm mt-2" data-lang="en" style="display: block; text-align: center;">Scan or click to visit</p><p class="text-white text-sm mt-2" data-lang="ar" style="display: block; text-align: center;">اذا قرات الشروط وموافق امسح أو اضغط للزيارة</p><p class="text-white/80 text-xs mt-1" data-lang="en" style="display: block; text-align: center;">https://opensea.io/Mo3nor</p><p class="text-white/80 text-xs mt-1" data-lang="ar" style="display: none; text-align: center;">https://opensea.io/Mo3nor</p></a><div style="display: flex; flex-direction: column; align-items: flex-end; margin-top: 20px;"><a href="topvip.html" style="margin: 8px 0; padding: 12px 24px; background-color: #22c55e; color: white; font-weight: bold; border-radius: 10px; text-decoration: none; text-align: center; display: block; width: 200px;">Top VIP</a><a href="test.html" style="margin: 8px 0; padding: 12px 24px; background-color: #22c55e; color: white; font-weight: bold; border-radius: 10px; text-decoration: none; text-align: center; display: block; width: 200px;">Test</a><a href="basic.html" style="margin: 8px 0; padding: 12px 24px; background-color: #22c55e; color: white; font-weight: bold; border-radius: 10px; text-decoration: none; text-align: center; display: block; width: 200px;">Basic</a><a href="terms.html" style="margin: 8px 0; padding: 12px 24px; background-color: #22c55e; color: white; font-weight: bold; border-radius: 10px; text-decoration: none; text-align: center; display: block; width: 200px;">Terms &amp; Conditions</a></div><div style="display: flex; flex-direction: column; gap: 16px; align-items: flex-start;"><a href="basic.html" onmouseout="this.style.transform='scale(1)'" onmouseover="this.style.transform='scale(1.05)'" style="padding: 12px 24px; background-color: #22c55e; color: white; font-weight: bold; border-radius: 10px; text-decoration: none; text-align: center; transition: transform 0.2s; width: 150px;"></a><a href="terms_green_organized.html" onmouseout="this.style.transform='scale(1)'" onmouseover="this.style.transform='scale(1.05)'" style="padding: 12px 24px; background-color: #22c55e; color: white; font-weight: bold; border-radius: 10px; text-decoration: none; text-align: center; transition: transform 0.2s; width: 150px;">الشروط والاحكام</a></div></div></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
         // All original JavaScript from index.html
@@ -336,7 +344,7 @@ Signature Press.</p></a><div style="display: flex; flex-direction: column; gap: 
          // You might need CSS rules like: .rtl { direction: rtl; }
          // And potentially adjust text alignment for specific elements if needed
       } else {
-        document.documentElement.setAttribute('lang', 'en');
+        document.documentElement.setAttribute('lang', 'ar');
         document.documentElement.setAttribute('dir', 'ltr');
       }
     });
