@@ -1,349 +1,246 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
-<meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>بسم الله</title>
-<script src="https://cdn.tailwindcss.com/3.4.16"></script>
-<script>tailwind.config={theme:{extend:{colors:{primary:'#3b82f6',secondary:'#10b981'},borderRadius:{'none':'0px','sm':'4px',DEFAULT:'8px','md':'12px','lg':'16px','xl':'20px','2xl':'24px','3xl':'32px','full':'9999px','button':'8px'}}}}</script>
-<link href="https://fonts.googleapis.com" rel="preconnect"/>
-<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
-<link href="https://fonts.googleapis.com/css2?family=Pacifico&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&amp;display=swap" rel="stylesheet"/>
-<link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" rel="stylesheet"/>
-<style>
-        /* Styles from original index.html */
-        :where([class^="ri-"])::before { content: "\f3c2"; }
-        body {
-            margin: 0;
-            overflow: hidden;
-            background-color: #000;
-            font-family: 'Orbitron', sans-serif;
-        }
-        #canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-        }
-        .glow-text {
-            text-shadow: 0 0 10px rgba(255, 255, 255, 0.7),
-            0 0 20px rgba(147, 51, 234, 0.6),
-            0 0 30px rgba(236, 72, 153, 0.5),
-            0 0 40px rgba(52, 211, 253, 0.4);
-        }
-        .arabic-text {
-            font-family: 'Amiri', serif;
-        }
-        .qr-container {
-          animation: rotateQR 27s linear infinite;
-        position: relative;
-        transition: transform 0.3s ease;
-        }
-        .qr-container:hover {
-        transform: scale(1.05);
-        cursor: pointer;
-        }
-        .pulse {
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        border-radius: 16px; /* Match QR container rounding */
-        box-shadow: 0 0 0 rgba(255, 255, 255, 0.7);
-        animation: pulse 2s infinite;
-        }
-        @keyframes pulse {
-        0% {
-        box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7);
-        }
-        70% {
-        box-shadow: 0 0 0 15px rgba(255, 255, 255, 0);
-        }
-        100% {
-        box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
-        }
-        }
-        @keyframes rotateQR {
-          from { transform: rotate(0deg); }
-          to { transform: rotate(360deg); }
-        }
-        /* Style for the new link buttons container */
-        .link-buttons a {
-             margin: 0 10px; /* Adjusted spacing */
-             padding: 10px 20px;
-             background-color: #22c55e; /* Existing button color */
-             color: white;
-             border-radius: 6px; /* Existing button radius */
-             text-decoration: none;
-             font-weight: bold;
-             transition: background-color 0.3s ease;
-             display: inline-block; /* Ensure proper spacing and sizing */
-        }
-        .link-buttons a:hover {
-            background-color: #16a34a; /* Darker green on hover */
-        }
-    </style>
-<style>
-    div::-webkit-scrollbar {
-      display: none;
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bism Allah - ENMO1234</title>
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: radial-gradient(ellipse at center, #001f1f 0%, #000000 100%);
+      color: #00ff88;
     }
-    </style></head>
-<body>
-<canvas id="canvas"></canvas>
-<div class="relative min-h-screen flex flex-col items-center justify-center px-4 py-12 z-10">
-<div class="mb-12 flex items-center space-x-6">
-<h1 class="text-4xl md:text-6xl font-bold text-white glow-text tracking-wider">بسم الله</h1>
-</div>
-<p class="text-2xl text-white arabic-text mb-4" style="text-align: center;">ENGMO1234
 
-BID = FREE CUSTOM WEBSITE
-
-اقترح المبلغ المناسب لك واستلم موقع مجاني</p>
-<div style="display: flex; flex-direction: row; justify-content: center; align-items: center; flex-wrap: nowrap; gap: 40px; margin-top: 40px; overflow-x: auto; padding: 20px; scrollbar-width: none;"><div style="display: flex; flex-direction: column; gap: 16px; align-items: flex-end;"><a href="topvip.html" onmouseout="this.style.transform='scale(1)'" onmouseover="this.style.transform='scale(1.05)'" style="padding: 12px 24px; background-color: #22c55e; color: white; font-weight: bold; border-radius: 10px; text-decoration: none; text-align: center; transition: transform 0.2s; width: 150px;">Top VIP</a><a href="test.html" onmouseout="this.style.transform='scale(1)'" onmouseover="this.style.transform='scale(1.05)'" style="padding: 12px 24px; background-color: #22c55e; color: white; font-weight: bold; border-radius: 10px; text-decoration: none; text-align: center; transition: transform 0.2s; width: 150px;">Test</a></div><a class="qr-container bg-white/10 backdrop-blur-md p-4 rounded-2xl" href="https://opensea.io/Mo3nor" target="_blank">
-<div class="pulse"></div>
-<div class="relative w-64 h-64 md:w-72 md:h-72 flex items-center justify-center bg-white/5 rounded-xl overflow-hidden"><div style="display: flex; justify-content: center; align-items: center; width: 100%; height: 100%;"><div class="flex items-center justify-center" id="qrcode"></div></div></div>
-<div class="mt-4 text-center">
-<p class="text-white text-sm">Scan or click to visit</p>
-<p class="text-white/80 text-xs mt-1">https://opensea.io/Mo3nor</p>
-</div>
-<p style="color: white; text-align: center; margin-top: 20px; white-space: pre-line;">By clicking, you agree to the Terms and Conditions
-اظغط اذا موافق على الشروط.
-Signature Press.</p></a><div style="display: flex; flex-direction: column; gap: 16px; align-items: flex-start;"><a href="basic.html" onmouseout="this.style.transform='scale(1)'" onmouseover="this.style.transform='scale(1.05)'" style="padding: 12px 24px; background-color: #22c55e; color: white; font-weight: bold; border-radius: 10px; text-decoration: none; text-align: center; transition: transform 0.2s; width: 150px;">Basic</a><a href="terms_green_organized.html" onmouseout="this.style.transform='scale(1)'" onmouseover="this.style.transform='scale(1.05)'" style="padding: 12px 24px; background-color: #22c55e; color: white; font-weight: bold; border-radius: 10px; text-decoration: none; text-align: center; transition: transform 0.2s; width: 150px;">والشروط &amp; Conditions</a></div></div></div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-<script>
-        // All original JavaScript from index.html
-        document.addEventListener('DOMContentLoaded', function() {
-            // Generate QR Code
-            const qr = new QRCode(document.getElementById("qrcode"), {
-                text: "https://opensea.io/Mo3nor",
-                width: 256,
-                height: 256,
-                colorDark: "#FFFFFF",
-                colorLight: "rgba(0, 0, 0, 0)", // Transparent background for QR itself
-                correctLevel: QRCode.CorrectLevel.H,
-                 margin: 2 // Add some margin around the QR code inside its container
-            });
-             // Add styles to QR code canvas/image if needed (original code had this)
-            const qrCanvas = document.querySelector('#qrcode canvas');
-            if (qrCanvas) {
-                qrCanvas.style.borderRadius = '8px';
-            }
-            const qrImage = document.querySelector('#qrcode img');
-            if (qrImage) {
-                qrImage.style.borderRadius = '8px';
-            }
-
-            // Canvas setup
-            const canvas = document.getElementById('canvas');
-            const ctx = canvas.getContext('2d');
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-
-            window.addEventListener('resize', () => {
-                canvas.width = window.innerWidth;
-                canvas.height = window.innerHeight;
-                // Reinitialize particles or adjust count on resize if needed
-            });
-
-            class Particle {
-                 constructor() {
-                    this.x = Math.random() * canvas.width;
-                    this.y = Math.random() * canvas.height;
-                    this.size = Math.random() * 2.5 + 0.5;
-                    this.speedX = Math.random() * 1.5 - 0.75;
-                    this.speedY = Math.random() * 1.5 - 0.75;
-                    this.color = this.getRandomColor();
-                }
-                 getRandomColor() {
-                     const colors = [
-                        'rgba(34, 197, 94, 0.7)', // Bright Green (Secondary Color)
-                        'rgba(59, 130, 246, 0.7)', // Blue (Primary Color)
-                        'rgba(255, 255, 255, 0.6)', // Whiteish
-                        'rgba(255, 255, 255, 0.5)' // Whiteish
-                    ];
-                    return colors[Math.floor(Math.random() * colors.length)];
-                }
-                update() {
-                    this.x += this.speedX;
-                    this.y += this.speedY;
-                    if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
-                    if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
-                }
-                draw() {
-                    ctx.fillStyle = this.color;
-                    ctx.beginPath();
-                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                    ctx.fill();
-                    ctx.closePath();
-                }
-            }
-
-            const particles = [];
-             const particleCount = Math.min(200, Math.floor(window.innerWidth * window.innerHeight / 8000));
-            for (let i = 0; i < particleCount; i++) {
-                particles.push(new Particle());
-            }
-
-            function animate() {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                 // Draw background gradient
-                const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-                gradient.addColorStop(0, 'rgba(5, 40, 20, 1)');    // Dark green top-left
-                gradient.addColorStop(0.4, 'rgba(30, 80, 50, 1)');
-                gradient.addColorStop(0.6, 'rgba(50, 150, 80, 1)');
-                gradient.addColorStop(1, 'rgba(20, 100, 50, 1)');  // Lighter green bottom-right
-                ctx.fillStyle = gradient;
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-
-                for (let i = 0; i < particles.length; i++) {
-                    particles[i].update();
-                    particles[i].draw();
-                }
-
-                 // Draw connections between particles
-                ctx.strokeStyle = 'rgba(255, 255, 255, 0.1)';
-                ctx.lineWidth = 0.5;
-                for (let i = 0; i < particles.length; i++) {
-                    for (let j = i + 1; j < particles.length; j++) {
-                        const dx = particles[i].x - particles[j].x;
-                        const dy = particles[i].y - particles[j].y;
-                        const distance = Math.sqrt(dx * dx + dy * dy);
-                        if (distance < 100) {
-                            ctx.beginPath();
-                            ctx.moveTo(particles[i].x, particles[i].y);
-                            ctx.lineTo(particles[j].x, particles[j].y);
-                            ctx.stroke();
-                            ctx.closePath();
-                        }
-                    }
-                }
-                // Draw flowing waves
-                drawWaves(Date.now() / 1000);
-
-                requestAnimationFrame(animate);
-            }
-
-            function drawWaves(time) {
-                const colors = [
-                    'rgba(34, 197, 94, 0.08)',  // More transparent secondary green
-                    'rgba(255, 255, 255, 0.06)',  // Faint white
-                    'rgba(255, 255, 255, 0.04)'   // Fainter white
-                ];
-                for (let c = 0; c < colors.length; c++) {
-                    ctx.strokeStyle = colors[c];
-                    ctx.lineWidth = 2;
-                    ctx.beginPath();
-                    const amplitude = 50 + c * 20;
-                    const period = 0.01 - c * 0.002;
-                    const phaseShift = time * (0.2 + c * 0.1);
-                    for (let x = 0; x < canvas.width; x += 5) {
-                        const y = Math.sin((x * period) + phaseShift) * amplitude +
-                                  Math.sin((x * period * 2) + phaseShift * 0.8) * (amplitude / 2) +
-                                  canvas.height / 2 + c * 50; // Stagger waves vertically
-                        if (x === 0) {
-                            ctx.moveTo(x, y);
-                        } else {
-                            ctx.lineTo(x, y);
-                        }
-                    }
-                    ctx.stroke();
-                    ctx.closePath();
-                }
-            }
-
-
-            animate(); // Start the main animation
-
-            // Interactive particles (original code) - Consider if needed/wanted on index
-            const interactiveParticles = [];
-            const interactiveParticleCount = 15;
-            class InteractiveParticle {
-                 constructor(x, y) {
-                    this.x = x; this.y = y;
-                    this.size = Math.random() * 3 + 2;
-                    this.targetX = x; this.targetY = y;
-                    this.speed = Math.random() * 0.1 + 0.05;
-                     // Brighter colors for interactive particles
-                    this.color = `rgba(${Math.floor(Math.random() * 100 + 155)}, ${Math.floor(Math.random() * 100 + 155)}, 255, ${Math.random() * 0.5 + 0.5})`;
-                }
-                update(mouseX, mouseY) {
-                    this.targetX = mouseX; this.targetY = mouseY;
-                    const dx = this.targetX - this.x;
-                    const dy = this.targetY - this.y;
-                    this.x += dx * this.speed;
-                    this.y += dy * this.speed;
-                }
-                draw() {
-                    ctx.fillStyle = this.color;
-                    ctx.beginPath();
-                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                    ctx.fill();
-                    ctx.closePath();
-                }
-            }
-            for (let i = 0; i < interactiveParticleCount; i++) {
-                interactiveParticles.push(new InteractiveParticle(canvas.width / 2, canvas.height / 2));
-            }
-            let mouseX = canvas.width / 2;
-            let mouseY = canvas.height / 2;
-             canvas.addEventListener('mousemove', (e) => {
-                mouseX = e.clientX;
-                mouseY = e.clientY;
-                // Update interactive particles immediately on move
-                 interactiveParticles.forEach(particle => {
-                   particle.update(mouseX, mouseY);
-                 });
-            });
-             // Separate animation loop for interactive particles ensures they are drawn over the main animation
-            function animateInteractiveParticles() {
-                interactiveParticles.forEach(particle => {
-                    // Update position continuously towards the mouse
-                    particle.update(mouseX, mouseY);
-                    particle.draw();
-                });
-                requestAnimationFrame(animateInteractiveParticles);
-            }
-             animateInteractiveParticles(); // Start interactive particle animation
-
-        });
-    </script>
-<div id="langToggle" style="
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      z-index: 50;
-      background-color: #10b981; /* Secondary color */
-      color: white;
-      padding: 10px 14px; /* Slightly adjusted padding */
-      border-radius: 50%;
-      cursor: pointer;
-      font-size: 18px; /* Arabic character size */
+    .overlay {
+      position: absolute;
       text-align: center;
-      line-height: 1; /* Ensure character is centered vertically */
-    ">ع</div>
-<script>
-    document.getElementById('langToggle').addEventListener('click', () => {
-      const all = document.body; // Target body or a main container
-      all.classList.toggle('rtl'); // Toggle a class for RTL styling
+      z-index: 2;
+      padding: 20px;
+      max-width: 90vw;
+    }
 
-      // Update HTML attributes for accessibility and CSS selectors
-      if (all.classList.contains('rtl')) {
-        document.documentElement.setAttribute('lang', 'ar');
-        document.documentElement.setAttribute('dir', 'rtl');
-         // You might need CSS rules like: .rtl { direction: rtl; }
-         // And potentially adjust text alignment for specific elements if needed
-      } else {
-        document.documentElement.setAttribute('lang', 'en');
-        document.documentElement.setAttribute('dir', 'ltr');
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+      color: #00ff88;
+      text-shadow: 0 0 10px #00ff88, 0 0 20px #00ff88;
+    }
+
+    .qr-container {
+      margin-bottom: 10px;
+    }
+
+    .qr-container img {
+      width: 150px;
+      height: 150px;
+    }
+
+    .qr-warning {
+      font-size: 1rem;
+      color: #00ff88;
+      text-shadow: 0 0 5px #00ff88;
+      background-color: rgba(0, 255, 136, 0.1);
+      border: 1px solid #00ff88;
+      border-radius: 8px;
+      padding: 12px;
+      margin-top: 12px;
+      max-width: 400px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .qr-warning a {
+      color: #00ff88;
+      text-decoration: underline;
+    }
+
+    @keyframes rotateQR {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .nav-links a {
+      display: block;
+      color: #00ff88;
+      margin: 10px 0;
+      font-size: 1.2rem;
+      text-decoration: none;
+      text-shadow: 0 0 5px #00ff88, 0 0 10px #00ff88;
+    }
+
+    .nav-links a:hover {
+      text-decoration: underline;
+    }
+
+    .translate-button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      background-color: #00ff88;
+      border: none;
+      border-radius: 5px;
+      color: black;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 0 10px #00ff88, 0 0 20px #00ff88;
+    }
+
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 1.5rem;
       }
+      .qr-container img {
+        width: 100px;
+        height: 100px;
+      }
+      .qr-warning {
+        font-size: 0.85rem;
+        padding: 10px;
+      }
+      .nav-links a {
+        font-size: 1rem;
+      }
+      .translate-button {
+        padding: 8px 16px;
+        font-size: 0.9rem;
+      }
+    }
+
+    canvas {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="bg"></canvas>
+  <div class="overlay">
+    <h1 id="title">Bism Allah</h1>
+    <div class="qr-container">
+      <a href="https://opensea.io/mo3nor" target="_blank">
+        <img src="https://api.qrserver.com/v1/create-qr-code/?data=https://opensea.io/mo3nor&size=150x150" alt="OpenSea QR" />
+      </a>
+    </div>
+    <div class="qr-warning">
+      <strong>⚠️ Legal Notice:</strong><br>
+      By scanning this QR, you accept the <a href="https://engmo1234.com/terms_green_organized.html" target="_blank">terms and conditions</a> of ENMO1234.<br>
+      <br>
+      <strong>⚠️ إشعار قانوني:</strong><br>
+      بمسح هذا الرمز، فإنك تقبل <a href="https://engmo1234.com/terms_green_organized.html" target="_blank">الشروط والأحكام</a> الخاصة بـ ENMO1234.
+    </div>
+    <div class="nav-links">
+      <a id="link1" href="https://engmo1234.com/topvip">TOPVIP</a>
+      <a id="link2" href="https://engmo1234.com/test">TEST</a>
+      <a id="link3" href="https://engmo1234.com/basic">BASIC</a>
+      <a id="link4" href="https://engmo1234.com/terms_green_organized.html">TERMS AND CONDITIONS</a>
+    </div>
+    <button id="translateBtn" class="translate-button" onclick="toggleLanguage()">ترجمة إلى العربية</button>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('bg');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    let particles = [];
+    for (let i = 0; i < 120; i++) {
+      particles.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        radius: Math.random() * 1.5,
+        dx: (Math.random() - 0.5) * 0.5,
+        dy: (Math.random() - 0.5) * 0.5,
+      });
+    }
+
+    let texts = [];
+    for (let i = 0; i < 10; i++) {
+      texts.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        dx: (Math.random() - 0.5) * 0.2,
+        dy: (Math.random() - 0.5) * 0.2,
+        size: 20 + Math.random() * 10
+      });
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = '#00ff88';
+      particles.forEach(p => {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        ctx.fill();
+      });
+
+      ctx.font = "bold 20px Arial";
+      ctx.fillStyle = '#00ff88';
+      texts.forEach(t => {
+        ctx.save();
+        ctx.shadowColor = '#00ff88';
+        ctx.shadowBlur = 10;
+        ctx.fillText("ENMO1234", t.x, t.y);
+        ctx.restore();
+      });
+    }
+
+    function update() {
+      particles.forEach(p => {
+        p.x += p.dx;
+        p.y += p.dy;
+        if (p.x < 0 || p.x > canvas.width) p.dx *= -1;
+        if (p.y < 0 || p.y > canvas.height) p.dy *= -1;
+      });
+
+      texts.forEach(t => {
+        t.x += t.dx;
+        t.y += t.dy;
+        if (t.x < 0 || t.x > canvas.width) t.dx *= -1;
+        if (t.y < 0 || t.y > canvas.height) t.dy *= -1;
+      });
+    }
+
+    function animate() {
+      draw();
+      update();
+      requestAnimationFrame(animate);
+    }
+
+    animate();
+    window.addEventListener('resize', () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
     });
-    </script>
+
+    let isArabic = false;
+    function toggleLanguage() {
+      if (!isArabic) {
+        document.getElementById('title').innerText = 'بسم الله';
+        document.getElementById('link1').innerText = 'كبار الشخصيات';
+        document.getElementById('link2').innerText = 'اختبار';
+        document.getElementById('link3').innerText = 'أساسي';
+        document.getElementById('link4').innerText = 'الشروط والأحكام';
+        document.getElementById('translateBtn').innerText = 'Translate to English';
+      } else {
+        document.getElementById('title').innerText = 'Bism Allah';
+        document.getElementById('link1').innerText = 'TOPVIP';
+        document.getElementById('link2').innerText = 'TEST';
+        document.getElementById('link3').innerText = 'BASIC';
+        document.getElementById('link4').innerText = 'TERMS AND CONDITIONS';
+        document.getElementById('translateBtn').innerText = 'ترجمة إلى العربية';
+      }
+      isArabic = !isArabic;
+    }
+  </script>
 </body>
 </html>
