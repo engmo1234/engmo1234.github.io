@@ -1,10 +1,11 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Bism Allah - ENMO1234</title>
-  <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Bism Allah - ENMO1234</title>
+<style>
     body, html {
       margin: 0;
       padding: 0;
@@ -120,36 +121,45 @@
       height: 100%;
       z-index: 1;
     }
-  </style>
+  
+.qr-warning {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+.qr-container:hover + .qr-warning {
+  opacity: 1;
+  pointer-events: auto;
+}
+</style>
 </head>
 <body>
-  <canvas id="bg"></canvas>
-  <div class="overlay">
-    <h1 id="title">Bism Allah</h1>
-    <div class="qr-container">
-      <a href="https://opensea.io/mo3nor" target="_blank">
-        <img style="animation: rotateQR 6s linear infinite;" src="https://api.qrserver.com/v1/create-qr-code/?data=https://opensea.io/mo3nor&size=150x150" alt="OpenSea QR" />
-      </a>
-    </div>
-    <div class="qr-warning">
-      <strong>⚠️ Legal Notice:</strong><br>
+<canvas id="bg"></canvas>
+<div class="overlay">
+<h1 id="title">Bism Allah</h1>
+<div class="qr-container">
+<a href="https://opensea.io/mo3nor" target="_blank">
+<img alt="OpenSea QR" src="https://api.qrserver.com/v1/create-qr-code/?data=https://www.engmo1234.com/vipreveal_bilingual_updated.html&amp;size=150x150" style="animation: rotateQR 6s linear infinite;"/>
+</a>
+</div>
+<div class="qr-warning">
+<strong>⚠️ Legal Notice:</strong><br/>
       By scanning this QR, you accept the <a href="https://engmo1234.com/terms_green_organized.html" target="_blank">terms and conditions</a> of ENMO1234.
-ٍBID WHAT YOU CAN AFFORD FOR FREE CUSTOM WEBSITE<br>
-      <br>
-      <strong>⚠️ إشعار قانوني:</strong><br>
+ٍBID WHAT YOU CAN AFFORD FOR FREE CUSTOM WEBSITE<br/>
+<br/>
+<strong>⚠️ إشعار قانوني:</strong><br/>
       بمسح هذا الرمز، فإنك تقبل <a href="https://engmo1234.com/terms_green_organized.html" target="_blank">الشروط والأحكام  </a> الخاصة بـ ENMO1234.
 اقترح ما يمكنك دفعه في العرض لتستلم موقعك المجاني
     </div>
-    <div class="nav-links">
-      <a id="link1" href="https://engmo1234.com/topvip">TOPVIP</a>
-      <a id="link2" href="https://engmo1234.com/test">TEST</a>
-      <a id="link3" href="https://engmo1234.com/basic">BASIC</a>
-      <a id="link4" href="https://engmo1234.com/terms_green_organized.html">TERMS AND CONDITIONS</a>
-    </div>
-    <button id="translateBtn" class="translate-button" onclick="toggleLanguage()">ترجمة إلى العربية</button>
-  </div>
-
-  <script>
+<div class="nav-links">
+<a href="https://engmo1234.com/topvip" id="link1">TOPVIP</a>
+<a href="https://engmo1234.com/test" id="link2">TEST</a>
+<a href="https://engmo1234.com/basic" id="link3">BASIC</a>
+<a href="https://engmo1234.com/terms_green_organized.html" id="link4">TERMS AND CONDITIONS</a>
+</div>
+<button class="translate-button" id="translateBtn" onclick="toggleLanguage()">ترجمة إلى العربية</button>
+</div>
+<script>
     const canvas = document.getElementById('bg');
     const ctx = canvas.getContext('2d');
     canvas.width = window.innerWidth;
