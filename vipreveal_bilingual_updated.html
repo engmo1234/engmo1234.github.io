@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>VIP Reveal</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron&amp;display=swap" rel="stylesheet"/>
+<style>
+    body {
+      margin: 0;
+      background-color: #000;
+      font-family: 'Orbitron', sans-serif;
+    }
+    #canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+    }
+    .fade-box {
+      background-color: rgba(255, 255, 255, 0.05);
+      padding: 32px;
+      border-radius: 16px;
+      box-shadow: 0 0 20px rgba(34, 197, 94, 0.5);
+      opacity: 0;
+      animation: fadeIn 2s forwards;
+    }
+    @keyframes fadeIn {
+      to { opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+<canvas id="canvas"></canvas>
+<div class="min-h-screen flex flex-col justify-center items-center text-center text-white px-6">
+<div class="fade-box max-w-2xl w-full space-y-6">
+<h2 class="text-2xl font-bold text-green-400">Welcome to your exclusive VIP artwork</h2><p class="text-sm text-white/90 leading-relaxed text-right">بالنقر على الرابط، فإنك توافق على جميع الشروط والأحكام. قم بالمزايدة بما يمكنك تحمله على العمل الفني الذي تختاره، وستحصل على موقع إلكتروني مجاني في حال اكتمال عملية الدفع.</p><p class="text-sm text-white/90 leading-relaxed text-left">By clicking the link you agree to all the terms and conditions. BID what you can afford for the art piece you like, and receive a free website if payment goes through.</p>
+<h2 class="text-xl font-bold text-green-400">مرحبًا بك في صفحتك الخاصة لكبار الشخصيات</h2>
+
+
+<a class="inline-block px-6 py-3 bg-green-500 text-white font-bold rounded-lg hover:bg-green-600 transition" href="https://opensea.io/Mo3nor" target="_blank">
+      View on OpenSea | مشاهدة العمل الفني
+    </a>
+</div>
+</div>
+<script>
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+class Particle {
+  constructor() {
+    this.x = Math.random() * canvas.width;
+    this.y = Math.random() * canvas.height;
+    this.size = Math.random() * 2 + 1;
+    this.speedX = Math.random() * 1 - 0.5;
+    this.speedY = Math.random() * 1 - 0.5;
+    this.color = 'rgba(132, 255, 158, 0.7)';
+  }
+  update() {
+    this.x += this.speedX;
+    this.y += this.speedY;
+    if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
+    if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+  }
+  draw() {
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+    ctx.fillStyle = this.color;
+    ctx.fill();
+  }
+}
+const particles = Array.from({ length: 100 }, () => new Particle());
+
+function animate() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  particles.forEach(p => {
+    p.update();
+    p.draw();
+  });
+  requestAnimationFrame(animate);
+}
+animate();
+
+window.addEventListener('resize', () => {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+});
+</script>
+</body>
+</html>
