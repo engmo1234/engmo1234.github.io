@@ -1,18 +1,17 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Engmo NFT Bid + Mint</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.6.1/web3.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/ethers@6.7.0/dist/ethers.min.js"></script>
   <style>
     body {
       margin: 0;
       font-family: 'Orbitron', sans-serif;
       color: white;
-      background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%);
+      background: black;
       overflow-x: hidden;
     }
     canvas {
@@ -22,18 +21,6 @@
       width: 100%;
       height: 100%;
       z-index: -1;
-    }
-    #video-container {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      flex-direction: column;
-      margin-top: 20px;
-    }
-    video {
-      max-width: 80%;
-      border: 2px solid #00ff88;
-      border-radius: 12px;
     }
     .btn {
       background-color: #00ff88;
@@ -46,29 +33,33 @@
     .btn:hover {
       background-color: #00cc66;
     }
+    video {
+      max-width: 80%;
+      border: 2px solid #00ff88;
+      border-radius: 12px;
+    }
   </style>
 </head>
 <body>
   <canvas id="canvas"></canvas>
 
-  <div class="text-center py-4 relative z-10">
+  <div class="text-center py-4 z-10 relative">
     <h1 class="text-4xl text-[#00ff88]">Engmo NFT Bid & Mint</h1>
     <p class="text-sm text-gray-300">Polygon Network | شبكة بوليجون</p>
-    <img src="https://www.engmo1234.com/polygon-logo.png" alt="Polygon Logo" class="mx-auto my-4 w-16 cursor-pointer" onclick="togglePolygonInfo()">
+    <img src="https://www.engmo1234.com/polygon-logo.png" alt="Polygon" class="w-16 mx-auto my-4 cursor-pointer" onclick="togglePolygonInfo()" />
     <div id="polygon-info" class="hidden text-sm max-w-xl mx-auto text-gray-400">
-      <p>To participate, fund your wallet with MATIC (Polygon’s token). You can buy it from centralized exchanges like Binance, Crypto.com, etc.</p>
-      <p>للمشاركة، قم بتمويل محفظتك بعملة MATIC (رمز بوليجون). يمكنك شراؤها من منصات مركزية مثل Binance، Crypto.com وغيرها.</p>
+      <p>To participate, fund your wallet with MATIC (Polygon’s token). You can buy it from exchanges like Binance, Crypto.com, etc.</p>
+      <p>للمشاركة، قم بتمويل محفظتك بعملة MATIC (رمز بوليجون). يمكنك شراؤها من منصات مثل Binance وCrypto.com وغيرها.</p>
     </div>
   </div>
 
-  <div id="video-container" class="relative z-10">
-    <video src="https://engmo1234.github.io/engmo_video_browser_safe.mp4" controls></video>
-  </div>
-
-  <div class="text-center mt-8 relative z-10">
-    <input type="number" id="bidAmount" placeholder="Enter bid in MATIC" class="px-4 py-2 rounded text-black"/>
-    <button class="btn" onclick="submitBid()">Submit Bid | إرسال العرض</button>
-    <button class="btn" onclick="mintNFT()">Mint NFT | سك الرمز</button>
+  <div class="flex justify-center items-center flex-col z-10 relative">
+    <video src="https://engmo1234.github.io/engmo_video_browser_safe.mp4" controls autoplay muted playsinline></video>
+    <input type="number" id="bidAmount" placeholder="Enter bid in MATIC" class="mt-6 px-4 py-2 rounded text-black" />
+    <div class="mt-4">
+      <button class="btn" onclick="submitBid()">Submit Bid | إرسال العرض</button>
+      <button class="btn" onclick="mintNFT()">Mint NFT | سك الرمز</button>
+    </div>
   </div>
 
   <script>
@@ -83,8 +74,8 @@
         x: Math.random() * canvas.width,
         y: Math.random() * canvas.height,
         radius: Math.random() * 2 + 1,
-        dx: (Math.random() - 0.5) * 1,
-        dy: (Math.random() - 0.5) * 1,
+        dx: (Math.random() - 0.5),
+        dy: (Math.random() - 0.5)
       });
     }
 
@@ -104,56 +95,55 @@
     }
     animate();
 
-    async function togglePolygonInfo() {
+    function togglePolygonInfo() {
       const info = document.getElementById("polygon-info");
       info.classList.toggle("hidden");
     }
 
-    window.addEventListener('load', async () => {
-      if (window.ethereum) {
-        window.web3 = new Web3(window.ethereum);
-        await window.ethereum.enable();
-      } else {
-        alert('Please install MetaMask to use this feature');
-      }
-    });
-
     const contractAddress = "0x71df1af577b4432cd2f024c22d52e72ce48cf36d";
-    const abi = [
-      { "inputs": [{ "internalType": "string", "name": "uri", "type": "string" }], "stateMutability": "nonpayable", "type": "constructor" },
+    const abi = [  // Minimal ABI
       { "inputs": [], "name": "mint", "outputs": [], "stateMutability": "nonpayable", "type": "function" },
-      { "inputs": [], "name": "submitBid", "outputs": [], "stateMutability": "payable", "type": "function" },
-      { "inputs": [{ "internalType": "address", "name": "bidder", "type": "address" }], "name": "approveBid", "outputs": [], "stateMutability": "nonpayable", "type": "function" }
+      { "inputs": [], "name": "submitBid", "outputs": [], "stateMutability": "payable", "type": "function" }
     ];
 
-    const contract = new web3.eth.Contract(abi, contractAddress);
+    async function getProviderAndContract() {
+      if (!window.ethereum) {
+        alert("MetaMask is not installed!");
+        return null;
+      }
+      const provider = new ethers.BrowserProvider(window.ethereum);
+      const signer = await provider.getSigner();
+      const contract = new ethers.Contract(contractAddress, abi, signer);
+      return { contract, signer };
+    }
 
     async function submitBid() {
-      const accounts = await web3.eth.getAccounts();
       const amount = document.getElementById("bidAmount").value;
-      if (!amount || amount <= 0) return alert("Enter a valid amount.");
+      if (!amount || isNaN(amount) || amount <= 0) {
+        alert("Please enter a valid bid amount.");
+        return;
+      }
 
       try {
-        await contract.methods.submitBid().send({
-          from: accounts[0],
-          value: web3.utils.toWei(amount, "ether")
-        });
+        const { contract } = await getProviderAndContract();
+        const tx = await contract.submitBid({ value: ethers.parseEther(amount.toString()) });
+        await tx.wait();
         alert("Bid submitted successfully!");
-      } catch (error) {
-        console.error(error);
-        alert("Error submitting bid.");
+      } catch (err) {
+        console.error(err);
+        alert("Failed to submit bid.");
       }
     }
 
     async function mintNFT() {
-      const accounts = await web3.eth.getAccounts();
-
       try {
-        await contract.methods.mint().send({ from: accounts[0] });
+        const { contract } = await getProviderAndContract();
+        const tx = await contract.mint();
+        await tx.wait();
         alert("NFT minted successfully!");
-      } catch (error) {
-        console.error(error);
-        alert("Error minting NFT.");
+      } catch (err) {
+        console.error(err);
+        alert("Failed to mint NFT.");
       }
     }
   </script>
