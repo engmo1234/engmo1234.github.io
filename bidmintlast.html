@@ -1,887 +1,161 @@
-<!DOCTYPE html>
 
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8"/>
-<title>ENGMO1234 | NFT Bid &amp; Mint</title>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<script src="https://cdn.tailwindcss.com"></script>
-<script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
-<style>
+  <meta charset="UTF-8">
+  <title>Engmo NFT Bid + Mint</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.6.1/web3.min.js"></script>
+  <style>
     body {
       margin: 0;
       font-family: 'Orbitron', sans-serif;
-      background: black;
       color: white;
+      background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%);
       overflow-x: hidden;
     }
-    #canvas {
+    canvas {
       position: fixed;
       top: 0;
       left: 0;
-      width: 100vw;
-      height: 100vh;
+      width: 100%;
+      height: 100%;
       z-index: -1;
     }
-    .container {
-      max-width: 700px;
-      margin: 100px auto;
-      text-align: center;
-      padding: 20px;
-    }
-    input {
-      width: 100%;
-      padding: 16px;
-      margin: 10px 0;
-      border-radius: 12px;
-      border: none;
-      font-size: 18px;
-      color: white;
-      background-color: #222;
-    }
-    input::placeholder {
-      color: #aaa;
-    }
-    button {
-      background: #00ff88;
-      padding: 12px 24px;
-      font-size: 18px;
-      border-radius: 10px;
-      cursor: pointer;
-    }
-    button:hover {
-      background-color: #00cc66;
-    }
-    .video-preview {
-      margin-top: 30px;
-      border: 2px solid #00ff88;
-      border-radius: 16px;
-      overflow: hidden;
-      width: 90%;
-      max-width: 600px;
-      margin-left: auto;
-      margin-right: auto;
+    #video-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      margin-top: 20px;
     }
     video {
-      width: 100%;
-      height: auto;
-      display: block;
-    }
-    .lang-toggle {
-      position: absolute;
-      top: 10px;
-      right: 20px;
-    }
-    .network-notice {
-      margin-top: 20px;
-      font-size: 16px;
-      color: #00ff88;
-    }
-    .polygon-logo {
-      width: 100px;
       max-width: 80%;
-      margin: 10px auto;
-      display: block;
-      cursor: pointer;
+      border: 2px solid #00ff88;
+      border-radius: 12px;
     }
-    .wallet-display {
-      margin-top: 10px;
-      font-size: 14px;
-      color: #ccc;
+    .btn {
+      background-color: #00ff88;
+      padding: 12px 24px;
+      border-radius: 8px;
+      color: black;
+      font-weight: bold;
+      margin: 10px;
     }
-    .hidden { display: none; }
-    .info-box {
-      display: none;
-      background: #111;
-      border: 1px solid #00ff88;
-      padding: 16px;
-      margin-top: 10px;
-      border-radius: 10px;
-      font-size: 14px;
+    .btn:hover {
+      background-color: #00cc66;
     }
   </style>
 </head>
 <body>
-<canvas id="canvas"></canvas>
-<script>
-    const canvas = document.getElementById('canvas');
-    const ctx = canvas.getContext('2d');
+  <canvas id="canvas"></canvas>
+
+  <div class="text-center py-4 relative z-10">
+    <h1 class="text-4xl text-[#00ff88]">Engmo NFT Bid & Mint</h1>
+    <p class="text-sm text-gray-300">Polygon Network | شبكة بوليجون</p>
+    <img src="https://www.engmo1234.com/polygon-logo.png" alt="Polygon Logo" class="mx-auto my-4 w-16 cursor-pointer" onclick="togglePolygonInfo()">
+    <div id="polygon-info" class="hidden text-sm max-w-xl mx-auto text-gray-400">
+      <p>To participate, fund your wallet with MATIC (Polygon’s token). You can buy it from centralized exchanges like Binance, Crypto.com, etc.</p>
+      <p>للمشاركة، قم بتمويل محفظتك بعملة MATIC (رمز بوليجون). يمكنك شراؤها من منصات مركزية مثل Binance، Crypto.com وغيرها.</p>
+    </div>
+  </div>
+
+  <div id="video-container" class="relative z-10">
+    <video src="https://engmo1234.github.io/engmo_video_browser_safe.mp4" controls></video>
+  </div>
+
+  <div class="text-center mt-8 relative z-10">
+    <input type="number" id="bidAmount" placeholder="Enter bid in MATIC" class="px-4 py-2 rounded text-black"/>
+    <button class="btn" onclick="submitBid()">Submit Bid | إرسال العرض</button>
+    <button class="btn" onclick="mintNFT()">Mint NFT | سك الرمز</button>
+  </div>
+
+  <script>
+    const canvas = document.getElementById("canvas");
+    const ctx = canvas.getContext("2d");
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
-    class Particle {
-      constructor() {
-        this.x = Math.random() * canvas.width;
-        this.y = Math.random() * canvas.height;
-        this.size = Math.random() * 2 + 1;
-        this.speedX = Math.random() * 1 - 0.5;
-        this.speedY = Math.random() * 1 - 0.5;
-      }
-      update() {
-        this.x += this.speedX;
-        this.y += this.speedY;
-        if (this.x > canvas.width || this.x < 0) this.speedX *= -1;
-        if (this.y > canvas.height || this.y < 0) this.speedY *= -1;
-      }
-      draw() {
-        ctx.fillStyle = '#00ff88';
-        ctx.beginPath();
-        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-        ctx.fill();
-      }
-    }
+
     const particles = [];
-    for (let i = 0; i < 100; i++) particles.push(new Particle());
+    for (let i = 0; i < 100; i++) {
+      particles.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        radius: Math.random() * 2 + 1,
+        dx: (Math.random() - 0.5) * 1,
+        dy: (Math.random() - 0.5) * 1,
+      });
+    }
+
     function animate() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      particles.forEach(p => { p.update(); p.draw(); });
+      for (let p of particles) {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        ctx.fillStyle = "#00ff88";
+        ctx.fill();
+        p.x += p.dx;
+        p.y += p.dy;
+        if (p.x < 0 || p.x > canvas.width) p.dx *= -1;
+        if (p.y < 0 || p.y > canvas.height) p.dy *= -1;
+      }
       requestAnimationFrame(animate);
     }
     animate();
-  </script>
-<button class="lang-toggle" onclick="toggleLanguage()">AR / EN</button>
-<div class="container">
-<img alt="Polygon Logo" class="polygon-logo" onclick="togglePolygonInfo()" src="polygon-logo.png"/>
-<div class="info-box" id="polygonInfo">
-      Polygon is a fast and affordable blockchain network. MATIC tokens are required for transactions and are available on centralized exchanges like Binance and Coinbase. Fund your wallet to bid and purchase.
-    </div>
-<div class="network-notice" id="networkWarning">🌐 This NFT is available only on the <strong>Polygon Network</strong>.</div>
-<button onclick="switchToPolygon()">🔄 Switch to Polygon</button>
-<div class="wallet-display" id="walletDisplay"></div>
-<h1 class="text-3xl mb-4 text-[#00ff88]" id="title">Submit Your NFT Bid</h1>
-<p class="text-sm text-gray-300" id="desc">Enter your bid amount in MATIC. You must be approved to mint later.</p>
-<div class="video-preview">
-<video autoplay="" controls="" loop="" muted="" playsinline="" src="https://engmo1234.github.io/engmo_video_browser_safe.mp4"></video>
-</div>
-<input id="bidAmount" placeholder="e.g., 1.5 MATIC" step="0.01" type="number"/>
-<button id="submitBtn" onclick="submitBid()">Submit Bid</button>
-<div id="status"></div>
-<div class="mt-6 hidden" id="mintSection">
-<button id="mintButton" onclick="mintNFT()">✅ Mint NFT (If Approved)</button>
-<p class="mt-4"><a href="https://form.jotform.com/223058286315456" style="color:#00ff88;text-decoration:underline;" target="_blank">🔓 Unlock Content</a></p>
-</div>
-</div>
-<script>const abi = [
-	{
-		"inputs": [
-			{
-				"internalType": "string",
-				"name": "uri",
-				"type": "string"
-			}
-		],
-		"stateMutability": "nonpayable",
-		"type": "constructor"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "sender",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "balance",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "needed",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "tokenId",
-				"type": "uint256"
-			}
-		],
-		"name": "ERC1155InsufficientBalance",
-		"type": "error"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "approver",
-				"type": "address"
-			}
-		],
-		"name": "ERC1155InvalidApprover",
-		"type": "error"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "idsLength",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "valuesLength",
-				"type": "uint256"
-			}
-		],
-		"name": "ERC1155InvalidArrayLength",
-		"type": "error"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "operator",
-				"type": "address"
-			}
-		],
-		"name": "ERC1155InvalidOperator",
-		"type": "error"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "receiver",
-				"type": "address"
-			}
-		],
-		"name": "ERC1155InvalidReceiver",
-		"type": "error"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "sender",
-				"type": "address"
-			}
-		],
-		"name": "ERC1155InvalidSender",
-		"type": "error"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "operator",
-				"type": "address"
-			},
-			{
-				"internalType": "address",
-				"name": "owner",
-				"type": "address"
-			}
-		],
-		"name": "ERC1155MissingApprovalForAll",
-		"type": "error"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "owner",
-				"type": "address"
-			}
-		],
-		"name": "OwnableInvalidOwner",
-		"type": "error"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "account",
-				"type": "address"
-			}
-		],
-		"name": "OwnableUnauthorizedAccount",
-		"type": "error"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "account",
-				"type": "address"
-			},
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "operator",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"internalType": "bool",
-				"name": "approved",
-				"type": "bool"
-			}
-		],
-		"name": "ApprovalForAll",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "bidder",
-				"type": "address"
-			}
-		],
-		"name": "BidApproved",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "bidder",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "amount",
-				"type": "uint256"
-			}
-		],
-		"name": "BidSubmitted",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "to",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "amount",
-				"type": "uint256"
-			}
-		],
-		"name": "FundsWithdrawn",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "minter",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "tokenId",
-				"type": "uint256"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "amount",
-				"type": "uint256"
-			}
-		],
-		"name": "NFTMinted",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "previousOwner",
-				"type": "address"
-			},
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "newOwner",
-				"type": "address"
-			}
-		],
-		"name": "OwnershipTransferred",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "operator",
-				"type": "address"
-			},
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "from",
-				"type": "address"
-			},
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "to",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256[]",
-				"name": "ids",
-				"type": "uint256[]"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256[]",
-				"name": "values",
-				"type": "uint256[]"
-			}
-		],
-		"name": "TransferBatch",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "operator",
-				"type": "address"
-			},
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "from",
-				"type": "address"
-			},
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "to",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "id",
-				"type": "uint256"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "value",
-				"type": "uint256"
-			}
-		],
-		"name": "TransferSingle",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": false,
-				"internalType": "string",
-				"name": "value",
-				"type": "string"
-			},
-			{
-				"indexed": true,
-				"internalType": "uint256",
-				"name": "id",
-				"type": "uint256"
-			}
-		],
-		"name": "URI",
-		"type": "event"
-	},
-	{
-		"inputs": [],
-		"name": "MAX_SUPPLY",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "TOKEN_ID",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "bidder",
-				"type": "address"
-			}
-		],
-		"name": "approveBid",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "account",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "id",
-				"type": "uint256"
-			}
-		],
-		"name": "balanceOf",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address[]",
-				"name": "accounts",
-				"type": "address[]"
-			},
-			{
-				"internalType": "uint256[]",
-				"name": "ids",
-				"type": "uint256[]"
-			}
-		],
-		"name": "balanceOfBatch",
-		"outputs": [
-			{
-				"internalType": "uint256[]",
-				"name": "",
-				"type": "uint256[]"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "",
-				"type": "address"
-			}
-		],
-		"name": "bids",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "amount",
-				"type": "uint256"
-			},
-			{
-				"internalType": "bool",
-				"name": "approved",
-				"type": "bool"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "",
-				"type": "address"
-			}
-		],
-		"name": "hasMinted",
-		"outputs": [
-			{
-				"internalType": "bool",
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "account",
-				"type": "address"
-			},
-			{
-				"internalType": "address",
-				"name": "operator",
-				"type": "address"
-			}
-		],
-		"name": "isApprovedForAll",
-		"outputs": [
-			{
-				"internalType": "bool",
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "mint",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "owner",
-		"outputs": [
-			{
-				"internalType": "address",
-				"name": "",
-				"type": "address"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "renounceOwnership",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "from",
-				"type": "address"
-			},
-			{
-				"internalType": "address",
-				"name": "to",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256[]",
-				"name": "ids",
-				"type": "uint256[]"
-			},
-			{
-				"internalType": "uint256[]",
-				"name": "values",
-				"type": "uint256[]"
-			},
-			{
-				"internalType": "bytes",
-				"name": "data",
-				"type": "bytes"
-			}
-		],
-		"name": "safeBatchTransferFrom",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "from",
-				"type": "address"
-			},
-			{
-				"internalType": "address",
-				"name": "to",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "id",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "value",
-				"type": "uint256"
-			},
-			{
-				"internalType": "bytes",
-				"name": "data",
-				"type": "bytes"
-			}
-		],
-		"name": "safeTransferFrom",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "operator",
-				"type": "address"
-			},
-			{
-				"internalType": "bool",
-				"name": "approved",
-				"type": "bool"
-			}
-		],
-		"name": "setApprovalForAll",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "submitBid",
-		"outputs": [],
-		"stateMutability": "payable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "bytes4",
-				"name": "interfaceId",
-				"type": "bytes4"
-			}
-		],
-		"name": "supportsInterface",
-		"outputs": [
-			{
-				"internalType": "bool",
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "totalMinted",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "newOwner",
-				"type": "address"
-			}
-		],
-		"name": "transferOwnership",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"name": "uri",
-		"outputs": [
-			{
-				"internalType": "string",
-				"name": "",
-				"type": "string"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "withdraw",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	}
-];</script>
-<div class="bg-white text-black p-4 rounded shadow-md max-w-md mx-auto my-4" id="matic-info" style="display:none;">
-<h3 class="font-bold mb-2">What is Polygon (MATIC)?</h3>
-<p>You need MATIC in your wallet to bid or mint. Polygon (MATIC) is available on centralized exchanges like Binance and Coinbase. Fund your wallet before proceeding.</p>
-<div class="hidden mt-4" lang="ar">
-<h3 class="font-bold mb-2">ما هو بوليجون (MATIC)؟</h3>
-<p>تحتاج إلى عملة MATIC في محفظتك للقيام بالمزايدة أو السك. بوليجون متوفرة في المنصات المركزية مثل Binance و Coinbase. قم بتمويل محفظتك قبل المتابعة.</p>
-</div>
-</div><script>
-document.addEventListener("DOMContentLoaded", function() {
-  const logo = document.querySelector("img[src*='polygon']");
-  const box = document.getElementById("matic-info");
-  const langToggle = document.querySelector("#translateToggle");
 
-  if (logo && box) {
-    logo.addEventListener("click", () => {
-      box.style.display = "block";
-    });
-  }
+    async function togglePolygonInfo() {
+      const info = document.getElementById("polygon-info");
+      info.classList.toggle("hidden");
+    }
 
-  if (langToggle) {
-    langToggle.addEventListener("click", () => {
-      const arabicText = box.querySelector("div[lang='ar']");
-      if (arabicText) {
-        arabicText.classList.toggle("hidden");
-        const englishText = box.querySelector("p");
-        if (englishText) englishText.classList.toggle("hidden");
+    window.addEventListener('load', async () => {
+      if (window.ethereum) {
+        window.web3 = new Web3(window.ethereum);
+        await window.ethereum.enable();
+      } else {
+        alert('Please install MetaMask to use this feature');
       }
     });
-  }
-});
-</script></body>
+
+    const contractAddress = "0x71df1af577b4432cd2f024c22d52e72ce48cf36d";
+    const abi = [
+      { "inputs": [{ "internalType": "string", "name": "uri", "type": "string" }], "stateMutability": "nonpayable", "type": "constructor" },
+      { "inputs": [], "name": "mint", "outputs": [], "stateMutability": "nonpayable", "type": "function" },
+      { "inputs": [], "name": "submitBid", "outputs": [], "stateMutability": "payable", "type": "function" },
+      { "inputs": [{ "internalType": "address", "name": "bidder", "type": "address" }], "name": "approveBid", "outputs": [], "stateMutability": "nonpayable", "type": "function" }
+    ];
+
+    const contract = new web3.eth.Contract(abi, contractAddress);
+
+    async function submitBid() {
+      const accounts = await web3.eth.getAccounts();
+      const amount = document.getElementById("bidAmount").value;
+      if (!amount || amount <= 0) return alert("Enter a valid amount.");
+
+      try {
+        await contract.methods.submitBid().send({
+          from: accounts[0],
+          value: web3.utils.toWei(amount, "ether")
+        });
+        alert("Bid submitted successfully!");
+      } catch (error) {
+        console.error(error);
+        alert("Error submitting bid.");
+      }
+    }
+
+    async function mintNFT() {
+      const accounts = await web3.eth.getAccounts();
+
+      try {
+        await contract.methods.mint().send({ from: accounts[0] });
+        alert("NFT minted successfully!");
+      } catch (error) {
+        console.error(error);
+        alert("Error minting NFT.");
+      }
+    }
+  </script>
+</body>
 </html>
