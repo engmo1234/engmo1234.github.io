@@ -1,12 +1,13 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>ENGMO1234 | NFT Bid & Mint</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
-  <style>
+<meta charset="utf-8"/>
+<title>ENGMO1234 | NFT Bid &amp; Mint</title>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+<style>
     body {
       margin: 0;
       font-family: 'Orbitron', sans-serif;
@@ -101,8 +102,8 @@
   </style>
 </head>
 <body>
-  <canvas id="canvas"></canvas>
-  <script>
+<canvas id="canvas"></canvas>
+<script>
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
     canvas.width = window.innerWidth;
@@ -137,99 +138,750 @@
     }
     animate();
   </script>
-
-  <button class="lang-toggle" onclick="toggleLanguage()">AR / EN</button>
-  <div class="container">
-    <img class="polygon-logo" src="polygon-logo.png" alt="Polygon Logo" onclick="togglePolygonInfo()">
-    <div id="polygonInfo" class="info-box">
+<button class="lang-toggle" onclick="toggleLanguage()">AR / EN</button>
+<div class="container">
+<img alt="Polygon Logo" class="polygon-logo" onclick="togglePolygonInfo()" src="polygon-logo.png"/>
+<div class="info-box" id="polygonInfo">
       Polygon is a fast and affordable blockchain network. MATIC tokens are required for transactions and are available on centralized exchanges like Binance and Coinbase. Fund your wallet to bid and purchase.
     </div>
+<div class="network-notice" id="networkWarning">🌐 This NFT is available only on the <strong>Polygon Network</strong>.</div>
+<button onclick="switchToPolygon()">🔄 Switch to Polygon</button>
+<div class="wallet-display" id="walletDisplay"></div>
+<h1 class="text-3xl mb-4 text-[#00ff88]" id="title">Submit Your NFT Bid</h1>
+<p class="text-sm text-gray-300" id="desc">Enter your bid amount in MATIC. You must be approved to mint later.</p>
+<div class="video-preview">
+<video autoplay="" controls="" loop="" muted="" playsinline="" src="https://engmo1234.github.io/engmo_video_browser_safe.mp4"></video>
+</div>
+<input id="bidAmount" placeholder="e.g., 1.5 MATIC" step="0.01" type="number"/>
+<button id="submitBtn" onclick="submitBid()">Submit Bid</button>
+<div id="status"></div>
+<div class="mt-6 hidden" id="mintSection">
+<button id="mintButton" onclick="mintNFT()">✅ Mint NFT (If Approved)</button>
+<p class="mt-4"><a href="https://form.jotform.com/223058286315456" style="color:#00ff88;text-decoration:underline;" target="_blank">🔓 Unlock Content</a></p>
+</div>
+</div>
+<script>const abi = [
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "uri",
+				"type": "string"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "constructor"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "sender",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "balance",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "needed",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "tokenId",
+				"type": "uint256"
+			}
+		],
+		"name": "ERC1155InsufficientBalance",
+		"type": "error"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "approver",
+				"type": "address"
+			}
+		],
+		"name": "ERC1155InvalidApprover",
+		"type": "error"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "idsLength",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "valuesLength",
+				"type": "uint256"
+			}
+		],
+		"name": "ERC1155InvalidArrayLength",
+		"type": "error"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "operator",
+				"type": "address"
+			}
+		],
+		"name": "ERC1155InvalidOperator",
+		"type": "error"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "receiver",
+				"type": "address"
+			}
+		],
+		"name": "ERC1155InvalidReceiver",
+		"type": "error"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "sender",
+				"type": "address"
+			}
+		],
+		"name": "ERC1155InvalidSender",
+		"type": "error"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "operator",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "owner",
+				"type": "address"
+			}
+		],
+		"name": "ERC1155MissingApprovalForAll",
+		"type": "error"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "owner",
+				"type": "address"
+			}
+		],
+		"name": "OwnableInvalidOwner",
+		"type": "error"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "account",
+				"type": "address"
+			}
+		],
+		"name": "OwnableUnauthorizedAccount",
+		"type": "error"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "account",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "operator",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "bool",
+				"name": "approved",
+				"type": "bool"
+			}
+		],
+		"name": "ApprovalForAll",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "bidder",
+				"type": "address"
+			}
+		],
+		"name": "BidApproved",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "bidder",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "amount",
+				"type": "uint256"
+			}
+		],
+		"name": "BidSubmitted",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "to",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "amount",
+				"type": "uint256"
+			}
+		],
+		"name": "FundsWithdrawn",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "minter",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "tokenId",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "amount",
+				"type": "uint256"
+			}
+		],
+		"name": "NFTMinted",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "previousOwner",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "newOwner",
+				"type": "address"
+			}
+		],
+		"name": "OwnershipTransferred",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "operator",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "from",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "to",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256[]",
+				"name": "ids",
+				"type": "uint256[]"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256[]",
+				"name": "values",
+				"type": "uint256[]"
+			}
+		],
+		"name": "TransferBatch",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "operator",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "from",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "to",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "id",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "value",
+				"type": "uint256"
+			}
+		],
+		"name": "TransferSingle",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "string",
+				"name": "value",
+				"type": "string"
+			},
+			{
+				"indexed": true,
+				"internalType": "uint256",
+				"name": "id",
+				"type": "uint256"
+			}
+		],
+		"name": "URI",
+		"type": "event"
+	},
+	{
+		"inputs": [],
+		"name": "MAX_SUPPLY",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "TOKEN_ID",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "bidder",
+				"type": "address"
+			}
+		],
+		"name": "approveBid",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "account",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "id",
+				"type": "uint256"
+			}
+		],
+		"name": "balanceOf",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address[]",
+				"name": "accounts",
+				"type": "address[]"
+			},
+			{
+				"internalType": "uint256[]",
+				"name": "ids",
+				"type": "uint256[]"
+			}
+		],
+		"name": "balanceOfBatch",
+		"outputs": [
+			{
+				"internalType": "uint256[]",
+				"name": "",
+				"type": "uint256[]"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"name": "bids",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "amount",
+				"type": "uint256"
+			},
+			{
+				"internalType": "bool",
+				"name": "approved",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"name": "hasMinted",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "account",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "operator",
+				"type": "address"
+			}
+		],
+		"name": "isApprovedForAll",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "mint",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "owner",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "renounceOwnership",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "from",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "to",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256[]",
+				"name": "ids",
+				"type": "uint256[]"
+			},
+			{
+				"internalType": "uint256[]",
+				"name": "values",
+				"type": "uint256[]"
+			},
+			{
+				"internalType": "bytes",
+				"name": "data",
+				"type": "bytes"
+			}
+		],
+		"name": "safeBatchTransferFrom",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "from",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "to",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "id",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "value",
+				"type": "uint256"
+			},
+			{
+				"internalType": "bytes",
+				"name": "data",
+				"type": "bytes"
+			}
+		],
+		"name": "safeTransferFrom",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "operator",
+				"type": "address"
+			},
+			{
+				"internalType": "bool",
+				"name": "approved",
+				"type": "bool"
+			}
+		],
+		"name": "setApprovalForAll",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "submitBid",
+		"outputs": [],
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "bytes4",
+				"name": "interfaceId",
+				"type": "bytes4"
+			}
+		],
+		"name": "supportsInterface",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "totalMinted",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "newOwner",
+				"type": "address"
+			}
+		],
+		"name": "transferOwnership",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "uri",
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "withdraw",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	}
+];</script>
+<div class="bg-white text-black p-4 rounded shadow-md max-w-md mx-auto my-4" id="matic-info" style="display:none;">
+<h3 class="font-bold mb-2">What is Polygon (MATIC)?</h3>
+<p>You need MATIC in your wallet to bid or mint. Polygon (MATIC) is available on centralized exchanges like Binance and Coinbase. Fund your wallet before proceeding.</p>
+<div class="hidden mt-4" lang="ar">
+<h3 class="font-bold mb-2">ما هو بوليجون (MATIC)؟</h3>
+<p>تحتاج إلى عملة MATIC في محفظتك للقيام بالمزايدة أو السك. بوليجون متوفرة في المنصات المركزية مثل Binance و Coinbase. قم بتمويل محفظتك قبل المتابعة.</p>
+</div>
+</div><script>
+document.addEventListener("DOMContentLoaded", function() {
+  const logo = document.querySelector("img[src*='polygon']");
+  const box = document.getElementById("matic-info");
+  const langToggle = document.querySelector("#translateToggle");
 
-    <div class="network-notice" id="networkWarning">🌐 This NFT is available only on the <strong>Polygon Network</strong>.</div>
-    <button onclick="switchToPolygon()">🔄 Switch to Polygon</button>
-    <div class="wallet-display" id="walletDisplay"></div>
+  if (logo && box) {
+    logo.addEventListener("click", () => {
+      box.style.display = "block";
+    });
+  }
 
-    <h1 id="title" class="text-3xl mb-4 text-[#00ff88]">Submit Your NFT Bid</h1>
-    <p id="desc" class="text-sm text-gray-300">Enter your bid amount in MATIC. You must be approved to mint later.</p>
-
-    <div class="video-preview">
-      <video muted autoplay loop playsinline controls src="https://engmo1234.github.io/engmo_video_browser_safe.mp4"></video>
-    </div>
-
-    <input type="number" id="bidAmount" placeholder="e.g., 1.5 MATIC" step="0.01" />
-    <button onclick="submitBid()" id="submitBtn">Submit Bid</button>
-    <div id="status"></div>
-
-    <div id="mintSection" class="mt-6 hidden">
-      <button id="mintButton" onclick="mintNFT()">✅ Mint NFT (If Approved)</button>
-      <p class="mt-4"><a href="https://form.jotform.com/223058286315456" target="_blank" style="color:#00ff88;text-decoration:underline;">🔓 Unlock Content</a></p>
-    </div>
-  </div>
-
-  <script>
-    const abi = [
-      { "inputs": [], "name": "submitBid", "outputs": [], "stateMutability": "payable", "type": "function" },
-      { "inputs": [], "name": "mint", "outputs": [], "stateMutability": "nonpayable", "type": "function" }
-    ];
-
-    async function submitBid() {
-      const statusEl = document.getElementById('status');
-      const bidAmount = document.getElementById('bidAmount').value;
-      if (!window.ethereum) return alert("Please install MetaMask.");
-      try {
-        const web3 = new Web3(window.ethereum);
-        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-        const contract = new web3.eth.Contract(abi, "0x71df1af577b4432cd2f024c22d52e72ce48cf36d");
-        const valueInWei = web3.utils.toWei(bidAmount, 'ether');
-        const tx = await contract.methods.submitBid().send({ from: accounts[0], value: valueInWei });
-        statusEl.innerText = `✅ Bid submitted! Tx: ${tx.transactionHash}`;
-        document.getElementById('mintSection').classList.remove('hidden');
-      } catch (err) {
-        statusEl.innerText = '❌ Error submitting bid: ' + err.message;
+  if (langToggle) {
+    langToggle.addEventListener("click", () => {
+      const arabicText = box.querySelector("div[lang='ar']");
+      if (arabicText) {
+        arabicText.classList.toggle("hidden");
+        const englishText = box.querySelector("p");
+        if (englishText) englishText.classList.toggle("hidden");
       }
-    }
-
-    async function mintNFT() {
-      const statusEl = document.getElementById('status');
-      try {
-        const web3 = new Web3(window.ethereum);
-        const accounts = await web3.eth.requestAccounts();
-        const contract = new web3.eth.Contract(abi, "0x71df1af577b4432cd2f024c22d52e72ce48cf36d");
-        const tx = await contract.methods.mint().send({ from: accounts[0] });
-        statusEl.innerText = `✅ NFT minted! Tx: ${tx.transactionHash}`;
-      } catch (err) {
-        statusEl.innerText = '❌ Error: ' + err.message;
-      }
-    }
-
-    function toggleLanguage() {
-      const en = {
-        title: "Submit Your NFT Bid",
-        desc: "Enter your bid amount in MATIC. You must be approved to mint later.",
-        placeholder: "e.g., 1.5 MATIC",
-        button: "Submit Bid",
-        notice: "🌐 This NFT is available only on the <strong>Polygon Network</strong>."
-      };
-      const ar = {
-        title: "أرسل عرضك لشراء NFT",
-        desc: "أدخل قيمة عرضك بـ MATIC. يجب أن تتم الموافقة عليك للسك لاحقًا.",
-        placeholder: "مثال: ١.٥ ماتيك",
-        button: "إرسال العرض",
-        notice: "🌐 هذا الرمز متاح فقط على <strong>شبكة بوليجون</strong>."
-      };
-      const isEnglish = document.getElementById('title').innerText.includes('Submit');
-      const lang = isEnglish ? ar : en;
-      document.getElementById('title').innerText = lang.title;
-      document.getElementById('desc').innerText = lang.desc;
-      document.getElementById('bidAmount').placeholder = lang.placeholder;
-      document.getElementById('submitBtn').innerText = lang.button;
-      document.getElementById('networkWarning').innerHTML = lang.notice;
-    }
-
-    function togglePolygonInfo() {
-      const infoBox = document.getElementById('polygonInfo');
-      infoBox.style.display = infoBox.style.display === 'block' ? 'none' : 'block';
-    }
-  </script>
-</body>
+    });
+  }
+});
+</script></body>
 </html>
