@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ENGMO1234 | NFT Bid & Mint</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Orbitron', sans-serif;
+      background: black;
+      color: white;
+      overflow-x: hidden;
+    }
+    #canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: -1;
+    }
+    .container {
+      max-width: 700px;
+      margin: 100px auto;
+      text-align: center;
+      padding: 20px;
+    }
+    input {
+      width: 100%;
+      padding: 16px;
+      margin: 10px 0;
+      border-radius: 12px;
+      border: none;
+      font-size: 18px;
+      color: white;
+      background-color: #222;
+    }
+    input::placeholder {
+      color: #aaa;
+    }
+    button {
+      background: #00ff88;
+      padding: 12px 24px;
+      font-size: 18px;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #00cc66;
+    }
+    .video-preview {
+      margin-top: 30px;
+      border: 2px solid #00ff88;
+      border-radius: 16px;
+      overflow: hidden;
+      width: 90%;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    video {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    .lang-toggle {
+      position: absolute;
+      top: 10px;
+      right: 20px;
+    }
+    .network-notice {
+      margin-top: 20px;
+      font-size: 16px;
+      color: #00ff88;
+    }
+    .polygon-logo {
+      width: 100px;
+      max-width: 80%;
+      margin: 10px auto;
+      display: block;
+      cursor: pointer;
+    }
+    .wallet-display {
+      margin-top: 10px;
+      font-size: 14px;
+      color: #ccc;
+    }
+    .hidden { display: none; }
+    .info-box {
+      display: none;
+      background: #111;
+      border: 1px solid #00ff88;
+      padding: 16px;
+      margin-top: 10px;
+      border-radius: 10px;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="canvas"></canvas>
+  <script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    class Particle {
+      constructor() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.size = Math.random() * 2 + 1;
+        this.speedX = Math.random() * 1 - 0.5;
+        this.speedY = Math.random() * 1 - 0.5;
+      }
+      update() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+        if (this.x > canvas.width || this.x < 0) this.speedX *= -1;
+        if (this.y > canvas.height || this.y < 0) this.speedY *= -1;
+      }
+      draw() {
+        ctx.fillStyle = '#00ff88';
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+    const particles = [];
+    for (let i = 0; i < 100; i++) particles.push(new Particle());
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach(p => { p.update(); p.draw(); });
+      requestAnimationFrame(animate);
+    }
+    animate();
+  </script>
+
+  <button class="lang-toggle" onclick="toggleLanguage()">AR / EN</button>
+  <div class="container">
+    <img class="polygon-logo" src="polygon-logo.png" alt="Polygon Logo" onclick="togglePolygonInfo()">
+    <div id="polygonInfo" class="info-box">
+      Polygon is a fast and affordable blockchain network. MATIC tokens are required for transactions and are available on centralized exchanges like Binance and Coinbase. Fund your wallet to bid and purchase.
+    </div>
+
+    <div class="network-notice" id="networkWarning">🌐 This NFT is available only on the <strong>Polygon Network</strong>.</div>
+    <button onclick="switchToPolygon()">🔄 Switch to Polygon</button>
+    <div class="wallet-display" id="walletDisplay"></div>
+
+    <h1 id="title" class="text-3xl mb-4 text-[#00ff88]">Submit Your NFT Bid</h1>
+    <p id="desc" class="text-sm text-gray-300">Enter your bid amount in MATIC. You must be approved to mint later.</p>
+
+    <div class="video-preview">
+      <video muted autoplay loop playsinline controls src="https://engmo1234.github.io/engmo_video_browser_safe.mp4"></video>
+    </div>
+
+    <input type="number" id="bidAmount" placeholder="e.g., 1.5 MATIC" step="0.01" />
+    <button onclick="submitBid()" id="submitBtn">Submit Bid</button>
+    <div id="status"></div>
+
+    <div id="mintSection" class="mt-6 hidden">
+      <button id="mintButton" onclick="mintNFT()">✅ Mint NFT (If Approved)</button>
+      <p class="mt-4"><a href="https://form.jotform.com/223058286315456" target="_blank" style="color:#00ff88;text-decoration:underline;">🔓 Unlock Content</a></p>
+    </div>
+  </div>
+
+  <script>
+    const abi = [
+      { "inputs": [], "name": "submitBid", "outputs": [], "stateMutability": "payable", "type": "function" },
+      { "inputs": [], "name": "mint", "outputs": [], "stateMutability": "nonpayable", "type": "function" }
+    ];
+
+    async function submitBid() {
+      const statusEl = document.getElementById('status');
+      const bidAmount = document.getElementById('bidAmount').value;
+      if (!window.ethereum) return alert("Please install MetaMask.");
+      try {
+        const web3 = new Web3(window.ethereum);
+        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+        const contract = new web3.eth.Contract(abi, "0x71df1af577b4432cd2f024c22d52e72ce48cf36d");
+        const valueInWei = web3.utils.toWei(bidAmount, 'ether');
+        const tx = await contract.methods.submitBid().send({ from: accounts[0], value: valueInWei });
+        statusEl.innerText = `✅ Bid submitted! Tx: ${tx.transactionHash}`;
+        document.getElementById('mintSection').classList.remove('hidden');
+      } catch (err) {
+        statusEl.innerText = '❌ Error submitting bid: ' + err.message;
+      }
+    }
+
+    async function mintNFT() {
+      const statusEl = document.getElementById('status');
+      try {
+        const web3 = new Web3(window.ethereum);
+        const accounts = await web3.eth.requestAccounts();
+        const contract = new web3.eth.Contract(abi, "0x71df1af577b4432cd2f024c22d52e72ce48cf36d");
+        const tx = await contract.methods.mint().send({ from: accounts[0] });
+        statusEl.innerText = `✅ NFT minted! Tx: ${tx.transactionHash}`;
+      } catch (err) {
+        statusEl.innerText = '❌ Error: ' + err.message;
+      }
+    }
+
+    function toggleLanguage() {
+      const en = {
+        title: "Submit Your NFT Bid",
+        desc: "Enter your bid amount in MATIC. You must be approved to mint later.",
+        placeholder: "e.g., 1.5 MATIC",
+        button: "Submit Bid",
+        notice: "🌐 This NFT is available only on the <strong>Polygon Network</strong>."
+      };
+      const ar = {
+        title: "أرسل عرضك لشراء NFT",
+        desc: "أدخل قيمة عرضك بـ MATIC. يجب أن تتم الموافقة عليك للسك لاحقًا.",
+        placeholder: "مثال: ١.٥ ماتيك",
+        button: "إرسال العرض",
+        notice: "🌐 هذا الرمز متاح فقط على <strong>شبكة بوليجون</strong>."
+      };
+      const isEnglish = document.getElementById('title').innerText.includes('Submit');
+      const lang = isEnglish ? ar : en;
+      document.getElementById('title').innerText = lang.title;
+      document.getElementById('desc').innerText = lang.desc;
+      document.getElementById('bidAmount').placeholder = lang.placeholder;
+      document.getElementById('submitBtn').innerText = lang.button;
+      document.getElementById('networkWarning').innerHTML = lang.notice;
+    }
+
+    function togglePolygonInfo() {
+      const infoBox = document.getElementById('polygonInfo');
+      infoBox.style.display = infoBox.style.display === 'block' ? 'none' : 'block';
+    }
+  </script>
+</body>
+</html>
