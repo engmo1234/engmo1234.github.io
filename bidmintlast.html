@@ -112,9 +112,8 @@
 
     window.addEventListener('load', async () => {
       if (window.ethereum) {
-        provider = new ethers.providers.Web3Provider(window.ethereum);
-        await provider.send("eth_requestAccounts", []);
-        signer = provider.getSigner();
+        provider = new ethers.BrowserProvider(window.ethereum);
+        signer = await provider.getSigner();
 
         const abi = [
           { "inputs": [{ "internalType": "string", "name": "uri", "type": "string" }], "stateMutability": "nonpayable", "type": "constructor" },
@@ -131,15 +130,20 @@
     });
 
     async function submitBid() {
-      const amount = document.getElementById("bidAmount").value;
-      if (!amount || amount <= 0) return alert("Enter a valid bid amount.");
+      const amount = document.getElementById("bidAmount").value.toString();
+      if (!amount || isNaN(amount) || Number(amount) <= 0) {
+        return alert("Enter a valid bid amount.");
+      }
+
       try {
-        const tx = await contract.submitBid({ value: ethers.utils.parseEther(amount) });
+        const tx = await contract.submitBid({
+          value: ethers.parseUnits(amount, "ether")
+        });
         await tx.wait();
-        alert("Bid submitted successfully!");
+        alert("✅ Bid submitted successfully!");
       } catch (err) {
         console.error(err);
-        alert("Failed to submit bid.");
+        alert("❌ Failed to submit bid. Make sure you're on Polygon and approved.");
       }
     }
 
