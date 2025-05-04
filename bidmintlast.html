@@ -94,14 +94,13 @@
     <button onclick="mintNFT()">Mint NFT | سك العملة الرقمية</button>
   </div>
 
-  <div id="unlockBox">
-    ✅ By minting, you have unlocked exclusive content!<br />
-    🔑 <a class="unlock-link" href="https://form.jotform.com/223058286315456" target="_blank">Access Unlockable Content</a><br />
-    <strong>Password:</strong> LAILAHAILALLAH<br /><br />
-    ✅ من خلال عملية السك، لقد قمت بفتح محتوى حصري!<br />
-    🔑 <a class="unlock-link" href="https://form.jotform.com/223058286315456" target="_blank">الدخول إلى المحتوى السري</a><br />
-    <strong>كلمة المرور:</strong> LAILAHAILALLAH
+  <div class="nft-box">
+    <h2>✅ Approve Bidders | الموافقة على المزايدين</h2>
+    <input type="text" id="bidderAddress" placeholder="Enter Bidder Address | أدخل عنوان المزايد" />
+    <button onclick="approveBid()">Approve Bid | الموافقة على المزايدة</button>
   </div>
+
+  <div id="unlockBox"></div>
 
   <script>
     const canvas = document.getElementById('bg');
@@ -113,9 +112,9 @@
       canvas.height = window.innerHeight;
     }
 
-    function createStars() {
+    function createStars(count) {
       stars = [];
-      for (let i = 0; i < 150; i++) {
+      for (let i = 0; i < count; i++) {
         stars.push({
           x: Math.random() * canvas.width,
           y: Math.random() * canvas.height,
@@ -124,95 +123,70 @@
       }
     }
 
-    function animateStars() {
-      ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
+    function drawStars() {
+      ctx.fillStyle = 'black';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = '#00ffcc';
-      ctx.shadowBlur = 6;
-      ctx.shadowColor = '#00ffcc';
-      for (let i = 0; i < stars.length; i++) {
-        let star = stars[i];
-        star.z -= 0.5;
-        if (star.z <= 0) {
-          star.z = canvas.width;
-        }
-        let k = 128.0 / star.z;
-        let px = star.x * k + canvas.width / 2;
-        let py = star.y * k + canvas.height / 2;
-        if (px >= 0 && px < canvas.width && py >= 0 && py < canvas.height) {
-          let size = (1 - star.z / canvas.width) * 3;
+      ctx.fillStyle = 'white';
+      stars.forEach(star => {
+        const k = 128.0 / star.z;
+        const x = star.x * k + canvas.width / 2;
+        const y = star.y * k + canvas.height / 2;
+        if (x >= 0 && x <= canvas.width && y >= 0 && y <= canvas.height) {
           ctx.beginPath();
-          ctx.arc(px, py, size, 0, Math.PI * 2);
+          ctx.arc(x, y, 1, 0, Math.PI * 2);
           ctx.fill();
         }
-      }
-      requestAnimationFrame(animateStars);
+        star.z -= 2;
+        if (star.z <= 0) {
+          star.x = Math.random() * canvas.width;
+          star.y = Math.random() * canvas.height;
+          star.z = canvas.width;
+        }
+      });
     }
 
-    resizeCanvas();
-    createStars();
-    animateStars();
+    function animate() {
+      drawStars();
+      requestAnimationFrame(animate);
+    }
+
     window.addEventListener('resize', () => {
       resizeCanvas();
-      createStars();
+      createStars(300);
     });
 
-    const CONTRACT_ADDRESS = "0xc66cccf6cf6b3e8fe8e489fbbbcd0f81e2ebccd2";
-    const ABI = [
-      { "inputs": [{ "internalType": "string", "name": "uri", "type": "string" }], "stateMutability": "nonpayable", "type": "constructor" },
-      { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "address", "name": "bidder", "type": "address" }], "name": "BidApproved", "type": "event" },
-      { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "address", "name": "bidder", "type": "address" }, { "indexed": false, "internalType": "uint256", "name": "amount", "type": "uint256" }], "name": "BidSubmitted", "type": "event" },
-      { "inputs": [], "name": "submitBid", "outputs": [], "stateMutability": "payable", "type": "function" },
-      { "inputs": [], "name": "mint", "outputs": [], "stateMutability": "nonpayable", "type": "function" }
+    resizeCanvas();
+    createStars(300);
+    animate();
+
+    const passwords = [
+      "Engmorichy1234a", "Engmorichy1234b", "Engmorichy1234c", "Engmorichy1234d", "Engmorichy1234e",
+      "Engmorichy1234f", "Engmorichy1234g", "Engmorichy1234h", "Engmorichy1234i", "Engmorichy1234j",
+      "Engmorichy1234k", "Engmorichy1234l", "Engmorichy1234m", "Engmorichy1234n", "Engmorichy1234o",
+      "Engmorichy1234p", "Engmorichy1234q", "Engmorichy1234r", "Engmorichy1234s", "Engmorichy1234t",
+      "Engmorichy1234u", "Engmorichy1234v", "Engmorichy1234w", "Engmorichy1234x", "Engmorichy1234y",
+      "Engmorichy1234z", "Engmorichy1234aa", "Engmorichy1234bb", "Engmorichy1234cc", "Engmorichy1234dd",
+      "Engmorichy1234ee", "Engmorichy1234ff", "Engmorichy1234gg", "Engmorichy1234hh", "Engmorichy1234ii",
+      "Engmorichy1234jj", "Engmorichy1234kk", "Engmorichy1234ll", "Engmorichy1234mm", "Engmorichy1234nn"
     ];
 
-    let provider;
-    let signer;
-    let contract;
-
-    async function connect() {
-      if (window.ethereum) {
-        provider = new ethers.providers.Web3Provider(window.ethereum);
-        await provider.send("eth_requestAccounts", []);
-        signer = provider.getSigner();
-        contract = new ethers.Contract(CONTRACT_ADDRESS, ABI, signer);
-        document.getElementById("message").textContent = "✅ Connected to MetaMask | تم الاتصال بمحفظة MetaMask";
-      } else {
-        document.getElementById("message").textContent = "❌ MetaMask not found. Please install it | لم يتم العثور على MetaMask. الرجاء التثبيت";
-      }
+    function getRandomPassword() {
+      const idx = Math.floor(Math.random() * passwords.length);
+      return passwords[idx];
     }
 
-    async function submitBid() {
-      const amount = document.getElementById("bidAmount").value;
-      if (!amount || isNaN(amount) || amount <= 0) {
-        alert("Enter a valid bid amount in MATIC | أدخل قيمة صحيحة");
-        return;
-      }
-      try {
-        const tx = await contract.submitBid({ value: ethers.utils.parseEther(amount) });
-        await tx.wait();
-        alert("✅ Bid submitted successfully! | تم تقديم المزايدة بنجاح!");
-      } catch (err) {
-        console.error(err);
-        alert("❌ Error submitting bid. | حدث خطأ في تقديم المزايدة.");
-      }
-    }
-
-    async function mintNFT() {
-      try {
-        const tx = await contract.mint();
-        await tx.wait();
-        document.getElementById("unlockBox").style.display = "block";
-        alert("✅ NFT minted successfully! | تم سك العملة الرقمية بنجاح!");
-      } catch (err) {
-        console.error(err);
-        alert("❌ Error minting NFT. | حدث خطأ في عملية السك.");
-      }
-    }
-
-    function togglePolygonHelp() {
-      const msg = document.getElementById("message");
-      msg.innerHTML = `🔷 Polygon (MATIC) is required for bidding and minting.<br />You can buy it from exchanges like Binance, KuCoin, or Crypto.com.<br />تأكد من شحن محفظتك بعملة MATIC من منصات مركزية مثل Binance أو KuCoin.`;
+    function showUnlockBox() {
+      const password = getRandomPassword();
+      const box = document.getElementById("unlockBox");
+      box.innerHTML = `
+        ✅ By minting, you have unlocked exclusive content!<br />
+        🔑 <a class="unlock-link" href="https://form.jotform.com/223058286315456" target="_blank">Access Unlockable Content</a><br />
+        <strong>Password:</strong> ${password}<br /><br />
+        ✅ من خلال عملية السك، لقد قمت بفتح محتوى حصري!<br />
+        🔑 <a class="unlock-link" href="https://form.jotform.com/223058286315456" target="_blank">الدخول إلى المحتوى السري</a><br />
+        <strong>كلمة المرور:</strong> ${password}
+      `;
+      box.style.display = "block";
     }
   </script>
 </body>
