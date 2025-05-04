@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Mint NFT |((UNDERMAINTAINANCE DO NOT PURCHASE تحت النعديل تدفع)) Engmo</title>
+  <title>Mint NFT | Engmo</title>
   <script src="https://cdn.jsdelivr.net/npm/web3@1.8.2/dist/web3.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
   <style>
@@ -36,13 +36,17 @@
       cursor: pointer;
       margin: 10px auto;
       display: block;
+      transition: transform 0.3s;
+    }
+    .polygon-logo:hover {
+      transform: scale(1.1);
     }
     h1 {
       margin-top: 10px;
       font-size: 28px;
       text-align: center;
     }
-    .nft-box, .tx-box {
+    .nft-box, .tx-box, .info-box {
       background-color: rgba(0, 0, 0, 0.6);
       padding: 20px;
       border-radius: 12px;
@@ -50,36 +54,116 @@
       text-align: center;
       max-width: 500px;
       margin-top: 30px;
+      width: 90%;
     }
     video#nftVideo {
       margin-top: 15px;
       max-width: 100%;
       border-radius: 8px;
+      background: #000;
     }
-    button, input[type="number"] {
+    button {
+      padding: 12px;
+      margin: 10px auto;
+      font-size: 16px;
+      display: block;
+      width: 100%;
+      background: linear-gradient(to right, #00ffcc, #0099ff);
+      color: black;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: opacity 0.3s;
+    }
+    button:hover {
+      opacity: 0.9;
+    }
+    button:disabled {
+      background: #666;
+      cursor: not-allowed;
+    }
+    input[type="number"], input[type="text"] {
       padding: 10px;
       margin: 10px auto;
       font-size: 16px;
       display: block;
       width: 100%;
-    }
-    input[type="number"] {
       border-radius: 5px;
-      border: none;
+      border: 2px solid #00ffcc;
+      background: rgba(0, 0, 0, 0.5);
+      color: white;
     }
     a.unlock-link {
       color: #00ff99;
       font-weight: bold;
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+    a.unlock-link:hover {
+      color: #00cc77;
     }
     a.tx-link {
       color: #a0d1ff;
       display: block;
       margin-top: 12px;
+      text-decoration: none;
+    }
+    a.tx-link:hover {
+      text-decoration: underline;
     }
     .explanation {
       margin-top: 10px;
       font-size: 14px;
       color: #cccccc;
+    }
+    .loading {
+      display: none;
+      margin: 10px auto;
+      border: 4px solid rgba(0, 255, 204, 0.3);
+      border-radius: 50%;
+      border-top: 4px solid #00ffcc;
+      width: 30px;
+      height: 30px;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    .error-message {
+      color: #ff4444;
+      margin-top: 10px;
+      display: none;
+    }
+    .success-message {
+      color: #00ff99;
+      margin-top: 10px;
+      display: none;
+    }
+    .stats {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 15px;
+    }
+    .stat-item {
+      flex: 1;
+      padding: 0 10px;
+    }
+    .stat-value {
+      font-weight: bold;
+      font-size: 18px;
+      color: #00ffcc;
+    }
+    .admin-panel {
+      display: none;
+      margin-top: 20px;
+      border-top: 1px dashed #00ffcc;
+      padding-top: 15px;
+    }
+    .admin-panel h3 {
+      color: #ff9900;
+      margin-bottom: 10px;
     }
   </style>
 </head>
@@ -111,99 +195,440 @@
     Polygon (MATIC) is used for transactions on this platform. You can get MATIC from major exchanges and fund your wallet. | يتم استخدام بوليجون (MATIC) لإجراء المعاملات على هذا النظام. يمكنك الحصول على MATIC من منصات التداول الرئيسية وتمويل محفظتك.
   </p>
 
+  <div class="info-box">
+    <h2>📊 Collection Stats</h2>
+    <div class="stats">
+      <div class="stat-item">
+        <div class="stat-value" id="totalMinted">0</div>
+        <div class="explanation">Minted</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value" id="maxSupply">0</div>
+        <div class="explanation">Total Supply</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value" id="userBalance">0</div>
+        <div class="explanation">Your NFTs</div>
+      </div>
+    </div>
+  </div>
+
   <div class="nft-box">
     <h2>🎥 NFT Video Preview</h2>
     <video id="nftVideo" controls autoplay muted loop playsinline>
       <source src="https://engmo1234.github.io/engmo1234.github.io/engmo_video_browser_safe.mp4" type="video/mp4">
       Your browser does not support the video tag.
     </video>
-    <input type="number" id="bidAmount" placeholder="Enter your bid in MATIC | أدخل مزايدتك بماتيك">
-    <button onclick="submitBid()">💰 Submit Bid | تقديم المزايدة</button>
-    <button onclick="mintNFT()">Mint NFT | سك العملة الرقمية</button>
-    <button onclick="withdrawBid()">Withdraw My Bid | سحب المزايدة</button>
+    <input type="number" id="bidAmount" placeholder="Enter your bid in MATIC | أدخل مزايدتك بماتيك" min="0" step="0.01">
+    <div class="loading" id="bidLoading"></div>
+    <div class="error-message" id="bidError"></div>
+    <div class="success-message" id="bidSuccess"></div>
+    <button onclick="submitBid()" id="bidButton">💰 Submit Bid | تقديم المزايدة</button>
+    <button onclick="mintNFT()" id="mintButton">Mint NFT | سك العملة الرقمية</button>
+    <button onclick="withdrawBid()" id="withdrawButton">Withdraw My Bid | سحب المزايدة</button>
     <p class="explanation">
       💡 If your bid was not approved, click above to withdraw. | إذا لم تتم الموافقة على مزايدتك، يمكنك الضغط أعلاه لسحب أموالك.
     </p>
+
+    <!-- Admin Panel (Only visible to contract owner) -->
+    <div id="adminPanel" class="admin-panel">
+      <h3>👑 Admin Controls</h3>
+      <input type="text" id="bidderAddress" placeholder="Enter bidder's 0x address">
+      <button onclick="approveBid()">✅ Approve Bid</button>
+      <button onclick="rejectBid()">❌ Reject Bid</button>
+      <p class="explanation">These functions are only available to the contract owner</p>
+    </div>
   </div>
 
   <div class="nft-box">
-    🔓 <a class="unlock-link" href="https://form.jotform.com/223058286315456" target="_blank">Access Unlockable Content | الوصول إلى المحتوى الحصري</a>
+    🔓 <a class="unlock-link" href="https://form.jotform.com/223058286315456" target="_blank" rel="noopener noreferrer">Access Unlockable Content | الوصول إلى المحتوى الحصري</a>
   </div>
 
   <div class="tx-box">
     <h3>📦 Last Successful Transaction</h3>
-    <p><strong>Status:</strong> Success ✅</p>
-    <p><strong>From:</strong> 0x8Bd4bE269E9F1D18659450d9D794F136E1F1223a</p>
-    <p><strong>To Contract:</strong> 0xc66ccCf6Cf6B3e8Fe8E489FbbBcD0f81E2ebcCD2</p>
-    <p><strong>Gas Used:</strong> 0.00150213 POL</p>
-    <a class="tx-link" href="https://polygonscan.com/tx/0x3caf36198934d477322ce8316f2704559fe46ade18870eb9390fe6d91db60a90" target="_blank">🔗 View Transaction on Polygonscan</a>
+    <p><strong>Status:</strong> <span id="txStatus">Success ✅</span></p>
+    <p><strong>From:</strong> <span id="txFrom">0x8Bd4bE269E9F1D18659450d9D794F136E1F1223a</span></p>
+    <p><strong>To Contract:</strong> <span id="txTo">0xc66ccCf6Cf6B3e8Fe8E489FbbBcD0f81E2ebcCD2</span></p>
+    <p><strong>Gas Used:</strong> <span id="txGas">0.00150213 POL</span></p>
+    <a class="tx-link" href="https://polygonscan.com/tx/0x3caf36198934d477322ce8316f2704559fe46ade18870eb9390fe6d91db60a90" target="_blank" rel="noopener noreferrer">🔗 View Transaction on Polygonscan</a>
   </div>
 
   <script>
-    const contractAddress = "0xc66cccf6cf6b3e8fe8e489fbbbcd0f81e2ebccd2";
-    const abi = /* INSERT FULL ABI HERE */;
+    // Configuration with your ABI
+    const config = {
+      contractAddress: "0xc66cccf6cf6b3e8fe8e489fbbbcd0f81e2ebccd2",
+      abi: [
+        {"inputs":[{"internalType":"string","name":"uri","type":"string"}],"stateMutability":"nonpayable","type":"constructor"},
+        {"inputs":[{"internalType":"address","name":"sender","type":"address"},{"internalType":"uint256","name":"balance","type":"uint256"},{"internalType":"uint256","name":"needed","type":"uint256"},{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"ERC1155InsufficientBalance","type":"error"},
+        {"inputs":[{"internalType":"address","name":"approver","type":"address"}],"name":"ERC1155InvalidApprover","type":"error"},
+        {"inputs":[{"internalType":"uint256","name":"idsLength","type":"uint256"},{"internalType":"uint256","name":"valuesLength","type":"uint256"}],"name":"ERC1155InvalidArrayLength","type":"error"},
+        {"inputs":[{"internalType":"address","name":"operator","type":"address"}],"name":"ERC1155InvalidOperator","type":"error"},
+        {"inputs":[{"internalType":"address","name":"receiver","type":"address"}],"name":"ERC1155InvalidReceiver","type":"error"},
+        {"inputs":[{"internalType":"address","name":"sender","type":"address"}],"name":"ERC1155InvalidSender","type":"error"},
+        {"inputs":[{"internalType":"address","name":"operator","type":"address"},{"internalType":"address","name":"owner","type":"address"}],"name":"ERC1155MissingApprovalForAll","type":"error"},
+        {"inputs":[{"internalType":"address","name":"owner","type":"address"}],"name":"OwnableInvalidOwner","type":"error"},
+        {"inputs":[{"internalType":"address","name":"account","type":"address"}],"name":"OwnableUnauthorizedAccount","type":"error"},
+        {"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"account","type":"address"},{"indexed":true,"internalType":"address","name":"operator","type":"address"},{"indexed":false,"internalType":"bool","name":"approved","type":"bool"}],"name":"ApprovalForAll","type":"event"},
+        {"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"bidder","type":"address"}],"name":"BidApproved","type":"event"},
+        {"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"bidder","type":"address"},{"indexed":false,"internalType":"uint256","name":"timestamp","type":"uint256"}],"name":"BidRejected","type":"event"},
+        {"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"bidder","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"BidSubmitted","type":"event"},
+        {"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"minter","type":"address"}],"name":"NFTMinted","type":"event"},
+        {"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"previousOwner","type":"address"},{"indexed":true,"internalType":"address","name":"newOwner","type":"address"}],"name":"OwnershipTransferred","type":"event"},
+        {"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"bidder","type":"address"},{"indexed":false,"internalType":"uint256","name":"amount","type":"uint256"}],"name":"RefundIssued","type":"event"},
+        {"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"operator","type":"address"},{"indexed":true,"internalType":"address","name":"from","type":"address"},{"indexed":true,"internalType":"address","name":"to","type":"address"},{"indexed":false,"internalType":"uint256[]","name":"ids","type":"uint256[]"},{"indexed":false,"internalType":"uint256[]","name":"values","type":"uint256[]"}],"name":"TransferBatch","type":"event"},
+        {"anonymous":false,"inputs":[{"indexed":true,"internalType":"address","name":"operator","type":"address"},{"indexed":true,"internalType":"address","name":"from","type":"address"},{"indexed":true,"internalType":"address","name":"to","type":"address"},{"indexed":false,"internalType":"uint256","name":"id","type":"uint256"},{"indexed":false,"internalType":"uint256","name":"value","type":"uint256"}],"name":"TransferSingle","type":"event"},
+        {"anonymous":false,"inputs":[{"indexed":false,"internalType":"string","name":"value","type":"string"},{"indexed":true,"internalType":"uint256","name":"id","type":"uint256"}],"name":"URI","type":"event"},
+        {"inputs":[],"name":"MAX_SUPPLY","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},
+        {"inputs":[],"name":"TOKEN_ID","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},
+        {"inputs":[{"internalType":"address","name":"bidder","type":"address"}],"name":"approveBid","outputs":[],"stateMutability":"nonpayable","type":"function"},
+        {"inputs":[{"internalType":"address","name":"account","type":"address"},{"internalType":"uint256","name":"id","type":"uint256"}],"name":"balanceOf","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},
+        {"inputs":[{"internalType":"address[]","name":"accounts","type":"address[]"},{"internalType":"uint256[]","name":"ids","type":"uint256[]"}],"name":"balanceOfBatch","outputs":[{"internalType":"uint256[]","name":"","type":"uint256[]"}],"stateMutability":"view","type":"function"},
+        {"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"bids","outputs":[{"internalType":"uint256","name":"amount","type":"uint256"},{"internalType":"bool","name":"approved","type":"bool"},{"internalType":"bool","name":"refunded","type":"bool"},{"internalType":"uint256","name":"timestamp","type":"uint256"}],"stateMutability":"view","type":"function"},
+        {"inputs":[{"internalType":"address","name":"","type":"address"}],"name":"hasMinted","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},
+        {"inputs":[{"internalType":"address","name":"account","type":"address"},{"internalType":"address","name":"operator","type":"address"}],"name":"isApprovedForAll","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},
+        {"inputs":[],"name":"mint","outputs":[],"stateMutability":"nonpayable","type":"function"},
+        {"inputs":[],"name":"owner","outputs":[{"internalType":"address","name":"","type":"address"}],"stateMutability":"view","type":"function"},
+        {"inputs":[{"internalType":"address","name":"bidder","type":"address"}],"name":"rejectBid","outputs":[],"stateMutability":"nonpayable","type":"function"},
+        {"inputs":[],"name":"renounceOwnership","outputs":[],"stateMutability":"nonpayable","type":"function"},
+        {"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256[]","name":"ids","type":"uint256[]"},{"internalType":"uint256[]","name":"values","type":"uint256[]"},{"internalType":"bytes","name":"data","type":"bytes"}],"name":"safeBatchTransferFrom","outputs":[],"stateMutability":"nonpayable","type":"function"},
+        {"inputs":[{"internalType":"address","name":"from","type":"address"},{"internalType":"address","name":"to","type":"address"},{"internalType":"uint256","name":"id","type":"uint256"},{"internalType":"uint256","name":"value","type":"uint256"},{"internalType":"bytes","name":"data","type":"bytes"}],"name":"safeTransferFrom","outputs":[],"stateMutability":"nonpayable","type":"function"},
+        {"inputs":[{"internalType":"address","name":"operator","type":"address"},{"internalType":"bool","name":"approved","type":"bool"}],"name":"setApprovalForAll","outputs":[],"stateMutability":"nonpayable","type":"function"},
+        {"inputs":[],"name":"submitBid","outputs":[],"stateMutability":"payable","type":"function"},
+        {"inputs":[{"internalType":"bytes4","name":"interfaceId","type":"bytes4"}],"name":"supportsInterface","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},
+        {"inputs":[],"name":"totalMinted","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},
+        {"inputs":[{"internalType":"address","name":"newOwner","type":"address"}],"name":"transferOwnership","outputs":[],"stateMutability":"nonpayable","type":"function"},
+        {"inputs":[{"internalType":"uint256","name":"","type":"uint256"}],"name":"uri","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},
+        {"inputs":[],"name":"withdraw","outputs":[],"stateMutability":"nonpayable","type":"function"},
+        {"inputs":[],"name":"withdrawBid","outputs":[],"stateMutability":"nonpayable","type":"function"}
+      ]
+    };
 
-    async function connectWeb3() {
-      if (!window.ethereum) return alert("MetaMask not found");
-      await window.ethereum.request({ method: "eth_requestAccounts" });
-      return new Web3(window.ethereum);
-    }
+    // DOM Elements
+    const elements = {
+      bidAmount: document.getElementById('bidAmount'),
+      bidButton: document.getElementById('bidButton'),
+      mintButton: document.getElementById('mintButton'),
+      withdrawButton: document.getElementById('withdrawButton'),
+      bidLoading: document.getElementById('bidLoading'),
+      bidError: document.getElementById('bidError'),
+      bidSuccess: document.getElementById('bidSuccess'),
+      totalMinted: document.getElementById('totalMinted'),
+      maxSupply: document.getElementById('maxSupply'),
+      userBalance: document.getElementById('userBalance'),
+      txStatus: document.getElementById('txStatus'),
+      txFrom: document.getElementById('txFrom'),
+      txTo: document.getElementById('txTo'),
+      txGas: document.getElementById('txGas'),
+      adminPanel: document.getElementById('adminPanel'),
+      bidderAddress: document.getElementById('bidderAddress')
+    };
 
-    async function submitBid() {
+    // State
+    let web3;
+    let contract;
+    let accounts = [];
+    let tokenId = 0;
+
+    // Initialize the application
+    async function initApp() {
       try {
-        const web3 = await connectWeb3();
-        const accounts = await web3.eth.getAccounts();
-        const contract = new web3.eth.Contract(abi, contractAddress);
-
-        const bidAmount = document.getElementById("bidAmount").value;
-        if (!bidAmount || isNaN(bidAmount)) {
-          return alert("Please enter a valid number.");
+        // Check if Web3 is injected
+        if (!window.ethereum) {
+          showError(elements.bidError, "Please install MetaMask or another Web3 wallet.");
+          disableButtons();
+          return;
         }
 
-        await contract.methods.submitBid().send({
-          from: accounts[0],
-          value: web3.utils.toWei(bidAmount, "ether")
+        // Initialize Web3
+        web3 = new Web3(window.ethereum);
+        
+        // Request account access
+        accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+        
+        // Initialize contract
+        contract = new web3.eth.Contract(config.abi, config.contractAddress);
+        
+        // Get token ID
+        tokenId = await contract.methods.TOKEN_ID().call();
+        
+        // Check if connected wallet is owner
+        await checkOwner();
+        
+        // Load initial stats
+        await updateStats();
+        
+        // Check user's bid status
+        await checkBidStatus();
+        
+        // Check if user has already minted
+        await checkMintedStatus();
+        
+        // Listen for account changes
+        window.ethereum.on('accountsChanged', (newAccounts) => {
+          accounts = newAccounts;
+          updateStats();
+          checkBidStatus();
+          checkMintedStatus();
+          checkOwner();
         });
+        
+        // Listen for chain changes
+        window.ethereum.on('chainChanged', () => {
+          window.location.reload();
+        });
+        
+        console.log("Web3 initialized successfully");
+      } catch (error) {
+        console.error("Initialization error:", error);
+        showError(elements.bidError, "Failed to initialize Web3. Please refresh the page.");
+        disableButtons();
+      }
+    }
 
-        alert("✅ Bid submitted successfully.");
+    // Update collection stats
+    async function updateStats() {
+      try {
+        const [totalMinted, maxSupply, userBalance] = await Promise.all([
+          contract.methods.totalMinted().call(),
+          contract.methods.MAX_SUPPLY().call(),
+          contract.methods.balanceOf(accounts[0], tokenId).call()
+        ]);
+        
+        elements.totalMinted.textContent = totalMinted;
+        elements.maxSupply.textContent = maxSupply;
+        elements.userBalance.textContent = userBalance;
+      } catch (error) {
+        console.error("Failed to update stats:", error);
+      }
+    }
+
+    // Check user's bid status
+    async function checkBidStatus() {
+      try {
+        const bid = await contract.methods.bids(accounts[0]).call();
+        if (bid.amount > 0) {
+          if (bid.approved) {
+            showSuccess(elements.bidSuccess, "Your bid has been approved! You can now mint.");
+            elements.mintButton.disabled = false;
+          } else if (bid.refunded) {
+            showError(elements.bidError, "Your bid was refunded.");
+          } else {
+            showSuccess(elements.bidSuccess, "Bid submitted. Waiting for approval...");
+          }
+        }
+      } catch (error) {
+        console.error("Failed to check bid status:", error);
+      }
+    }
+
+    // Check if user has already minted
+    async function checkMintedStatus() {
+      try {
+        const hasMinted = await contract.methods.hasMinted(accounts[0]).call();
+        if (hasMinted) {
+          elements.mintButton.disabled = true;
+          elements.mintButton.textContent = "Already Minted | تم السك مسبقاً";
+        }
+      } catch (error) {
+        console.error("Failed to check minted status:", error);
+      }
+    }
+
+    // Check if connected wallet is owner
+    async function checkOwner() {
+      try {
+        const owner = await contract.methods.owner().call();
+        if (accounts[0] && accounts[0].toLowerCase() === owner.toLowerCase()) {
+          elements.adminPanel.style.display = 'block';
+        } else {
+          elements.adminPanel.style.display = 'none';
+        }
+      } catch (error) {
+        console.error("Failed to check owner status:", error);
+      }
+    }
+
+    // Button actions
+    async function submitBid() {
+      try {
+        if (!validateInput()) return;
+        
+        showLoading(elements.bidLoading, elements.bidButton);
+        hideMessages();
+        
+        const bidAmount = elements.bidAmount.value;
+        const weiAmount = web3.utils.toWei(bidAmount, "ether");
+        
+        const tx = await contract.methods.submitBid().send({
+          from: accounts[0],
+          value: weiAmount
+        });
+        
+        updateTransactionDetails(tx);
+        showSuccess(elements.bidSuccess, "✅ Bid submitted successfully!");
+        await checkBidStatus();
       } catch (err) {
         console.error("Bid submission failed:", err);
-        alert("❌ Failed to submit bid.");
+        showError(elements.bidError, getErrorMessage(err));
+      } finally {
+        hideLoading(elements.bidLoading, elements.bidButton);
       }
     }
 
     async function mintNFT() {
       try {
-        const web3 = await connectWeb3();
-        const accounts = await web3.eth.getAccounts();
-        const contract = new web3.eth.Contract(abi, contractAddress);
-
-        await contract.methods.mint().send({ from: accounts[0] });
-        alert("🎉 NFT Minted Successfully!");
+        showLoading(elements.bidLoading, elements.mintButton);
+        hideMessages();
+        
+        const tx = await contract.methods.mint().send({ from: accounts[0] });
+        
+        updateTransactionDetails(tx);
+        showSuccess(elements.bidSuccess, "🎉 NFT Minted Successfully!");
+        await updateStats();
+        await checkMintedStatus();
       } catch (err) {
         console.error("Minting failed:", err);
-        alert("❌ Error minting NFT.");
+        showError(elements.bidError, getErrorMessage(err));
+      } finally {
+        hideLoading(elements.bidLoading, elements.mintButton);
       }
     }
 
     async function withdrawBid() {
       try {
-        const web3 = await connectWeb3();
-        const accounts = await web3.eth.getAccounts();
-        const contract = new web3.eth.Contract(abi, contractAddress);
-
-        await contract.methods.withdrawBid().send({ from: accounts[0] });
-        alert("✅ Bid withdrawn successfully.");
+        showLoading(elements.bidLoading, elements.withdrawButton);
+        hideMessages();
+        
+        const tx = await contract.methods.withdrawBid().send({ from: accounts[0] });
+        
+        updateTransactionDetails(tx);
+        showSuccess(elements.bidSuccess, "✅ Bid withdrawn successfully.");
+        await checkBidStatus();
       } catch (err) {
         console.error("Withdrawal failed:", err);
-        alert("❌ Failed to withdraw bid.");
+        showError(elements.bidError, getErrorMessage(err));
+      } finally {
+        hideLoading(elements.bidLoading, elements.withdrawButton);
       }
+    }
+
+    // Admin functions
+    async function approveBid() {
+      const bidderAddress = elements.bidderAddress.value.trim();
+      if (!web3.utils.isAddress(bidderAddress)) {
+        showError(elements.bidError, "Invalid Ethereum address");
+        return;
+      }
+      
+      try {
+        showLoading(elements.bidLoading);
+        await contract.methods.approveBid(bidderAddress).send({ from: accounts[0] });
+        showSuccess(elements.bidSuccess, `✅ Approved bid for ${bidderAddress.substring(0, 6)}...`);
+      } catch (err) {
+        console.error("Approval failed:", err);
+        showError(elements.bidError, getErrorMessage(err));
+      } finally {
+        hideLoading(elements.bidLoading);
+      }
+    }
+
+    async function rejectBid() {
+      const bidderAddress = elements.bidderAddress.value.trim();
+      if (!web3.utils.isAddress(bidderAddress)) {
+        showError(elements.bidError, "Invalid Ethereum address");
+        return;
+      }
+      
+      try {
+        showLoading(elements.bidLoading);
+        await contract.methods.rejectBid(bidderAddress).send({ from: accounts[0] });
+        showSuccess(elements.bidSuccess, `✅ Rejected bid for ${bidderAddress.substring(0, 6)}...`);
+      } catch (err) {
+        console.error("Rejection failed:", err);
+        showError(elements.bidError, getErrorMessage(err));
+      } finally {
+        hideLoading(elements.bidLoading);
+      }
+    }
+
+    // Helper functions
+    function updateTransactionDetails(tx) {
+      elements.txFrom.textContent = tx.from;
+      elements.txTo.textContent = tx.to;
+      elements.txGas.textContent = web3.utils.fromWei(tx.gasUsed, 'ether') + " MATIC";
+    }
+
+    function validateInput() {
+      const bidAmount = elements.bidAmount.value;
+      if (!bidAmount || isNaN(bidAmount) || parseFloat(bidAmount) <= 0) {
+        showError(elements.bidError, "Please enter a valid positive number.");
+        return false;
+      }
+      return true;
+    }
+
+    function getErrorMessage(error) {
+      if (error.message.includes("user denied transaction")) {
+        return "Transaction was rejected by user.";
+      }
+      if (error.message.includes("insufficient funds")) {
+        return "Insufficient MATIC balance for this transaction.";
+      }
+      if (error.message.includes("has already minted")) {
+        return "You have already minted this NFT.";
+      }
+      if (error.message.includes("bid not approved")) {
+        return "Your bid hasn't been approved yet.";
+      }
+      if (error.message.includes("no bid to withdraw")) {
+        return "No bid found to withdraw.";
+      }
+      if (error.message.includes("OwnableUnauthorizedAccount")) {
+        return "Only contract owner can perform this action.";
+      }
+      return "Transaction failed. See console for details.";
+    }
+
+    function showLoading(loaderElement, buttonElement = null) {
+      loaderElement.style.display = "block";
+      if (buttonElement) buttonElement.disabled = true;
+    }
+
+    function hideLoading(loaderElement, buttonElement = null) {
+      loaderElement.style.display = "none";
+      if (buttonElement) buttonElement.disabled = false;
+    }
+
+    function showError(element, message) {
+      element.textContent = message;
+      element.style.display = "block";
+      elements.bidSuccess.style.display = "none";
+    }
+
+    function showSuccess(element, message) {
+      element.textContent = message;
+      element.style.display = "block";
+      elements.bidError.style.display = "none";
+    }
+
+    function hideMessages() {
+      elements.bidError.style.display = "none";
+      elements.bidSuccess.style.display = "none";
+    }
+
+    function disableButtons() {
+      elements.bidButton.disabled = true;
+      elements.mintButton.disabled = true;
+      elements.withdrawButton.disabled = true;
     }
 
     function togglePolygonHelp() {
       const help = document.getElementById('polygonHelp');
       help.style.display = help.style.display === 'none' ? 'block' : 'none';
     }
+
+    // Initialize the app when DOM is loaded
+    window.addEventListener('DOMContentLoaded', initApp);
   </script>
 </body>
 </html>
