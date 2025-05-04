@@ -1,260 +1,249 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Mint NFT | Engmo</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NFT Minting Portal</title>
   <script src="https://cdn.jsdelivr.net/npm/web3@1.8.2/dist/web3.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vanta@0.5.24/dist/vanta.net.min.js"></script>
   <style>
-    html, body {
+    * {
+      box-sizing: border-box;
       margin: 0;
       padding: 0;
       font-family: Arial, sans-serif;
-      color: white;
-      overflow-x: hidden;
-      background: black;
-    }
-    canvas#bg {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      z-index: -1;
     }
     body {
+      background: #000;
+      color: #fff;
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: flex-start;
-      padding: 3rem 1rem;
-      min-height: 100vh;
+      padding: 20px;
+      position: relative;
+      overflow-x: hidden;
+    }
+    #bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 20px;
+      width: 100%;
+    }
+    .logo-link {
+      display: inline-block;
+      margin-bottom: 10px;
     }
     .polygon-logo {
-      width: 60px;
-      cursor: pointer;
-      margin: 10px auto;
-      display: block;
+      width: 70px;
+      height: auto;
       transition: transform 0.3s;
     }
     .polygon-logo:hover {
       transform: scale(1.1);
     }
     h1 {
-      margin-top: 10px;
-      font-size: 28px;
-      text-align: center;
+      font-size: 24px;
+      margin-bottom: 10px;
+      color: #00ffcc;
     }
-    .nft-box, .tx-box, .info-box {
-      background-color: rgba(0, 0, 0, 0.6);
-      padding: 20px;
-      border-radius: 12px;
-      border: 2px solid #00ffcc;
-      text-align: center;
+    .container {
+      width: 100%;
       max-width: 500px;
-      margin-top: 30px;
-      width: 90%;
     }
-    video#nftVideo {
-      margin-top: 15px;
-      max-width: 100%;
+    .card {
+      background: rgba(0,0,0,0.7);
+      border: 2px solid #00ffcc;
+      border-radius: 15px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    input {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border: 2px solid #00ffcc;
       border-radius: 8px;
-      background: #000;
+      background: rgba(0,0,0,0.5);
+      color: #fff;
+      font-size: 16px;
     }
     button {
-      padding: 12px;
-      margin: 10px auto;
-      font-size: 16px;
-      display: block;
       width: 100%;
-      background: linear-gradient(to right, #00ffcc, #0099ff);
-      color: black;
+      padding: 12px;
+      margin: 10px 0;
       border: none;
-      border-radius: 6px;
-      cursor: pointer;
+      border-radius: 8px;
+      font-size: 16px;
       font-weight: bold;
-      transition: opacity 0.3s;
+      cursor: pointer;
+      transition: all 0.3s;
     }
-    button:hover {
+    .btn-primary {
+      background: linear-gradient(135deg, #00ffcc, #0099ff);
+      color: #000;
+    }
+    .btn-primary:hover {
       opacity: 0.9;
     }
+    .btn-secondary {
+      background: rgba(255,255,255,0.1);
+      color: #fff;
+      border: 1px solid #00ffcc;
+    }
     button:disabled {
-      background: #666;
+      background: #333;
+      color: #666;
       cursor: not-allowed;
-    }
-    input[type="number"], input[type="text"] {
-      padding: 10px;
-      margin: 10px auto;
-      font-size: 16px;
-      display: block;
-      width: 100%;
-      border-radius: 5px;
-      border: 2px solid #00ffcc;
-      background: rgba(0, 0, 0, 0.5);
-      color: white;
-    }
-    a.unlock-link {
-      color: #00ff99;
-      font-weight: bold;
-      text-decoration: none;
-      transition: color 0.3s;
-    }
-    a.unlock-link:hover {
-      color: #00cc77;
-    }
-    a.tx-link {
-      color: #a0d1ff;
-      display: block;
-      margin-top: 12px;
-      text-decoration: none;
-    }
-    a.tx-link:hover {
-      text-decoration: underline;
-    }
-    .explanation {
-      margin-top: 10px;
-      font-size: 14px;
-      color: #cccccc;
     }
     .loading {
       display: none;
-      margin: 10px auto;
-      border: 4px solid rgba(0, 255, 204, 0.3);
-      border-radius: 50%;
-      border-top: 4px solid #00ffcc;
       width: 30px;
       height: 30px;
+      margin: 15px auto;
+      border: 4px solid rgba(0,255,204,0.3);
+      border-top: 4px solid #00ffcc;
+      border-radius: 50%;
       animation: spin 1s linear infinite;
     }
     @keyframes spin {
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
     }
-    .error-message {
-      color: #ff4444;
-      margin-top: 10px;
+    .message {
+      padding: 12px;
+      margin: 15px 0;
+      border-radius: 8px;
       display: none;
     }
-    .success-message {
+    .error {
+      background: rgba(255,50,50,0.2);
+      border: 1px solid #ff3232;
+      color: #ff6b6b;
+    }
+    .success {
+      background: rgba(0,255,153,0.2);
+      border: 1px solid #00ff99;
       color: #00ff99;
-      margin-top: 10px;
-      display: none;
     }
     .stats {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 15px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+      margin-top: 20px;
     }
     .stat-item {
-      flex: 1;
-      padding: 0 10px;
+      text-align: center;
+      padding: 12px;
+      background: rgba(0,0,0,0.5);
+      border-radius: 8px;
+      border: 1px solid #333;
     }
     .stat-value {
-      font-weight: bold;
       font-size: 18px;
+      font-weight: bold;
       color: #00ffcc;
     }
     .admin-panel {
       display: none;
       margin-top: 20px;
+      padding-top: 20px;
       border-top: 1px dashed #00ffcc;
-      padding-top: 15px;
     }
-    .admin-panel h3 {
-      color: #ff9900;
-      margin-bottom: 10px;
+    .wallet-info {
+      margin-top: 15px;
+      padding: 12px;
+      background: rgba(0,0,0,0.5);
+      border-radius: 8px;
+      border: 1px solid #333;
+      font-size: 14px;
     }
   </style>
 </head>
 <body>
-  <canvas id="bg"></canvas>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r121/three.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/vanta@0.5.24/dist/vanta.stars.min.js"></script>
+  <div id="bg"></div>
+
+  <header class="header">
+    <a href="https://polygon.technology/" target="_blank" class="logo-link">
+      <img src="https://polygon.technology/wp-content/uploads/2021/06/polygon-logo.png" 
+           alt="Polygon Logo" class="polygon-logo">
+    </a>
+    <h1>NFT Minting Portal</h1>
+  </header>
+
+  <main class="container">
+    <div class="card">
+      <h2>Mint Your NFT</h2>
+      <input type="number" id="bidAmount" placeholder="Enter amount in MATIC" step="0.01" min="0">
+      <button id="bidButton" class="btn-primary">Submit Bid</button>
+      <button id="mintButton" class="btn-primary" disabled>Mint NFT</button>
+      <button id="withdrawButton" class="btn-secondary">Withdraw Bid</button>
+      
+      <div class="loading" id="loading"></div>
+      <div class="message error" id="error"></div>
+      <div class="message success" id="success"></div>
+      
+      <div class="stats">
+        <div class="stat-item">
+          <div>Total Minted</div>
+          <div class="stat-value" id="totalMinted">0</div>
+        </div>
+        <div class="stat-item">
+          <div>Max Supply</div>
+          <div class="stat-value" id="maxSupply">0</div>
+        </div>
+        <div class="stat-item">
+          <div>Your Balance</div>
+          <div class="stat-value" id="userBalance">0</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Transaction Details</h2>
+      <div>
+        <div><strong>From:</strong> <span id="txFrom">-</span></div>
+        <div><strong>To:</strong> <span id="txTo">-</span></div>
+        <div><strong>Gas Used:</strong> <span id="txGas">-</span></div>
+      </div>
+      <div class="wallet-info" id="walletInfo">Wallet not connected</div>
+    </div>
+
+    <div class="card admin-panel" id="adminPanel">
+      <h3>Admin Controls</h3>
+      <input type="text" id="bidderAddress" placeholder="Enter bidder's wallet address">
+      <button id="approveButton" class="btn-primary">Approve Bid</button>
+      <button id="rejectButton" class="btn-secondary">Reject Bid</button>
+    </div>
+  </main>
+
   <script>
-    window.addEventListener('DOMContentLoaded', () => {
-      VANTA.STARS({
-        el: "#bg",
-        mouseControls: true,
-        touchControls: true,
-        minHeight: 200.00,
-        minWidth: 200.00,
-        scale: 1.0,
-        scaleMobile: 1.0,
-        backgroundColor: 0x000000,
-        color: 0xffffff,
-        size: 1.7,
-        spacing: 20.0
-      });
+    // Initialize 3D background
+    VANTA.NET({
+      el: "#bg",
+      mouseControls: true,
+      touchControls: true,
+      gyroControls: false,
+      minHeight: 200.00,
+      minWidth: 200.00,
+      scale: 1.00,
+      scaleMobile: 1.00,
+      color: 0x00ff00,
+      backgroundColor: 0x0,
+      points: 12.00,
+      maxDistance: 22.00,
+      spacing: 18.00
     });
-  </script>
 
-  <h1>🎉 Mint Your NFT | سك العملة الرقمية</h1>
-  <img src="https://www.engmo1234.com/polygon-logo.png" alt="Polygon Logo" class="polygon-logo" onclick="togglePolygonHelp()" />
-  <p class="explanation" id="polygonHelp" style="display:none">
-    Polygon (MATIC) is used for transactions on this platform. You can get MATIC from major exchanges and fund your wallet. | يتم استخدام بوليجون (MATIC) لإجراء المعاملات على هذا النظام. يمكنك الحصول على MATIC من منصات التداول الرئيسية وتمويل محفظتك.
-  </p>
-
-  <div class="info-box">
-    <h2>📊 Collection Stats</h2>
-    <div class="stats">
-      <div class="stat-item">
-        <div class="stat-value" id="totalMinted">0</div>
-        <div class="explanation">Minted</div>
-      </div>
-      <div class="stat-item">
-        <div class="stat-value" id="maxSupply">0</div>
-        <div class="explanation">Total Supply</div>
-      </div>
-      <div class="stat-item">
-        <div class="stat-value" id="userBalance">0</div>
-        <div class="explanation">Your NFTs</div>
-      </div>
-    </div>
-  </div>
-
-  <div class="nft-box">
-    <h2>🎥 NFT Video Preview</h2>
-    <video id="nftVideo" controls autoplay muted loop playsinline>
-      <source src="https://engmo1234.github.io/engmo1234.github.io/engmo_video_browser_safe.mp4" type="video/mp4">
-      Your browser does not support the video tag.
-    </video>
-    <input type="number" id="bidAmount" placeholder="Enter your bid in MATIC | أدخل مزايدتك بماتيك" min="0" step="0.01">
-    <div class="loading" id="bidLoading"></div>
-    <div class="error-message" id="bidError"></div>
-    <div class="success-message" id="bidSuccess"></div>
-    <button onclick="submitBid()" id="bidButton">💰 Submit Bid | تقديم المزايدة</button>
-    <button onclick="mintNFT()" id="mintButton">Mint NFT | سك العملة الرقمية</button>
-    <button onclick="withdrawBid()" id="withdrawButton">Withdraw My Bid | سحب المزايدة</button>
-    <p class="explanation">
-      💡 If your bid was not approved, click above to withdraw. | إذا لم تتم الموافقة على مزايدتك، يمكنك الضغط أعلاه لسحب أموالك.
-    </p>
-
-    <!-- Admin Panel (Only visible to contract owner) -->
-    <div id="adminPanel" class="admin-panel">
-      <h3>👑 Admin Controls</h3>
-      <input type="text" id="bidderAddress" placeholder="Enter bidder's 0x address">
-      <button onclick="approveBid()">✅ Approve Bid</button>
-      <button onclick="rejectBid()">❌ Reject Bid</button>
-      <p class="explanation">These functions are only available to the contract owner</p>
-    </div>
-  </div>
-
-  <div class="nft-box">
-    🔓 <a class="unlock-link" href="https://form.jotform.com/223058286315456" target="_blank" rel="noopener noreferrer">Access Unlockable Content | الوصول إلى المحتوى الحصري</a>
-  </div>
-
-  <div class="tx-box">
-    <h3>📦 Last Successful Transaction</h3>
-    <p><strong>Status:</strong> <span id="txStatus">Success ✅</span></p>
-    <p><strong>From:</strong> <span id="txFrom">0x8Bd4bE269E9F1D18659450d9D794F136E1F1223a</span></p>
-    <p><strong>To Contract:</strong> <span id="txTo">0xc66ccCf6Cf6B3e8Fe8E489FbbBcD0f81E2ebcCD2</span></p>
-    <p><strong>Gas Used:</strong> <span id="txGas">0.00150213 POL</span></p>
-    <a class="tx-link" href="https://polygonscan.com/tx/0x3caf36198934d477322ce8316f2704559fe46ade18870eb9390fe6d91db60a90" target="_blank" rel="noopener noreferrer">🔗 View Transaction on Polygonscan</a>
-  </div>
-
-  <script>
-    // Configuration with your ABI
+    // Smart contract configuration
     const config = {
       contractAddress: "0xc66cccf6cf6b3e8fe8e489fbbbcd0f81e2ebccd2",
       abi: [
@@ -303,38 +292,19 @@
       ]
     };
 
-    // DOM Elements
-    const elements = {
-      bidAmount: document.getElementById('bidAmount'),
-      bidButton: document.getElementById('bidButton'),
-      mintButton: document.getElementById('mintButton'),
-      withdrawButton: document.getElementById('withdrawButton'),
-      bidLoading: document.getElementById('bidLoading'),
-      bidError: document.getElementById('bidError'),
-      bidSuccess: document.getElementById('bidSuccess'),
-      totalMinted: document.getElementById('totalMinted'),
-      maxSupply: document.getElementById('maxSupply'),
-      userBalance: document.getElementById('userBalance'),
-      txStatus: document.getElementById('txStatus'),
-      txFrom: document.getElementById('txFrom'),
-      txTo: document.getElementById('txTo'),
-      txGas: document.getElementById('txGas'),
-      adminPanel: document.getElementById('adminPanel'),
-      bidderAddress: document.getElementById('bidderAddress')
-    };
-
-    // State
+    // App state
     let web3;
     let contract;
     let accounts = [];
     let tokenId = 0;
+    let isProcessing = false;
 
-    // Initialize the application
+    // Initialize the app
     async function initApp() {
       try {
-        // Check if Web3 is injected
+        // Check for Web3 wallet
         if (!window.ethereum) {
-          showError(elements.bidError, "Please install MetaMask or another Web3 wallet.");
+          showError("Please install MetaMask or another Web3 wallet.");
           disableButtons();
           return;
         }
@@ -342,50 +312,73 @@
         // Initialize Web3
         web3 = new Web3(window.ethereum);
         
-        // Request account access
-        accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+        // Check and switch to Polygon network
+        await checkNetwork();
+        
+        // Connect to wallet
+        await connectWallet();
         
         // Initialize contract
         contract = new web3.eth.Contract(config.abi, config.contractAddress);
-        
-        // Get token ID
         tokenId = await contract.methods.TOKEN_ID().call();
         
-        // Check if connected wallet is owner
+        // Set up UI
+        updateWalletInfo();
         await checkOwner();
-        
-        // Load initial stats
         await updateStats();
-        
-        // Check user's bid status
         await checkBidStatus();
-        
-        // Check if user has already minted
         await checkMintedStatus();
-        
-        // Listen for account changes
-        window.ethereum.on('accountsChanged', (newAccounts) => {
-          accounts = newAccounts;
-          updateStats();
-          checkBidStatus();
-          checkMintedStatus();
-          checkOwner();
-        });
-        
-        // Listen for chain changes
-        window.ethereum.on('chainChanged', () => {
-          window.location.reload();
-        });
-        
-        console.log("Web3 initialized successfully");
+
+        // Set up event listeners
+        setupEventListeners();
+
       } catch (error) {
         console.error("Initialization error:", error);
-        showError(elements.bidError, "Failed to initialize Web3. Please refresh the page.");
+        showError("Failed to connect. Please refresh and ensure you're on Polygon network.");
         disableButtons();
       }
     }
 
-    // Update collection stats
+    async function checkNetwork() {
+      const chainId = await window.ethereum.request({ method: 'eth_chainId' });
+      if (chainId !== '0x89') { // Polygon mainnet
+        try {
+          await window.ethereum.request({
+            method: 'wallet_switchEthereumChain',
+            params: [{ chainId: '0x89' }],
+          });
+        } catch (error) {
+          showError("Please switch to Polygon Network in your wallet");
+          throw error;
+        }
+      }
+    }
+
+    async function connectWallet() {
+      try {
+        accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+        if (accounts.length === 0) {
+          throw new Error("No accounts found");
+        }
+      } catch (error) {
+        console.error("Wallet connection error:", error);
+        showError("Please connect your wallet to continue");
+        throw error;
+      }
+    }
+
+    function updateWalletInfo() {
+      const walletInfo = document.getElementById('walletInfo');
+      if (accounts.length > 0) {
+        const shortAddress = `${accounts[0].substring(0, 6)}...${accounts[0].substring(38)}`;
+        walletInfo.textContent = `Connected: ${shortAddress}`;
+        walletInfo.style.color = "#00ff99";
+      } else {
+        walletInfo.textContent = "Wallet not connected";
+        walletInfo.style.color = "#ff4444";
+      }
+    }
+
     async function updateStats() {
       try {
         const [totalMinted, maxSupply, userBalance] = await Promise.all([
@@ -394,240 +387,324 @@
           contract.methods.balanceOf(accounts[0], tokenId).call()
         ]);
         
-        elements.totalMinted.textContent = totalMinted;
-        elements.maxSupply.textContent = maxSupply;
-        elements.userBalance.textContent = userBalance;
+        document.getElementById('totalMinted').textContent = totalMinted;
+        document.getElementById('maxSupply').textContent = maxSupply;
+        document.getElementById('userBalance').textContent = userBalance;
       } catch (error) {
         console.error("Failed to update stats:", error);
+        showError("Failed to load collection stats");
       }
     }
 
-    // Check user's bid status
     async function checkBidStatus() {
       try {
         const bid = await contract.methods.bids(accounts[0]).call();
+        const mintButton = document.getElementById('mintButton');
+        
         if (bid.amount > 0) {
           if (bid.approved) {
-            showSuccess(elements.bidSuccess, "Your bid has been approved! You can now mint.");
-            elements.mintButton.disabled = false;
+            showSuccess("Your bid has been approved! You can now mint.");
+            mintButton.disabled = false;
           } else if (bid.refunded) {
-            showError(elements.bidError, "Your bid was refunded.");
+            showError("Your bid was refunded.");
+            mintButton.disabled = true;
           } else {
-            showSuccess(elements.bidSuccess, "Bid submitted. Waiting for approval...");
+            showSuccess("Bid submitted. Waiting for approval...");
+            mintButton.disabled = true;
           }
+        } else {
+          mintButton.disabled = true;
         }
       } catch (error) {
         console.error("Failed to check bid status:", error);
+        showError("Failed to check your bid status");
       }
     }
 
-    // Check if user has already minted
     async function checkMintedStatus() {
       try {
         const hasMinted = await contract.methods.hasMinted(accounts[0]).call();
+        const mintButton = document.getElementById('mintButton');
+        
         if (hasMinted) {
-          elements.mintButton.disabled = true;
-          elements.mintButton.textContent = "Already Minted | تم السك مسبقاً";
+          mintButton.disabled = true;
+          mintButton.textContent = "Already Minted";
+          showSuccess("You've already minted your NFT!");
         }
       } catch (error) {
         console.error("Failed to check minted status:", error);
       }
     }
 
-    // Check if connected wallet is owner
     async function checkOwner() {
       try {
         const owner = await contract.methods.owner().call();
+        const adminPanel = document.getElementById('adminPanel');
+        
         if (accounts[0] && accounts[0].toLowerCase() === owner.toLowerCase()) {
-          elements.adminPanel.style.display = 'block';
+          adminPanel.style.display = 'block';
+          showSuccess("Admin privileges activated");
         } else {
-          elements.adminPanel.style.display = 'none';
+          adminPanel.style.display = 'none';
         }
       } catch (error) {
         console.error("Failed to check owner status:", error);
       }
     }
 
-    // Button actions
+    // Transaction functions
     async function submitBid() {
+      if (isProcessing) return;
+      isProcessing = true;
+      
       try {
-        if (!validateInput()) return;
-        
-        showLoading(elements.bidLoading, elements.bidButton);
+        const bidAmount = document.getElementById('bidAmount').value;
+        if (!bidAmount || isNaN(bidAmount) || parseFloat(bidAmount) <= 0) {
+          showError("Please enter a valid positive amount");
+          return;
+        }
+
+        showLoading();
         hideMessages();
         
-        const bidAmount = elements.bidAmount.value;
         const weiAmount = web3.utils.toWei(bidAmount, "ether");
         
+        // Estimate gas first
+        const gasEstimate = await contract.methods.submitBid()
+          .estimateGas({ from: accounts[0], value: weiAmount });
+        
+        // Send transaction with 20% gas buffer
         const tx = await contract.methods.submitBid().send({
           from: accounts[0],
-          value: weiAmount
+          value: weiAmount,
+          gas: Math.round(gasEstimate * 1.2)
         });
         
         updateTransactionDetails(tx);
-        showSuccess(elements.bidSuccess, "✅ Bid submitted successfully!");
+        showSuccess("✅ Bid submitted successfully!");
         await checkBidStatus();
       } catch (err) {
         console.error("Bid submission failed:", err);
-        showError(elements.bidError, getErrorMessage(err));
+        showError(getErrorMessage(err));
       } finally {
-        hideLoading(elements.bidLoading, elements.bidButton);
+        isProcessing = false;
+        hideLoading();
       }
     }
 
     async function mintNFT() {
+      if (isProcessing) return;
+      isProcessing = true;
+      
       try {
-        showLoading(elements.bidLoading, elements.mintButton);
+        showLoading();
         hideMessages();
         
-        const tx = await contract.methods.mint().send({ from: accounts[0] });
+        const gasEstimate = await contract.methods.mint()
+          .estimateGas({ from: accounts[0] });
+        
+        const tx = await contract.methods.mint().send({ 
+          from: accounts[0],
+          gas: Math.round(gasEstimate * 1.2)
+        });
         
         updateTransactionDetails(tx);
-        showSuccess(elements.bidSuccess, "🎉 NFT Minted Successfully!");
+        showSuccess("🎉 NFT Minted Successfully!");
         await updateStats();
         await checkMintedStatus();
       } catch (err) {
         console.error("Minting failed:", err);
-        showError(elements.bidError, getErrorMessage(err));
+        showError(getErrorMessage(err));
       } finally {
-        hideLoading(elements.bidLoading, elements.mintButton);
+        isProcessing = false;
+        hideLoading();
       }
     }
 
     async function withdrawBid() {
+      if (isProcessing) return;
+      isProcessing = true;
+      
       try {
-        showLoading(elements.bidLoading, elements.withdrawButton);
+        showLoading();
         hideMessages();
         
-        const tx = await contract.methods.withdrawBid().send({ from: accounts[0] });
+        const gasEstimate = await contract.methods.withdrawBid()
+          .estimateGas({ from: accounts[0] });
+        
+        const tx = await contract.methods.withdrawBid().send({ 
+          from: accounts[0],
+          gas: Math.round(gasEstimate * 1.2)
+        });
         
         updateTransactionDetails(tx);
-        showSuccess(elements.bidSuccess, "✅ Bid withdrawn successfully.");
+        showSuccess("✅ Bid withdrawn successfully.");
         await checkBidStatus();
       } catch (err) {
         console.error("Withdrawal failed:", err);
-        showError(elements.bidError, getErrorMessage(err));
+        showError(getErrorMessage(err));
       } finally {
-        hideLoading(elements.bidLoading, elements.withdrawButton);
+        isProcessing = false;
+        hideLoading();
       }
     }
 
     // Admin functions
     async function approveBid() {
-      const bidderAddress = elements.bidderAddress.value.trim();
+      if (isProcessing) return;
+      isProcessing = true;
+      
+      const bidderAddress = document.getElementById('bidderAddress').value.trim();
       if (!web3.utils.isAddress(bidderAddress)) {
-        showError(elements.bidError, "Invalid Ethereum address");
+        showError("Please enter a valid wallet address");
+        isProcessing = false;
         return;
       }
       
       try {
-        showLoading(elements.bidLoading);
-        await contract.methods.approveBid(bidderAddress).send({ from: accounts[0] });
-        showSuccess(elements.bidSuccess, `✅ Approved bid for ${bidderAddress.substring(0, 6)}...`);
+        showLoading();
+        hideMessages();
+        
+        const gasEstimate = await contract.methods.approveBid(bidderAddress)
+          .estimateGas({ from: accounts[0] });
+        
+        const tx = await contract.methods.approveBid(bidderAddress).send({
+          from: accounts[0],
+          gas: Math.round(gasEstimate * 1.2)
+        });
+        
+        updateTransactionDetails(tx);
+        showSuccess(`✅ Approved bid for ${bidderAddress.substring(0, 6)}...`);
       } catch (err) {
         console.error("Approval failed:", err);
-        showError(elements.bidError, getErrorMessage(err));
+        showError(getErrorMessage(err));
       } finally {
-        hideLoading(elements.bidLoading);
+        isProcessing = false;
+        hideLoading();
       }
     }
 
     async function rejectBid() {
-      const bidderAddress = elements.bidderAddress.value.trim();
+      if (isProcessing) return;
+      isProcessing = true;
+      
+      const bidderAddress = document.getElementById('bidderAddress').value.trim();
       if (!web3.utils.isAddress(bidderAddress)) {
-        showError(elements.bidError, "Invalid Ethereum address");
+        showError("Please enter a valid wallet address");
+        isProcessing = false;
         return;
       }
       
       try {
-        showLoading(elements.bidLoading);
-        await contract.methods.rejectBid(bidderAddress).send({ from: accounts[0] });
-        showSuccess(elements.bidSuccess, `✅ Rejected bid for ${bidderAddress.substring(0, 6)}...`);
+        showLoading();
+        hideMessages();
+        
+        const gasEstimate = await contract.methods.rejectBid(bidderAddress)
+          .estimateGas({ from: accounts[0] });
+        
+        const tx = await contract.methods.rejectBid(bidderAddress).send({
+          from: accounts[0],
+          gas: Math.round(gasEstimate * 1.2)
+        });
+        
+        updateTransactionDetails(tx);
+        showSuccess(`✅ Rejected bid for ${bidderAddress.substring(0, 6)}...`);
       } catch (err) {
         console.error("Rejection failed:", err);
-        showError(elements.bidError, getErrorMessage(err));
+        showError(getErrorMessage(err));
       } finally {
-        hideLoading(elements.bidLoading);
+        isProcessing = false;
+        hideLoading();
       }
     }
 
     // Helper functions
-    function updateTransactionDetails(tx) {
-      elements.txFrom.textContent = tx.from;
-      elements.txTo.textContent = tx.to;
-      elements.txGas.textContent = web3.utils.fromWei(tx.gasUsed, 'ether') + " MATIC";
+    function setupEventListeners() {
+      document.getElementById('bidButton').addEventListener('click', submitBid);
+      document.getElementById('mintButton').addEventListener('click', mintNFT);
+      document.getElementById('withdrawButton').addEventListener('click', withdrawBid);
+      document.getElementById('approveButton').addEventListener('click', approveBid);
+      document.getElementById('rejectButton').addEventListener('click', rejectBid);
+      
+      window.ethereum.on('accountsChanged', (newAccounts) => {
+        accounts = newAccounts;
+        updateWalletInfo();
+        updateStats();
+        checkBidStatus();
+        checkMintedStatus();
+        checkOwner();
+      });
+      
+      window.ethereum.on('chainChanged', () => window.location.reload());
     }
 
-    function validateInput() {
-      const bidAmount = elements.bidAmount.value;
-      if (!bidAmount || isNaN(bidAmount) || parseFloat(bidAmount) <= 0) {
-        showError(elements.bidError, "Please enter a valid positive number.");
-        return false;
-      }
-      return true;
+    function updateTransactionDetails(tx) {
+      document.getElementById('txFrom').textContent = shortenAddress(tx.from);
+      document.getElementById('txTo').textContent = shortenAddress(tx.to);
+      document.getElementById('txGas').textContent = `${web3.utils.fromWei(tx.gasUsed, 'ether')} MATIC`;
+    }
+
+    function shortenAddress(address) {
+      if (!address) return '-';
+      return `${address.substring(0, 6)}...${address.substring(38)}`;
     }
 
     function getErrorMessage(error) {
-      if (error.message.includes("user denied transaction")) {
-        return "Transaction was rejected by user.";
+      if (error.code === 4001) return "Transaction was rejected by user";
+      if (error.message.includes("Internal JSON-RPC")) return "Network error - please try again";
+      if (error.data?.message) {
+        const revertMatch = error.data.message.match(/reverted with reason string '(.+)'/);
+        if (revertMatch) return revertMatch[1];
       }
-      if (error.message.includes("insufficient funds")) {
-        return "Insufficient MATIC balance for this transaction.";
-      }
-      if (error.message.includes("has already minted")) {
-        return "You have already minted this NFT.";
-      }
-      if (error.message.includes("bid not approved")) {
-        return "Your bid hasn't been approved yet.";
-      }
-      if (error.message.includes("no bid to withdraw")) {
-        return "No bid found to withdraw.";
-      }
-      if (error.message.includes("OwnableUnauthorizedAccount")) {
-        return "Only contract owner can perform this action.";
-      }
+      if (error.message.includes("insufficient funds")) return "Insufficient MATIC for transaction";
       return "Transaction failed. See console for details.";
     }
 
-    function showLoading(loaderElement, buttonElement = null) {
-      loaderElement.style.display = "block";
-      if (buttonElement) buttonElement.disabled = true;
+    function showLoading() {
+      document.getElementById('loading').style.display = "block";
+      disableButtons();
     }
 
-    function hideLoading(loaderElement, buttonElement = null) {
-      loaderElement.style.display = "none";
-      if (buttonElement) buttonElement.disabled = false;
+    function hideLoading() {
+      document.getElementById('loading').style.display = "none";
+      enableButtons();
     }
 
-    function showError(element, message) {
-      element.textContent = message;
-      element.style.display = "block";
-      elements.bidSuccess.style.display = "none";
+    function showError(message) {
+      const el = document.getElementById('error');
+      el.textContent = message;
+      el.style.display = "block";
+      document.getElementById('success').style.display = "none";
     }
 
-    function showSuccess(element, message) {
-      element.textContent = message;
-      element.style.display = "block";
-      elements.bidError.style.display = "none";
+    function showSuccess(message) {
+      const el = document.getElementById('success');
+      el.textContent = message;
+      el.style.display = "block";
+      document.getElementById('error').style.display = "none";
     }
 
     function hideMessages() {
-      elements.bidError.style.display = "none";
-      elements.bidSuccess.style.display = "none";
+      document.getElementById('error').style.display = "none";
+      document.getElementById('success').style.display = "none";
     }
 
     function disableButtons() {
-      elements.bidButton.disabled = true;
-      elements.mintButton.disabled = true;
-      elements.withdrawButton.disabled = true;
+      document.getElementById('bidButton').disabled = true;
+      document.getElementById('mintButton').disabled = true;
+      document.getElementById('withdrawButton').disabled = true;
+      document.getElementById('approveButton').disabled = true;
+      document.getElementById('rejectButton').disabled = true;
     }
 
-    function togglePolygonHelp() {
-      const help = document.getElementById('polygonHelp');
-      help.style.display = help.style.display === 'none' ? 'block' : 'none';
+    function enableButtons() {
+      document.getElementById('bidButton').disabled = false;
+      document.getElementById('withdrawButton').disabled = false;
+      document.getElementById('approveButton').disabled = false;
+      document.getElementById('rejectButton').disabled = false;
     }
 
-    // Initialize the app when DOM is loaded
+    // Initialize the app
     window.addEventListener('DOMContentLoaded', initApp);
   </script>
 </body>
