@@ -13,7 +13,7 @@
       font-family: Arial, sans-serif;
       color: white;
       overflow-x: hidden;
-      background: transparent;
+      background: black;
     }
     canvas#bg {
       position: fixed;
@@ -34,6 +34,7 @@
     h1 {
       margin-top: 10px;
       font-size: 28px;
+      text-align: center;
     }
     .polygon-logo {
       width: 60px;
@@ -61,7 +62,7 @@
       font-size: 16px;
       width: 100%;
     }
-    #nftPreview {
+    video#nftVideo {
       margin-top: 15px;
       max-width: 100%;
       border-radius: 8px;
@@ -70,8 +71,8 @@
       margin-top: 20px;
       padding: 15px;
       border: 2px dashed #00ff99;
-      display: none;
       background-color: rgba(0, 255, 100, 0.1);
+      text-align: center;
     }
     a.unlock-link {
       color: #00ff99;
@@ -81,14 +82,38 @@
 </head>
 <body>
   <canvas id="bg"></canvas>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r121/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vanta@0.5.24/dist/vanta.stars.min.js"></script>
+  <script>
+    window.addEventListener('DOMContentLoaded', () => {
+      VANTA.STARS({
+        el: "#bg",
+        mouseControls: true,
+        touchControls: true,
+        minHeight: 200.00,
+        minWidth: 200.00,
+        scale: 1.0,
+        scaleMobile: 1.0,
+        backgroundColor: 0x000000,
+        color: 0xffffff,
+        size: 1.7,
+        spacing: 20.0,
+        showDots: true
+      });
+    });
+  </script>
+
   <h1>Bid & Mint NFT | مزايدة وسك العملة الرقمية</h1>
-  <img src="https://www.engmo1234.com/polygon-logo.png" alt="Polygon Logo" class="polygon-logo" onclick="togglePolygonHelp()" />
-  <div id="message"></div>
-  <button onclick="connect()">🔌 Connect Wallet | توصيل المحفظة</button>
+  <img src="https://www.engmo1234.com/polygon-logo.png" alt="Polygon Logo" class="polygon-logo" />
+  <div id="message">To use this platform, fund your wallet with MATIC (Polygon network). | لاستخدام هذا النظام، قم بتمويل محفظتك بعملة MATIC على شبكة بوليجون.</div>
+  <button onclick="connectWallet()">🔌 Connect Wallet | توصيل المحفظة</button>
 
   <div class="nft-box">
-    <h2>🎨 NFT Preview</h2>
-    <img id="nftPreview" src="https://gateway.pinata.cloud/ipfs/bafybeig36baxfvkgiihxznuuchvtmfrdxvpkzynuk5hgph5fg7jd22f42i" alt="NFT Preview" />
+    <h2>🎥 NFT Video Preview</h2>
+    <video id="nftVideo" controls autoplay muted loop playsinline>
+      <source src="https://engmo1234.github.io/engmo1234.github.io/engmo_video_browser_safe.mp4" type="video/mp4">
+      Your browser does not support the video tag.
+    </video>
     <input type="number" id="bidAmount" placeholder="Enter your bid in MATIC | أدخل قيمة المزايدة بـ MATIC" />
     <button onclick="submitBid()">Submit Bid | تقديم المزايدة</button>
     <button onclick="mintNFT()">Mint NFT | سك العملة الرقمية</button>
@@ -100,93 +125,73 @@
     <button onclick="approveBid()">Approve Bid | الموافقة على المزايدة</button>
   </div>
 
-  <div id="unlockBox"></div>
+  <div id="unlockBox">
+    🔓 <a class="unlock-link" href="https://form.jotform.com/223058286315456" target="_blank">Access Unlockable Content | الوصول إلى المحتوى الحصري</a>
+  </div>
 
   <script>
-    const canvas = document.getElementById('bg');
-    const ctx = canvas.getContext('2d');
-    let stars = [];
+    const contractAddress = "0xc66cccf6cf6b3e8fe8e489fbbbcd0f81e2ebccd2";
+    const ownerAddress = "0x8Bd4bE269E9F1D18659450d9D794F136E1F1223a";
+    const abi = /* INSERT FULL ABI JSON HERE */;
 
-    function resizeCanvas() {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    }
-
-    function createStars(count) {
-      stars = [];
-      for (let i = 0; i < count; i++) {
-        stars.push({
-          x: Math.random() * canvas.width,
-          y: Math.random() * canvas.height,
-          z: Math.random() * canvas.width
-        });
+    async function connectWallet() {
+      if (typeof window.ethereum !== "undefined") {
+        try {
+          await window.ethereum.request({ method: "eth_requestAccounts" });
+          console.log("Wallet connected");
+        } catch (err) {
+          console.error("User denied account access");
+        }
+      } else {
+        alert("Please install MetaMask to use this feature.");
       }
     }
 
-    function drawStars() {
-      ctx.fillStyle = 'black';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = 'white';
-      stars.forEach(star => {
-        const k = 128.0 / star.z;
-        const x = star.x * k + canvas.width / 2;
-        const y = star.y * k + canvas.height / 2;
-        if (x >= 0 && x <= canvas.width && y >= 0 && y <= canvas.height) {
-          ctx.beginPath();
-          ctx.arc(x, y, 1, 0, Math.PI * 2);
-          ctx.fill();
-        }
-        star.z -= 2;
-        if (star.z <= 0) {
-          star.x = Math.random() * canvas.width;
-          star.y = Math.random() * canvas.height;
-          star.z = canvas.width;
-        }
-      });
+    async function submitBid() {
+      if (!window.ethereum) return alert("MetaMask not found");
+      const web3 = new Web3(window.ethereum);
+      const accounts = await web3.eth.getAccounts();
+      const amount = document.getElementById("bidAmount").value;
+      const contract = new web3.eth.Contract(abi, contractAddress);
+      try {
+        await contract.methods.submitBid().send({ from: accounts[0], value: web3.utils.toWei(amount, "ether") });
+        alert("✅ Bid submitted!");
+      } catch (err) {
+        console.error("Bid submission failed:", err);
+        alert("❌ Error submitting bid.");
+      }
     }
 
-    function animate() {
-      drawStars();
-      requestAnimationFrame(animate);
+    async function approveBid() {
+      const web3 = new Web3(window.ethereum);
+      const accounts = await web3.eth.getAccounts();
+      if (accounts[0].toLowerCase() !== ownerAddress.toLowerCase()) {
+        alert("Only the owner can approve bids.");
+        return;
+      }
+      const contract = new web3.eth.Contract(abi, contractAddress);
+      const bidder = document.getElementById("bidderAddress").value;
+      try {
+        await contract.methods.approveBid(bidder).send({ from: accounts[0] });
+        alert("✅ Bid approved!");
+      } catch (err) {
+        console.error("Approval failed:", err);
+        alert("❌ Error approving bid.");
+      }
     }
 
-    window.addEventListener('resize', () => {
-      resizeCanvas();
-      createStars(300);
-    });
-
-    resizeCanvas();
-    createStars(300);
-    animate();
-
-    const passwords = [
-      "Engmorichy1234a", "Engmorichy1234b", "Engmorichy1234c", "Engmorichy1234d", "Engmorichy1234e",
-      "Engmorichy1234f", "Engmorichy1234g", "Engmorichy1234h", "Engmorichy1234i", "Engmorichy1234j",
-      "Engmorichy1234k", "Engmorichy1234l", "Engmorichy1234m", "Engmorichy1234n", "Engmorichy1234o",
-      "Engmorichy1234p", "Engmorichy1234q", "Engmorichy1234r", "Engmorichy1234s", "Engmorichy1234t",
-      "Engmorichy1234u", "Engmorichy1234v", "Engmorichy1234w", "Engmorichy1234x", "Engmorichy1234y",
-      "Engmorichy1234z", "Engmorichy1234aa", "Engmorichy1234bb", "Engmorichy1234cc", "Engmorichy1234dd",
-      "Engmorichy1234ee", "Engmorichy1234ff", "Engmorichy1234gg", "Engmorichy1234hh", "Engmorichy1234ii",
-      "Engmorichy1234jj", "Engmorichy1234kk", "Engmorichy1234ll", "Engmorichy1234mm", "Engmorichy1234nn"
-    ];
-
-    function getRandomPassword() {
-      const idx = Math.floor(Math.random() * passwords.length);
-      return passwords[idx];
-    }
-
-    function showUnlockBox() {
-      const password = getRandomPassword();
-      const box = document.getElementById("unlockBox");
-      box.innerHTML = `
-        ✅ By minting, you have unlocked exclusive content!<br />
-        🔑 <a class="unlock-link" href="https://form.jotform.com/223058286315456" target="_blank">Access Unlockable Content</a><br />
-        <strong>Password:</strong> ${password}<br /><br />
-        ✅ من خلال عملية السك، لقد قمت بفتح محتوى حصري!<br />
-        🔑 <a class="unlock-link" href="https://form.jotform.com/223058286315456" target="_blank">الدخول إلى المحتوى السري</a><br />
-        <strong>كلمة المرور:</strong> ${password}
-      `;
-      box.style.display = "block";
+    async function mintNFT() {
+      if (!window.ethereum) return alert("MetaMask not found");
+      const web3 = new Web3(window.ethereum);
+      const accounts = await web3.eth.getAccounts();
+      const contract = new web3.eth.Contract(abi, contractAddress);
+      try {
+        await contract.methods.mint().send({ from: accounts[0] });
+        alert("🎉 NFT Minted Successfully!");
+      } catch (err) {
+        console.error("Minting failed:", err);
+        alert("❌ Error minting NFT.");
+      }
     }
   </script>
 </body>
