@@ -1,149 +1,183 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Engmo NFT Bid + Mint</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.7.0/ethers.umd.min.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bid & Mint NFT | Engmo</title>
+  <script src="https://cdn.jsdelivr.net/npm/web3@1.8.2/dist/web3.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
   <style>
-    body {
+    html, body {
       margin: 0;
-      font-family: 'Orbitron', sans-serif;
+      padding: 0;
+      font-family: Arial, sans-serif;
       color: white;
-      background: linear-gradient(135deg, #0f0f0f 0%, #1a1a1a 100%);
       overflow-x: hidden;
+      height: 100vh;
+      background: transparent; /* Removed black to reveal canvas */
     }
-    canvas {
+    canvas#bg {
       position: fixed;
       top: 0;
       left: 0;
-      width: 100%;
-      height: 100%;
+      width: 100vw;
+      height: 100vh;
       z-index: -1;
+      background: transparent; /* Transparent canvas */
     }
-    #video-container {
+    body {
       display: flex;
-      justify-content: center;
-      align-items: center;
       flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 2rem;
+    }
+    h1 {
       margin-top: 20px;
     }
-    video {
-      max-width: 80%;
-      border: 2px solid #00ff88;
-      border-radius: 12px;
-    }
-    .btn {
-      background-color: #00ff88;
-      padding: 12px 24px;
-      border-radius: 8px;
-      color: black;
-      font-weight: bold;
+    button, input {
+      padding: 10px;
       margin: 10px;
+      font-size: 16px;
+      width: 280px;
+      max-width: 90vw;
     }
-    .btn:hover {
-      background-color: #00cc66;
+    .polygon-logo {
+      width: 60px;
+      cursor: pointer;
+      margin: 10px auto;
+      display: block;
+    }
+    #message {
+      max-width: 500px;
+      margin-top: 15px;
+    }
+    #unlockBox {
+      margin-top: 20px;
+      padding: 15px;
+      border: 2px dashed #00ff99;
+      display: none;
+      background-color: rgba(0, 255, 100, 0.1);
+    }
+    a.unlock-link {
+      color: #00ff99;
+      font-weight: bold;
     }
   </style>
 </head>
 <body>
-  <canvas id="canvas"></canvas>
+  <canvas id="bg"></canvas>
+  <h1>Bid & Mint NFT | مزايدة وسك العملة الرقمية</h1>
+  <img src="https://www.engmo1234.com/polygon-logo.png" alt="Polygon Logo" class="polygon-logo" onclick="togglePolygonHelp()" />
+  <button onclick="connect()">🔌 Connect Wallet | توصيل المحفظة</button>
+  <div id="message"></div>
 
-  <div class="text-center py-4 relative z-10">
-    <h1 class="text-4xl text-[#00ff88]">Engmo NFT Bid & Mint</h1>
-    <p class="text-sm text-gray-300">Polygon Network | شبكة بوليجون</p>
-    <img src="https://www.engmo1234.com/polygon-logo.png" alt="Polygon Logo" class="mx-auto my-4 w-16 cursor-pointer" onclick="togglePolygonInfo()">
-    <div id="polygon-info" class="hidden text-sm max-w-xl mx-auto text-gray-400">
-      <p>To participate, fund your wallet with MATIC (Polygon’s token). You can buy it from centralized exchanges like Binance, Crypto.com, etc.</p>
-      <p>للمشاركة، قم بتمويل محفظتك بعملة MATIC (رمز بوليجون). يمكنك شراؤها من منصات مركزية مثل Binance، Crypto.com وغيرها.</p>
-    </div>
-  </div>
+  <input type="number" id="bidAmount" placeholder="Enter your bid in MATIC | أدخل قيمة المزايدة بـ MATIC" />
+  <button onclick="submitBid()">Submit Bid | تقديم المزايدة</button>
+  <button onclick="mintNFT()">Mint NFT | سك العملة الرقمية</button>
 
-  <div id="video-container" class="relative z-10">
-    <video src="https://engmo1234.github.io/engmo_video_browser_safe.mp4" controls></video>
-  </div>
-
-  <div class="text-center mt-8 relative z-10">
-    <input type="number" id="bidAmount" placeholder="Enter bid in MATIC" class="px-4 py-2 rounded text-black"/>
-    <button class="btn" onclick="submitBid()">Submit Bid | إرسال العرض</button>
-    <button class="btn" onclick="mintNFT()">Mint NFT | سك الرمز</button>
+  <div id="unlockBox">
+    ✅ By minting, you have unlocked exclusive content!<br />
+    🔑 <a class="unlock-link" href="https://form.jotform.com/223058286315456" target="_blank">Access Unlockable Content</a><br />
+    <strong>Password:</strong> LAILAHAILALLAH<br /><br />
+    ✅ من خلال عملية السك، لقد قمت بفتح محتوى حصري!<br />
+    🔑 <a class="unlock-link" href="https://form.jotform.com/223058286315456" target="_blank">الدخول إلى المحتوى السري</a><br />
+    <strong>كلمة المرور:</strong> LAILAHAILALLAH
   </div>
 
   <script>
-    const canvas = document.getElementById("canvas");
-    const ctx = canvas.getContext("2d");
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    const canvas = document.getElementById('bg');
+    const ctx = canvas.getContext('2d');
+    let stars = [];
 
-    const particles = [];
-    for (let i = 0; i < 100; i++) {
-      particles.push({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        radius: Math.random() * 2 + 1,
-        dx: (Math.random() - 0.5) * 1,
-        dy: (Math.random() - 0.5) * 1,
-      });
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
     }
 
-    function animate() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      for (let p of particles) {
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-        ctx.fillStyle = "#00ff88";
-        ctx.fill();
-        p.x += p.dx;
-        p.y += p.dy;
-        if (p.x < 0 || p.x > canvas.width) p.dx *= -1;
-        if (p.y < 0 || p.y > canvas.height) p.dy *= -1;
+    function createStars() {
+      stars = [];
+      for (let i = 0; i < 150; i++) {
+        stars.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          z: Math.random() * canvas.width
+        });
       }
-      requestAnimationFrame(animate);
-    }
-    animate();
-
-    function togglePolygonInfo() {
-      const info = document.getElementById("polygon-info");
-      info.classList.toggle("hidden");
     }
 
-    let provider, signer, contract;
-
-    window.addEventListener('load', async () => {
-      if (window.ethereum) {
-        provider = new ethers.BrowserProvider(window.ethereum);
-        signer = await provider.getSigner();
-
-        const abi = [
-          { "inputs": [{ "internalType": "string", "name": "uri", "type": "string" }], "stateMutability": "nonpayable", "type": "constructor" },
-          { "inputs": [], "name": "mint", "outputs": [], "stateMutability": "nonpayable", "type": "function" },
-          { "inputs": [], "name": "submitBid", "outputs": [], "stateMutability": "payable", "type": "function" },
-          { "inputs": [{ "internalType": "address", "name": "bidder", "type": "address" }], "name": "approveBid", "outputs": [], "stateMutability": "nonpayable", "type": "function" }
-        ];
-
-        const contractAddress = "0x71df1af577b4432cd2f024c22d52e72ce48cf36d";
-        contract = new ethers.Contract(contractAddress, abi, signer);
-      } else {
-        alert("Please install MetaMask.");
+    function animateStars() {
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = '#00ffcc';
+      ctx.shadowBlur = 6;
+      ctx.shadowColor = '#00ffcc';
+      for (let i = 0; i < stars.length; i++) {
+        let star = stars[i];
+        star.z -= 0.5;
+        if (star.z <= 0) {
+          star.z = canvas.width;
+        }
+        let k = 128.0 / star.z;
+        let px = star.x * k + canvas.width / 2;
+        let py = star.y * k + canvas.height / 2;
+        if (px >= 0 && px < canvas.width && py >= 0 && py < canvas.height) {
+          let size = (1 - star.z / canvas.width) * 3;
+          ctx.beginPath();
+          ctx.arc(px, py, size, 0, Math.PI * 2);
+          ctx.fill();
+        }
       }
+      requestAnimationFrame(animateStars);
+    }
+
+    resizeCanvas();
+    createStars();
+    animateStars();
+    window.addEventListener('resize', () => {
+      resizeCanvas();
+      createStars();
     });
 
-    async function submitBid() {
-      const amount = document.getElementById("bidAmount").value.toString();
-      if (!amount || isNaN(amount) || Number(amount) <= 0) {
-        return alert("Enter a valid bid amount.");
-      }
+    const CONTRACT_ADDRESS = "0xc66cccf6cf6b3e8fe8e489fbbbcd0f81e2ebccd2";
+    const ABI = [
+      { "inputs": [{ "internalType": "string", "name": "uri", "type": "string" }], "stateMutability": "nonpayable", "type": "constructor" },
+      { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "address", "name": "bidder", "type": "address" }], "name": "BidApproved", "type": "event" },
+      { "anonymous": false, "inputs": [{ "indexed": true, "internalType": "address", "name": "bidder", "type": "address" }, { "indexed": false, "internalType": "uint256", "name": "amount", "type": "uint256" }], "name": "BidSubmitted", "type": "event" },
+      { "inputs": [], "name": "submitBid", "outputs": [], "stateMutability": "payable", "type": "function" },
+      { "inputs": [], "name": "mint", "outputs": [], "stateMutability": "nonpayable", "type": "function" }
+    ];
 
+    let provider;
+    let signer;
+    let contract;
+
+    async function connect() {
+      if (window.ethereum) {
+        provider = new ethers.providers.Web3Provider(window.ethereum);
+        await provider.send("eth_requestAccounts", []);
+        signer = provider.getSigner();
+        contract = new ethers.Contract(CONTRACT_ADDRESS, ABI, signer);
+        document.getElementById("message").textContent = "✅ Connected to MetaMask | تم الاتصال بمحفظة MetaMask";
+      } else {
+        document.getElementById("message").textContent = "❌ MetaMask not found. Please install it | لم يتم العثور على MetaMask. الرجاء التثبيت";
+      }
+    }
+
+    async function submitBid() {
+      const amount = document.getElementById("bidAmount").value;
+      if (!amount || isNaN(amount) || amount <= 0) {
+        alert("Enter a valid bid amount in MATIC | أدخل قيمة صحيحة");
+        return;
+      }
       try {
-        const tx = await contract.submitBid({
-          value: ethers.parseUnits(amount, "ether")
-        });
+        const tx = await contract.submitBid({ value: ethers.utils.parseEther(amount) });
         await tx.wait();
-        alert("✅ Bid submitted successfully!");
+        alert("✅ Bid submitted successfully! | تم تقديم المزايدة بنجاح!");
       } catch (err) {
         console.error(err);
-        alert("❌ Failed to submit bid. Make sure you're on Polygon and approved.");
+        alert("❌ Error submitting bid. | حدث خطأ في تقديم المزايدة.");
       }
     }
 
@@ -151,11 +185,19 @@
       try {
         const tx = await contract.mint();
         await tx.wait();
-        alert("NFT minted successfully!");
+        document.getElementById("unlockBox").style.display = "block";
+        alert("✅ NFT minted successfully! | تم سك العملة الرقمية بنجاح!");
       } catch (err) {
         console.error(err);
-        alert("Minting failed.");
+        alert("❌ Error minting NFT. | حدث خطأ في عملية السك.");
       }
+    }
+
+    function togglePolygonHelp() {
+      const msg = document.getElementById("message");
+      msg.innerHTML = `🔷 Polygon (MATIC) is required for bidding and minting.<br />
+        You can buy it from exchanges like Binance, KuCoin, or Crypto.com.<br />
+        تأكد من شحن محفظتك بعملة MATIC من منصات مركزية مثل Binance أو KuCoin.`;
     }
   </script>
 </body>
