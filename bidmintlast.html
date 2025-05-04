@@ -12,7 +12,7 @@
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: Arial, sans-serif;
+      font-family: 'Arial', sans-serif;
     }
     body {
       background: #000;
@@ -41,19 +41,23 @@
     .logo-link {
       display: inline-block;
       margin-bottom: 10px;
+      transition: transform 0.3s;
     }
     .polygon-logo {
       width: 70px;
       height: auto;
-      transition: transform 0.3s;
+      border-radius: 50%;
+      box-shadow: 0 0 15px rgba(0, 255, 204, 0.5);
     }
     .polygon-logo:hover {
       transform: scale(1.1);
+      box-shadow: 0 0 20px rgba(0, 255, 204, 0.8);
     }
     h1 {
       font-size: 24px;
       margin-bottom: 10px;
       color: #00ffcc;
+      text-shadow: 0 0 10px rgba(0, 255, 204, 0.5);
     }
     .container {
       width: 100%;
@@ -65,6 +69,7 @@
       border-radius: 15px;
       padding: 20px;
       margin-bottom: 20px;
+      box-shadow: 0 0 20px rgba(0, 255, 204, 0.2);
     }
     input {
       width: 100%;
@@ -75,6 +80,12 @@
       background: rgba(0,0,0,0.5);
       color: #fff;
       font-size: 16px;
+      transition: all 0.3s;
+    }
+    input:focus {
+      outline: none;
+      border-color: #0099ff;
+      box-shadow: 0 0 10px rgba(0, 153, 255, 0.5);
     }
     button {
       width: 100%;
@@ -93,16 +104,23 @@
     }
     .btn-primary:hover {
       opacity: 0.9;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0, 255, 204, 0.4);
     }
     .btn-secondary {
       background: rgba(255,255,255,0.1);
       color: #fff;
       border: 1px solid #00ffcc;
     }
+    .btn-secondary:hover {
+      background: rgba(0, 255, 204, 0.1);
+    }
     button:disabled {
       background: #333;
       color: #666;
       cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
     }
     .loading {
       display: none;
@@ -122,7 +140,7 @@
       padding: 12px;
       margin: 15px 0;
       border-radius: 8px;
-      display: none;
+      text-align: center;
     }
     .error {
       background: rgba(255,50,50,0.2);
@@ -165,6 +183,18 @@
       border-radius: 8px;
       border: 1px solid #333;
       font-size: 14px;
+      text-align: center;
+    }
+    @media (max-width: 600px) {
+      body {
+        padding: 15px;
+      }
+      .card {
+        padding: 15px;
+      }
+      .stats {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
@@ -173,7 +203,7 @@
 
   <header class="header">
     <a href="https://polygon.technology/" target="_blank" class="logo-link">
-      <img src="https://polygon.technology/wp-content/uploads/2021/06/polygon-logo.png" 
+      <img src="http://www.engmo1234.com/polygon-logo.png" 
            alt="Polygon Logo" class="polygon-logo">
     </a>
     <h1>NFT Minting Portal</h1>
@@ -188,8 +218,8 @@
       <button id="withdrawButton" class="btn-secondary">Withdraw Bid</button>
       
       <div class="loading" id="loading"></div>
-      <div class="message error" id="error"></div>
-      <div class="message success" id="success"></div>
+      <div class="message error" id="error" style="display:none;"></div>
+      <div class="message success" id="success" style="display:none;"></div>
       
       <div class="stats">
         <div class="stat-item">
@@ -226,21 +256,24 @@
   </main>
 
   <script>
-    // Initialize 3D background
-    VANTA.NET({
-      el: "#bg",
-      mouseControls: true,
-      touchControls: true,
-      gyroControls: false,
-      minHeight: 200.00,
-      minWidth: 200.00,
-      scale: 1.00,
-      scaleMobile: 1.00,
-      color: 0x00ff00,
-      backgroundColor: 0x0,
-      points: 12.00,
-      maxDistance: 22.00,
-      spacing: 18.00
+    // Wait for all resources to load before initializing Vanta.js
+    window.addEventListener('load', function() {
+      // Initialize 3D background
+      VANTA.NET({
+        el: "#bg",
+        mouseControls: true,
+        touchControls: true,
+        gyroControls: false,
+        minHeight: 200.00,
+        minWidth: 200.00,
+        scale: 1.00,
+        scaleMobile: 1.00,
+        color: 0x00ff00,
+        backgroundColor: 0x0,
+        points: 12.00,
+        maxDistance: 22.00,
+        spacing: 18.00
+      });
     });
 
     // Smart contract configuration
@@ -298,10 +331,14 @@
     let accounts = [];
     let tokenId = 0;
     let isProcessing = false;
+    let vantaEffect;
 
     // Initialize the app
     async function initApp() {
       try {
+        // Initialize Vanta.js effect
+        initVanta();
+
         // Check for Web3 wallet
         if (!window.ethereum) {
           showError("Please install MetaMask or another Web3 wallet.");
@@ -336,6 +373,29 @@
         console.error("Initialization error:", error);
         showError("Failed to connect. Please refresh and ensure you're on Polygon network.");
         disableButtons();
+      }
+    }
+
+    function initVanta() {
+      if (window.VANTA) {
+        vantaEffect = VANTA.NET({
+          el: "#bg",
+          mouseControls: true,
+          touchControls: true,
+          gyroControls: false,
+          minHeight: 200.00,
+          minWidth: 200.00,
+          scale: 1.00,
+          scaleMobile: 1.00,
+          color: 0x00ff00,
+          backgroundColor: 0x0,
+          points: 12.00,
+          maxDistance: 22.00,
+          spacing: 18.00
+        });
+      } else {
+        console.log("VANTA not loaded yet, retrying...");
+        setTimeout(initVanta, 100);
       }
     }
 
@@ -405,15 +465,19 @@
           if (bid.approved) {
             showSuccess("Your bid has been approved! You can now mint.");
             mintButton.disabled = false;
+            mintButton.textContent = "Mint NFT";
           } else if (bid.refunded) {
             showError("Your bid was refunded.");
             mintButton.disabled = true;
+            mintButton.textContent = "Bid Refunded";
           } else {
             showSuccess("Bid submitted. Waiting for approval...");
             mintButton.disabled = true;
+            mintButton.textContent = "Waiting Approval";
           }
         } else {
           mintButton.disabled = true;
+          mintButton.textContent = "Mint NFT";
         }
       } catch (error) {
         console.error("Failed to check bid status:", error);
@@ -459,8 +523,14 @@
       
       try {
         const bidAmount = document.getElementById('bidAmount').value;
-        if (!bidAmount || isNaN(bidAmount) || parseFloat(bidAmount) <= 0) {
-          showError("Please enter a valid positive amount");
+        if (!bidAmount || isNaN(bidAmount)) {
+          showError("Please enter a valid amount");
+          return;
+        }
+        
+        const amount = parseFloat(bidAmount);
+        if (amount <= 0) {
+          showError("Bid amount must be greater than 0");
           return;
         }
 
@@ -469,9 +539,23 @@
         
         const weiAmount = web3.utils.toWei(bidAmount, "ether");
         
+        // First check if user already has a bid
+        const existingBid = await contract.methods.bids(accounts[0]).call();
+        if (existingBid.amount > 0 && !existingBid.refunded) {
+          showError("You already have an active bid");
+          return;
+        }
+        
         // Estimate gas first
-        const gasEstimate = await contract.methods.submitBid()
-          .estimateGas({ from: accounts[0], value: weiAmount });
+        let gasEstimate;
+        try {
+          gasEstimate = await contract.methods.submitBid()
+            .estimateGas({ from: accounts[0], value: weiAmount });
+        } catch (err) {
+          console.error("Gas estimation failed:", err);
+          showError("Failed to estimate gas. Contract may be paused.");
+          return;
+        }
         
         // Send transaction with 20% gas buffer
         const tx = await contract.methods.submitBid().send({
@@ -497,11 +581,25 @@
       isProcessing = true;
       
       try {
+        // First check if bid is approved
+        const bid = await contract.methods.bids(accounts[0]).call();
+        if (!bid.approved) {
+          showError("Your bid hasn't been approved yet");
+          return;
+        }
+
         showLoading();
         hideMessages();
         
-        const gasEstimate = await contract.methods.mint()
-          .estimateGas({ from: accounts[0] });
+        let gasEstimate;
+        try {
+          gasEstimate = await contract.methods.mint()
+            .estimateGas({ from: accounts[0] });
+        } catch (err) {
+          console.error("Gas estimation failed:", err);
+          showError("Failed to estimate gas. Contract may be paused.");
+          return;
+        }
         
         const tx = await contract.methods.mint().send({ 
           from: accounts[0],
@@ -526,11 +624,29 @@
       isProcessing = true;
       
       try {
+        // First check if bid exists and can be withdrawn
+        const bid = await contract.methods.bids(accounts[0]).call();
+        if (bid.amount === 0) {
+          showError("No bid to withdraw");
+          return;
+        }
+        if (bid.refunded) {
+          showError("Bid already withdrawn");
+          return;
+        }
+
         showLoading();
         hideMessages();
         
-        const gasEstimate = await contract.methods.withdrawBid()
-          .estimateGas({ from: accounts[0] });
+        let gasEstimate;
+        try {
+          gasEstimate = await contract.methods.withdrawBid()
+            .estimateGas({ from: accounts[0] });
+        } catch (err) {
+          console.error("Gas estimation failed:", err);
+          showError("Failed to estimate gas. Contract may be paused.");
+          return;
+        }
         
         const tx = await contract.methods.withdrawBid().send({ 
           from: accounts[0],
@@ -565,8 +681,26 @@
         showLoading();
         hideMessages();
         
-        const gasEstimate = await contract.methods.approveBid(bidderAddress)
-          .estimateGas({ from: accounts[0] });
+        // First check if bid exists
+        const bid = await contract.methods.bids(bidderAddress).call();
+        if (bid.amount === 0) {
+          showError("No bid found for this address");
+          return;
+        }
+        if (bid.approved) {
+          showError("Bid already approved");
+          return;
+        }
+        
+        let gasEstimate;
+        try {
+          gasEstimate = await contract.methods.approveBid(bidderAddress)
+            .estimateGas({ from: accounts[0] });
+        } catch (err) {
+          console.error("Gas estimation failed:", err);
+          showError("Failed to estimate gas. Contract may be paused.");
+          return;
+        }
         
         const tx = await contract.methods.approveBid(bidderAddress).send({
           from: accounts[0],
@@ -599,8 +733,26 @@
         showLoading();
         hideMessages();
         
-        const gasEstimate = await contract.methods.rejectBid(bidderAddress)
-          .estimateGas({ from: accounts[0] });
+        // First check if bid exists
+        const bid = await contract.methods.bids(bidderAddress).call();
+        if (bid.amount === 0) {
+          showError("No bid found for this address");
+          return;
+        }
+        if (bid.refunded) {
+          showError("Bid already refunded");
+          return;
+        }
+        
+        let gasEstimate;
+        try {
+          gasEstimate = await contract.methods.rejectBid(bidderAddress)
+            .estimateGas({ from: accounts[0] });
+        } catch (err) {
+          console.error("Gas estimation failed:", err);
+          showError("Failed to estimate gas. Contract may be paused.");
+          return;
+        }
         
         const tx = await contract.methods.rejectBid(bidderAddress).send({
           from: accounts[0],
@@ -657,6 +809,7 @@
         if (revertMatch) return revertMatch[1];
       }
       if (error.message.includes("insufficient funds")) return "Insufficient MATIC for transaction";
+      if (error.message.includes("execution reverted")) return "Contract rejected transaction";
       return "Transaction failed. See console for details.";
     }
 
@@ -702,6 +855,15 @@
       document.getElementById('withdrawButton').disabled = false;
       document.getElementById('approveButton').disabled = false;
       document.getElementById('rejectButton').disabled = false;
+      
+      // Only enable mint button if bid is approved
+      if (contract && accounts[0]) {
+        contract.methods.bids(accounts[0]).call()
+          .then(bid => {
+            document.getElementById('mintButton').disabled = !bid.approved;
+          })
+          .catch(console.error);
+      }
     }
 
     // Initialize the app
