@@ -1,139 +1,343 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>NFT Minting Platform</title>
-  <script src="https://cdn.jsdelivr.net/npm/web3@1.5.2/dist/web3.min.js"></script>
-  <style>
-    body { 
-      margin: 0; 
-      overflow: hidden; 
-      font-family: Arial, sans-serif;
-      color: white;
-    }
-    canvas { 
-      display: block; 
-      position: fixed;
-      top: 0;
-      left: 0;
-      z-index: -1;
-    }
-    #container {
-      max-width: 800px;
-      margin: 0 auto;
-      padding: 20px;
-      background-color: rgba(0,0,0,0.7);
-      border-radius: 10px;
-      margin-top: 50px;
-    }
-    #video-container {
-      margin: 20px 0;
-      text-align: center;
-    }
-    #video-container iframe {
-      width: 100%;
-      height: 400px;
-      border: none;
-      border-radius: 8px;
-    }
-    .polygon-link {
-      display: block;
-      text-align: center;
-      margin: 20px 0;
-    }
-    .polygon-link img {
-      width: 150px;
-      cursor: pointer;
-    }
-    button {
-      background: #8247e5;
-      color: white;
-      border: none;
-      padding: 10px 20px;
-      margin: 5px;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-    button:hover {
-      background: #6b30d0;
-    }
-    .function-section {
-      margin: 20px 0;
-      padding: 15px;
-      background: rgba(0,0,0,0.5);
-      border-radius: 8px;
-    }
-    input {
-      padding: 8px;
-      margin: 5px;
-      width: 100px;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EngmoShirt NFT Collection</title>
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.5.2/dist/web3.min.js"></script>
+    <style>
+        :root {
+            --primary: #6a11cb;
+            --secondary: #2575fc;
+            --dark: #1a1a2e;
+            --light: #f8f9fa;
+            --success: #28a745;
+            --danger: #dc3545;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, var(--dark), #16213e);
+            color: var(--light);
+            min-height: 100vh;
+            background-attachment: fixed;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .wallet-btn {
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            padding: 0.5rem 1.5rem;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .wallet-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        
+        .wallet-btn.connected {
+            background: var(--success);
+        }
+        
+        .hero {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 3rem;
+            text-align: center;
+        }
+        
+        .video-container {
+            width: 100%;
+            max-width: 800px;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            margin-bottom: 2rem;
+        }
+        
+        video {
+            width: 100%;
+            display: block;
+        }
+        
+        .collection-info {
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(10px);
+            padding: 2rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            margin: 2rem 0;
+        }
+        
+        .stat-card {
+            background: rgba(255,255,255,0.05);
+            padding: 1.5rem;
+            border-radius: 10px;
+            text-align: center;
+            min-width: 150px;
+            margin: 0.5rem;
+            flex: 1;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            margin: 0.5rem 0;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .bid-section {
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(10px);
+            padding: 2rem;
+            border-radius: 10px;
+            margin-bottom: 2rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 0.75rem;
+            border-radius: 5px;
+            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(0,0,0,0.3);
+            color: white;
+            font-size: 1rem;
+        }
+        
+        button {
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        
+        button:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .admin-section {
+            background: rgba(255,0,0,0.1);
+            padding: 2rem;
+            border-radius: 10px;
+            margin-top: 2rem;
+            display: none;
+        }
+        
+        .admin-section h3 {
+            color: #ff6b6b;
+            margin-top: 0;
+        }
+        
+        .bid-status {
+            margin-top: 2rem;
+            padding: 1rem;
+            border-radius: 5px;
+            display: none;
+        }
+        
+        .success {
+            background: rgba(40, 167, 69, 0.2);
+            border-left: 4px solid var(--success);
+        }
+        
+        .error {
+            background: rgba(220, 53, 69, 0.2);
+            border-left: 4px solid var(--danger);
+        }
+        
+        .nft-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+        
+        .nft-card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 10px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .nft-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+        }
+        
+        .nft-image {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+        }
+        
+        .nft-info {
+            padding: 1rem;
+        }
+        
+        .nft-title {
+            margin: 0;
+            font-size: 1.2rem;
+        }
+        
+        .nft-description {
+            color: rgba(255,255,255,0.7);
+            font-size: 0.9rem;
+            margin: 0.5rem 0;
+        }
+        
+        @media (max-width: 768px) {
+            .stats {
+                flex-direction: column;
+            }
+            
+            .stat-card {
+                margin-bottom: 1rem;
+            }
+        }
+    </style>
 </head>
 <body>
-  <canvas id="bg"></canvas>
-  
-  <div id="container">
-    <h1 style="text-align: center;">NFT Minting Platform</h1>
-    
-    <div id="video-container">
-      <iframe src="https://www.youtube.com/embed/86Jxkq6oxR0" allowfullscreen></iframe>
+    <div class="container">
+        <header>
+            <div class="logo">EngmoShirt NFT Collection</div>
+            <button id="connectWallet" class="wallet-btn">Connect Wallet</button>
+        </header>
+        
+        <div class="hero">
+            <div class="video-container">
+                <video controls autoplay loop muted>
+                    <source src="https://brown-nearby-junglefowl-183.mypinata.cloud/ipfs/bafybeiacpga4nqrc3uatb62k654fhft7jhia4pvgyqvqtcb4skb3ma5y4i" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+            <h1>Limited Edition Video NFTs</h1>
+            <p>Bid for your chance to own one of only 99 unique digital collectibles</p>
+        </div>
+        
+        <div class="collection-info">
+            <h2>About the Collection</h2>
+            <p>Each EngmoShirt NFT is a unique digital collectible featuring exclusive video content. Only 99 will ever be minted through our bidding platform.</p>
+            
+            <div class="stats">
+                <div class="stat-card">
+                    <div class="stat-label">Total Supply</div>
+                    <div class="stat-value" id="totalSupply">99</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Available</div>
+                    <div class="stat-value" id="availableSupply">99</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Your Bids</div>
+                    <div class="stat-value" id="userBids">0</div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="bidStatus" class="bid-status" style="display: none;"></div>
+        
+        <div class="bid-section">
+            <h2>Place Your Bid</h2>
+            <div class="form-group">
+                <label for="bidAmount">Bid Amount (ETH)</label>
+                <input type="number" id="bidAmount" placeholder="Enter amount in ETH" step="0.01" min="0.01">
+            </div>
+            <button id="submitBid">Submit Bid</button>
+            <button id="withdrawBid" style="margin-top: 1rem; background: var(--danger);">Withdraw Bid</button>
+        </div>
+        
+        <div class="bid-section">
+            <h2>Mint Your NFT</h2>
+            <p>If your bid has been approved, you can mint your NFT here.</p>
+            <button id="mintNft">Mint NFT</button>
+        </div>
+        
+        <div id="adminSection" class="admin-section">
+            <h3>Admin Controls</h3>
+            <div class="form-group">
+                <label for="bidderAddress">Bidder Address</label>
+                <input type="text" id="bidderAddress" placeholder="Enter bidder's address">
+            </div>
+            <button id="approveBid">Approve Bid</button>
+            <button id="withdrawFunds" style="margin-top: 1rem; background: var(--success);">Withdraw Funds</button>
+        </div>
+        
+        <div class="collection-info">
+            <h2>Your Collection</h2>
+            <div class="nft-grid" id="nftGrid">
+                <!-- NFTs will be displayed here -->
+            </div>
+        </div>
     </div>
-    
-    <div class="polygon-link">
-      <a href="https://www.youtube.com/watch?v=86Jxkq6oxR0" target="_blank">
-        <img src="https://wiki.polygon.technology/img/polygon-logo.png" alt="Polygon">
-      </a>
-    </div>
-    
-    <div id="wallet-section" style="text-align: center;">
-      <button id="connectWallet">Connect Wallet</button>
-      <p id="walletAddress"></p>
-    </div>
-    
-    <div class="function-section">
-      <h3>Mint Functions</h3>
-      <input id="mintQuantity" type="number" placeholder="Quantity" min="1">
-      <button id="requestMint">Request Mint</button>
-      <button id="withdrawUserFunds">Withdraw User Funds</button>
-    </div>
-    
-    <div class="function-section">
-      <h3>Owner Functions</h3>
-      <input id="requestId" type="number" placeholder="Request ID">
-      <button id="approveMint">Approve Mint</button>
-      <button id="withdrawOwnerFunds">Withdraw Owner Funds</button>
-      <button id="pauseContract">Pause Contract</button>
-      <button id="unpauseContract">Unpause Contract</button>
-    </div>
-  </div>
 
-  <script>
-    // 3D Background
-    const canvas = document.getElementById('bg');
-    const ctx = canvas.getContext('2d');
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    
-    function animateBackground() {
-      requestAnimationFrame(animateBackground);
-      ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      
-      ctx.fillStyle = '#8247e5';
-      for(let i = 0; i < 100; i++) {
-        const x = Math.random() * canvas.width;
-        const y = Math.random() * canvas.height;
-        const size = Math.random() * 3;
-        ctx.fillRect(x, y, size, size);
-      }
-    }
-    animateBackground();
-    
-    // Web3 Connection
-    let web3;
-    let contract;
-    const contractAddress = "0x65583b261db49cb16e876a824e5656c5a20531f4";
-    const contractABI = [
+    <script>
+        // Replace with your contract ABI
+        const contractABI = [
 	{
 		"inputs": [],
 		"stateMutability": "nonpayable",
@@ -294,13 +498,20 @@
 			{
 				"indexed": true,
 				"internalType": "address",
-				"name": "owner",
+				"name": "bidder",
 				"type": "address"
-			},
+			}
+		],
+		"name": "BidApproved",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
 			{
 				"indexed": true,
 				"internalType": "address",
-				"name": "user",
+				"name": "bidder",
 				"type": "address"
 			},
 			{
@@ -310,7 +521,7 @@
 				"type": "uint256"
 			}
 		],
-		"name": "EmergencyWithdraw",
+		"name": "BidSubmitted",
 		"type": "event"
 	},
 	{
@@ -319,7 +530,7 @@
 			{
 				"indexed": true,
 				"internalType": "address",
-				"name": "receiver",
+				"name": "to",
 				"type": "address"
 			},
 			{
@@ -338,51 +549,13 @@
 			{
 				"indexed": true,
 				"internalType": "address",
-				"name": "requester",
+				"name": "minter",
 				"type": "address"
 			},
 			{
 				"indexed": false,
 				"internalType": "uint256",
-				"name": "requestId",
-				"type": "uint256"
-			}
-		],
-		"name": "MintApproved",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "requester",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "requestId",
-				"type": "uint256"
-			}
-		],
-		"name": "MintRejected",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "requester",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "requestId",
+				"name": "tokenId",
 				"type": "uint256"
 			},
 			{
@@ -392,7 +565,7 @@
 				"type": "uint256"
 			}
 		],
-		"name": "MintRequested",
+		"name": "NFTMinted",
 		"type": "event"
 	},
 	{
@@ -418,13 +591,19 @@
 		"anonymous": false,
 		"inputs": [
 			{
-				"indexed": false,
+				"indexed": true,
 				"internalType": "address",
-				"name": "account",
+				"name": "bidder",
 				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "amount",
+				"type": "uint256"
 			}
 		],
-		"name": "Paused",
+		"name": "RefundIssued",
 		"type": "event"
 	},
 	{
@@ -524,46 +703,14 @@
 		"anonymous": false,
 		"inputs": [
 			{
-				"indexed": false,
-				"internalType": "address",
-				"name": "account",
-				"type": "address"
-			}
-		],
-		"name": "Unpaused",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
 				"indexed": true,
 				"internalType": "address",
-				"name": "user",
+				"name": "owner",
 				"type": "address"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "amount",
-				"type": "uint256"
 			}
 		],
-		"name": "UserWithdrawn",
+		"name": "UnlockableContentAccessed",
 		"type": "event"
-	},
-	{
-		"inputs": [],
-		"name": "MAX_PER_USER",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
 	},
 	{
 		"inputs": [],
@@ -580,7 +727,7 @@
 	},
 	{
 		"inputs": [],
-		"name": "MINT_PRICE",
+		"name": "TOKEN_ID",
 		"outputs": [
 			{
 				"internalType": "uint256",
@@ -592,14 +739,21 @@
 		"type": "function"
 	},
 	{
+		"inputs": [],
+		"name": "accessUnlockableContent",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
 		"inputs": [
 			{
-				"internalType": "uint256",
-				"name": "requestId",
-				"type": "uint256"
+				"internalType": "address",
+				"name": "bidder",
+				"type": "address"
 			}
 		],
-		"name": "approveMint",
+		"name": "approveBid",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
@@ -655,30 +809,85 @@
 	{
 		"inputs": [
 			{
-				"internalType": "uint256[]",
-				"name": "requestIds",
-				"type": "uint256[]"
+				"internalType": "address",
+				"name": "",
+				"type": "address"
 			}
 		],
-		"name": "batchApproveMints",
-		"outputs": [],
-		"stateMutability": "nonpayable",
+		"name": "bids",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "amount",
+				"type": "uint256"
+			},
+			{
+				"internalType": "bool",
+				"name": "approved",
+				"type": "bool"
+			},
+			{
+				"internalType": "bool",
+				"name": "refunded",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "getImageURI",
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
+			}
+		],
+		"stateMutability": "pure",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "getUnlockablePassword",
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
+			}
+		],
+		"stateMutability": "pure",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "getVideoURI",
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
+			}
+		],
+		"stateMutability": "pure",
 		"type": "function"
 	},
 	{
 		"inputs": [
 			{
 				"internalType": "address",
-				"name": "_user",
+				"name": "",
 				"type": "address"
 			}
 		],
-		"name": "getOwedAmount",
+		"name": "hasMinted",
 		"outputs": [
 			{
-				"internalType": "uint256",
+				"internalType": "bool",
 				"name": "",
-				"type": "uint256"
+				"type": "bool"
 			}
 		],
 		"stateMutability": "view",
@@ -709,55 +918,10 @@
 		"type": "function"
 	},
 	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"name": "mintRequests",
-		"outputs": [
-			{
-				"internalType": "address",
-				"name": "requester",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "amountPaid",
-				"type": "uint256"
-			},
-			{
-				"internalType": "bool",
-				"name": "approved",
-				"type": "bool"
-			},
-			{
-				"internalType": "bool",
-				"name": "rejected",
-				"type": "bool"
-			},
-			{
-				"internalType": "bool",
-				"name": "fundsWithdrawn",
-				"type": "bool"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
 		"inputs": [],
-		"name": "name",
-		"outputs": [
-			{
-				"internalType": "string",
-				"name": "",
-				"type": "string"
-			}
-		],
-		"stateMutability": "view",
+		"name": "mint",
+		"outputs": [],
+		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
@@ -775,42 +939,9 @@
 	},
 	{
 		"inputs": [],
-		"name": "pause",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "paused",
-		"outputs": [
-			{
-				"internalType": "bool",
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
 		"name": "renounceOwnership",
 		"outputs": [],
 		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "quantity",
-				"type": "uint256"
-			}
-		],
-		"name": "requestMint",
-		"outputs": [],
-		"stateMutability": "payable",
 		"type": "function"
 	},
 	{
@@ -898,6 +1029,13 @@
 		"type": "function"
 	},
 	{
+		"inputs": [],
+		"name": "submitBid",
+		"outputs": [],
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
 		"inputs": [
 			{
 				"internalType": "bytes4",
@@ -911,19 +1049,6 @@
 				"internalType": "bool",
 				"name": "",
 				"type": "bool"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "symbol",
-		"outputs": [
-			{
-				"internalType": "string",
-				"name": "",
-				"type": "string"
 			}
 		],
 		"stateMutability": "view",
@@ -956,30 +1081,10 @@
 		"type": "function"
 	},
 	{
-		"inputs": [],
-		"name": "unlockableContent",
-		"outputs": [
-			{
-				"internalType": "string",
-				"name": "",
-				"type": "string"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "unpause",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
 		"inputs": [
 			{
 				"internalType": "uint256",
-				"name": "tokenId",
+				"name": "",
 				"type": "uint256"
 			}
 		],
@@ -991,112 +1096,220 @@
 				"type": "string"
 			}
 		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "",
-				"type": "address"
-			}
-		],
-		"name": "userMintCount",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
+		"stateMutability": "pure",
 		"type": "function"
 	},
 	{
 		"inputs": [],
-		"name": "videoCID",
-		"outputs": [
-			{
-				"internalType": "string",
-				"name": "",
-				"type": "string"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "withdrawOwnerFunds",
+		"name": "withdraw",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
 		"inputs": [],
-		"name": "withdrawUserFunds",
+		"name": "withdrawBid",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
 	}
-];
-    
-    document.getElementById('connectWallet').addEventListener('click', async () => {
-      if (window.ethereum) {
-        try {
-          await window.ethereum.request({ method: 'eth_requestAccounts' });
-          web3 = new Web3(window.ethereum);
-          const accounts = await web3.eth.getAccounts();
-          document.getElementById('walletAddress').textContent = `Connected: ${accounts[0].slice(0,6)}...${accounts[0].slice(-4)}`;
-          
-          contract = new web3.eth.Contract(contractABI, contractAddress);
-        } catch (error) {
-          console.error(error);
+]; // INSERT ABI HERE
+        
+        // Replace with your contract address
+        const contractAddress = "0xbedd1239f703beb2a8b3f6e9e7e9c1613d44e55d";
+        
+        let web3;
+        let contract;
+        let accounts = [];
+        let isAdmin = false;
+        
+        // Initialize Web3
+        async function initWeb3() {
+            if (window.ethereum) {
+                web3 = new Web3(window.ethereum);
+                try {
+                    accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                    setupEventListeners();
+                    checkAdminStatus();
+                    updateUI();
+                } catch (error) {
+                    console.error("User denied account access");
+                }
+            } else if (window.web3) {
+                web3 = new Web3(window.web3.currentProvider);
+                accounts = await web3.eth.getAccounts();
+                setupEventListeners();
+                checkAdminStatus();
+                updateUI();
+            } else {
+                alert('Please install MetaMask to use this dApp!');
+            }
         }
-      } else {
-        alert('Please install MetaMask!');
-      }
-    });
-    
-    // Contract Functions
-    document.getElementById('requestMint').addEventListener('click', async () => {
-      const quantity = document.getElementById('mintQuantity').value;
-      const accounts = await web3.eth.getAccounts();
-      const price = await contract.methods.MINT_PRICE().call();
-      const totalPrice = web3.utils.toWei((price * quantity).toString(), 'ether');
-      
-      await contract.methods.requestMint(quantity).send({
-        from: accounts[0],
-        value: totalPrice
-      });
-    });
-    
-    document.getElementById('approveMint').addEventListener('click', async () => {
-      const requestId = document.getElementById('requestId').value;
-      const accounts = await web3.eth.getAccounts();
-      await contract.methods.approveMint(requestId).send({ from: accounts[0] });
-    });
-    
-    document.getElementById('withdrawUserFunds').addEventListener('click', async () => {
-      const accounts = await web3.eth.getAccounts();
-      await contract.methods.withdrawUserFunds().send({ from: accounts[0] });
-    });
-    
-    document.getElementById('withdrawOwnerFunds').addEventListener('click', async () => {
-      const accounts = await web3.eth.getAccounts();
-      await contract.methods.withdrawOwnerFunds().send({ from: accounts[0] });
-    });
-    
-    document.getElementById('pauseContract').addEventListener('click', async () => {
-      const accounts = await web3.eth.getAccounts();
-      await contract.methods.pause().send({ from: accounts[0] });
-    });
-    
-    document.getElementById('unpauseContract').addEventListener('click', async () => {
-      const accounts = await web3.eth.getAccounts();
-      await contract.methods.unpause().send({ from: accounts[0] });
-    });
-  </script>
+        
+        // Setup contract instance
+        function setupContract() {
+            contract = new web3.eth.Contract(contractABI, contractAddress);
+        }
+        
+        // Check if connected account is admin
+        async function checkAdminStatus() {
+            if (!contract) return;
+            
+            try {
+                const owner = await contract.methods.owner().call();
+                isAdmin = (owner.toLowerCase() === accounts[0].toLowerCase());
+                
+                if (isAdmin) {
+                    document.getElementById('adminSection').style.display = 'block';
+                }
+            } catch (error) {
+                console.error("Error checking admin status:", error);
+            }
+        }
+        
+        // Update UI with contract data
+        async function updateUI() {
+            if (!contract || accounts.length === 0) return;
+            
+            try {
+                // Update supply info
+                const totalMinted = await contract.methods.totalMinted().call();
+                document.getElementById('availableSupply').textContent = 99 - totalMinted;
+                
+                // Update user bid info
+                const userBid = await contract.methods.bids(accounts[0]).call();
+                document.getElementById('userBids').textContent = web3.utils.fromWei(userBid.amount, 'ether') || '0';
+                
+                // Update wallet button
+                const walletBtn = document.getElementById('connectWallet');
+                walletBtn.textContent = `${accounts[0].substring(0, 6)}...${accounts[0].substring(38)}`;
+                walletBtn.classList.add('connected');
+                
+                // Check if user can mint
+                const canMint = userBid.approved && !(await contract.methods.hasMinted(accounts[0]).call());
+                document.getElementById('mintNft').disabled = !canMint;
+                
+                // Load user's NFTs
+                loadUserNFTs();
+            } catch (error) {
+                console.error("Error updating UI:", error);
+            }
+        }
+        
+        // Load user's owned NFTs
+        async function loadUserNFTs() {
+            const balance = await contract.methods.balanceOf(accounts[0], 0).call();
+            const nftGrid = document.getElementById('nftGrid');
+            nftGrid.innerHTML = '';
+            
+            if (balance > 0) {
+                for (let i = 0; i < balance; i++) {
+                    const nftCard = document.createElement('div');
+                    nftCard.className = 'nft-card';
+                    nftCard.innerHTML = `
+                        <img src="https://brown-nearby-junglefowl-183.mypinata.cloud/ipfs/bafybeicdsnpkhgtmc4qlxz3rrth7xwwzrx2a5mtjaxljfetgi6ps3kp5mq" class="nft-image">
+                        <div class="nft-info">
+                            <h3 class="nft-title">EngmoShirt NFT</h3>
+                            <p class="nft-description">Limited edition digital collectible</p>
+                        </div>
+                    `;
+                    nftGrid.appendChild(nftCard);
+                }
+            }
+        }
+        
+        // Show status message
+        function showStatus(message, isError = false) {
+            const statusDiv = document.getElementById('bidStatus');
+            statusDiv.textContent = message;
+            statusDiv.className = isError ? 'bid-status error' : 'bid-status success';
+            statusDiv.style.display = 'block';
+            
+            setTimeout(() => {
+                statusDiv.style.display = 'none';
+            }, 5000);
+        }
+        
+        // Setup event listeners
+        function setupEventListeners() {
+            // Connect wallet button
+            document.getElementById('connectWallet').addEventListener('click', initWeb3);
+            
+            // Submit bid button
+            document.getElementById('submitBid').addEventListener('click', async () => {
+                const amount = document.getElementById('bidAmount').value;
+                if (!amount || isNaN(amount) {
+                    showStatus('Please enter a valid bid amount', true);
+                    return;
+                }
+                
+                try {
+                    const weiAmount = web3.utils.toWei(amount, 'ether');
+                    await contract.methods.submitBid().send({ 
+                        from: accounts[0], 
+                        value: weiAmount 
+                    });
+                    showStatus('Bid submitted successfully!');
+                    updateUI();
+                } catch (error) {
+                    showStatus('Error submitting bid: ' + error.message, true);
+                }
+            });
+            
+            // Withdraw bid button
+            document.getElementById('withdrawBid').addEventListener('click', async () => {
+                try {
+                    await contract.methods.withdrawBid().send({ from: accounts[0] });
+                    showStatus('Bid withdrawn successfully!');
+                    updateUI();
+                } catch (error) {
+                    showStatus('Error withdrawing bid: ' + error.message, true);
+                }
+            });
+            
+            // Mint NFT button
+            document.getElementById('mintNft').addEventListener('click', async () => {
+                try {
+                    await contract.methods.mint().send({ from: accounts[0] });
+                    showStatus('NFT minted successfully!');
+                    updateUI();
+                } catch (error) {
+                    showStatus('Error minting NFT: ' + error.message, true);
+                }
+            });
+            
+            // Admin: Approve bid button
+            document.getElementById('approveBid').addEventListener('click', async () => {
+                const bidderAddress = document.getElementById('bidderAddress').value;
+                if (!web3.utils.isAddress(bidderAddress)) {
+                    showStatus('Please enter a valid Ethereum address', true);
+                    return;
+                }
+                
+                try {
+                    await contract.methods.approveBid(bidderAddress).send({ from: accounts[0] });
+                    showStatus('Bid approved successfully!');
+                } catch (error) {
+                    showStatus('Error approving bid: ' + error.message, true);
+                }
+            });
+            
+            // Admin: Withdraw funds button
+            document.getElementById('withdrawFunds').addEventListener('click', async () => {
+                try {
+                    await contract.methods.withdraw().send({ from: accounts[0] });
+                    showStatus('Funds withdrawn successfully!');
+                } catch (error) {
+                    showStatus('Error withdrawing funds: ' + error.message, true);
+                }
+            });
+        }
+        
+        // Initialize when page loads
+        window.addEventListener('load', () => {
+            initWeb3();
+            setupContract();
+        });
+    </script>
 </body>
 </html>
