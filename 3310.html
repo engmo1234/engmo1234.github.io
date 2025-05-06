@@ -1,224 +1,49 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Owner Message Sender</title>
+    <title>Secure Message Sender</title>
     <script src="https://cdn.jsdelivr.net/npm/web3@1.8.0/dist/web3.min.js"></script>
     <style>
-        :root {
-            --primary: #7b51e3;
-            --primary-dark: #5e35b1;
-            --error: #ff5252;
-            --success: #4caf50;
-            --background: #f8f9fa;
-            --card-bg: #ffffff;
-            --text: #333333;
-            --text-light: #666666;
-        }
-        
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        
-        body {
-            background-color: var(--background);
-            color: var(--text);
-            line-height: 1.6;
-            padding: 20px;
-            max-width: 800px;
-            margin: 0 auto;
-        }
-        
-        h1 {
-            color: var(--primary);
-            text-align: center;
-            margin-bottom: 20px;
-            font-weight: 600;
-        }
-        
-        .card {
-            background-color: var(--card-bg);
-            border-radius: 12px;
-            padding: 25px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-            margin-bottom: 20px;
-        }
-        
-        .btn {
-            background-color: var(--primary);
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: 500;
-            width: 100%;
-            transition: all 0.3s ease;
-            display: block;
-            text-align: center;
-        }
-        
-        .btn:hover {
-            background-color: var(--primary-dark);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(130, 71, 229, 0.3);
-        }
-        
-        .btn:disabled {
-            background-color: #cccccc;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-        }
-        
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
-            color: var(--text);
-        }
-        
-        input, textarea {
-            width: 100%;
-            padding: 12px;
-            margin-bottom: 16px;
-            border: 1px solid #dddddd;
-            border-radius: 8px;
-            font-size: 16px;
-            transition: border 0.3s ease;
-        }
-        
-        input:focus, textarea:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 2px rgba(130, 71, 229, 0.2);
-        }
-        
-        textarea {
-            min-height: 120px;
-            resize: vertical;
-        }
-        
-        .status {
-            margin-top: 16px;
-            padding: 12px;
-            border-radius: 8px;
-            display: none;
-            font-size: 15px;
-        }
-        
-        .success {
-            background-color: rgba(76, 175, 80, 0.1);
-            color: var(--success);
-            display: block;
-            border: 1px solid var(--success);
-        }
-        
-        .error {
-            background-color: rgba(255, 82, 82, 0.1);
-            color: var(--error);
-            display: block;
-            border: 1px solid var(--error);
-        }
-        
-        .wallet-info {
-            margin: 16px 0;
-            padding: 12px;
-            background-color: rgba(130, 71, 229, 0.05);
-            border-radius: 8px;
-            border-left: 4px solid var(--primary);
-        }
-        
-        .wallet-info p {
-            margin: 4px 0;
-            font-size: 14px;
-        }
-        
-        .wallet-address {
-            font-family: monospace;
-            font-size: 15px;
-            word-break: break-all;
-        }
-        
-        .owner-status {
-            margin: 16px 0;
-            padding: 12px;
-            border-radius: 8px;
-            font-weight: 500;
-        }
-        
-        .owner-true {
-            background-color: rgba(76, 175, 80, 0.1);
-            color: var(--success);
-            border: 1px solid var(--success);
-        }
-        
-        .owner-false {
-            background-color: rgba(255, 82, 82, 0.1);
-            color: var(--error);
-            border: 1px solid var(--error);
-        }
-        
-        .hidden {
-            display: none;
-        }
-        
-        @media (max-width: 600px) {
-            body {
-                padding: 15px;
-            }
-            
-            .card {
-                padding: 20px;
-            }
-        }
+        body { font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; }
+        .card { background: white; border-radius: 10px; padding: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        button { background: #7b51e3; color: white; border: none; padding: 10px 15px; border-radius: 5px; width: 100%; margin-top: 10px; cursor: pointer; }
+        input, textarea { width: 100%; padding: 10px; margin: 8px 0; border: 1px solid #ddd; border-radius: 5px; box-sizing: border-box; }
+        textarea { height: 100px; }
+        .status { margin-top: 15px; padding: 10px; border-radius: 5px; display: none; }
+        .success { background: #d4edda; color: #155724; display: block; }
+        .error { background: #f8d7da; color: #721c24; display: block; }
+        .wallet-info { margin-top: 15px; font-weight: bold; }
     </style>
 </head>
 <body>
-    <h1>Secure Message Sender</h1>
-    
     <div class="card">
-        <div id="walletSection">
-            <button id="connectWallet" class="btn">Connect MetaMask</button>
-            
-            <div id="walletInfo" class="wallet-info hidden">
-                <p><strong>Connected Wallet:</strong></p>
-                <p class="wallet-address" id="walletAddress"></p>
-                <p><strong>Network:</strong> <span id="networkName"></span></p>
-            </div>
-            
-            <div id="ownerStatus" class="owner-status hidden"></div>
+        <h1>Secure Message Sender</h1>
+        
+        <button id="connectWallet">Connect MetaMask</button>
+        
+        <div id="walletInfo" class="wallet-info" style="display:none">
+            Connected: <span id="walletAddress"></span><br>
+            Network: <span id="networkName"></span>
+            <div id="ownerStatus" style="margin-top:10px;"></div>
         </div>
         
-        <div id="messageSection" class="hidden">
-            <h2 style="margin-bottom: 16px;">Send Secure Message</h2>
+        <div id="messageSection" style="display:none">
+            <h3>Send Message</h3>
+            <label>To Address:</label>
+            <input type="text" id="recipientAddress" placeholder="0x...">
             
-            <div class="form-group">
-                <label for="recipientAddress">Recipient Address:</label>
-                <input type="text" id="recipientAddress" placeholder="0x..." required>
-            </div>
+            <label>Message:</label>
+            <textarea id="messageContent" placeholder="Your message"></textarea>
             
-            <div class="form-group">
-                <label for="messageContent">Message Content:</label>
-                <textarea id="messageContent" placeholder="Type your message here..." required></textarea>
-            </div>
-            
-            <button id="sendMessageBtn" class="btn">Send Encrypted Message</button>
-            
+            <button id="sendMessageBtn">Send Message</button>
             <div id="statusMessage" class="status"></div>
         </div>
     </div>
 
     <script>
-        // Contract configuration
-        const CONFIG = {
-            contractAddress: "0x441877ae9e4f3bb17dfebfb8b9d7567d3eee968d",
-            contractABI: [
+        // CONFIGURATION - EDIT THESE VALUES
+        const CONTRACT_ADDRESS = "0x266f692b696102c3637a5e06cf3337cfa166b40b"; // Replace with your contract address
+        const CONTRACT_ABI = [
 	{
 		"inputs": [],
 		"stateMutability": "nonpayable",
@@ -256,7 +81,7 @@
 				"type": "bool"
 			}
 		],
-		"name": "EmergencyLock",
+		"name": "ContractLocked",
 		"type": "event"
 	},
 	{
@@ -265,7 +90,13 @@
 			{
 				"indexed": true,
 				"internalType": "address",
-				"name": "user",
+				"name": "sender",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "recipient",
 				"type": "address"
 			},
 			{
@@ -275,7 +106,7 @@
 				"type": "uint256"
 			}
 		],
-		"name": "MessageStored",
+		"name": "MessageSent",
 		"type": "event"
 	},
 	{
@@ -298,25 +129,6 @@
 		"type": "event"
 	},
 	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "reader",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"internalType": "bool",
-				"name": "authorized",
-				"type": "bool"
-			}
-		],
-		"name": "ReaderAuthorized",
-		"type": "event"
-	},
-	{
 		"inputs": [],
 		"name": "renounceOwnership",
 		"outputs": [],
@@ -326,43 +138,24 @@
 	{
 		"inputs": [
 			{
-				"internalType": "bool",
-				"name": "_locked",
-				"type": "bool"
-			}
-		],
-		"name": "setContractLock",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
 				"internalType": "address",
-				"name": "_reader",
+				"name": "recipient",
 				"type": "address"
 			},
 			{
-				"internalType": "bool",
-				"name": "_authorized",
-				"type": "bool"
+				"internalType": "string",
+				"name": "message",
+				"type": "string"
 			}
 		],
-		"name": "setReaderAuthorization",
+		"name": "sendMessage",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
-		"inputs": [
-			{
-				"internalType": "string",
-				"name": "_message",
-				"type": "string"
-			}
-		],
-		"name": "storeMessage",
+		"inputs": [],
+		"name": "toggleLock",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
@@ -381,23 +174,10 @@
 		"type": "function"
 	},
 	{
-		"inputs": [],
-		"name": "contractLocked",
-		"outputs": [
-			{
-				"internalType": "bool",
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
 		"inputs": [
 			{
 				"internalType": "address",
-				"name": "_user",
+				"name": "sender",
 				"type": "address"
 			}
 		],
@@ -413,14 +193,8 @@
 		"type": "function"
 	},
 	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "_reader",
-				"type": "address"
-			}
-		],
-		"name": "isAuthorizedReader",
+		"inputs": [],
+		"name": "isLocked",
 		"outputs": [
 			{
 				"internalType": "bool",
@@ -444,263 +218,98 @@
 		"stateMutability": "view",
 		"type": "function"
 	}
-],
-            supportedNetworks: {
-                137: "Polygon Mainnet",
-                80001: "Polygon Mumbai Testnet"
-            }
-        };
+];
+
+        // App Code (No need to edit below)
+        let web3, contract, account;
         
-        // App state
-        const state = {
-            web3: null,
-            contract: null,
-            account: null,
-            isOwner: false,
-            isCorrectNetwork: false
-        };
-        
-        // DOM elements
-        const elements = {
-            connectWalletBtn: document.getElementById('connectWallet'),
-            walletInfo: document.getElementById('walletInfo'),
-            walletAddress: document.getElementById('walletAddress'),
-            networkName: document.getElementById('networkName'),
-            ownerStatus: document.getElementById('ownerStatus'),
-            messageSection: document.getElementById('messageSection'),
-            sendMessageBtn: document.getElementById('sendMessageBtn'),
-            statusMessage: document.getElementById('statusMessage'),
-            recipientAddress: document.getElementById('recipientAddress'),
-            messageContent: document.getElementById('messageContent')
-        };
-        
-        // Initialize the application
         async function init() {
             if (window.ethereum) {
+                web3 = new Web3(window.ethereum);
                 try {
-                    // Initialize Web3
-                    state.web3 = new Web3(window.ethereum);
-                    
-                    // Check if already connected
-                    const accounts = await state.web3.eth.getAccounts();
-                    if (accounts.length > 0) {
-                        await handleAccountsChanged(accounts);
-                    }
-                    
-                    // Set up event listeners
-                    setupEventListeners();
-                    
-                } catch (error) {
-                    showStatus(`Initialization error: ${error.message}`, 'error');
+                    const accounts = await web3.eth.getAccounts();
+                    if (accounts.length > 0) connectWallet(accounts[0]);
+                } catch (e) {
+                    showStatus(e.message, 'error');
                 }
             } else {
-                elements.connectWalletBtn.textContent = "MetaMask Not Installed";
-                elements.connectWalletBtn.disabled = true;
-                showStatus("Please install MetaMask to use this application.", 'error');
+                document.getElementById('connectWallet').textContent = "Install MetaMask";
+                document.getElementById('connectWallet').disabled = true;
             }
         }
         
-        // Set up event listeners
-        function setupEventListeners() {
-            // Connect wallet button
-            elements.connectWalletBtn.addEventListener('click', connectWallet);
-            
-            // Send message button
-            elements.sendMessageBtn.addEventListener('click', sendMessage);
-            
-            // MetaMask events
-            if (window.ethereum) {
-                window.ethereum.on('accountsChanged', handleAccountsChanged);
-                window.ethereum.on('chainChanged', handleChainChanged);
-            }
-        }
-        
-        // Handle wallet connection
         async function connectWallet() {
             try {
-                elements.connectWalletBtn.disabled = true;
-                elements.connectWalletBtn.textContent = "Connecting...";
-                
-                // Request account access
                 const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-                await handleAccountsChanged(accounts);
+                account = accounts[0];
+                contract = new web3.eth.Contract(CONTRACT_ABI, CONTRACT_ADDRESS);
                 
-            } catch (error) {
-                showStatus(`Connection error: ${error.message}`, 'error');
-                elements.connectWalletBtn.disabled = false;
-                elements.connectWalletBtn.textContent = "Connect MetaMask";
-            }
-        }
-        
-        // Handle account changes
-        async function handleAccountsChanged(accounts) {
-            if (accounts.length === 0) {
-                // Wallet disconnected
-                resetApp();
-                return;
-            }
-            
-            state.account = accounts[0];
-            updateUI();
-            
-            // Check network
-            await checkNetwork();
-            
-            // Initialize contract if on correct network
-            if (state.isCorrectNetwork) {
-                initializeContract();
-                await checkOwnership();
-            }
-        }
-        
-        // Handle chain changes
-        async function handleChainChanged(chainId) {
-            // Convert chainId to decimal
-            const decimalChainId = parseInt(chainId, 16);
-            state.isCorrectNetwork = !!CONFIG.supportedNetworks[decimalChainId];
-            
-            if (state.isCorrectNetwork) {
-                initializeContract();
-                await checkOwnership();
-            } else {
-                state.contract = null;
-                state.isOwner = false;
-            }
-            
-            updateUI();
-        }
-        
-        // Check current network
-        async function checkNetwork() {
-            const chainId = await state.web3.eth.getChainId();
-            state.isCorrectNetwork = !!CONFIG.supportedNetworks[chainId];
-            elements.networkName.textContent = CONFIG.supportedNetworks[chainId] || `Unsupported Network (ID: ${chainId})`;
-        }
-        
-        // Initialize contract instance
-        function initializeContract() {
-            state.contract = new state.web3.eth.Contract(
-                CONFIG.contractABI,
-                CONFIG.contractAddress
-            );
-        }
-        
-        // Check if connected account is contract owner
-        async function checkOwnership() {
-            try {
-                const owner = await state.contract.methods.owner().call();
-                state.isOwner = owner.toLowerCase() === state.account.toLowerCase();
-            } catch (error) {
-                console.error("Error checking ownership:", error);
-                state.isOwner = false;
-            }
-        }
-        
-        // Send message function
-        async function sendMessage() {
-            // Validate inputs
-            const recipient = elements.recipientAddress.value.trim();
-            const message = elements.messageContent.value.trim();
-            
-            if (!state.web3.utils.isAddress(recipient)) {
-                showStatus("Please enter a valid recipient address", 'error');
-                return;
-            }
-            
-            if (message === "") {
-                showStatus("Please enter a message", 'error');
-                return;
-            }
-            
-            if (!state.isOwner) {
-                showStatus("Only the contract owner can send messages", 'error');
-                return;
-            }
-            
-            try {
                 // Update UI
-                elements.sendMessageBtn.disabled = true;
-                elements.sendMessageBtn.textContent = "Sending...";
-                elements.statusMessage.classList.add('hidden');
+                document.getElementById('connectWallet').textContent = "Connected";
+                document.getElementById('connectWallet').disabled = true;
+                document.getElementById('walletAddress').textContent = account;
+                document.getElementById('walletInfo').style.display = "block";
                 
-                // Send transaction (using recipient address)
-                const tx = await state.contract.methods
-                    .sendOwnerMessage(recipient, message) // Make sure this matches your contract function
-                    .send({ from: state.account });
+                // Check network
+                const chainId = await web3.eth.getChainId();
+                document.getElementById('networkName').textContent = 
+                    chainId === 137 ? "Polygon Mainnet" : 
+                    chainId === 80001 ? "Polygon Mumbai" : 
+                    `Chain ID: ${chainId}`;
                 
-                // Show success
-                showStatus(
-                    `Message successfully sent to ${recipient}! Transaction hash: ${tx.transactionHash}`,
-                    'success'
-                );
+                // Check if owner
+                const owner = await contract.methods.owner().call();
+                const isOwner = owner.toLowerCase() === account.toLowerCase();
                 
-                // Clear form
-                elements.messageContent.value = "";
-                elements.recipientAddress.value = "";
+                if (isOwner) {
+                    document.getElementById('ownerStatus').innerHTML = "<span style='color:green'>✓ You are the owner</span>";
+                    document.getElementById('messageSection').style.display = "block";
+                } else {
+                    document.getElementById('ownerStatus').innerHTML = "<span style='color:red'>✗ Only owner can send</span>";
+                }
                 
-            } catch (error) {
-                console.error("Error sending message:", error);
-                showStatus(
-                    `Failed to send message: ${error.message}`,
-                    'error'
-                );
-            } finally {
-                // Reset button
-                elements.sendMessageBtn.disabled = false;
-                elements.sendMessageBtn.textContent = "Send Encrypted Message";
+                // Set up send button
+                document.getElementById('sendMessageBtn').addEventListener('click', sendMessage);
+                
+            } catch (e) {
+                showStatus(e.message, 'error');
             }
         }
         
-        // Update UI based on current state
-        function updateUI() {
-            // Wallet connection
-            if (state.account) {
-                elements.connectWalletBtn.disabled = true;
-                elements.connectWalletBtn.textContent = "Connected";
-                elements.walletInfo.classList.remove('hidden');
-                elements.walletAddress.textContent = state.account;
-            } else {
-                elements.connectWalletBtn.disabled = false;
-                elements.connectWalletBtn.textContent = "Connect MetaMask";
-                elements.walletInfo.classList.add('hidden');
+        async function sendMessage() {
+            const recipient = document.getElementById('recipientAddress').value;
+            const message = document.getElementById('messageContent').value;
+            
+            if (!web3.utils.isAddress(recipient)) {
+                showStatus("Invalid address", 'error');
+                return;
             }
             
-            // Network and ownership status
-            if (state.isCorrectNetwork) {
-                if (state.isOwner) {
-                    elements.ownerStatus.textContent = "✓ You are the contract owner";
-                    elements.ownerStatus.className = "owner-status owner-true";
-                    elements.messageSection.classList.remove('hidden');
-                } else {
-                    elements.ownerStatus.textContent = "✗ Only the contract owner can send messages";
-                    elements.ownerStatus.className = "owner-status owner-false";
-                    elements.messageSection.classList.add('hidden');
-                }
-                elements.ownerStatus.classList.remove('hidden');
-            } else {
-                elements.ownerStatus.textContent = `Please switch to ${Object.values(CONFIG.supportedNetworks).join(" or ")}`;
-                elements.ownerStatus.className = "owner-status owner-false";
-                elements.ownerStatus.classList.remove('hidden');
-                elements.messageSection.classList.add('hidden');
+            try {
+                document.getElementById('sendMessageBtn').disabled = true;
+                const tx = await contract.methods.sendMessage(recipient, message)
+                    .send({ from: account });
+                
+                showStatus(`Message sent! TX: ${tx.transactionHash}`, 'success');
+                document.getElementById('messageContent').value = "";
+            } catch (e) {
+                showStatus(e.message, 'error');
+            } finally {
+                document.getElementById('sendMessageBtn').disabled = false;
             }
         }
         
-        // Reset application state
-        function resetApp() {
-            state.account = null;
-            state.isOwner = false;
-            updateUI();
+        function showStatus(msg, type) {
+            const el = document.getElementById('statusMessage');
+            el.textContent = msg;
+            el.className = `status ${type}`;
         }
         
-        // Show status message
-        function showStatus(message, type) {
-            elements.statusMessage.textContent = message;
-            elements.statusMessage.className = `status ${type}`;
-            elements.statusMessage.classList.remove('hidden');
-        }
-        
-        // Initialize the app when page loads
-        window.addEventListener('load', init);
+        // Initialize on load
+        window.addEventListener('load', () => {
+            init();
+            document.getElementById('connectWallet').addEventListener('click', connectWallet);
+        });
     </script>
 </body>
 </html>
