@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Secure Message Sender (Owner Only)</title>
+    <title>Owner Message Sender</title>
     <script src="https://cdn.jsdelivr.net/npm/web3@1.8.0/dist/web3.min.js"></script>
     <style>
         :root {
-            --primary: #8247e5;
+            --primary: #7b51e3;
             --primary-dark: #5e35b1;
             --error: #ff5252;
             --success: #4caf50;
@@ -76,10 +76,17 @@
             box-shadow: none;
         }
         
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--text);
+        }
+        
         input, textarea {
             width: 100%;
             padding: 12px;
-            margin: 8px 0 16px;
+            margin-bottom: 16px;
             border: 1px solid #dddddd;
             border-radius: 8px;
             font-size: 16px;
@@ -90,6 +97,11 @@
             outline: none;
             border-color: var(--primary);
             box-shadow: 0 0 0 2px rgba(130, 71, 229, 0.2);
+        }
+        
+        textarea {
+            min-height: 120px;
+            resize: vertical;
         }
         
         .status {
@@ -186,13 +198,17 @@
         <div id="messageSection" class="hidden">
             <h2 style="margin-bottom: 16px;">Send Secure Message</h2>
             
-            <label for="recipientAddress">Recipient Address:</label>
-            <input type="text" id="recipientAddress" placeholder="0x..." required>
+            <div class="form-group">
+                <label for="recipientAddress">Recipient Address:</label>
+                <input type="text" id="recipientAddress" placeholder="0x..." required>
+            </div>
             
-            <label for="messageContent">Your Message:</label>
-            <textarea id="messageContent" placeholder="Type your message here..." rows="4" required></textarea>
+            <div class="form-group">
+                <label for="messageContent">Message Content:</label>
+                <textarea id="messageContent" placeholder="Type your message here..." required></textarea>
+            </div>
             
-            <button id="sendMessageBtn" class="btn">Send Message</button>
+            <button id="sendMessageBtn" class="btn">Send Encrypted Message</button>
             
             <div id="statusMessage" class="status"></div>
         </div>
@@ -428,7 +444,7 @@
 		"stateMutability": "view",
 		"type": "function"
 	}
-  ],
+],
             supportedNetworks: {
                 137: "Polygon Mainnet",
                 80001: "Polygon Mumbai Testnet"
@@ -607,19 +623,20 @@
                 elements.sendMessageBtn.textContent = "Sending...";
                 elements.statusMessage.classList.add('hidden');
                 
-                // Send transaction
+                // Send transaction (using recipient address)
                 const tx = await state.contract.methods
-                    .storeMessage(message)
+                    .sendOwnerMessage(recipient, message) // Make sure this matches your contract function
                     .send({ from: state.account });
                 
                 // Show success
                 showStatus(
-                    `Message successfully stored! Transaction hash: ${tx.transactionHash}`,
+                    `Message successfully sent to ${recipient}! Transaction hash: ${tx.transactionHash}`,
                     'success'
                 );
                 
                 // Clear form
                 elements.messageContent.value = "";
+                elements.recipientAddress.value = "";
                 
             } catch (error) {
                 console.error("Error sending message:", error);
@@ -630,7 +647,7 @@
             } finally {
                 // Reset button
                 elements.sendMessageBtn.disabled = false;
-                elements.sendMessageBtn.textContent = "Send Message";
+                elements.sendMessageBtn.textContent = "Send Encrypted Message";
             }
         }
         
