@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EngmoShirt NFT Collection</title>
+    <title>Engmo NFT Collection</title>
     <script src="https://cdn.jsdelivr.net/npm/web3@1.5.2/dist/web3.min.js"></script>
     <style>
         :root {
@@ -19,16 +19,35 @@
             font-family: 'Poppins', sans-serif;
             margin: 0;
             padding: 0;
-            background: linear-gradient(135deg, var(--dark), #16213e);
+            background: #000 url('https://assets.codepen.io/13471/stars.png') repeat;
             color: var(--light);
             min-height: 100vh;
-            background-attachment: fixed;
+            overflow-x: hidden;
+            position: relative;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(ellipse at center, rgba(0,100,0,0.2) 0%, rgba(0,50,0,0.5) 100%);
+            z-index: -1;
         }
         
         .container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 2rem;
+            position: relative;
+            z-index: 1;
+            background: rgba(0, 20, 0, 0.7);
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.2);
+            margin-top: 2rem;
+            margin-bottom: 2rem;
         }
         
         header {
@@ -37,20 +56,21 @@
             align-items: center;
             margin-bottom: 2rem;
             padding-bottom: 1rem;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
+            border-bottom: 1px solid rgba(0,255,0,0.3);
         }
         
         .logo {
             font-size: 1.8rem;
             font-weight: 700;
-            background: linear-gradient(to right, var(--primary), var(--secondary));
+            background: linear-gradient(to right, #00ff00, #00cc00);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
+            text-shadow: 0 0 10px rgba(0,255,0,0.5);
         }
         
         .wallet-btn {
-            background: linear-gradient(to right, var(--primary), var(--secondary));
+            background: linear-gradient(to right, #00aa00, #007700);
             color: white;
             border: none;
             padding: 0.5rem 1.5rem;
@@ -58,11 +78,12 @@
             cursor: pointer;
             font-weight: 600;
             transition: all 0.3s ease;
+            box-shadow: 0 0 10px rgba(0,255,0,0.3);
         }
         
         .wallet-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            box-shadow: 0 5px 15px rgba(0,255,0,0.5);
         }
         
         .wallet-btn.connected {
@@ -84,6 +105,7 @@
             overflow: hidden;
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
             margin-bottom: 2rem;
+            border: 2px solid rgba(0,255,0,0.5);
         }
         
         video {
@@ -92,12 +114,13 @@
         }
         
         .collection-info {
-            background: rgba(255,255,255,0.05);
+            background: rgba(0,50,0,0.3);
             backdrop-filter: blur(10px);
             padding: 2rem;
             border-radius: 10px;
             margin-bottom: 2rem;
             text-align: center;
+            border: 1px solid rgba(0,255,0,0.2);
         }
         
         .stats {
@@ -108,31 +131,33 @@
         }
         
         .stat-card {
-            background: rgba(255,255,255,0.05);
+            background: rgba(0,40,0,0.4);
             padding: 1.5rem;
             border-radius: 10px;
             text-align: center;
             min-width: 150px;
             margin: 0.5rem;
             flex: 1;
+            border: 1px solid rgba(0,255,0,0.2);
         }
         
         .stat-value {
             font-size: 2rem;
             font-weight: 700;
             margin: 0.5rem 0;
-            background: linear-gradient(to right, var(--primary), var(--secondary));
+            background: linear-gradient(to right, #00ff00, #00cc00);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
         }
         
         .bid-section {
-            background: rgba(255,255,255,0.05);
+            background: rgba(0,50,0,0.3);
             backdrop-filter: blur(10px);
             padding: 2rem;
             border-radius: 10px;
             margin-bottom: 2rem;
+            border: 1px solid rgba(0,255,0,0.2);
         }
         
         .form-group {
@@ -143,20 +168,21 @@
             display: block;
             margin-bottom: 0.5rem;
             font-weight: 600;
+            color: #00ff00;
         }
         
         input, select {
             width: 100%;
             padding: 0.75rem;
             border-radius: 5px;
-            border: 1px solid rgba(255,255,255,0.1);
-            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(0,255,0,0.3);
+            background: rgba(0,20,0,0.5);
             color: white;
             font-size: 1rem;
         }
         
         button {
-            background: linear-gradient(to right, var(--primary), var(--secondary));
+            background: linear-gradient(to right, #00aa00, #007700);
             color: white;
             border: none;
             padding: 0.75rem 1.5rem;
@@ -166,11 +192,12 @@
             font-size: 1rem;
             transition: all 0.3s ease;
             width: 100%;
+            box-shadow: 0 0 10px rgba(0,255,0,0.3);
         }
         
         button:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            box-shadow: 0 5px 15px rgba(0,255,0,0.5);
         }
         
         button:disabled {
@@ -186,6 +213,7 @@
             border-radius: 10px;
             margin-top: 2rem;
             display: none;
+            border: 1px solid rgba(255,0,0,0.3);
         }
         
         .admin-section h3 {
@@ -218,15 +246,16 @@
         }
         
         .nft-card {
-            background: rgba(255,255,255,0.05);
+            background: rgba(0,40,0,0.4);
             border-radius: 10px;
             overflow: hidden;
             transition: all 0.3s ease;
+            border: 1px solid rgba(0,255,0,0.2);
         }
         
         .nft-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+            box-shadow: 0 10px 20px rgba(0,255,0,0.3);
         }
         
         .nft-image {
@@ -242,10 +271,11 @@
         .nft-title {
             margin: 0;
             font-size: 1.2rem;
+            color: #00ff00;
         }
         
         .nft-description {
-            color: rgba(255,255,255,0.7);
+            color: rgba(200,255,200,0.7);
             font-size: 0.9rem;
             margin: 0.5rem 0;
         }
@@ -264,7 +294,7 @@
 <body>
     <div class="container">
         <header>
-            <div class="logo">EngmoShirt NFT Collection</div>
+            <div class="logo">Engmo NFT Collection</div>
             <button id="connectWallet" class="wallet-btn">Connect Wallet</button>
         </header>
         
@@ -281,7 +311,7 @@
         
         <div class="collection-info">
             <h2>About the Collection</h2>
-            <p>Each EngmoShirt NFT is a unique digital collectible featuring exclusive video content. Only 99 will ever be minted through our bidding platform.</p>
+            <p>Each EngmoShirt NFT is a unique digital collectible featuring exclusive video content AND WEBSITE DESIGN GIFT. Only 99 will ever be minted through our bidding platform.</p>
             
             <div class="stats">
                 <div class="stat-card">
@@ -304,8 +334,8 @@
         <div class="bid-section">
             <h2>Place Your Bid</h2>
             <div class="form-group">
-                <label for="bidAmount">Bid Amount (ETH)</label>
-                <input type="number" id="bidAmount" placeholder="Enter amount in ETH" step="0.01" min="0.01">
+                <label for="bidAmount">Bid Amount (MATIC)</label>
+                <input type="number" id="bidAmount" placeholder="Enter amount in MATIC" step="0.01" min="0.01">
             </div>
             <button id="submitBid">Submit Bid</button>
             <button id="withdrawBid" style="margin-top: 1rem; background: var(--danger);">Withdraw Bid</button>
@@ -336,7 +366,7 @@
     </div>
 
     <script>
-        // Replace with your contract ABI
+        // PUT ABI HERE
         const contractABI = [
 	{
 		"inputs": [],
@@ -1113,34 +1143,53 @@
 		"stateMutability": "nonpayable",
 		"type": "function"
 	}
-]; // INSERT ABI HERE
+]
         
-        // Replace with your contract address
-        const contractAddress = "0xbedd1239f703beb2a8b3f6e9e7e9c1613d44e55d";
+        // Replace with your Polygon contract address
+        const contractAddress = "YOUR_POLYGON_CONTRACT_ADDRESS";
         
         let web3;
         let contract;
         let accounts = [];
         let isAdmin = false;
         
-        // Initialize Web3
+        // Initialize Web3 for Polygon
         async function initWeb3() {
             if (window.ethereum) {
-                web3 = new Web3(window.ethereum);
                 try {
+                    // Request account access
                     accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                    
+                    // Switch to Polygon network
+                    try {
+                        await window.ethereum.request({
+                            method: 'wallet_addEthereumChain',
+                            params: [{
+                                chainId: '0x89', // Polygon mainnet
+                                chainName: 'Polygon Mainnet',
+                                nativeCurrency: {
+                                    name: 'MATIC',
+                                    symbol: 'MATIC',
+                                    decimals: 18
+                                },
+                                rpcUrls: ['https://polygon-rpc.com/'],
+                                blockExplorerUrls: ['https://polygonscan.com/']
+                            }]
+                        });
+                    } catch (switchError) {
+                        // If Polygon is already added, just continue
+                        if (switchError.code !== 4001) {
+                            console.error("Error switching to Polygon:", switchError);
+                        }
+                    }
+                    
+                    web3 = new Web3(window.ethereum);
                     setupEventListeners();
                     checkAdminStatus();
                     updateUI();
                 } catch (error) {
                     console.error("User denied account access");
                 }
-            } else if (window.web3) {
-                web3 = new Web3(window.web3.currentProvider);
-                accounts = await web3.eth.getAccounts();
-                setupEventListeners();
-                checkAdminStatus();
-                updateUI();
             } else {
                 alert('Please install MetaMask to use this dApp!');
             }
@@ -1209,7 +1258,7 @@
                     nftCard.innerHTML = `
                         <img src="https://brown-nearby-junglefowl-183.mypinata.cloud/ipfs/bafybeicdsnpkhgtmc4qlxz3rrth7xwwzrx2a5mtjaxljfetgi6ps3kp5mq" class="nft-image">
                         <div class="nft-info">
-                            <h3 class="nft-title">EngmoShirt NFT</h3>
+                            <h3 class="nft-title">EngmoEBSITEGIFT NFT</h3>
                             <p class="nft-description">Limited edition digital collectible</p>
                         </div>
                     `;
@@ -1238,7 +1287,7 @@
             // Submit bid button
             document.getElementById('submitBid').addEventListener('click', async () => {
                 const amount = document.getElementById('bidAmount').value;
-                if (!amount || isNaN(amount) {
+                if (!amount || isNaN(amount)) {
                     showStatus('Please enter a valid bid amount', true);
                     return;
                 }
@@ -1282,7 +1331,7 @@
             document.getElementById('approveBid').addEventListener('click', async () => {
                 const bidderAddress = document.getElementById('bidderAddress').value;
                 if (!web3.utils.isAddress(bidderAddress)) {
-                    showStatus('Please enter a valid Ethereum address', true);
+                    showStatus('Please enter a valid address', true);
                     return;
                 }
                 
