@@ -1,315 +1,616 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Secure Message Sender</title>
-    <script src="https://cdn.jsdelivr.net/npm/web3@1.8.0/dist/web3.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure Message Portal</title>
     <style>
-        body { font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; }
-        .card { background: white; border-radius: 10px; padding: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        button { background: #7b51e3; color: white; border: none; padding: 10px 15px; border-radius: 5px; width: 100%; margin-top: 10px; cursor: pointer; }
-        input, textarea { width: 100%; padding: 10px; margin: 8px 0; border: 1px solid #ddd; border-radius: 5px; box-sizing: border-box; }
-        textarea { height: 100px; }
-        .status { margin-top: 15px; padding: 10px; border-radius: 5px; display: none; }
-        .success { background: #d4edda; color: #155724; display: block; }
-        .error { background: #f8d7da; color: #721c24; display: block; }
-        .wallet-info { margin-top: 15px; font-weight: bold; }
+        :root {
+            --primary: #8247e5;
+            --secondary: #f1f1f1;
+            --dark: #1a1a1a;
+            --light: #ffffff;
+            --error: #ff4d4d;
+            --success: #4CAF50;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--secondary);
+            color: var(--dark);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background-color: var(--primary);
+            color: var(--light);
+            padding: 20px 0;
+            text-align: center;
+            margin-bottom: 30px;
+            border-radius: 0 0 10px 10px;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .card {
+            background-color: var(--light);
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .card-title {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: var(--primary);
+            border-bottom: 2px solid var(--primary);
+            padding-bottom: 10px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        
+        input, textarea, select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+        
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+        
+        button {
+            background-color: var(--primary);
+            color: var(--light);
+            border: none;
+            padding: 12px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover {
+            background-color: #6b3cb3;
+        }
+        
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+        }
+        
+        .wallet-info {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            gap: 15px;
+        }
+        
+        .wallet-address {
+            font-family: monospace;
+            background-color: var(--secondary);
+            padding: 8px 12px;
+            border-radius: 4px;
+            word-break: break-all;
+        }
+        
+        .message-list {
+            margin-top: 20px;
+        }
+        
+        .message {
+            border-left: 4px solid var(--primary);
+            padding: 15px;
+            margin-bottom: 15px;
+            background-color: var(--secondary);
+        }
+        
+        .message-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+            color: #555;
+        }
+        
+        .message-content {
+            white-space: pre-wrap;
+        }
+        
+        .alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+        }
+        
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .alert-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .network-info {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            align-items: center;
+        }
+        
+        .network-badge {
+            background-color: var(--primary);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .wallet-info {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
     </style>
 </head>
 <body>
-    <div class="card">
-        <h1>Secure Message Sender</h1>
-        
-        <button id="connectWallet">Connect MetaMask</button>
-        
-        <div id="walletInfo" class="wallet-info" style="display:none">
-            Connected: <span id="walletAddress"></span><br>
-            Network: <span id="networkName"></span>
-            <div id="ownerStatus" style="margin-top:10px;"></div>
+    <header>
+        <div class="container">
+            <h1>Secure Message Portal</h1>
+            <p class="subtitle">Send and receive encrypted messages on Polygon</p>
+        </div>
+    </header>
+    
+    <main class="container">
+        <div class="card">
+            <h2 class="card-title">Wallet Connection</h2>
+            <div class="wallet-info">
+                <button id="connectWallet">Connect Wallet</button>
+                <span id="walletAddress" class="wallet-address">Not connected</span>
+            </div>
+            <div id="networkInfo" class="network-info" style="display: none;">
+                <span class="network-badge" id="networkName"></span>
+                <span id="chainId"></span>
+            </div>
         </div>
         
-        <div id="messageSection" style="display:none">
-            <h3>Send Message</h3>
-            <label>To Address:</label>
-            <input type="text" id="recipientAddress" placeholder="0x...">
-            
-            <label>Message:</label>
-            <textarea id="messageContent" placeholder="Your message"></textarea>
-            
-            <button id="sendMessageBtn">Send Message</button>
-            <div id="statusMessage" class="status"></div>
+        <div class="card">
+            <h2 class="card-title">Send Message</h2>
+            <form id="messageForm">
+                <div class="form-group">
+                    <label for="recipient">Recipient Address</label>
+                    <input type="text" id="recipient" placeholder="0x..." required>
+                </div>
+                <div class="form-group">
+                    <label for="message">Message Content</label>
+                    <textarea id="message" placeholder="Enter your secure message (max 1000 characters)" required></textarea>
+                </div>
+                <button type="submit" id="sendButton" disabled>Send Message</button>
+            </form>
+            <div id="messageAlert" class="alert" style="display: none;"></div>
         </div>
-    </div>
-
+        
+        <div class="card">
+            <h2 class="card-title">Your Messages</h2>
+            <button id="loadMessages" disabled>Load Messages</button>
+            <div id="messagesContainer" class="message-list"></div>
+        </div>
+    </main>
+    
     <script>
-        // CONFIGURATION - EDIT THESE VALUES
-        const CONTRACT_ADDRESS = "0x266f692b696102c3637a5e06cf3337cfa166b40b"; // Replace with your contract address
-        const CONTRACT_ABI = [
-	{
-		"inputs": [],
-		"stateMutability": "nonpayable",
-		"type": "constructor"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "owner",
-				"type": "address"
-			}
-		],
-		"name": "OwnableInvalidOwner",
-		"type": "error"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "account",
-				"type": "address"
-			}
-		],
-		"name": "OwnableUnauthorizedAccount",
-		"type": "error"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": false,
-				"internalType": "bool",
-				"name": "locked",
-				"type": "bool"
-			}
-		],
-		"name": "ContractLocked",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "sender",
-				"type": "address"
-			},
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "recipient",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "timestamp",
-				"type": "uint256"
-			}
-		],
-		"name": "MessageSent",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "previousOwner",
-				"type": "address"
-			},
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "newOwner",
-				"type": "address"
-			}
-		],
-		"name": "OwnershipTransferred",
-		"type": "event"
-	},
-	{
-		"inputs": [],
-		"name": "renounceOwnership",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "recipient",
-				"type": "address"
-			},
-			{
-				"internalType": "string",
-				"name": "message",
-				"type": "string"
-			}
-		],
-		"name": "sendMessage",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "toggleLock",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "newOwner",
-				"type": "address"
-			}
-		],
-		"name": "transferOwnership",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "sender",
-				"type": "address"
-			}
-		],
-		"name": "getMessage",
-		"outputs": [
-			{
-				"internalType": "string",
-				"name": "",
-				"type": "string"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "isLocked",
-		"outputs": [
-			{
-				"internalType": "bool",
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "owner",
-		"outputs": [
-			{
-				"internalType": "address",
-				"name": "",
-				"type": "address"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	}
-];
-
-        // App Code (No need to edit below)
-        let web3, contract, account;
+        // Contract ABI (simplified for this example)
+        const contractABI = [
+            {
+                "inputs": [],
+                "stateMutability": "nonpayable",
+                "type": "constructor"
+            },
+            {
+                "anonymous": false,
+                "inputs": [
+                    {
+                        "indexed": true,
+                        "internalType": "address",
+                        "name": "previousOwner",
+                        "type": "address"
+                    },
+                    {
+                        "indexed": true,
+                        "internalType": "address",
+                        "name": "newOwner",
+                        "type": "address"
+                    }
+                ],
+                "name": "OwnershipChanged",
+                "type": "event"
+            },
+            {
+                "anonymous": false,
+                "inputs": [
+                    {
+                        "indexed": true,
+                        "internalType": "address",
+                        "name": "sender",
+                        "type": "address"
+                    },
+                    {
+                        "indexed": true,
+                        "internalType": "address",
+                        "name": "recipient",
+                        "type": "address"
+                    }
+                ],
+                "name": "MessageSent",
+                "type": "event"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "address",
+                        "name": "",
+                        "type": "address"
+                    }
+                ],
+                "name": "approvedRecoveryTokens",
+                "outputs": [
+                    {
+                        "internalType": "bool",
+                        "name": "",
+                        "type": "bool"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "getChainId",
+                "outputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "",
+                        "type": "uint256"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "getMessages",
+                "outputs": [
+                    {
+                        "components": [
+                            {
+                                "internalType": "address",
+                                "name": "sender",
+                                "type": "address"
+                            },
+                            {
+                                "internalType": "string",
+                                "name": "content",
+                                "type": "string"
+                            },
+                            {
+                                "internalType": "uint256",
+                                "name": "timestamp",
+                                "type": "uint256"
+                            }
+                        ],
+                        "internalType": "struct SecureMessagePortal.Message[]",
+                        "name": "",
+                        "type": "tuple[]"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "address",
+                        "name": "recipient",
+                        "type": "address"
+                    },
+                    {
+                        "internalType": "string",
+                        "name": "message",
+                        "type": "string"
+                    }
+                ],
+                "name": "sendMessage",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            }
+        ];
         
+        // Contract address - replace with your actual contract address
+        const contractAddress = "0x123..."; // Replace with your contract address
+        
+        let provider;
+        let signer;
+        let contract;
+        let currentAccount = null;
+        
+        // DOM elements
+        const connectWalletBtn = document.getElementById('connectWallet');
+        const walletAddressEl = document.getElementById('walletAddress');
+        const networkInfoEl = document.getElementById('networkInfo');
+        const networkNameEl = document.getElementById('networkName');
+        const chainIdEl = document.getElementById('chainId');
+        const messageForm = document.getElementById('messageForm');
+        const recipientInput = document.getElementById('recipient');
+        const messageInput = document.getElementById('message');
+        const sendButton = document.getElementById('sendButton');
+        const messageAlert = document.getElementById('messageAlert');
+        const loadMessagesBtn = document.getElementById('loadMessages');
+        const messagesContainer = document.getElementById('messagesContainer');
+        
+        // Network names mapping
+        const networkNames = {
+            137: "Polygon Mainnet",
+            80001: "Polygon Mumbai Testnet",
+            1: "Ethereum Mainnet",
+            5: "Goerli Testnet"
+        };
+        
+        // Initialize the application
         async function init() {
+            // Check if MetaMask is installed
             if (window.ethereum) {
-                web3 = new Web3(window.ethereum);
+                provider = new ethers.providers.Web3Provider(window.ethereum);
+                
+                // Listen for account changes
+                window.ethereum.on('accountsChanged', (accounts) => {
+                    if (accounts.length > 0) {
+                        currentAccount = accounts[0];
+                        updateUI();
+                    } else {
+                        handleDisconnect();
+                    }
+                });
+                
+                // Listen for chain changes
+                window.ethereum.on('chainChanged', () => {
+                    window.location.reload();
+                });
+                
+                // Try to connect automatically
                 try {
-                    const accounts = await web3.eth.getAccounts();
-                    if (accounts.length > 0) connectWallet(accounts[0]);
-                } catch (e) {
-                    showStatus(e.message, 'error');
+                    const accounts = await window.ethereum.request({ method: 'eth_accounts' });
+                    if (accounts.length > 0) {
+                        currentAccount = accounts[0];
+                        await setupContract();
+                        updateUI();
+                    }
+                } catch (error) {
+                    console.error("Error connecting to wallet:", error);
                 }
             } else {
-                document.getElementById('connectWallet').textContent = "Install MetaMask";
-                document.getElementById('connectWallet').disabled = true;
+                alert("Please install MetaMask to use this application!");
             }
         }
         
-        async function connectWallet() {
-            try {
-                const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-                account = accounts[0];
-                contract = new web3.eth.Contract(CONTRACT_ABI, CONTRACT_ADDRESS);
-                
-                // Update UI
-                document.getElementById('connectWallet').textContent = "Connected";
-                document.getElementById('connectWallet').disabled = true;
-                document.getElementById('walletAddress').textContent = account;
-                document.getElementById('walletInfo').style.display = "block";
-                
-                // Check network
-                const chainId = await web3.eth.getChainId();
-                document.getElementById('networkName').textContent = 
-                    chainId === 137 ? "Polygon Mainnet" : 
-                    chainId === 80001 ? "Polygon Mumbai" : 
-                    `Chain ID: ${chainId}`;
-                
-                // Check if owner
-                const owner = await contract.methods.owner().call();
-                const isOwner = owner.toLowerCase() === account.toLowerCase();
-                
-                if (isOwner) {
-                    document.getElementById('ownerStatus').innerHTML = "<span style='color:green'>✓ You are the owner</span>";
-                    document.getElementById('messageSection').style.display = "block";
-                } else {
-                    document.getElementById('ownerStatus').innerHTML = "<span style='color:red'>✗ Only owner can send</span>";
-                }
-                
-                // Set up send button
-                document.getElementById('sendMessageBtn').addEventListener('click', sendMessage);
-                
-            } catch (e) {
-                showStatus(e.message, 'error');
-            }
-        }
-        
-        async function sendMessage() {
-            const recipient = document.getElementById('recipientAddress').value;
-            const message = document.getElementById('messageContent').value;
-            
-            if (!web3.utils.isAddress(recipient)) {
-                showStatus("Invalid address", 'error');
+        // Connect wallet handler
+        connectWalletBtn.addEventListener('click', async () => {
+            if (!window.ethereum) {
+                alert("Please install MetaMask to use this application!");
                 return;
             }
             
             try {
-                document.getElementById('sendMessageBtn').disabled = true;
-                const tx = await contract.methods.sendMessage(recipient, message)
-                    .send({ from: account });
+                const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+                currentAccount = accounts[0];
+                await setupContract();
+                updateUI();
+            } catch (error) {
+                console.error("Error connecting wallet:", error);
+                showAlert("Failed to connect wallet: " + error.message, "error");
+            }
+        });
+        
+        // Set up the contract instance
+        async function setupContract() {
+            signer = provider.getSigner();
+            contract = new ethers.Contract(contractAddress, contractABI, signer);
+            
+            // Get network info
+            try {
+                const chainId = await contract.getChainId();
+                const chainIdHex = "0x" + chainId.toString(16);
+                const networkName = networkNames[chainId] || `Chain ID: ${chainId}`;
                 
-                showStatus(`Message sent! TX: ${tx.transactionHash}`, 'success');
-                document.getElementById('messageContent').value = "";
-            } catch (e) {
-                showStatus(e.message, 'error');
-            } finally {
-                document.getElementById('sendMessageBtn').disabled = false;
+                networkNameEl.textContent = networkName;
+                chainIdEl.textContent = `(${chainIdHex})`;
+                networkInfoEl.style.display = "flex";
+            } catch (error) {
+                console.error("Error getting chain ID:", error);
             }
         }
         
-        function showStatus(msg, type) {
-            const el = document.getElementById('statusMessage');
-            el.textContent = msg;
-            el.className = `status ${type}`;
+        // Update UI based on connection state
+        function updateUI() {
+            if (currentAccount) {
+                walletAddressEl.textContent = currentAccount;
+                connectWalletBtn.textContent = "Disconnect";
+                sendButton.disabled = false;
+                loadMessagesBtn.disabled = false;
+            } else {
+                walletAddressEl.textContent = "Not connected";
+                connectWalletBtn.textContent = "Connect Wallet";
+                sendButton.disabled = true;
+                loadMessagesBtn.disabled = true;
+                messagesContainer.innerHTML = "";
+                networkInfoEl.style.display = "none";
+            }
         }
         
-        // Initialize on load
-        window.addEventListener('load', () => {
-            init();
-            document.getElementById('connectWallet').addEventListener('click', connectWallet);
+        // Handle wallet disconnection
+        function handleDisconnect() {
+            currentAccount = null;
+            contract = null;
+            updateUI();
+        }
+        
+        // Send message handler
+        messageForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const recipient = recipientInput.value.trim();
+            const message = messageInput.value.trim();
+            
+            // Basic validation
+            if (!ethers.utils.isAddress(recipient)) {
+                showAlert("Please enter a valid Ethereum address", "error");
+                return;
+            }
+            
+            if (message.length === 0) {
+                showAlert("Please enter a message", "error");
+                return;
+            }
+            
+            if (message.length > 1000) {
+                showAlert("Message must be 1000 characters or less", "error");
+                return;
+            }
+            
+            try {
+                sendButton.disabled = true;
+                sendButton.textContent = "Sending...";
+                
+                const tx = await contract.sendMessage(recipient, message);
+                showAlert("Transaction sent! Waiting for confirmation...", "success");
+                
+                await tx.wait();
+                showAlert("Message sent successfully!", "success");
+                
+                // Clear form
+                messageInput.value = "";
+                recipientInput.value = "";
+            } catch (error) {
+                console.error("Error sending message:", error);
+                showAlert("Failed to send message: " + error.message, "error");
+            } finally {
+                sendButton.disabled = false;
+                sendButton.textContent = "Send Message";
+            }
         });
+        
+        // Load messages handler
+        loadMessagesBtn.addEventListener('click', async () => {
+            try {
+                loadMessagesBtn.disabled = true;
+                loadMessagesBtn.textContent = "Loading...";
+                
+                const messages = await contract.getMessages();
+                displayMessages(messages);
+            } catch (error) {
+                console.error("Error loading messages:", error);
+                showAlert("Failed to load messages: " + error.message, "error");
+            } finally {
+                loadMessagesBtn.disabled = false;
+                loadMessagesBtn.textContent = "Load Messages";
+            }
+        });
+        
+        // Display messages
+        function displayMessages(messages) {
+            if (messages.length === 0) {
+                messagesContainer.innerHTML = "<p>No messages found.</p>";
+                return;
+            }
+            
+            messagesContainer.innerHTML = "";
+            
+            messages.forEach((msg, index) => {
+                const messageEl = document.createElement('div');
+                messageEl.className = 'message';
+                
+                const date = new Date(msg.timestamp * 1000);
+                const formattedDate = date.toLocaleString();
+                
+                messageEl.innerHTML = `
+                    <div class="message-header">
+                        <span>From: ${msg.sender}</span>
+                        <span>${formattedDate}</span>
+                    </div>
+                    <div class="message-content">${msg.content}</div>
+                `;
+                
+                messagesContainer.appendChild(messageEl);
+            });
+        }
+        
+        // Show alert message
+        function showAlert(message, type) {
+            messageAlert.textContent = message;
+            messageAlert.className = `alert alert-${type}`;
+            messageAlert.style.display = "block";
+            
+            // Hide after 5 seconds
+            setTimeout(() => {
+                messageAlert.style.display = "none";
+            }, 5000);
+        }
+        
+        // Connect/disconnect toggle
+        connectWalletBtn.addEventListener('click', function() {
+            if (currentAccount) {
+                handleDisconnect();
+            }
+        });
+        
+        // Initialize the app
+        init();
     </script>
 </body>
 </html>
