@@ -260,7 +260,7 @@
       <p>Thank you for being a collector! Here's your exclusive content:</p>
       <button id="unlockButton" class="btn-primary">Reveal Private Link</button>
       <div id="contentLink" style="display:none; margin-top:15px;">
-        <a href="https://form.jotform.com/223058286315456" target="_blank" style="color:#00ffcc;">Access Your          Exclusive Content</a>
+        <a href="https://form.jotform.com/223058286315456" target="_blank" style="color:#00ffcc;">Access Your Exclusive Content</a>
       </div>
     </div>
   </main>
@@ -720,6 +720,34 @@
       }
     }
 
+    async function checkUnlockableContent() {
+  try {
+    if (!contract || !accounts[0]) return;
+    
+    const balance = await contract.methods.balanceOf(accounts[0], tokenId).call();
+    const unlockableSection = document.getElementById('unlockableContent');
+    
+    if (balance > 0) {
+      unlockableSection.style.display = 'block';
+      
+      // Set up unlock button
+      document.getElementById('unlockButton').addEventListener('click', async () => {
+        try {
+          await contract.methods.accessUnlockableContent().send({ from: accounts[0] });
+          document.getElementById('contentLink').style.display = 'block';
+          showSuccess("Content unlocked successfully!");
+        } catch (error) {
+          showError("Failed to unlock content: " + getErrorMessage(error));
+        }
+      });
+    } else {
+      unlockableSection.style.display = 'none';
+    }
+  } catch (error) {
+    console.error("Error checking unlockable content:", error);
+  }
+}
+   
     function setupEventListeners() {
       document.getElementById('bidButton').addEventListener('click', submitBid);
       document.getElementById('mintButton').addEventListener('click', mintNFT);
@@ -747,6 +775,7 @@
         await checkBidStatus();
         await checkMintedStatus();
         await updateStats();
+        await checkUnlockableContent();
         showSuccess("Status refreshed successfully!");
       } catch (error) {
         console.error("Refresh failed:", error);
