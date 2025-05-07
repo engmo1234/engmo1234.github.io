@@ -212,7 +212,7 @@
   <main class="container">
     <div class="card">
       <h2>Mint Your NFT</h2>
-      <input type="number" id="bidAmount" placeholder="Enter amount in MATIC" step="0.01" min="313">
+      <input type="number" id="bidAmount" placeholder="Enter amount in MATIC" step="0.01" min="0.4">
       <button id="bidButton" class="btn-primary">Submit Bid</button>
       <button id="mintButton" class="btn-primary" disabled>Mint NFT</button>
       <button id="withdrawButton" class="btn-secondary">Withdraw Bid</button>
@@ -253,6 +253,15 @@
       <input type="text" id="bidderAddress" placeholder="Enter bidder's wallet address">
       <button id="approveButton" class="btn-primary">Approve Bid</button>
       <button id="rejectButton" class="btn-secondary">Reject Bid</button>
+    </div>
+
+    <div class="card" id="unlockableContent" style="display:block;">
+      <h2>Exclusive Content</h2>
+      <p>Thank you for being a collector! Here's your exclusive content:</p>
+      <button id="unlockButton" class="btn-primary">Reveal Private Link</button>
+      <div id="contentLink" style="display:none; margin-top:15px;">
+        <a href="https://engmo1234.com/basic" target="_blank" style="color:#00ffcc;">Access Your Exclusive Content pssword=3mokey </a>
+      </div>
     </div>
   </main>
 
@@ -711,6 +720,34 @@
       }
     }
 
+    async function checkUnlockableContent() {
+  try {
+    if (!contract || !accounts[0]) return;
+    
+    const balance = await contract.methods.balanceOf(accounts[0], tokenId).call();
+    const unlockableSection = document.getElementById('unlockableContent');
+    
+    if (balance > 0) {
+      unlockableSection.style.display = 'block';
+      
+      // Set up unlock button
+      document.getElementById('unlockButton').addEventListener('click', async () => {
+        try {
+          await contract.methods.accessUnlockableContent().send({ from: accounts[0] });
+          document.getElementById('contentLink').style.display = 'block';
+          showSuccess("Content unlocked successfully!");
+        } catch (error) {
+          showError("Failed to unlock content: " + getErrorMessage(error));
+        }
+      });
+    } else {
+      unlockableSection.style.display = 'none';
+    }
+  } catch (error) {
+    console.error("Error checking unlockable content:", error);
+  }
+}
+   
     function setupEventListeners() {
       document.getElementById('bidButton').addEventListener('click', submitBid);
       document.getElementById('mintButton').addEventListener('click', mintNFT);
@@ -738,6 +775,7 @@
         await checkBidStatus();
         await checkMintedStatus();
         await updateStats();
+        await checkUnlockableContent();
         showSuccess("Status refreshed successfully!");
       } catch (error) {
         console.error("Refresh failed:", error);
@@ -826,7 +864,7 @@
 
     // Smart contract configuration
     const config = {
-      contractAddress: "0xc66cccf6cf6b3e8fe8e489fbbbcd0f81e2ebccd2",
+      contractAddress: "0xc66ccCf6Cf6B3e8Fe8E489FbbBcD0f81E2ebcCD2",
       abi: [
         {"inputs":[{"internalType":"string","name":"uri","type":"string"}],"stateMutability":"nonpayable","type":"constructor"},
         {"inputs":[{"internalType":"address","name":"sender","type":"address"},{"internalType":"uint256","name":"balance","type":"uint256"},{"internalType":"uint256","name":"needed","type":"uint256"},{"internalType":"uint256","name":"tokenId","type":"uint256"}],"name":"ERC1155InsufficientBalance","type":"error"},
