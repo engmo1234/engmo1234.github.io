@@ -23,6 +23,10 @@
     overflow: hidden;
     font-family: 'Cairo', sans-serif;
     color: #00ff88;
+    overflow-x: auto; /* Allows horizontal scrolling if needed */
+    overflow-y: auto; /* Ensures vertical scrolling works */
+    min-width: 100vw; /* Ensures body takes full viewport width */
+    white-space: nowrap; /* Prevents text wrapping (if needed) */
   }
 
   #bg {
@@ -369,7 +373,7 @@
   <!-- Navigation Links -->
   <div class="nav-links">
     <a href="https://engmo1234.com/topvip" id="link1">TOPVIP</a>
-    <a href="https://engmo1234.com/test" id="link2">TEST</a>
+    <a href="https://engmo1234.com/test" id="link2">Senior</a>
     <a href="https://engmo1234.com/basic" id="link3">BASIC</a>
     <a href="https://engmo1234.com/terms_green_organized.html" id="link4">TERMS</a>
   </div>
@@ -586,7 +590,7 @@
       // Switch to English
       document.getElementById('title').innerText = 'Bism Allah';
       document.getElementById('link1').innerText = 'TOPVIP';
-      document.getElementById('link2').innerText = 'TEST';
+      document.getElementById('link2').innerText = 'Senior';
       document.getElementById('link3').innerText = 'BASIC';
       document.getElementById('link4').innerText = 'TERMS';
       document.getElementById('translateBtn').innerText = 'ترجمة إلى العربية';
