@@ -458,11 +458,11 @@
     
     <div class="legal-notice">
       <div class="english">
-        <p>By scanning or clicking this QR, you accept our <a href="#" id="termsLink">terms and conditions</a>.</p>
+        <p>By scanning this QR, you accept our <a href="#" id="termsLink">terms and conditions</a>.</p>
         <p>BID WHAT YOU CAN AFFORD FOR YOUR CUSTOM WEBSITE</p>
       </div>
       <div class="arabic hidden">
-        <p>بمسح او يضغط هذا الرمز، فإنك تقبل <a href="#" id="termsLinkAr">الشروط والأحكام</a>.</p>
+        <p>بمسح هذا الرمز، فإنك تقبل <a href="#" id="termsLinkAr">الشروط والأحكام</a>.</p>
         <p>اقترح ما يمكنك دفعه لتحصل على موقعك المخصص</p>
       </div>
     </div>
@@ -577,7 +577,98 @@
         <p class="arabic hidden">بعد السك، ستحصل على حق الوصول إلى موقعك المخصص</p>
       </div>
     </div>
+    <!-- Add this where you want the button/videos to appear -->
+<!-- Add this where you want the button/videos to appear -->
+<div class="crypto-video-transparent">
+  <button id="showVideosBtn" onclick="toggleVideos()">Don't know what is crypto?ما هم العملات المشمفرة</button>
+  <div id="videoWrapper" style="display: none;">
+    <div class="video-embed">
+      <iframe width="560" height="315" src="https://www.youtube.com/embed/o-h_YZt8_Es" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    </div>
+    <div class="video-embed">
+      <iframe width="560" height="315" src="https://www.youtube.com/embed/-Z3k8wNCEcs" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    </div>
+  </div>
+</div>
+
+<style>
+  /* Transparent container with glass-morphism effect */
+  .crypto-video-transparent {
+    text-align: center;
+    margin: 30px 0;
+    padding: 20px;
+    background: transparent; /* Semi-transparent black */
+    backdrop-filter: blur(2px); /* Frosted glass effect */
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.1); /* Subtle border */
+  }
+
+  /* Modern neon button */
+  #showVideosBtn {
+    background: transparent;
+    color: #fff;
+    padding: 14px 28px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 50px;
+    border: 2px solid #00d4ff;
+    transition: all 0.4s;
+    text-shadow: 0 0 5px rgba(0,212,255,0.5);
+    box-shadow: 
+      0 0 10px rgba(0,212,255,0.3),
+      inset 0 0 10px rgba(0,212,255,0.1);
+  }
+
+  #showVideosBtn:hover {
+    background: rgba(0,212,255,0.1);
+    box-shadow: 
+      0 0 20px rgba(0,212,255,0.5),
+      inset 0 0 15px rgba(0,212,255,0.2);
+    transform: translateY(-2px);
+  }
+
+  /* Video styling */
+  .video-embed {
+    position: relative;
+    padding-bottom: 56.25%; /* 16:9 aspect ratio */
+    height: 0;
+    overflow: hidden;
+    margin: 25px 0;
+    border-radius: 8px;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+  }
+
+  .video-embed iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+  }
+</style>
+
+<script>
+  function toggleVideos() {
+    const wrapper = document.getElementById('videoWrapper');
+    const btn = document.getElementById('showVideosBtn');
     
+    if (wrapper.style.display === 'none') {
+      wrapper.style.display = 'block';
+      btn.textContent = 'Hide Videos';
+      btn.style.borderColor = '#ff3a3a';
+      btn.style.textShadow = '0 0 5px rgba(255,58,58,0.5)';
+      btn.style.boxShadow = '0 0 20px rgba(255,58,58,0.5), inset 0 0 15px rgba(255,58,58,0.2)';
+    } else {
+      wrapper.style.display = 'none';
+      btn.textContent = 'Don\'t know what is crypto? Click me';
+      btn.style.borderColor = '#00ff88';
+      btn.style.textShadow = '0 0 5px rgba(0,212,255,0.5)';
+      btn.style.boxShadow = '0 0 10px rgba(0,212,255,0.3), inset 0 0 10px rgba(0,212,255,0.1)';
+    }
+  }
+</script>
     <div style="text-align: center; margin-top: 50px;">
       <a href="#tutorials" class="btn">Watch Tutorial Videos</a>
     </div>
