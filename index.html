@@ -444,8 +444,8 @@
 <div class="container">
   <header>
     <h1 id="title">Bism Allah</h1>
-    <p class="subtitle english">Professional Website and Web3 Services | Accepting Polygon (MATIC) & NFT Payments</p>
-    <p class="subtitle arabic hidden">خدمات مواقع و ويب 3 احترافية | قبول دفعات Polygon (MATIC) و NFT</p>
+    <p class="subtitle english">Professional Website and Web3 design Services | Accepting Polygon (MATIC) & NFT Payments</p>
+    <p class="subtitle arabic hidden">خدمات تصميم مواقع و ويب 3 احترافية | قبول دفعات Polygon (MATIC) و NFT</p>
   </header>
 
   <section class="cta-section">
@@ -674,7 +674,148 @@
     </div>
   </section>
 </div>
+<div class="completed-websites">
+  <button id="showWebsitesBtn" onclick="toggleWebsites()">View Completed Websites</button>
+  <div id="websitesWrapper" style="display: none;">
+    <div class="website-card">
+      <h3>Saraya VIP</h3>
+      <p>A premium Engineering consultant services platform</p>
+      <a href="https://saraya.vip" target="_blank" class="website-link">Visit saraya.vip</a>
+    </div>
+    <!-- Add more website cards here as needed -->
+  </div>
+</div>
 
+<style>
+  /* Base transparent container */
+  .crypto-video-transparent, .completed-websites {
+    text-align: center;
+    margin: 30px 0;
+    padding: 20px;
+    background: rgba(0,0,0,0.05);
+    backdrop-filter: blur(2px);
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+
+  /* Button styling */
+  #showVideosBtn, #showWebsitesBtn {
+    background: transparent;
+    color: #fff;
+    padding: 14px 28px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 50px;
+    border: 2px solid #00ff88;
+    transition: all 0.4s;
+    text-shadow: 0 0 5px rgba(0,255,136,0.5);
+    box-shadow: 
+      0 0 10px rgba(0,255,136,0.3),
+      inset 0 0 10px rgba(0,255,136,0.1);
+    margin: 10px;
+  }
+
+  #showVideosBtn:hover, #showWebsitesBtn:hover {
+    background: rgba(0,255,136,0.1);
+    box-shadow: 
+      0 0 20px rgba(0,255,136,0.5),
+      inset 0 0 15px rgba(0,255,136,0.2);
+    transform: translateY(-2px);
+  }
+
+  /* Video styling */
+  .video-embed {
+    position: relative;
+    padding-bottom: 56.25%;
+    height: 0;
+    overflow: hidden;
+    margin: 25px 0;
+    border-radius: 8px;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+  }
+
+  .video-embed iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+  }
+
+  /* Website cards styling */
+  .website-card {
+    background: rgba(0,0,0,0.2);
+    padding: 20px;
+    border-radius: 8px;
+    margin: 20px auto;
+    max-width: 500px;
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+
+  .website-card h3 {
+    color: #00ff88;
+    margin-top: 0;
+  }
+
+  .website-link {
+    display: inline-block;
+    padding: 10px 20px;
+    background: rgba(0,255,136,0.1);
+    color: #00ff88;
+    text-decoration: none;
+    border-radius: 50px;
+    border: 1px solid #00ff88;
+    transition: all 0.3s;
+    margin-top: 10px;
+  }
+
+  .website-link:hover {
+    background: rgba(0,255,136,0.2);
+    box-shadow: 0 0 15px rgba(0,255,136,0.3);
+  }
+</style>
+
+<script>
+  function toggleVideos() {
+    const wrapper = document.getElementById('videoWrapper');
+    const btn = document.getElementById('showVideosBtn');
+    
+    if (wrapper.style.display === 'none') {
+      wrapper.style.display = 'block';
+      btn.textContent = 'Hide Videos';
+      btn.style.borderColor = '#ff3a3a';
+      btn.style.textShadow = '0 0 5px rgba(255,58,58,0.5)';
+      btn.style.boxShadow = '0 0 20px rgba(255,58,58,0.5), inset 0 0 15px rgba(255,58,58,0.2)';
+    } else {
+      wrapper.style.display = 'none';
+      btn.textContent = 'Don\'t know what is crypto? Click me';
+      btn.style.borderColor = '#00ff88';
+      btn.style.textShadow = '0 0 5px rgba(0,255,136,0.5)';
+      btn.style.boxShadow = '0 0 10px rgba(0,255,136,0.3), inset 0 0 10px rgba(0,255,136,0.1)';
+    }
+  }
+
+  function toggleWebsites() {
+    const wrapper = document.getElementById('websitesWrapper');
+    const btn = document.getElementById('showWebsitesBtn');
+    
+    if (wrapper.style.display === 'none') {
+      wrapper.style.display = 'block';
+      btn.textContent = 'Hide Websites';
+      btn.style.borderColor = '#ff3a3a';
+      btn.style.textShadow = '0 0 5px rgba(255,58,58,0.5)';
+      btn.style.boxShadow = '0 0 20px rgba(255,58,58,0.5), inset 0 0 15px rgba(255,58,58,0.2)';
+    } else {
+      wrapper.style.display = 'none';
+      btn.textContent = 'View Completed Websites';
+      btn.style.borderColor = '#00ff88';
+      btn.style.textShadow = '0 0 5px rgba(0,255,136,0.5)';
+      btn.style.boxShadow = '0 0 10px rgba(0,255,136,0.3), inset 0 0 10px rgba(0,255,136,0.1)';
+    }
+  }
+</script>
 <footer>
   <p class="english">&copy; 2023 ENGMO1234. All rights reserved. 
   <p class="arabic hidden">&copy; 2023 ENGMO1234. جميع الحقوق محفوظة. 
