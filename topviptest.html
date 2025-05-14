@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -28,7 +29,30 @@
             z-index: -1;
         }
 
-        /* === NEW SCANNER STYLES THAT MATCH YOUR THEME === */
+        /* === WALLET STATUS === */
+        .wallet-status {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            border: 1px solid #00ff87;
+        }
+
+        #connect-wallet {
+            background: linear-gradient(90deg, #00ff87, #60efff);
+            color: black;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+
+        /* === SCANNER STYLES === */
         .scanner-container {
             margin-top: 40px;
             padding: 25px;
@@ -36,11 +60,6 @@
             border-radius: 12px;
             border: 1px solid rgba(96, 239, 255, 0.1);
             transition: all 0.3s;
-        }
-
-        .scanner-container:hover {
-            background: rgba(30, 30, 50, 0.3);
-            border-color: rgba(96, 239, 255, 0.3);
         }
 
         #scan-button {
@@ -133,8 +152,6 @@
             color: #60efff;
         }
 
-
-        
     </style>
 </head>
 <body>
@@ -144,7 +161,7 @@
     <div class="container">
         <!-- Your existing blog content here -->
 
-        <!-- Add this single scanner section at the end -->
+        <!-- Single scanner section -->
         <div class="scanner-container">
             <h2>NFT Ownership Verification</h2>
             <p>Connect your wallet to check if you own NFTs from our collection.</p>
@@ -165,34 +182,55 @@
             </div>
         </div>
     </div>
-  <!-- Add this right before your closing </div> for the container -->
-<div class="blog-post" style="margin-top: 40px;">
-    <h2>NFT Ownership Verification</h2>
-    <p>Connect your wallet to check if you own NFTs from our collection.</p>
-    
-    <div style="text-align: center; margin: 20px 0;">
-        <button id="scan-button" style="background: linear-gradient(90deg, #00ff87, #60efff);
-            color: black; border: none; padding: 10px 20px; border-radius: 8px;
-            cursor: pointer; font-weight: bold;">Verify NFT Ownership</button>
-        <div id="scan-status" style="margin-top: 15px; color: #60efff;"></div>
-    </div>
-    
-    <div id="hidden-content" style="display: none; background: rgba(0, 255, 135, 0.1);
-        padding: 20px; border-radius: 10px; border: 1px solid #00ff87; text-align: center;">
-        <h3>Access Granted!</h3>
-        <p>Thank you for supporting our project. Here's your exclusive content:</p>
-        <a href="https://form.jotform.com/223058286315456" target="_blank" 
-           style="color: #60efff; text-decoration: none; font-weight: bold;">
-           Click here for exclusive form
-        </a>
-        <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://form.jotform.com/223058286315456" 
-             alt="QR Code" style="max-width: 200px; margin: 20px auto; display: block;">
-    </div>
-</div>
-    <script>
-        // ... Your existing JavaScript code ...
 
-        // Add these constants
+    <script>
+        // 1. STARFIELD INITIALIZATION
+        const initStarfield = () => {
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            document.getElementById('starfield').appendChild(renderer.domElement);
+
+            // Create stars
+            const starsGeometry = new THREE.BufferGeometry();
+            const starsMaterial = new THREE.PointsMaterial({
+                color: 0xffffff,
+                size: 0.5,
+                transparent: true
+            });
+
+            const starsVertices = [];
+            for (let i = 0; i < 10000; i++) {
+                starsVertices.push(
+                    THREE.MathUtils.randFloatSpread(2000),
+                    THREE.MathUtils.randFloatSpread(2000),
+                    THREE.MathUtils.randFloatSpread(2000)
+                );
+            }
+
+            starsGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starsVertices, 3));
+            const stars = new THREE.Points(starsGeometry, starsMaterial);
+            scene.add(stars);
+
+            camera.position.z = 1;
+
+            const animate = () => {
+                requestAnimationFrame(animate);
+                stars.rotation.x += 0.0005;
+                stars.rotation.y += 0.0005;
+                renderer.render(scene, camera);
+            };
+            animate();
+
+            window.addEventListener('resize', () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            });
+        };
+
+        // 2. WALLET AND SCANNER FUNCTIONALITY
         const CONTRACT_ADDRESS = "0x281fd8fede6627817110f8c89193a54e64069187";
         const CONTRACT_ABI = [
 	{
@@ -1049,8 +1087,28 @@
 		"type": "function"
 	}
 ];
+        let currentAccount = null;
 
-        // Add this function
+        const connectWallet = async () => {
+            if (window.ethereum) {
+                try {
+                    const provider = new ethers.providers.Web3Provider(window.ethereum);
+                    await provider.send("eth_requestAccounts", []);
+                    const accounts = await provider.listAccounts();
+                    currentAccount = accounts[0];
+                    
+                    document.getElementById('wallet-status').textContent = 
+                        `Connected: ${currentAccount.substring(0, 6)}...${currentAccount.substring(38)}`;
+                    
+                } catch (error) {
+                    console.error("Wallet connection error:", error);
+                    document.getElementById('wallet-status').textContent = "Connection failed";
+                }
+            } else {
+                alert("Please install MetaMask or another Ethereum wallet!");
+            }
+        };
+
         const checkNFTOwnership = async () => {
             if (!currentAccount) {
                 alert("Please connect your wallet first!");
@@ -1078,50 +1136,40 @@
             }
         };
 
-        // Add this event listener in your initialization
+        // 3. INITIALIZATION
         window.addEventListener('load', () => {
+            // Initialize starfield
             initStarfield();
             
-            // Add this to your initialization
-window.addEventListener('load', () => {
-    initStarfield();
-    
-    // Add connect wallet button (only once)
-    const walletStatus = document.getElementById('wallet-status');
-    if (!document.getElementById('connect-wallet')) { // Check if button doesn't already exist
-        const connectBtn = document.createElement('button');
-        connectBtn.id = 'connect-wallet';
-        connectBtn.textContent = 'Connect Wallet';
-        connectBtn.onclick = connectWallet;
-        walletStatus.appendChild(connectBtn);
-    }
-    
-    // Add scan button event listener (only once)
-    const scanButton = document.getElementById('scan-button');
-    if (scanButton) {
-        scanButton.addEventListener('click', checkNFTOwnership);
-    }
-    
-    // Check if wallet is already connected
-    if (window.ethereum) {
-        window.ethereum.on('accountsChanged', (accounts) => {
-            if (accounts.length > 0) {
-                connectWallet();
-            } else {
-                currentAccount = null;
-                document.getElementById('wallet-status').textContent = "Wallet not connected";
-                document.getElementById('wallet-status').appendChild(connectBtn);
-                isAdmin = false;
-                document.querySelectorAll('.admin-controls, .admin-tools').forEach(el => {
-                    el.style.display = 'none';
+            // Set up wallet connection
+            const walletStatus = document.getElementById('wallet-status');
+            const connectBtn = document.createElement('button');
+            connectBtn.id = 'connect-wallet';
+            connectBtn.textContent = 'Connect Wallet';
+            connectBtn.onclick = connectWallet;
+            walletStatus.appendChild(connectBtn);
+            
+            // Set up scan button
+            document.getElementById('scan-button').addEventListener('click', checkNFTOwnership);
+            
+            // Check for existing wallet connection
+            if (window.ethereum) {
+                window.ethereum.on('accountsChanged', (accounts) => {
+                    if (accounts.length > 0) {
+                        connectWallet();
+                    } else {
+                        currentAccount = null;
+                        walletStatus.textContent = "Wallet not connected";
+                        walletStatus.appendChild(connectBtn);
+                    }
                 });
+                
+                // Try to connect automatically if already authorized
+                if (window.ethereum.selectedAddress) {
+                    connectWallet();
+                }
             }
         });
-        
-        // Try to connect automatically
-        connectWallet();
-    }
-});
     </script>
 </body>
 </html>
