@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -8,6 +9,7 @@
     <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700&display=swap" rel="stylesheet">
     <style>
+        /* === ULTRA-TRANSPARENT THEME === */
         body {
             margin: 0;
             padding: 0;
@@ -27,6 +29,7 @@
             z-index: -1;
         }
 
+        /* === WALLET STATUS === */
         .wallet-status {
             position: fixed;
             top: 20px;
@@ -38,7 +41,7 @@
             border: 1px solid #00ff87;
         }
 
-        .wallet-btn {
+        #connect-wallet {
             background: linear-gradient(90deg, #00ff87, #60efff);
             color: black;
             border: none;
@@ -49,29 +52,14 @@
             margin-left: 10px;
         }
 
-        .container {
-            max-width: 900px;
-            margin: 5% auto;
-            padding: 40px;
-            background: rgba(0, 0, 0, 0.1);
-            backdrop-filter: blur(5px);
-            border-radius: 15px;
-            border: 1px solid rgba(96, 239, 255, 0.1);
-        }
-
-        h1, h2, h3 {
-            background: linear-gradient(90deg, #00ff87, #60efff);
-            -webkit-background-clip: text;
-            color: transparent;
-            margin-bottom: 10px;
-        }
-
+        /* === SCANNER STYLES === */
         .scanner-container {
             margin-top: 40px;
-            padding: 20px;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 10px;
-            border: 1px solid rgba(96, 239, 255, 0.2);
+            padding: 25px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 12px;
+            border: 1px solid rgba(96, 239, 255, 0.1);
+            transition: all 0.3s;
         }
 
         #scan-button {
@@ -82,13 +70,13 @@
             border-radius: 8px;
             cursor: pointer;
             font-weight: bold;
-            margin-top: 10px;
+            margin-top: 15px;
         }
 
         .scan-status {
             margin-top: 15px;
-            font-size: 0.9em;
             color: #60efff;
+            font-size: 0.9em;
         }
 
         .hidden-content {
@@ -117,6 +105,53 @@
             display: block;
             border-radius: 8px;
         }
+
+        /* === REST OF YOUR EXISTING STYLES === */
+
+
+         .scanner-container {
+            margin-top: 40px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            border: 1px solid rgba(96, 239, 255, 0.2);
+        }
+        
+       
+        .container {
+            max-width: 900px;
+            margin: 5% auto;
+            padding: 40px;
+            background: rgba(0, 0, 0, 0.1) !important;
+            backdrop-filter: blur(5px);
+            border-radius: 15px;
+            border: 1px solid rgba(96, 239, 255, 0.1);
+        }
+
+        h1, h2, h3 {
+            background: linear-gradient(90deg, #00ff87, #60efff);
+            -webkit-background-clip: text;
+            color: transparent;
+            margin-bottom: 10px;
+        }
+
+         #scan-button {
+            background: linear-gradient(90deg, #00ff87, #60efff);
+            color: black;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        
+        .scan-status {
+            margin-top: 15px;
+            font-size: 0.9em;
+            color: #60efff;
+        }
+
     </style>
 </head>
 <body>
@@ -124,6 +159,9 @@
     <div class="wallet-status" id="wallet-status">Wallet not connected</div>
     
     <div class="container">
+        <!-- Your existing blog content here -->
+
+        <!-- Single scanner section -->
         <div class="scanner-container">
             <h2>NFT Ownership Verification</h2>
             <p>Connect your wallet to check if you own NFTs from our collection.</p>
@@ -146,7 +184,7 @@
     </div>
 
     <script>
-        // Starfield initialization
+        // 1. STARFIELD INITIALIZATION
         const initStarfield = () => {
             const scene = new THREE.Scene();
             const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
@@ -154,6 +192,7 @@
             renderer.setSize(window.innerWidth, window.innerHeight);
             document.getElementById('starfield').appendChild(renderer.domElement);
 
+            // Create stars
             const starsGeometry = new THREE.BufferGeometry();
             const starsMaterial = new THREE.PointsMaterial({
                 color: 0xffffff,
@@ -191,7 +230,7 @@
             });
         };
 
-        // Wallet and contract setup
+        // 2. WALLET AND SCANNER FUNCTIONALITY
         const CONTRACT_ADDRESS = "0x281fd8fede6627817110f8c89193a54e64069187";
         const CONTRACT_ABI = [
 	{
@@ -1048,134 +1087,139 @@
 		"type": "function"
 	}
 ];
+       // ===== REPLACE YOUR EXISTING WALLET CODE WITH THIS =====
+let currentAccount = null;
 
-        let currentAccount = null;
-        let provider = null;
-        let signer = null;
-        let contract = null;
-
-        // Initialize wallet connection
-        const initWallet = async () => {
-            if (window.ethereum) {
-                try {
-                    provider = new ethers.providers.Web3Provider(window.ethereum);
-                    
-                    // Check if already connected
-                    const accounts = await provider.listAccounts();
-                    if (accounts.length > 0) {
-                        currentAccount = accounts[0];
-                        updateWalletStatus();
-                    }
-                    
-                    // Set up event listeners
-                    window.ethereum.on('accountsChanged', (accounts) => {
-                        if (accounts.length === 0) {
-                            currentAccount = null;
-                        } else {
-                            currentAccount = accounts[0];
-                        }
-                        updateWalletStatus();
-                    });
-                    
-                    window.ethereum.on('chainChanged', () => {
-                        window.location.reload();
-                    });
-                    
-                } catch (error) {
-                    console.error("Error initializing wallet:", error);
-                }
-            }
+const connectWallet = async () => {
+    if (window.ethereum) {
+        try {
+            // Request account access
+            const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+            currentAccount = accounts[0];
             
-            updateWalletStatus();
-        };
-
-        // Connect wallet function
-        const connectWallet = async () => {
-            if (!window.ethereum) {
-                alert("Please install MetaMask!");
-                return false;
-            }
+            // Update UI
+            document.getElementById('wallet-status').innerHTML = `
+                Connected: ${currentAccount.substring(0, 6)}...${currentAccount.substring(38)}
+                <button id="disconnect-wallet" style="margin-left: 10px; background: #ff3a3a; color: white; border: none; border-radius: 15px; padding: 2px 8px; font-size: 0.8em;">
+                    Disconnect
+                </button>
+            `;
             
-            try {
-                provider = new ethers.providers.Web3Provider(window.ethereum);
-                const accounts = await provider.send("eth_requestAccounts", []);
-                currentAccount = accounts[0];
-                signer = provider.getSigner();
-                contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer);
-                
-                updateWalletStatus();
-                return true;
-            } catch (error) {
-                console.error("Error connecting wallet:", error);
-                document.getElementById('wallet-status').textContent = "Connection rejected";
-                return false;
-            }
-        };
-
-        // Disconnect wallet function
-        const disconnectWallet = () => {
-            currentAccount = null;
-            signer = null;
-            contract = null;
-            updateWalletStatus();
-        };
-
-        // Update wallet status UI
-        const updateWalletStatus = () => {
-            const walletStatus = document.getElementById('wallet-status');
+            // Add disconnect handler
+            document.getElementById('disconnect-wallet').addEventListener('click', () => {
+                currentAccount = null;
+                initWallet(); // Reset to initial state
+            });
             
-            if (currentAccount) {
-                walletStatus.innerHTML = `
-                    Connected: ${currentAccount.substring(0, 6)}...${currentAccount.substring(38)}
-                    <button id="disconnect-wallet" class="wallet-btn" style="background: #ff3a3a; color: white;">
-                        Disconnect
-                    </button>
-                `;
-                document.getElementById('disconnect-wallet').addEventListener('click', disconnectWallet);
-            } else {
-                walletStatus.innerHTML = `
-                    Wallet not connected
-                    <button id="connect-wallet" class="wallet-btn">
-                        Connect Wallet
-                    </button>
-                `;
-                document.getElementById('connect-wallet').addEventListener('click', connectWallet);
-            }
-        };
+            return true;
+        } catch (error) {
+            console.error("User rejected request:", error);
+            document.getElementById('wallet-status').textContent = "Connection rejected";
+            return false;
+        }
+    } else {
+        alert("Please install MetaMask!");
+        return false;
+    }
+};
 
-        // Check NFT ownership
+const initWallet = () => {
+    const walletStatus = document.getElementById('wallet-status');
+    walletStatus.innerHTML = `
+        Wallet not connected
+        <button id="connect-wallet" style="margin-left: 10px; 
+               background: linear-gradient(90deg, #00ff87, #60efff); 
+               color: black; border: none; border-radius: 15px; 
+               padding: 2px 8px; font-weight: bold;">
+            Connect Wallet
+        </button>
+    `;
+    document.getElementById('connect-wallet').addEventListener('click', connectWallet);
+    
+    // Auto-connect if already authorized
+    if (window.ethereum?.selectedAddress) {
+        connectWallet();
+    }
+    
+    // Handle account changes
+    if (window.ethereum) {
+        window.ethereum.on('accountsChanged', (accounts) => {
+            if (accounts.length === 0) {
+                currentAccount = null;
+                initWallet();
+            } else if (accounts[0] !== currentAccount) {
+                connectWallet();
+            }
+        });
+    }
+};
+// ===== END OF REPLACEMENT CODE =====
+
         const checkNFTOwnership = async () => {
-            if (!currentAccount) {
-                alert("Please connect your wallet first!");
-                return;
-            }
-            
-            const statusElement = document.getElementById('scan-status');
-            statusElement.innerHTML = '<span style="color:#60efff">Scanning wallet...</span>';
-            
-            try {
-                const balance = await contract.balanceOf(currentAccount, 1);
-                
-                if (balance.gt(0)) {
-                    statusElement.innerHTML = '<span style="color:#00ff87">✓ Access granted! NFT detected.</span>';
-                    document.getElementById('hidden-content').style.display = 'block';
-                } else {
-                    statusElement.innerHTML = '<span style="color:#ff3a3a">✗ No NFTs found in this wallet.</span>';
-                    document.getElementById('hidden-content').style.display = 'none';
-                }
-            } catch (error) {
-                console.error("Error checking NFT:", error);
-                statusElement.innerHTML = '<span style="color:#ffcc00">⚠ Error scanning. Try again.</span>';
-            }
-        };
+    if (!currentAccount) {
+        alert("Please connect your wallet first!");
+        return;
+    }
+    
+    const statusElement = document.getElementById('scan-status');
+    statusElement.innerHTML = '<span style="color:#60efff">Scanning wallet...</span>';
+    
+    try {
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        const contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, provider);
+        
+        // First get the TOKEN_ID from the contract
+        const tokenId = await contract.TOKEN_ID();
+        
+        // Then check balance for that token ID
+        const balance = await contract.balanceOf(currentAccount, tokenId);
+        
+        if (balance.gt(0)) {
+            statusElement.innerHTML = '<span style="color:#00ff87">✓ Access granted! NFT detected.</span>';
+            document.getElementById('hidden-content').style.display = 'block';
+        } else {
+            statusElement.innerHTML = '<span style="color:#ff3a3a">✗ No NFTs found in this wallet.</span>';
+            document.getElementById('hidden-content').style.display = 'none';
+        }
+    } catch (error) {
+        console.error("Error:", error);
+        statusElement.innerHTML = '<span style="color:#ffcc00">⚠ Error scanning. Try again.</span>';
+    }
+};
 
-        // Initialize everything when page loads
+        // 3. INITIALIZATION
         window.addEventListener('load', () => {
+            // Initialize starfield
             initStarfield();
-            initWallet();
+            
+            // Set up wallet connection
+            const walletStatus = document.getElementById('wallet-status');
+            const connectBtn = document.createElement('button');
+            connectBtn.id = 'connect-wallet';
+            connectBtn.textContent = 'Connect Wallet';
+            connectBtn.onclick = connectWallet;
+            walletStatus.appendChild(connectBtn);
             
             // Set up scan button
             document.getElementById('scan-button').addEventListener('click', checkNFTOwnership);
+            
+            // Check for existing wallet connection
+            if (window.ethereum) {
+                window.ethereum.on('accountsChanged', (accounts) => {
+                    if (accounts.length > 0) {
+                        connectWallet();
+                    } else {
+                        currentAccount = null;
+                        walletStatus.textContent = "Wallet not connected";
+                        walletStatus.appendChild(connectBtn);
+                    }
+                });
+                
+                // Try to connect automatically if already authorized
+                if (window.ethereum.selectedAddress) {
+                    connectWallet();
+                }
+            }
         });
     </script>
 </body>
