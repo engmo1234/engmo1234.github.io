@@ -1155,7 +1155,7 @@ const initWallet = () => {
 };
 // ===== END OF REPLACEMENT CODE =====
 
-        const checkNFTOwnership = async () => {
+       const checkNFTOwnership = async () => {
     if (!currentAccount) {
         alert("Please connect your wallet first!");
         return;
@@ -1168,15 +1168,21 @@ const initWallet = () => {
         const provider = new ethers.providers.Web3Provider(window.ethereum);
         const contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, provider);
         
-        // First get the TOKEN_ID from the contract
-        const tokenId = await contract.TOKEN_ID();
-        
-        // Then check balance for that token ID
-        const balance = await contract.balanceOf(currentAccount, tokenId);
+        // Check balance for token ID 0 (as defined in your contract)
+        const balance = await contract.balanceOf(currentAccount, 0);
         
         if (balance.gt(0)) {
             statusElement.innerHTML = '<span style="color:#00ff87">✓ Access granted! NFT detected.</span>';
             document.getElementById('hidden-content').style.display = 'block';
+            
+            // Call the accessUnlockableContent function if you want to track access
+            try {
+                const signer = provider.getSigner();
+                const contractWithSigner = contract.connect(signer);
+                await contractWithSigner.accessUnlockableContent();
+            } catch (e) {
+                console.log("Couldn't record access (view function might not need gas)", e);
+            }
         } else {
             statusElement.innerHTML = '<span style="color:#ff3a3a">✗ No NFTs found in this wallet.</span>';
             document.getElementById('hidden-content').style.display = 'none';
