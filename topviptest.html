@@ -1165,31 +1165,53 @@ const initWallet = () => {
     statusElement.innerHTML = '<span style="color:#60efff">Scanning wallet...</span>';
     
     try {
+        // 1. Check if Ethereum provider is available
+        if (!window.ethereum) {
+            throw new Error("Ethereum provider not found");
+        }
+
+        // 2. Create provider and contract instance
         const provider = new ethers.providers.Web3Provider(window.ethereum);
         const contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, provider);
+
+        console.log("Contract instance created", contract);
         
-        // Check balance for token ID 0 (as defined in your contract)
+        // 3. Check balance for token ID 0
         const balance = await contract.balanceOf(currentAccount, 0);
+        console.log("Balance check completed", balance.toString());
         
         if (balance.gt(0)) {
             statusElement.innerHTML = '<span style="color:#00ff87">✓ Access granted! NFT detected.</span>';
             document.getElementById('hidden-content').style.display = 'block';
             
-            // Call the accessUnlockableContent function if you want to track access
+            // Optional: Record access
             try {
                 const signer = provider.getSigner();
                 const contractWithSigner = contract.connect(signer);
-                await contractWithSigner.accessUnlockableContent();
+                const tx = await contractWithSigner.accessUnlockableContent();
+                console.log("Access recorded in tx:", tx.hash);
             } catch (e) {
-                console.log("Couldn't record access (view function might not need gas)", e);
+                console.log("Note: Couldn't record access", e);
             }
         } else {
             statusElement.innerHTML = '<span style="color:#ff3a3a">✗ No NFTs found in this wallet.</span>';
             document.getElementById('hidden-content').style.display = 'none';
         }
     } catch (error) {
-        console.error("Error:", error);
-        statusElement.innerHTML = '<span style="color:#ffcc00">⚠ Error scanning. Try again.</span>';
+        console.error("Full error details:", error);
+        
+        let errorMessage = "⚠ Error scanning. Try again.";
+        if (error.message.includes("user rejected transaction")) {
+            errorMessage = "⚠ You rejected the transaction";
+        } else if (error.message.includes("contract not deployed")) {
+            errorMessage = "⚠ Contract not found at this address";
+        } else if (error.message.includes("invalid address")) {
+            errorMessage = "⚠ Invalid contract address";
+        } else if (error.message.includes("network mismatch")) {
+            errorMessage = "⚠ Wrong network - please switch to the correct network";
+        }
+        
+        statusElement.innerHTML = `<span style="color:#ffcc00">${errorMessage}</span>`;
     }
 };
 
