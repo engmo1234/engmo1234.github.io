@@ -354,12 +354,21 @@
             if (window.ethereum) {
                 try {
                     const provider = new ethers.providers.Web3Provider(window.ethereum);
-                    await provider.send("eth_requestAccounts", []);
-                    const accounts = await provider.listAccounts();
+                    const accounts = await provider.send("eth_requestAccounts", []);
+                    
+                    if (accounts.length === 0) {
+                        console.log("No accounts found");
+                        return;
+                    }
+                    
                     currentAccount = accounts[0];
                     
                     document.getElementById('wallet-status').textContent = 
                         `Connected: ${currentAccount.substring(0, 6)}...${currentAccount.substring(38)}`;
+                    
+                    // Remove connect button since we're connected
+                    const connectBtn = document.getElementById('connect-wallet');
+                    if (connectBtn) connectBtn.remove();
                     
                     // Check if admin
                     isAdmin = currentAccount.toLowerCase() === ADMIN_WALLET.toLowerCase();
@@ -373,35 +382,49 @@
                 } catch (e) {
                     console.error("Wallet connection error:", e);
                     document.getElementById('wallet-status').textContent = "Connection failed";
+                    
+                    // If error is 4001 (user rejected request), show connect button again
+                    if (e.code === 4001) {
+                        const walletStatus = document.getElementById('wallet-status');
+                        if (!document.getElementById('connect-wallet')) {
+                            const connectBtn = document.createElement('button');
+                            connectBtn.id = 'connect-wallet';
+                            connectBtn.textContent = 'Connect Wallet';
+                            connectBtn.onclick = connectWallet;
+                            walletStatus.appendChild(connectBtn);
+                        }
+                    }
                 }
             } else {
                 alert("Please install MetaMask or another Ethereum wallet!");
             }
         };
 
-        // Comment System
+        // Comment System - Now open to all without wallet
         document.getElementById('submit-comment').addEventListener('click', () => {
             const commentText = document.getElementById('comment-text').value.trim();
-            if (!commentText) return;
-            
-            if (!currentAccount) {
-                alert("Please connect your wallet to comment!");
+            if (!commentText) {
+                alert("Please enter a comment!");
                 return;
             }
             
             commentIdCounter++;
             const now = new Date();
             const timeAgo = "just now";
-            const authorShort = currentAccount.substring(0, 6) + "..." + currentAccount.substring(38);
+            
+            // If wallet is connected, show address, otherwise show "Guest"
+            const authorName = currentAccount 
+                ? currentAccount.substring(0, 6) + "..." + currentAccount.substring(38)
+                : "Guest";
             
             const commentHTML = `
                 <div class="comment" data-comment-id="${commentIdCounter}">
                     <div class="comment-header">
-                        <span class="comment-author">${authorShort}</span>
+                        <span class="comment-author">${authorName}</span>
                         <span class="comment-date">${timeAgo}</span>
                     </div>
                     <p>${commentText}</p>
-                    ${isAdmin ? `<div class="admin-controls" style="display: ${isAdmin ? 'block' : 'none'}">
+                    ${isAdmin ? `<div class="admin-controls" style="display: block">
                         <button class="delete-comment" data-id="${commentIdCounter}">Delete</button>
                     </div>` : ''}
                 </div>
@@ -411,20 +434,19 @@
             document.getElementById('comment-text').value = '';
             
             // Update comment count
-            const commentCount = document.querySelectorAll('.comment').length;
-            document.getElementById('comment-count').textContent = commentCount;
+            updateCommentCount();
         });
 
         // Edit Post Functionality
         document.addEventListener('click', (e) => {
-            // Delete comment
+            // Delete comment (admin only)
             if (e.target.classList.contains('delete-comment') && isAdmin) {
                 const commentId = e.target.getAttribute('data-id');
                 document.querySelector(`.comment[data-comment-id="${commentId}"]`).remove();
                 updateCommentCount();
             }
             
-            // Edit post
+            // Edit post (admin only)
             if (e.target.classList.contains('edit-post') && isAdmin) {
                 const postId = e.target.getAttribute('data-id');
                 const post = document.querySelector(`.blog-post[data-post-id="${postId}"]`);
@@ -483,22 +505,56 @@
             
             // Check if wallet is already connected
             if (window.ethereum) {
+                // Handle account changes
                 window.ethereum.on('accountsChanged', (accounts) => {
                     if (accounts.length > 0) {
-                        connectWallet();
+                        currentAccount = accounts[0];
+                        document.getElementById('wallet-status').textContent = 
+                            `Connected: ${currentAccount.substring(0, 6)}...${currentAccount.substring(38)}`;
+                        
+                        // Check if admin
+                        isAdmin = currentAccount.toLowerCase() === ADMIN_WALLET.toLowerCase();
+                        
+                        if (isAdmin) {
+                            document.querySelectorAll('.admin-controls, .admin-tools').forEach(el => {
+                                el.style.display = 'block';
+                            });
+                        } else {
+                            document.querySelectorAll('.admin-controls, .admin-tools').forEach(el => {
+                                el.style.display = 'none';
+                            });
+                        }
+                        
+                        // Remove connect button if it exists
+                        const connectBtn = document.getElementById('connect-wallet');
+                        if (connectBtn) connectBtn.remove();
                     } else {
+                        // Disconnected
                         currentAccount = null;
-                        document.getElementById('wallet-status').textContent = "Wallet not connected";
-                        document.getElementById('wallet-status').appendChild(connectBtn);
                         isAdmin = false;
+                        document.getElementById('wallet-status').textContent = "Wallet not connected";
                         document.querySelectorAll('.admin-controls, .admin-tools').forEach(el => {
                             el.style.display = 'none';
                         });
+                        
+                        // Add connect button back if not present
+                        if (!document.getElementById('connect-wallet')) {
+                            const connectBtn = document.createElement('button');
+                            connectBtn.id = 'connect-wallet';
+                            connectBtn.textContent = 'Connect Wallet';
+                            connectBtn.onclick = connectWallet;
+                            walletStatus.appendChild(connectBtn);
+                        }
                     }
                 });
                 
-                // Try to connect automatically
-                connectWallet();
+                // Try to connect automatically if already connected
+                window.ethereum.request({ method: 'eth_accounts' })
+                    .then(accounts => {
+                        if (accounts.length > 0) {
+                            connectWallet();
+                        }
+                    });
             }
         });
     </script>
