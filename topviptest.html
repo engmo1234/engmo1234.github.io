@@ -1087,27 +1087,73 @@
 		"type": "function"
 	}
 ];
-        let currentAccount = null;
+       // ===== REPLACE YOUR EXISTING WALLET CODE WITH THIS =====
+let currentAccount = null;
 
-        const connectWallet = async () => {
-            if (window.ethereum) {
-                try {
-                    const provider = new ethers.providers.Web3Provider(window.ethereum);
-                    await provider.send("eth_requestAccounts", []);
-                    const accounts = await provider.listAccounts();
-                    currentAccount = accounts[0];
-                    
-                    document.getElementById('wallet-status').textContent = 
-                        `Connected: ${currentAccount.substring(0, 6)}...${currentAccount.substring(38)}`;
-                    
-                } catch (error) {
-                    console.error("Wallet connection error:", error);
-                    document.getElementById('wallet-status').textContent = "Connection failed";
-                }
-            } else {
-                alert("Please install MetaMask or another Ethereum wallet!");
+const connectWallet = async () => {
+    if (window.ethereum) {
+        try {
+            // Request account access
+            const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+            currentAccount = accounts[0];
+            
+            // Update UI
+            document.getElementById('wallet-status').innerHTML = `
+                Connected: ${currentAccount.substring(0, 6)}...${currentAccount.substring(38)}
+                <button id="disconnect-wallet" style="margin-left: 10px; background: #ff3a3a; color: white; border: none; border-radius: 15px; padding: 2px 8px; font-size: 0.8em;">
+                    Disconnect
+                </button>
+            `;
+            
+            // Add disconnect handler
+            document.getElementById('disconnect-wallet').addEventListener('click', () => {
+                currentAccount = null;
+                initWallet(); // Reset to initial state
+            });
+            
+            return true;
+        } catch (error) {
+            console.error("User rejected request:", error);
+            document.getElementById('wallet-status').textContent = "Connection rejected";
+            return false;
+        }
+    } else {
+        alert("Please install MetaMask!");
+        return false;
+    }
+};
+
+const initWallet = () => {
+    const walletStatus = document.getElementById('wallet-status');
+    walletStatus.innerHTML = `
+        Wallet not connected
+        <button id="connect-wallet" style="margin-left: 10px; 
+               background: linear-gradient(90deg, #00ff87, #60efff); 
+               color: black; border: none; border-radius: 15px; 
+               padding: 2px 8px; font-weight: bold;">
+            Connect Wallet
+        </button>
+    `;
+    document.getElementById('connect-wallet').addEventListener('click', connectWallet);
+    
+    // Auto-connect if already authorized
+    if (window.ethereum?.selectedAddress) {
+        connectWallet();
+    }
+    
+    // Handle account changes
+    if (window.ethereum) {
+        window.ethereum.on('accountsChanged', (accounts) => {
+            if (accounts.length === 0) {
+                currentAccount = null;
+                initWallet();
+            } else if (accounts[0] !== currentAccount) {
+                connectWallet();
             }
-        };
+        });
+    }
+};
+// ===== END OF REPLACEMENT CODE =====
 
         const checkNFTOwnership = async () => {
             if (!currentAccount) {
