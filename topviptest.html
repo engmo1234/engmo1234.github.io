@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -9,7 +8,6 @@
     <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        /* === ULTRA-TRANSPARENT THEME === */
         body {
             margin: 0;
             padding: 0;
@@ -29,7 +27,6 @@
             z-index: -1;
         }
 
-        /* === WALLET STATUS === */
         .wallet-status {
             position: fixed;
             top: 20px;
@@ -41,7 +38,7 @@
             border: 1px solid #00ff87;
         }
 
-        #connect-wallet {
+        .wallet-btn {
             background: linear-gradient(90deg, #00ff87, #60efff);
             color: black;
             border: none;
@@ -52,14 +49,29 @@
             margin-left: 10px;
         }
 
-        /* === SCANNER STYLES === */
+        .container {
+            max-width: 900px;
+            margin: 5% auto;
+            padding: 40px;
+            background: rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(5px);
+            border-radius: 15px;
+            border: 1px solid rgba(96, 239, 255, 0.1);
+        }
+
+        h1, h2, h3 {
+            background: linear-gradient(90deg, #00ff87, #60efff);
+            -webkit-background-clip: text;
+            color: transparent;
+            margin-bottom: 10px;
+        }
+
         .scanner-container {
             margin-top: 40px;
-            padding: 25px;
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 12px;
-            border: 1px solid rgba(96, 239, 255, 0.1);
-            transition: all 0.3s;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            border: 1px solid rgba(96, 239, 255, 0.2);
         }
 
         #scan-button {
@@ -70,13 +82,13 @@
             border-radius: 8px;
             cursor: pointer;
             font-weight: bold;
-            margin-top: 15px;
+            margin-top: 10px;
         }
 
         .scan-status {
             margin-top: 15px;
-            color: #60efff;
             font-size: 0.9em;
+            color: #60efff;
         }
 
         .hidden-content {
@@ -105,53 +117,6 @@
             display: block;
             border-radius: 8px;
         }
-
-        /* === REST OF YOUR EXISTING STYLES === */
-
-
-         .scanner-container {
-            margin-top: 40px;
-            padding: 20px;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 10px;
-            border: 1px solid rgba(96, 239, 255, 0.2);
-        }
-        
-       
-        .container {
-            max-width: 900px;
-            margin: 5% auto;
-            padding: 40px;
-            background: rgba(0, 0, 0, 0.1) !important;
-            backdrop-filter: blur(5px);
-            border-radius: 15px;
-            border: 1px solid rgba(96, 239, 255, 0.1);
-        }
-
-        h1, h2, h3 {
-            background: linear-gradient(90deg, #00ff87, #60efff);
-            -webkit-background-clip: text;
-            color: transparent;
-            margin-bottom: 10px;
-        }
-
-         #scan-button {
-            background: linear-gradient(90deg, #00ff87, #60efff);
-            color: black;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: bold;
-            margin-top: 10px;
-        }
-        
-        .scan-status {
-            margin-top: 15px;
-            font-size: 0.9em;
-            color: #60efff;
-        }
-
     </style>
 </head>
 <body>
@@ -159,9 +124,6 @@
     <div class="wallet-status" id="wallet-status">Wallet not connected</div>
     
     <div class="container">
-        <!-- Your existing blog content here -->
-
-        <!-- Single scanner section -->
         <div class="scanner-container">
             <h2>NFT Ownership Verification</h2>
             <p>Connect your wallet to check if you own NFTs from our collection.</p>
@@ -184,7 +146,7 @@
     </div>
 
     <script>
-        // 1. STARFIELD INITIALIZATION
+        // Starfield initialization
         const initStarfield = () => {
             const scene = new THREE.Scene();
             const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
@@ -192,7 +154,6 @@
             renderer.setSize(window.innerWidth, window.innerHeight);
             document.getElementById('starfield').appendChild(renderer.domElement);
 
-            // Create stars
             const starsGeometry = new THREE.BufferGeometry();
             const starsMaterial = new THREE.PointsMaterial({
                 color: 0xffffff,
@@ -230,931 +191,105 @@
             });
         };
 
-        // 2. WALLET AND SCANNER FUNCTIONALITY
+        // Wallet and contract setup
         const CONTRACT_ADDRESS = "0x281fd8fede6627817110f8c89193a54e64069187";
-        const CONTRACT_ABI = [
-	{
-		"inputs": [],
-		"stateMutability": "nonpayable",
-		"type": "constructor"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "sender",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "balance",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "needed",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "tokenId",
-				"type": "uint256"
-			}
-		],
-		"name": "ERC1155InsufficientBalance",
-		"type": "error"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "approver",
-				"type": "address"
-			}
-		],
-		"name": "ERC1155InvalidApprover",
-		"type": "error"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "idsLength",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "valuesLength",
-				"type": "uint256"
-			}
-		],
-		"name": "ERC1155InvalidArrayLength",
-		"type": "error"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "operator",
-				"type": "address"
-			}
-		],
-		"name": "ERC1155InvalidOperator",
-		"type": "error"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "receiver",
-				"type": "address"
-			}
-		],
-		"name": "ERC1155InvalidReceiver",
-		"type": "error"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "sender",
-				"type": "address"
-			}
-		],
-		"name": "ERC1155InvalidSender",
-		"type": "error"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "operator",
-				"type": "address"
-			},
-			{
-				"internalType": "address",
-				"name": "owner",
-				"type": "address"
-			}
-		],
-		"name": "ERC1155MissingApprovalForAll",
-		"type": "error"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "owner",
-				"type": "address"
-			}
-		],
-		"name": "OwnableInvalidOwner",
-		"type": "error"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "account",
-				"type": "address"
-			}
-		],
-		"name": "OwnableUnauthorizedAccount",
-		"type": "error"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "account",
-				"type": "address"
-			},
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "operator",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"internalType": "bool",
-				"name": "approved",
-				"type": "bool"
-			}
-		],
-		"name": "ApprovalForAll",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "bidder",
-				"type": "address"
-			}
-		],
-		"name": "BidApproved",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "bidder",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "timestamp",
-				"type": "uint256"
-			}
-		],
-		"name": "BidRejected",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "bidder",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "amount",
-				"type": "uint256"
-			}
-		],
-		"name": "BidSubmitted",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "to",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "amount",
-				"type": "uint256"
-			}
-		],
-		"name": "FundsWithdrawn",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "minter",
-				"type": "address"
-			}
-		],
-		"name": "NFTMinted",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "previousOwner",
-				"type": "address"
-			},
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "newOwner",
-				"type": "address"
-			}
-		],
-		"name": "OwnershipTransferred",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": false,
-				"internalType": "address",
-				"name": "account",
-				"type": "address"
-			}
-		],
-		"name": "Paused",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "bidder",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "amount",
-				"type": "uint256"
-			}
-		],
-		"name": "RefundIssued",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "operator",
-				"type": "address"
-			},
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "from",
-				"type": "address"
-			},
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "to",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256[]",
-				"name": "ids",
-				"type": "uint256[]"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256[]",
-				"name": "values",
-				"type": "uint256[]"
-			}
-		],
-		"name": "TransferBatch",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "operator",
-				"type": "address"
-			},
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "from",
-				"type": "address"
-			},
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "to",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "id",
-				"type": "uint256"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "value",
-				"type": "uint256"
-			}
-		],
-		"name": "TransferSingle",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": false,
-				"internalType": "string",
-				"name": "value",
-				"type": "string"
-			},
-			{
-				"indexed": true,
-				"internalType": "uint256",
-				"name": "id",
-				"type": "uint256"
-			}
-		],
-		"name": "URI",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "owner",
-				"type": "address"
-			}
-		],
-		"name": "UnlockableContentAccessed",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": false,
-				"internalType": "address",
-				"name": "account",
-				"type": "address"
-			}
-		],
-		"name": "Unpaused",
-		"type": "event"
-	},
-	{
-		"inputs": [],
-		"name": "MAX_SUPPLY",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "MIN_BID",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "TOKEN_ID",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "accessUnlockableContent",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "allowWithdrawals",
-		"outputs": [
-			{
-				"internalType": "bool",
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "bidder",
-				"type": "address"
-			}
-		],
-		"name": "approveBid",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "account",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "id",
-				"type": "uint256"
-			}
-		],
-		"name": "balanceOf",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address[]",
-				"name": "accounts",
-				"type": "address[]"
-			},
-			{
-				"internalType": "uint256[]",
-				"name": "ids",
-				"type": "uint256[]"
-			}
-		],
-		"name": "balanceOfBatch",
-		"outputs": [
-			{
-				"internalType": "uint256[]",
-				"name": "",
-				"type": "uint256[]"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "",
-				"type": "address"
-			}
-		],
-		"name": "bids",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "amount",
-				"type": "uint256"
-			},
-			{
-				"internalType": "bool",
-				"name": "approved",
-				"type": "bool"
-			},
-			{
-				"internalType": "bool",
-				"name": "refunded",
-				"type": "bool"
-			},
-			{
-				"internalType": "uint256",
-				"name": "timestamp",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "",
-				"type": "address"
-			}
-		],
-		"name": "hasMinted",
-		"outputs": [
-			{
-				"internalType": "bool",
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "account",
-				"type": "address"
-			},
-			{
-				"internalType": "address",
-				"name": "operator",
-				"type": "address"
-			}
-		],
-		"name": "isApprovedForAll",
-		"outputs": [
-			{
-				"internalType": "bool",
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "mint",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "owner",
-		"outputs": [
-			{
-				"internalType": "address",
-				"name": "",
-				"type": "address"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "pause",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "paused",
-		"outputs": [
-			{
-				"internalType": "bool",
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "bidder",
-				"type": "address"
-			}
-		],
-		"name": "rejectBid",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "renounceOwnership",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "from",
-				"type": "address"
-			},
-			{
-				"internalType": "address",
-				"name": "to",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256[]",
-				"name": "ids",
-				"type": "uint256[]"
-			},
-			{
-				"internalType": "uint256[]",
-				"name": "values",
-				"type": "uint256[]"
-			},
-			{
-				"internalType": "bytes",
-				"name": "data",
-				"type": "bytes"
-			}
-		],
-		"name": "safeBatchTransferFrom",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "from",
-				"type": "address"
-			},
-			{
-				"internalType": "address",
-				"name": "to",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "id",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "value",
-				"type": "uint256"
-			},
-			{
-				"internalType": "bytes",
-				"name": "data",
-				"type": "bytes"
-			}
-		],
-		"name": "safeTransferFrom",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "operator",
-				"type": "address"
-			},
-			{
-				"internalType": "bool",
-				"name": "approved",
-				"type": "bool"
-			}
-		],
-		"name": "setApprovalForAll",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "submitBid",
-		"outputs": [],
-		"stateMutability": "payable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "bytes4",
-				"name": "interfaceId",
-				"type": "bytes4"
-			}
-		],
-		"name": "supportsInterface",
-		"outputs": [
-			{
-				"internalType": "bool",
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "bool",
-				"name": "_status",
-				"type": "bool"
-			}
-		],
-		"name": "toggleWithdrawals",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "totalMinted",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "newOwner",
-				"type": "address"
-			}
-		],
-		"name": "transferOwnership",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "unpause",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"name": "uri",
-		"outputs": [
-			{
-				"internalType": "string",
-				"name": "",
-				"type": "string"
-			}
-		],
-		"stateMutability": "pure",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "withdraw",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "withdrawBid",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	}
-];
-       // ===== REPLACE YOUR EXISTING WALLET CODE WITH THIS =====
-let currentAccount = null;
+        const CONTRACT_ABI = [/* Your ABI here */];
 
-const connectWallet = async () => {
-    if (window.ethereum) {
-        try {
-            // Request account access
-            const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-            currentAccount = accounts[0];
-            
-            // Update UI
-            document.getElementById('wallet-status').innerHTML = `
-                Connected: ${currentAccount.substring(0, 6)}...${currentAccount.substring(38)}
-                <button id="disconnect-wallet" style="margin-left: 10px; background: #ff3a3a; color: white; border: none; border-radius: 15px; padding: 2px 8px; font-size: 0.8em;">
-                    Disconnect
-                </button>
-            `;
-            
-            // Add disconnect handler
-            document.getElementById('disconnect-wallet').addEventListener('click', () => {
-                currentAccount = null;
-                initWallet(); // Reset to initial state
-            });
-            
-            return true;
-        } catch (error) {
-            console.error("User rejected request:", error);
-            document.getElementById('wallet-status').textContent = "Connection rejected";
-            return false;
-        }
-    } else {
-        alert("Please install MetaMask!");
-        return false;
-    }
-};
+        let currentAccount = null;
+        let provider = null;
+        let signer = null;
+        let contract = null;
 
-const initWallet = () => {
-    const walletStatus = document.getElementById('wallet-status');
-    walletStatus.innerHTML = `
-        Wallet not connected
-        <button id="connect-wallet" style="margin-left: 10px; 
-               background: linear-gradient(90deg, #00ff87, #60efff); 
-               color: black; border: none; border-radius: 15px; 
-               padding: 2px 8px; font-weight: bold;">
-            Connect Wallet
-        </button>
-    `;
-    document.getElementById('connect-wallet').addEventListener('click', connectWallet);
-    
-    // Auto-connect if already authorized
-    if (window.ethereum?.selectedAddress) {
-        connectWallet();
-    }
-    
-    // Handle account changes
-    if (window.ethereum) {
-        window.ethereum.on('accountsChanged', (accounts) => {
-            if (accounts.length === 0) {
-                currentAccount = null;
-                initWallet();
-            } else if (accounts[0] !== currentAccount) {
-                connectWallet();
+        // Initialize wallet connection
+        const initWallet = async () => {
+            if (window.ethereum) {
+                try {
+                    provider = new ethers.providers.Web3Provider(window.ethereum);
+                    
+                    // Check if already connected
+                    const accounts = await provider.listAccounts();
+                    if (accounts.length > 0) {
+                        currentAccount = accounts[0];
+                        updateWalletStatus();
+                    }
+                    
+                    // Set up event listeners
+                    window.ethereum.on('accountsChanged', (accounts) => {
+                        if (accounts.length === 0) {
+                            currentAccount = null;
+                        } else {
+                            currentAccount = accounts[0];
+                        }
+                        updateWalletStatus();
+                    });
+                    
+                    window.ethereum.on('chainChanged', () => {
+                        window.location.reload();
+                    });
+                    
+                } catch (error) {
+                    console.error("Error initializing wallet:", error);
+                }
             }
-        });
-    }
-};
-// ===== END OF REPLACEMENT CODE =====
+            
+            updateWalletStatus();
+        };
 
+        // Connect wallet function
+        const connectWallet = async () => {
+            if (!window.ethereum) {
+                alert("Please install MetaMask!");
+                return false;
+            }
+            
+            try {
+                provider = new ethers.providers.Web3Provider(window.ethereum);
+                const accounts = await provider.send("eth_requestAccounts", []);
+                currentAccount = accounts[0];
+                signer = provider.getSigner();
+                contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer);
+                
+                updateWalletStatus();
+                return true;
+            } catch (error) {
+                console.error("Error connecting wallet:", error);
+                document.getElementById('wallet-status').textContent = "Connection rejected";
+                return false;
+            }
+        };
+
+        // Disconnect wallet function
+        const disconnectWallet = () => {
+            currentAccount = null;
+            signer = null;
+            contract = null;
+            updateWalletStatus();
+        };
+
+        // Update wallet status UI
+        const updateWalletStatus = () => {
+            const walletStatus = document.getElementById('wallet-status');
+            
+            if (currentAccount) {
+                walletStatus.innerHTML = `
+                    Connected: ${currentAccount.substring(0, 6)}...${currentAccount.substring(38)}
+                    <button id="disconnect-wallet" class="wallet-btn" style="background: #ff3a3a; color: white;">
+                        Disconnect
+                    </button>
+                `;
+                document.getElementById('disconnect-wallet').addEventListener('click', disconnectWallet);
+            } else {
+                walletStatus.innerHTML = `
+                    Wallet not connected
+                    <button id="connect-wallet" class="wallet-btn">
+                        Connect Wallet
+                    </button>
+                `;
+                document.getElementById('connect-wallet').addEventListener('click', connectWallet);
+            }
+        };
+
+        // Check NFT ownership
         const checkNFTOwnership = async () => {
             if (!currentAccount) {
                 alert("Please connect your wallet first!");
@@ -1165,8 +300,6 @@ const initWallet = () => {
             statusElement.innerHTML = '<span style="color:#60efff">Scanning wallet...</span>';
             
             try {
-                const provider = new ethers.providers.Web3Provider(window.ethereum);
-                const contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, provider);
                 const balance = await contract.balanceOf(currentAccount, 1);
                 
                 if (balance.gt(0)) {
@@ -1177,44 +310,18 @@ const initWallet = () => {
                     document.getElementById('hidden-content').style.display = 'none';
                 }
             } catch (error) {
-                console.error("Error:", error);
+                console.error("Error checking NFT:", error);
                 statusElement.innerHTML = '<span style="color:#ffcc00">⚠ Error scanning. Try again.</span>';
             }
         };
 
-        // 3. INITIALIZATION
+        // Initialize everything when page loads
         window.addEventListener('load', () => {
-            // Initialize starfield
             initStarfield();
-            
-            // Set up wallet connection
-            const walletStatus = document.getElementById('wallet-status');
-            const connectBtn = document.createElement('button');
-            connectBtn.id = 'connect-wallet';
-            connectBtn.textContent = 'Connect Wallet';
-            connectBtn.onclick = connectWallet;
-            walletStatus.appendChild(connectBtn);
+            initWallet();
             
             // Set up scan button
             document.getElementById('scan-button').addEventListener('click', checkNFTOwnership);
-            
-            // Check for existing wallet connection
-            if (window.ethereum) {
-                window.ethereum.on('accountsChanged', (accounts) => {
-                    if (accounts.length > 0) {
-                        connectWallet();
-                    } else {
-                        currentAccount = null;
-                        walletStatus.textContent = "Wallet not connected";
-                        walletStatus.appendChild(connectBtn);
-                    }
-                });
-                
-                // Try to connect automatically if already authorized
-                if (window.ethereum.selectedAddress) {
-                    connectWallet();
-                }
-            }
         });
     </script>
 </body>
