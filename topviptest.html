@@ -1,1392 +1,1385 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NFT Verification Portal</title>
-    <!-- Updated CDN links for reliability -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700&display=swap" rel="stylesheet">
-    <style>
-        /* === MAIN STYLES === */
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Space Grotesk', sans-serif;
-            color: #e0e0e0;
-            background: #000;
-            overflow-x: hidden;
-            line-height: 1.6;
-        }
-
-        #starfield {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-        }
-
-        .container {
-            max-width: 900px;
-            margin: 5% auto;
-            padding: 40px;
-            background: rgba(0, 0, 0, 0.1);
-            backdrop-filter: blur(5px);
-            border-radius: 15px;
-            border: 1px solid rgba(96, 239, 255, 0.1);
-        }
-
-        h1, h2, h3 {
-            background: linear-gradient(90deg, #00ff87, #60efff);
-            -webkit-background-clip: text;
-            color: transparent;
-            margin-bottom: 10px;
-        }
-
-        /* === WALLET CONNECTION === */
-        .wallet-status {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: rgba(0, 0, 0, 0.7);
-            padding: 8px 15px;
-            border-radius: 20px;
-            font-size: 0.9em;
-            border: 1px solid #00ff87;
-            z-index: 100;
-        }
-
-        .wallet-btn {
-            margin-left: 10px;
-            border: none;
-            border-radius: 15px;
-            padding: 2px 8px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        #connect-wallet {
-            background: linear-gradient(90deg, #00ff87, #60efff);
-            color: black;
-        }
-
-        #disconnect-wallet {
-            background: #ff3a3a;
-            color: white;
-        }
-
-        /* === SCANNER SECTION === */
-        .scanner-container {
-            margin-top: 40px;
-            padding: 25px;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 12px;
-            border: 1px solid rgba(96, 239, 255, 0.2);
-            text-align: center;
-        }
-
-        #scan-button {
-            background: linear-gradient(90deg, #00ff87, #60efff);
-            color: black;
-            border: none;
-            padding: 12px 25px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: bold;
-            margin-top: 15px;
-            font-size: 1em;
-            transition: all 0.3s;
-        }
-
-        #scan-button:hover {
-            transform: scale(1.05);
-        }
-
-        #scan-button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .scan-status {
-            margin-top: 15px;
-            font-size: 0.9em;
-            min-height: 24px;
-        }
-
-        .hidden-content {
-            display: none;
-            margin-top: 20px;
-            padding: 20px;
-            background: rgba(0, 255, 135, 0.05);
-            border-radius: 10px;
-            border: 1px solid rgba(0, 255, 135, 0.2);
-            text-align: center;
-            animation: fadeIn 0.5s ease-out;
-        }
-
-        .hidden-content a {
-            color: #60efff;
-            text-decoration: none;
-            font-weight: bold;
-        }
-
-        .hidden-content a:hover {
-            text-decoration: underline;
-        }
-
-        .qr-code {
-            max-width: 200px;
-            margin: 15px auto;
-            display: block;
-            border-radius: 8px;
-            border: 1px solid rgba(96, 239, 255, 0.5);
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* === DEBUG BUTTON (can remove later) === */
-        #debug-btn {
-            position: fixed;
-            bottom: 10px;
-            right: 10px;
-            background: rgba(255,255,255,0.1);
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 5px;
-            cursor: pointer;
-            z-index: 1000;
-        }
-        
-        /* Network indicator */
-        .network-indicator {
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            background: rgba(0, 0, 0, 0.7);
-            padding: 8px 15px;
-            border-radius: 20px;
-            font-size: 0.9em;
-            border: 1px solid #60efff;
-            z-index: 100;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TopVIP NFT Minting Access</title>
+  <script src="https://cdn.jsdelivr.net/npm/web3@1.8.2/dist/web3.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vanta@0.5.24/dist/vanta.net.min.js"></script>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Arial', sans-serif;
+    }
+    body {
+      background: #000;
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+      position: relative;
+      overflow-x: hidden;
+    }
+    #bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 20px;
+      width: 100%;
+    }
+    .logo-link {
+      display: inline-block;
+      margin-bottom: 10px;
+      transition: transform 0.3s;
+    }
+    .polygon-logo {
+      width: 70px;
+      height: auto;
+      border-radius: 50%;
+      box-shadow: 0 0 15px rgba(0, 255, 204, 0.5);
+    }
+    .polygon-logo:hover {
+      transform: scale(1.1);
+      box-shadow: 0 0 20px rgba(0, 255, 204, 0.8);
+    }
+    h1 {
+      font-size: 24px;
+      margin-bottom: 10px;
+      color: #00ffcc;
+      text-shadow: 0 0 10px rgba(0, 255, 204, 0.5);
+    }
+    .container {
+      width: 100%;
+      max-width: 500px;
+    }
+    .card {
+      background: rgba(0,30,0,0.8);
+      border: 2px solid #00ff00;
+      border-radius: 15px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 0 15px rgba(0, 255, 0, 0.7);
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #00ffcc, #0099ff);
+      color: #000;
+    }
+    .btn-primary:hover {
+      opacity: 0.9;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0, 255, 204, 0.4);
+    }
+    button:disabled {
+      background: #333;
+      color: #666;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+    .loading {
+      display: none;
+      width: 30px;
+      height: 30px;
+      margin: 15px auto;
+      border: 4px solid rgba(0,255,204,0.3);
+      border-top: 4px solid #00ffcc;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    .message {
+      padding: 12px;
+      margin: 15px 0;
+      border-radius: 8px;
+      text-align: center;
+    }
+    .error {
+      background: rgba(255,50,50,0.2);
+      border: 1px solid #ff3232;
+      color: #ff6b6b;
+    }
+    .success {
+      background: rgba(0,255,153,0.2);
+      border: 1px solid #00ff99;
+      color: #00ff99;
+    }
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+      margin-top: 20px;
+    }
+    .stat-item {
+      text-align: center;
+      padding: 12px;
+      background: rgba(0,0,0,0.5);
+      border-radius: 8px;
+      border: 1px solid #333;
+    }
+    .stat-value {
+      font-size: 18px;
+      font-weight: bold;
+      color: #00ffcc;
+    }
+    .wallet-info {
+      margin-top: 15px;
+      padding: 12px;
+      background: rgba(0,0,0,0.5);
+      border-radius: 8px;
+      border: 1px solid #333;
+      font-size: 14px;
+      text-align: center;
+    }
+    @media (max-width: 600px) {
+      body {
+        padding: 15px;
+      }
+      .card {
+        padding: 15px;
+      }
+      .stats {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
 </head>
 <body>
-    <div id="starfield"></div>
-    <div class="network-indicator" id="network-indicator">Network: Not Connected</div>
-    <div class="wallet-status" id="wallet-status">Wallet not connected</div>
-    
-    <div class="container">
-        <div class="scanner-container">
-            <h2>NFT Ownership Verification</h2>
-            <p>Connect your wallet to verify if you own NFTs from our collection</p>
-            
-            <button id="scan-button" disabled>Verify NFT Ownership</button>
-            <div class="scan-status" id="scan-status"></div>
-            
-            <div class="hidden-content" id="hidden-content">
-                <h3>Access Granted!</h3>
-                <p>Thank you for supporting our project. Here's your exclusive content:</p>
-                <a href="https://form.jotform.com/223058286315456" target="_blank">
-                    Click here for exclusive form
-                </a>
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://form.jotform.com/223058286315456" 
-                     alt="QR Code" class="qr-code">
-            </div>
+  <div id="bg"></div>
+
+  <header class="header">
+    <a href="https://www.engmo1234.com/index" target="_blank" class="logo-link">
+      <img src="http://www.engmo1234.com/polygon-logo.png" 
+           alt="Polygon Logo" class="polygon-logo" onerror="this.src='https://polygon.technology/images/polygon-logo.png'">
+    </a>
+    <h1>TopVIP NFT Minting Access</h1>
+  </header>
+
+  <main class="container">
+    <div class="card">
+      <h2>Mint Your TopVIP NFT</h2>
+      <button id="mintButton" class="btn-primary" disabled>Mint NFT</button>
+      <button id="refreshButton" class="btn-primary" style="margin-top: 10px;">Refresh Status</button>
+      
+      <div class="loading" id="loading"></div>
+      <div class="message error" id="error" style="display:none;"></div>
+      <div class="message success" id="success" style="display:none;"></div>
+      
+      <div class="stats">
+        <div class="stat-item">
+          <div>Total Minted</div>
+          <div class="stat-value" id="totalMinted">0</div>
         </div>
+        <div class="stat-item">
+          <div>Max Supply</div>
+          <div class="stat-value" id="maxSupply">0</div>
+        </div>
+        <div class="stat-item">
+          <div>Your Balance</div>
+          <div class="stat-value" id="userBalance">0</div>
+        </div>
+      </div>
     </div>
 
-    <!-- Debug button (can remove in production) -->
-    <button id="debug-btn">Debug</button>
+    <div class="card">
+      <div class="wallet-info" id="walletInfo">Wallet not connected</div>
+    </div>
 
-    <script>
-        // ===== CONFIGURATION =====
-        const CONTRACT_ADDRESS = "0x281fd8fede6627817110f8c89193a54e64069187"; // Your Polygon contract address
-        const POLYGON_MAINNET_CHAIN_ID = "0x89"; // 137 in decimal
-        const POLYGON_SCAN_URL = "https://polygonscan.com";
+    <div class="card" id="unlockableContent" style="display:block;">
+      <h2>Exclusive Content</h2>
+      <p>Thank you for being a collector! Here's your exclusive content:</p>
+      <button id="unlockButton" class="btn-primary">Reveal Private Link</button>
+      <div id="contentLink" style="display:none; margin-top:15px;">
+        <a href="https://form.jotform.com/223058286315456" target="_blank" style="color:#00ffcc;">Access Your Exclusive Content</a>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // App state
+    let web3;
+    let contract;
+    let accounts = [];
+    let tokenId = 0;
+    let isProcessing = false;
+    let vantaEffect;
+
+    // Initialize the app
+    async function initApp() {
+      try {
+        // Initialize Vanta.js effect
+        initVanta();
+
+        // Check for Web3 wallet
+        if (!window.ethereum) {
+          showError("Please install MetaMask or another Web3 wallet.");
+          disableButtons();
+          return;
+        }
+
+        // Initialize Web3
+        web3 = new Web3(window.ethereum);
         
-        // ===== STARFIELD ANIMATION =====
-        const initStarfield = () => {
-            const scene = new THREE.Scene();
-            const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
-            const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            document.getElementById('starfield').appendChild(renderer.domElement);
+        // Check and switch to Polygon network
+        await checkNetwork();
+        
+        // Connect to wallet
+        await connectWallet();
+        
+        // Initialize contract
+        await initializeContract();
+        
+        // Set up UI
+        updateWalletInfo();
+        await updateStats();
+        await checkMintedStatus();
 
-            const starsGeometry = new THREE.BufferGeometry();
-            const starsMaterial = new THREE.PointsMaterial({
-                color: 0xffffff,
-                size: 0.5,
-                transparent: true
-            });
+        // Set up event listeners
+        setupEventListeners();
 
-            const starsVertices = [];
-            for (let i = 0; i < 10000; i++) {
-                starsVertices.push(
-                    THREE.MathUtils.randFloatSpread(2000),
-                    THREE.MathUtils.randFloatSpread(2000),
-                    THREE.MathUtils.randFloatSpread(2000)
-                );
-            }
+      } catch (error) {
+        console.error("Initialization error:", error);
+        showError("Failed to connect. Please refresh and ensure you're on Polygon network.");
+        disableButtons();
+      }
+    }
 
-            starsGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starsVertices, 3));
-            const stars = new THREE.Points(starsGeometry, starsMaterial);
-            scene.add(stars);
+    async function initializeContract() {
+      contract = new web3.eth.Contract([
+	{
+		"inputs": [],
+		"stateMutability": "nonpayable",
+		"type": "constructor"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "sender",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "balance",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "needed",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "tokenId",
+				"type": "uint256"
+			}
+		],
+		"name": "ERC1155InsufficientBalance",
+		"type": "error"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "approver",
+				"type": "address"
+			}
+		],
+		"name": "ERC1155InvalidApprover",
+		"type": "error"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "idsLength",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "valuesLength",
+				"type": "uint256"
+			}
+		],
+		"name": "ERC1155InvalidArrayLength",
+		"type": "error"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "operator",
+				"type": "address"
+			}
+		],
+		"name": "ERC1155InvalidOperator",
+		"type": "error"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "receiver",
+				"type": "address"
+			}
+		],
+		"name": "ERC1155InvalidReceiver",
+		"type": "error"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "sender",
+				"type": "address"
+			}
+		],
+		"name": "ERC1155InvalidSender",
+		"type": "error"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "operator",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "owner",
+				"type": "address"
+			}
+		],
+		"name": "ERC1155MissingApprovalForAll",
+		"type": "error"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "owner",
+				"type": "address"
+			}
+		],
+		"name": "OwnableInvalidOwner",
+		"type": "error"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "account",
+				"type": "address"
+			}
+		],
+		"name": "OwnableUnauthorizedAccount",
+		"type": "error"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "account",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "operator",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "bool",
+				"name": "approved",
+				"type": "bool"
+			}
+		],
+		"name": "ApprovalForAll",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "bidder",
+				"type": "address"
+			}
+		],
+		"name": "BidApproved",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "bidder",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "timestamp",
+				"type": "uint256"
+			}
+		],
+		"name": "BidRejected",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "bidder",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "amount",
+				"type": "uint256"
+			}
+		],
+		"name": "BidSubmitted",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "to",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "amount",
+				"type": "uint256"
+			}
+		],
+		"name": "FundsWithdrawn",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "minter",
+				"type": "address"
+			}
+		],
+		"name": "NFTMinted",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "previousOwner",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "newOwner",
+				"type": "address"
+			}
+		],
+		"name": "OwnershipTransferred",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "account",
+				"type": "address"
+			}
+		],
+		"name": "Paused",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "bidder",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "amount",
+				"type": "uint256"
+			}
+		],
+		"name": "RefundIssued",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "operator",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "from",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "to",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256[]",
+				"name": "ids",
+				"type": "uint256[]"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256[]",
+				"name": "values",
+				"type": "uint256[]"
+			}
+		],
+		"name": "TransferBatch",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "operator",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "from",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "to",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "id",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "value",
+				"type": "uint256"
+			}
+		],
+		"name": "TransferSingle",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "string",
+				"name": "value",
+				"type": "string"
+			},
+			{
+				"indexed": true,
+				"internalType": "uint256",
+				"name": "id",
+				"type": "uint256"
+			}
+		],
+		"name": "URI",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "owner",
+				"type": "address"
+			}
+		],
+		"name": "UnlockableContentAccessed",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "account",
+				"type": "address"
+			}
+		],
+		"name": "Unpaused",
+		"type": "event"
+	},
+	{
+		"inputs": [],
+		"name": "MAX_SUPPLY",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "MIN_BID",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "TOKEN_ID",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "accessUnlockableContent",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "allowWithdrawals",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "bidder",
+				"type": "address"
+			}
+		],
+		"name": "approveBid",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "account",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "id",
+				"type": "uint256"
+			}
+		],
+		"name": "balanceOf",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address[]",
+				"name": "accounts",
+				"type": "address[]"
+			},
+			{
+				"internalType": "uint256[]",
+				"name": "ids",
+				"type": "uint256[]"
+			}
+		],
+		"name": "balanceOfBatch",
+		"outputs": [
+			{
+				"internalType": "uint256[]",
+				"name": "",
+				"type": "uint256[]"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"name": "bids",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "amount",
+				"type": "uint256"
+			},
+			{
+				"internalType": "bool",
+				"name": "approved",
+				"type": "bool"
+			},
+			{
+				"internalType": "bool",
+				"name": "refunded",
+				"type": "bool"
+			},
+			{
+				"internalType": "uint256",
+				"name": "timestamp",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"name": "hasMinted",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "account",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "operator",
+				"type": "address"
+			}
+		],
+		"name": "isApprovedForAll",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "mint",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "owner",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "pause",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "paused",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "bidder",
+				"type": "address"
+			}
+		],
+		"name": "rejectBid",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "renounceOwnership",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "from",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "to",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256[]",
+				"name": "ids",
+				"type": "uint256[]"
+			},
+			{
+				"internalType": "uint256[]",
+				"name": "values",
+				"type": "uint256[]"
+			},
+			{
+				"internalType": "bytes",
+				"name": "data",
+				"type": "bytes"
+			}
+		],
+		"name": "safeBatchTransferFrom",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "from",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "to",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "id",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "value",
+				"type": "uint256"
+			},
+			{
+				"internalType": "bytes",
+				"name": "data",
+				"type": "bytes"
+			}
+		],
+		"name": "safeTransferFrom",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "operator",
+				"type": "address"
+			},
+			{
+				"internalType": "bool",
+				"name": "approved",
+				"type": "bool"
+			}
+		],
+		"name": "setApprovalForAll",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "submitBid",
+		"outputs": [],
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "bytes4",
+				"name": "interfaceId",
+				"type": "bytes4"
+			}
+		],
+		"name": "supportsInterface",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "bool",
+				"name": "_status",
+				"type": "bool"
+			}
+		],
+		"name": "toggleWithdrawals",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "totalMinted",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "newOwner",
+				"type": "address"
+			}
+		],
+		"name": "transferOwnership",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "unpause",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "uri",
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
+			}
+		],
+		"stateMutability": "pure",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "withdraw",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "withdrawBid",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	}
+], "0x281fd8fede6627817110f8c89193a54e64069187");
+      tokenId = await contract.methods.TOKEN_ID().call();
+    }
 
-            camera.position.z = 1;
-
-            const animate = () => {
-                requestAnimationFrame(animate);
-                stars.rotation.x += 0.0005;
-                stars.rotation.y += 0.0005;
-                renderer.render(scene, camera);
-            };
-            animate();
-
-            window.addEventListener('resize', () => {
-                camera.aspect = window.innerWidth / window.innerHeight;
-                camera.updateProjectionMatrix();
-                renderer.setSize(window.innerWidth, window.innerHeight);
-            });
-        };
-
-        // ===== WALLET CONNECTION =====
-        let currentAccount = null;
-        let provider;
-        let contract;
-
-        // Update wallet status display
-        const updateWalletStatus = () => {
-            const walletStatus = document.getElementById('wallet-status');
-            const scanButton = document.getElementById('scan-button');
-            
-            if (currentAccount) {
-                walletStatus.innerHTML = `
-                    Connected: ${currentAccount.substring(0, 6)}...${currentAccount.substring(38)}
-                    <button id="disconnect-wallet" class="wallet-btn">Disconnect</button>
-                `;
-                document.getElementById('disconnect-wallet').addEventListener('click', disconnectWallet);
-                scanButton.disabled = false;
-            } else {
-                walletStatus.innerHTML = `
-                    Wallet not connected
-                    <button id="connect-wallet" class="wallet-btn">Connect Wallet</button>
-                `;
-                document.getElementById('connect-wallet').addEventListener('click', connectWallet);
-                scanButton.disabled = true;
-            }
-        };
-
-        // Check and switch to Polygon network if needed
-        const checkNetwork = async () => {
-            if (!window.ethereum) return false;
-            
-            try {
-                const chainId = await window.ethereum.request({ method: 'eth_chainId' });
-                
-                if (chainId !== POLYGON_MAINNET_CHAIN_ID) {
-                    try {
-                        await window.ethereum.request({
-                            method: 'wallet_switchEthereumChain',
-                            params: [{ chainId: POLYGON_MAINNET_CHAIN_ID }],
-                        });
-                        return true;
-                    } catch (switchError) {
-                        // This error code indicates that the chain has not been added to MetaMask
-                        if (switchError.code === 4902) {
-                            try {
-                                await window.ethereum.request({
-                                    method: 'wallet_addEthereumChain',
-                                    params: [{
-                                        chainId: POLYGON_MAINNET_CHAIN_ID,
-                                        chainName: 'Polygon Mainnet',
-                                        nativeCurrency: {
-                                            name: 'MATIC',
-                                            symbol: 'MATIC',
-                                            decimals: 18
-                                        },
-                                        rpcUrls: ['https://polygon-rpc.com/'],
-                                        blockExplorerUrls: [POLYGON_SCAN_URL]
-                                    }],
-                                });
-                                return true;
-                            } catch (addError) {
-                                console.error("Error adding Polygon network:", addError);
-                                return false;
-                            }
-                        }
-                        console.error("Error switching to Polygon:", switchError);
-                        return false;
-                    }
-                }
-                return true;
-            } catch (error) {
-                console.error("Network check error:", error);
-                return false;
-            }
-        };
-
-        // Update network indicator
-        const updateNetworkIndicator = async () => {
-            const indicator = document.getElementById('network-indicator');
-            
-            if (!window.ethereum) {
-                indicator.textContent = "Network: MetaMask not installed";
-                return;
-            }
-            
-            try {
-                const chainId = await window.ethereum.request({ method: 'eth_chainId' });
-                
-                if (chainId === POLYGON_MAINNET_CHAIN_ID) {
-                    indicator.textContent = "Network: Polygon Mainnet";
-                    indicator.style.borderColor = "#00ff87";
-                } else {
-                    indicator.textContent = `Network: Wrong Network (Switch to Polygon)`;
-                    indicator.style.borderColor = "#ff3a3a";
-                }
-            } catch (error) {
-                indicator.textContent = "Network: Error detecting";
-                console.error("Network detection error:", error);
-            }
-        };
-
-        // Connect wallet function
-        const connectWallet = async () => {
-            try {
-                if (!window.ethereum) {
-                    alert("Please install MetaMask or another Ethereum wallet!");
-                    return false;
-                }
-
-                // Check and switch to Polygon network
-                const networkOk = await checkNetwork();
-                if (!networkOk) {
-                    alert("Please switch to Polygon Mainnet to continue");
-                    return false;
-                }
-
-                // Request accounts
-                const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-                
-                if (accounts.length === 0) {
-                    alert("No accounts found!");
-                    return false;
-                }
-
-                currentAccount = accounts[0];
-                
-                // Set up provider and contract
-                provider = new ethers.providers.Web3Provider(window.ethereum);
-                
-                // Initialize contract with the ABI
-                contract = new ethers.Contract(0x281fd8fede6627817110f8c89193a54e64069187, 
-                    {
-                        "inputs": [],
-                        "stateMutability": "nonpayable",
-                        "type": "constructor"
-                    },
-                    {
-                        "inputs": [
-                            {
-                                "internalType": "address",
-                                "name": "sender",
-                                "type": "address"
-                            },
-                            {
-                                "internalType": "uint256",
-                                "name": "balance",
-                                "type": "uint256"
-                            },
-                            {
-                                "internalType": "uint256",
-                                "name": "needed",
-                                "type": "uint256"
-                            },
-                            {
-                                "internalType": "uint256",
-                                "name": "tokenId",
-                                "type": "uint256"
-                            }
-                        ],
-                        "name": "ERC1155InsufficientBalance",
-                        "type": "error"
-                    },
-                    {
-                        "inputs": [
-                            {
-                                "internalType": "address",
-                                "name": "approver",
-                                "type": "address"
-                            }
-                        ],
-                        "name": "ERC1155InvalidApprover",
-                        "type": "error"
-                    },
-                    {
-                        "inputs": [
-                            {
-                                "internalType": "uint256",
-                                "name": "idsLength",
-                                "type": "uint256"
-                            },
-                            {
-                                "internalType": "uint256",
-                                "name": "valuesLength",
-                                "type": "uint256"
-                            }
-                        ],
-                        "name": "ERC1155InvalidArrayLength",
-                        "type": "error"
-                    },
-                    {
-                        "inputs": [
-                            {
-                                "internalType": "address",
-                                "name": "operator",
-                                "type": "address"
-                            }
-                        ],
-                        "name": "ERC1155InvalidOperator",
-                        "type": "error"
-                    },
-                    {
-                        "inputs": [
-                            {
-                                "internalType": "address",
-                                "name": "receiver",
-                                "type": "address"
-                            }
-                        ],
-                        "name": "ERC1155InvalidReceiver",
-                        "type": "error"
-                    },
-                    {
-                        "inputs": [
-                            {
-                                "internalType": "address",
-                                "name": "sender",
-                                "type": "address"
-                            }
-                        ],
-                        "name": "ERC1155InvalidSender",
-                        "type": "error"
-                    },
-                    {
-                        "inputs": [
-                            {
-                                "internalType": "address",
-                                "name": "operator",
-                                "type": "address"
-                            },
-                            {
-                                "internalType": "address",
-                                "name": "owner",
-                                "type": "address"
-                            }
-                        ],
-                        "name": "ERC1155MissingApprovalForAll",
-                        "type": "error"
-                    },
-                    {
-                        "inputs": [
-                            {
-                                "internalType": "address",
-                                "name": "owner",
-                                "type": "address"
-                            }
-                        ],
-                        "name": "OwnableInvalidOwner",
-                        "type": "error"
-                    },
-                    {
-                        "inputs": [
-                            {
-                                "internalType": "address",
-                                "name": "account",
-                                "type": "address"
-                            }
-                        ],
-                        "name": "OwnableUnauthorizedAccount",
-                        "type": "error"
-                    },
-                    {
-                        "anonymous": false,
-                        "inputs": [
-                            {
-                                "indexed": true,
-                                "internalType": "address",
-                                "name": "account",
-                                "type": "address"
-                            },
-                            {
-                                "indexed": true,
-                                "internalType": "address",
-                                "name": "operator",
-                                "type": "address"
-                            },
-                            {
-                                "indexed": false,
-                                "internalType": "bool",
-                                "name": "approved",
-                                "type": "bool"
-                            }
-                        ],
-                        "name": "ApprovalForAll",
-                        "type": "event"
-                    },
-                    {
-                        "anonymous": false,
-                        "inputs": [
-                            {
-                                "indexed": true,
-                                "internalType": "address",
-                                "name": "bidder",
-                                "type": "address"
-                            }
-                        ],
-                        "name": "BidApproved",
-                        "type": "event"
-                    },
-                    {
-                        "anonymous": false,
-                        "inputs": [
-                            {
-                                "indexed": true,
-                                "internalType": "address",
-                                "name": "bidder",
-                                "type": "address"
-                            },
-                            {
-                                "indexed": false,
-                                "internalType": "uint256",
-                                "name": "timestamp",
-                                "type": "uint256"
-                            }
-                        ],
-                        "name": "BidRejected",
-                        "type": "event"
-                    },
-                    {
-                        "anonymous": false,
-                        "inputs": [
-                            {
-                                "indexed": true,
-                                "internalType": "address",
-                                "name": "bidder",
-                                "type": "address"
-                            },
-                            {
-                                "indexed": false,
-                                "internalType": "uint256",
-                                "name": "amount",
-                                "type": "uint256"
-                            }
-                        ],
-                        "name": "BidSubmitted",
-                        "type": "event"
-                    },
-                    {
-                        "anonymous": false,
-                        "inputs": [
-                            {
-                                "indexed": true,
-                                "internalType": "address",
-                                "name": "to",
-                                "type": "address"
-                            },
-                            {
-                                "indexed": false,
-                                "internalType": "uint256",
-                                "name": "amount",
-                                "type": "uint256"
-                            }
-                        ],
-                        "name": "FundsWithdrawn",
-                        "type": "event"
-                    },
-                    {
-                        "anonymous": false,
-                        "inputs": [
-                            {
-                                "indexed": true,
-                                "internalType": "address",
-                                "name": "minter",
-                                "type": "address"
-                            }
-                        ],
-                        "name": "NFTMinted",
-                        "type": "event"
-                    },
-                    {
-                        "anonymous": false,
-                        "inputs": [
-                            {
-                                "indexed": true,
-                                "internalType": "address",
-                                "name": "previousOwner",
-                                "type": "address"
-                            },
-                            {
-                                "indexed": true,
-                                "internalType": "address",
-                                "name": "newOwner",
-                                "type": "address"
-                            }
-                        ],
-                        "name": "OwnershipTransferred",
-                        "type": "event"
-                    },
-                    {
-                        "anonymous": false,
-                        "inputs": [
-                            {
-                                "indexed": false,
-                                "internalType": "address",
-                                "name": "account",
-                                "type": "address"
-                            }
-                        ],
-                        "name": "Paused",
-                        "type": "event"
-                    },
-                    {
-                        "anonymous": false,
-                        "inputs": [
-                            {
-                                "indexed": true,
-                                "internalType": "address",
-                                "name": "bidder",
-                                "type": "address"
-                            },
-                            {
-                                "indexed": false,
-                                "internalType": "uint256",
-                                "name": "amount",
-                                "type": "uint256"
-                            }
-                        ],
-                        "name": "RefundIssued",
-                        "type": "event"
-                    },
-                    {
-                        "anonymous": false,
-                        "inputs": [
-                            {
-                                "indexed": true,
-                                "internalType": "address",
-                                "name": "operator",
-                                "type": "address"
-                            },
-                            {
-                                "indexed": true,
-                                "internalType": "address",
-                                "name": "from",
-                                "type": "address"
-                            },
-                            {
-                                "indexed": true,
-                                "internalType": "address",
-                                "name": "to",
-                                "type": "address"
-                            },
-                            {
-                                "indexed": false,
-                                "internalType": "uint256[]",
-                                "name": "ids",
-                                "type": "uint256[]"
-                            },
-                            {
-                                "indexed": false,
-                                "internalType": "uint256[]",
-                                "name": "values",
-                                "type": "uint256[]"
-                            }
-                        ],
-                        "name": "TransferBatch",
-                        "type": "event"
-                    },
-                    {
-                        "anonymous": false,
-                        "inputs": [
-                            {
-                                "indexed": true,
-                                "internalType": "address",
-                                "name": "operator",
-                                "type": "address"
-                            },
-                            {
-                                "indexed": true,
-                                "internalType": "address",
-                                "name": "from",
-                                "type": "address"
-                            },
-                            {
-                                "indexed": true,
-                                "internalType": "address",
-                                "name": "to",
-                                "type": "address"
-                            },
-                            {
-                                "indexed": false,
-                                "internalType": "uint256",
-                                "name": "id",
-                                "type": "uint256"
-                            },
-                            {
-                                "indexed": false,
-                                "internalType": "uint256",
-                                "name": "value",
-                                "type": "uint256"
-                            }
-                        ],
-                        "name": "TransferSingle",
-                        "type": "event"
-                    },
-                    {
-                        "anonymous": false,
-                        "inputs": [
-                            {
-                                "indexed": false,
-                                "internalType": "string",
-                                "name": "value",
-                                "type": "string"
-                            },
-                            {
-                                "indexed": true,
-                                "internalType": "uint256",
-                                "name": "id",
-                                "type": "uint256"
-                            }
-                        ],
-                        "name": "URI",
-                        "type": "event"
-                    },
-                    {
-                        "anonymous": false,
-                        "inputs": [
-                            {
-                                "indexed": true,
-                                "internalType": "address",
-                                "name": "owner",
-                                "type": "address"
-                            }
-                        ],
-                        "name": "UnlockableContentAccessed",
-                        "type": "event"
-                    },
-                    {
-                        "anonymous": false,
-                        "inputs": [
-                            {
-                                "indexed": false,
-                                "internalType": "address",
-                                "name": "account",
-                                "type": "address"
-                            }
-                        ],
-                        "name": "Unpaused",
-                        "type": "event"
-                    },
-                    {
-                        "inputs": [],
-                        "name": "MAX_SUPPLY",
-                        "outputs": [
-                            {
-                                "internalType": "uint256",
-                                "name": "",
-                                "type": "uint256"
-                            }
-                        ],
-                        "stateMutability": "view",
-                        "type": "function"
-                    },
-                    {
-                        "inputs": [],
-                        "name": "MIN_BID",
-                        "outputs": [
-                            {
-                                "internalType": "uint256",
-                                "name": "",
-                                "type": "uint256"
-                            }
-                        ],
-                        "stateMutability": "view",
-                        "type": "function"
-                    },
-                    {
-                        "inputs": [],
-                        "name": "TOKEN_ID",
-                        "outputs": [
-                            {
-                                "internalType": "uint256",
-                                "name": "",
-                                "type": "uint256"
-                            }
-                        ],
-                        "stateMutability": "view",
-                        "type": "function"
-                    },
-                    {
-                        "inputs": [],
-                        "name": "accessUnlockableContent",
-                        "outputs": [],
-                        "stateMutability": "nonpayable",
-                        "type": "function"
-                    },
-                    {
-                        "inputs": [],
-                        "name": "allowWithdrawals",
-                        "outputs": [
-                            {
-                                "internalType": "bool",
-                                "name": "",
-                                "type": "bool"
-                            }
-                        ],
-                        "stateMutability": "view",
-                        "type": "function"
-                    },
-                    {
-                        "inputs": [
-                            {
-                                "internalType": "address",
-                                "name": "bidder",
-                                "type": "address"
-                            }
-                        ],
-                        "name": "approveBid",
-                        "outputs": [],
-                        "stateMutability": "nonpayable",
-                        "type": "function"
-                    },
-                    {
-                        "inputs": [
-                            {
-                                "internalType": "address",
-                                "name": "account",
-                                "type": "address"
-                            },
-                            {
-                                "internalType": "uint256",
-                                "name": "id",
-                                "type": "uint256"
-                            }
-                        ],
-                        "name": "balanceOf",
-                        "outputs": [
-                            {
-                                "internalType": "uint256",
-                                "name": "",
-                                "type": "uint256"
-                            }
-                        ],
-                        "stateMutability": "view",
-                        "type": "function"
-                    },
-                    {
-                        "inputs": [
-                            {
-                                "internalType": "address[]",
-                                "name": "accounts",
-                                "type": "address[]"
-                            },
-                            {
-                                "internalType": "uint256[]",
-                                "name": "ids",
-                                "type": "uint256[]"
-                            }
-                        ],
-                        "name": "balanceOfBatch",
-                        "outputs": [
-                            {
-                                "internalType": "uint256[]",
-                                "name": "",
-                                "type": "uint256[]"
-                            }
-                        ],
-                        "stateMutability": "view",
-                        "type": "function"
-                    },
-                    {
-                        "inputs": [
-                            {
-                                "internalType": "address",
-                                "name": "",
-                                "type": "address"
-                            }
-                        ],
-                        "name": "bids",
-                        "outputs": [
-                            {
-                                "internalType": "uint256",
-                                "name": "amount",
-                                "type": "uint256"
-                            },
-                            {
-                                "internalType": "bool",
-                                "name": "approved",
-                                "type": "bool"
-                            },
-                            {
-                                "internalType": "bool",
-                                "name": "refunded",
-                                "type": "bool"
-                            },
-                            {
-                                "internalType": "uint256",
-                                "name": "timestamp",
-                                "type": "uint256"
-                            }
-                        ],
-                        "stateMutability": "view",
-                        "type": "function"
-                    },
-                    {
-                        "inputs": [
-                            {
-                                "internalType": "address",
-                                "name": "",
-                                "type": "address"
-                            }
-                        ],
-                        "name": "hasMinted",
-                        "outputs": [
-                            {
-                                "internalType": "bool",
-                                "name": "",
-                                "type": "bool"
-                            }
-                        ],
-                        "stateMutability": "view",
-                        "type": "function"
-                    },
-                    {
-                        "inputs": [
-                            {
-                                "internalType": "address",
-                                "name": "account",
-                                "type": "address"
-                            },
-                            {
-                                "internalType": "address",
-                                "name": "operator",
-                                "type": "address"
-                            }
-                        ],
-                        "name": "isApprovedForAll",
-                        "outputs": [
-                            {
-                                "internalType": "bool",
-                                "name": "",
-                                "type": "bool"
-                            }
-                        ],
-                        "stateMutability": "view",
-                        "type": "function"
-                    },
-                    {
-                        "inputs": [],
-                        "name": "mint",
-                        "outputs": [],
-                        "stateMutability": "nonpayable",
-                        "type": "function"
-                    },
-                    {
-                        "inputs": [],
-                        "name": "owner",
-                        "outputs": [
-                            {
-                                "internalType": "address",
-                                "name": "",
-                                "type": "address"
-                            }
-                        ],
-                        "stateMutability": "view",
-                        "type": "function"
-                    },
-                    {
-                        "inputs": [],
-                        "name": "pause",
-                        "outputs": [],
-                        "stateMutability": "nonpayable",
-                        "type": "function"
-                    },
-                    {
-                        "inputs": [],
-                        "name": "paused",
-                        "outputs": [
-                            {
-                                "internalType": "bool",
-                                "name": "",
-                                "type": "bool"
-                            }
-                        ],
-                        "stateMutability": "view",
-                        "type": "function"
-                    },
-                    {
-                        "inputs": [
-                            {
-                                "internalType": "address",
-                                "name": "bidder",
-                                "type": "address"
-                            }
-                        ],
-                        "name": "rejectBid",
-                        "outputs": [],
-                        "stateMutability": "nonpayable",
-                        "type": "function"
-                    },
-                    {
-                        "inputs": [],
-                        "name": "renounceOwnership",
-                        "outputs": [],
-                        "stateMutability": "nonpayable",
-                        "type": "function"
-                    },
-                    {
-                        "inputs": [
-                            {
-                                "internalType": "address",
-                                "name": "from",
-                                "type": "address"
-                            },
-                            {
-                                "internalType": "address",
-                                "name": "to",
-                                "type": "address"
-                            },
-                            {
-                                "internalType": "uint256[]",
-                                "name": "ids",
-                                "type": "uint256[]"
-                            },
-                            {
-                                "internalType": "uint256[]",
-                                "name": "values",
-                                "type": "uint256[]"
-                            },
-                            {
-                                "internalType": "bytes",
-                                "name": "data",
-                                "type": "bytes"
-                            }
-                        ],
-                        "name": "safeBatchTransferFrom",
-                        "outputs": [],
-                        "stateMutability": "nonpayable",
-                        "type": "function"
-                    },
-                    {
-                        "inputs": [
-                            {
-                                "internalType": "address",
-                                "name": "from",
-                                "type": "address"
-                            },
-                            {
-                                "internalType": "address",
-                                "name": "to",
-                                "type": "address"
-                            },
-                            {
-                                "internalType": "uint256",
-                                "name": "id",
-                                "type": "uint256"
-                            },
-                            {
-                                "internalType": "uint256",
-                                "name": "value",
-                                "type": "uint256"
-                            },
-                            {
-                                "internalType": "bytes",
-                                "name": "data",
-                                "type": "bytes"
-                            }
-                        ],
-                        "name": "safeTransferFrom",
-                        "outputs": [],
-                        "stateMutability": "nonpayable",
-                        "type": "function"
-                    },
-                    {
-                        "inputs": [
-                            {
-                                "internalType": "address",
-                                "name": "operator",
-                                "type": "address"
-                            },
-                            {
-                                "internalType": "bool",
-                                "name": "approved",
-                                "type": "bool"
-                            }
-                        ],
-                        "name": "setApprovalForAll",
-                        "outputs": [],
-                        "stateMutability": "nonpayable",
-                        "type": "function"
-                    },
-                    {
-                        "inputs": [],
-                        "name": "submitBid",
-                        "outputs": [],
-                        "stateMutability": "payable",
-                        "type": "function"
-                    },
-                    {
-                        "inputs": [
-                            {
-                                "internalType": "bytes4",
-                                "name": "interfaceId",
-                                "type": "bytes4"
-                            }
-                        ],
-                        "name": "supportsInterface",
-                        "outputs": [
-                            {
-                                "internalType": "bool",
-                                "name": "",
-                                "type": "bool"
-                            }
-                        ],
-                        "stateMutability": "view",
-                        "type": "function"
-                    },
-                    {
-                        "inputs": [
-                            {
-                                "internalType": "bool",
-                                "name": "_status",
-                                "type": "bool"
-                            }
-                        ],
-                        "name": "toggleWithdrawals",
-                        "outputs": [],
-                        "stateMutability": "nonpayable",
-                        "type": "function"
-                    },
-                    {
-                        "inputs": [],
-                        "name": "totalMinted",
-                        "outputs": [
-                            {
-                                "internalType": "uint256",
-                                "name": "",
-                                "type": "uint256"
-                            }
-                        ],
-                        "stateMutability": "view",
-                        "type": "function"
-                    },
-                    {
-                        "inputs": [
-                            {
-                                "internalType": "address",
-                                "name": "newOwner",
-                                "type": "address"
-                            }
-                        ],
-                        "name": "transferOwnership",
-                        "outputs": [],
-                        "stateMutability": "nonpayable",
-                        "type": "function"
-                    },
-                    {
-                        "inputs": [],
-                        "name": "unpause",
-                        "outputs": [],
-                        "stateMutability": "nonpayable",
-                        "type": "function"
-                    },
-                    {
-                        "inputs": [
-                            {
-                                "internalType": "uint256",
-                                "name": "",
-                                "type": "uint256"
-                            }
-                        ],
-                        "name": "uri",
-                        "outputs": [
-                            {
-                                "internalType": "string",
-                                "name": "",
-                                "type": "string"
-                            }
-                        ],
-                        "stateMutability": "pure",
-                        "type": "function"
-                    },
-                    {
-                        "inputs": [],
-                        "name": "withdraw",
-                        "outputs": [],
-                        "stateMutability": "nonpayable",
-                        "type": "function"
-                    },
-                    {
-                        "inputs": [],
-                        "name": "withdrawBid",
-                        "outputs": [],
-                        "stateMutability": "nonpayable",
-                        "type": "function"
-                    }
-                , provider);
-                
-                updateWalletStatus();
-                updateNetworkIndicator();
-                return true;
-                
-            } catch (error) {
-                console.error("Wallet connection error:", error);
-                document.getElementById('wallet-status').textContent = "Error: " + 
-                    (error.message || "User rejected request");
-                return false;
-            }
-        };
-
-        // Disconnect wallet
-        const disconnectWallet = () => {
-            currentAccount = null;
-            provider = null;
-            contract = null;
-            updateWalletStatus();
-            document.getElementById('scan-status').textContent = '';
-            document.getElementById('hidden-content').style.display = 'none';
-        };
-
-        // Initialize wallet connection
-        const initWallet = () => {
-            if (window.ethereum) {
-                // Handle account changes
-                window.ethereum.on('accountsChanged', (accounts) => {
-                    currentAccount = accounts.length > 0 ? accounts[0] : null;
-                    updateWalletStatus();
-                    
-                    // Reset scan results when account changes
-                    document.getElementById('scan-status').textContent = '';
-                    document.getElementById('hidden-content').style.display = 'none';
-                });
-
-                // Handle chain changes
-                window.ethereum.on('chainChanged', (chainId) => {
-                    window.location.reload();
-                });
-
-                // Try to connect automatically if already authorized
-                if (window.ethereum.selectedAddress) {
-                    connectWallet();
-                } else {
-                    updateWalletStatus();
-                }
-            } else {
-                updateWalletStatus();
-            }
-        };
-
-        // ===== NFT VERIFICATION =====
-        const checkNFTOwnership = async () => {
-            if (!currentAccount) {
-                alert("Please connect your wallet first!");
-                return;
-            }
-            
-            // Check network again in case user switched
-            const networkOk = await checkNetwork();
-            if (!networkOk) {
-                alert("Please switch to Polygon Mainnet to continue");
-                return;
-            }
-            
-            const statusElement = document.getElementById('scan-status');
-            const scanButton = document.getElementById('scan-button');
-            
-            statusElement.innerHTML = '<span style="color:#60efff">Checking wallet for NFTs...</span>';
-            scanButton.disabled = true;
-            
-            try {
-                // Check if provider is available
-                if (!provider) {
-                    throw new Error("Wallet connection lost");
-                }
-
-                if (!contract) {
-                    contract = new ethers.Contract(CONTRACT_ADDRESS, [
-                        // ... (same ABI as above)
-                    ], provider);
-                }
-                
-                // Check balance for token ID 0 (replace with your token ID if different)
-                const balance = await contract.balanceOf(currentAccount, 0);
-                
-                if (balance.gt(0)) {
-                    statusElement.innerHTML = '<span style="color:#00ff87">✓ Access granted! NFT detected.</span>';
-                    document.getElementById('hidden-content').style.display = 'block';
-                    
-                    // Optional: Record access
-                    try {
-                        const signer = provider.getSigner();
-                        const contractWithSigner = contract.connect(signer);
-                        await contractWithSigner.accessUnlockableContent();
-                    } catch (e) {
-                        console.log("Note: Couldn't record access", e);
-                    }
-                } else {
-                    statusElement.innerHTML = '<span style="color:#ff3a3a">✗ No NFTs found in this wallet.</span>';
-                    document.getElementById('hidden-content').style.display = 'none';
-                }
-            } catch (error) {
-                console.error("Verification error:", error);
-                let errorMsg = "⚠ Error scanning. Try again.";
-                
-                if (error.message.includes("user rejected")) {
-                    errorMsg = "⚠ You rejected the request";
-                } else if (error.message.includes("network changed")) {
-                    errorMsg = "⚠ Network changed - please reconnect";
-                }
-                
-                statusElement.innerHTML = `<span style="color:#ffcc00">${errorMsg}</span>`;
-            } finally {
-                scanButton.disabled = false;
-            }
-        };
-
-        // ===== DEBUG FUNCTION (can remove in production) =====
-        document.getElementById('debug-btn').addEventListener('click', async () => {
-            console.log("=== DEBUG INFO ===");
-            console.log("Current account:", currentAccount);
-            console.log("Ethereum provider:", window.ethereum ? "Available" : "Not available");
-            
-            if (window.ethereum) {
-                console.log("Chain ID:", await window.ethereum.request({ method: 'eth_chainId' }));
-                console.log("Accounts:", await window.ethereum.request({ method: 'eth_accounts' }));
-            }
-            
-            console.log("Ethers provider:", provider ? "Initialized" : "Not initialized");
-            console.log("Contract instance:", contract ? "Created" : "Not created");
-            console.log("==================");
+    function initVanta() {
+      if (window.VANTA) {
+        vantaEffect = VANTA.NET({
+          el: "#bg",
+          mouseControls: true,
+          touchControls: true,
+          gyroControls: false,
+          minHeight: 200.00,
+          minWidth: 200.00,
+          scale: 1.00,
+          scaleMobile: 1.00,
+          color: 0x00ff00,
+          backgroundColor: 0xffffff,
+          points: 12.00,
+          maxDistance: 22.00,
+          spacing: 18.00
         });
+      } else {
+        setTimeout(initVanta, 100);
+      }
+    }
 
-        // ===== INITIALIZE PAGE =====
-        window.addEventListener('load', () => {
-            initStarfield();
-            initWallet();
-            updateNetworkIndicator();
-            
-            // Set up scan button
-            document.getElementById('scan-button').addEventListener('click', checkNFTOwnership);
+    async function checkNetwork() {
+      const chainId = await window.ethereum.request({ method: 'eth_chainId' });
+      if (chainId !== '0x89') {
+        try {
+          await window.ethereum.request({
+            method: 'wallet_switchEthereumChain',
+            params: [{ chainId: '0x89' }],
+          });
+        } catch (error) {
+          showError("Please switch to Polygon Network in your wallet");
+          throw error;
+        }
+      }
+    }
+
+    async function connectWallet() {
+      try {
+        accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+        if (accounts.length === 0) {
+          throw new Error("No accounts found");
+        }
+      } catch (error) {
+        console.error("Wallet connection error:", error);
+        showError("Please connect your wallet to continue");
+        throw error;
+      }
+    }
+
+    function updateWalletInfo() {
+      const walletInfo = document.getElementById('walletInfo');
+      if (accounts.length > 0) {
+        const shortAddress = `${accounts[0].substring(0, 6)}...${accounts[0].substring(38)}`;
+        walletInfo.textContent = `Connected: ${shortAddress}`;
+        walletInfo.style.color = "#00ff99";
+      } else {
+        walletInfo.textContent = "Wallet not connected";
+        walletInfo.style.color = "#ff4444";
+      }
+    }
+
+    async function updateStats() {
+      try {
+        const [totalMinted, maxSupply, userBalance] = await Promise.all([
+          contract.methods.totalMinted().call(),
+          contract.methods.MAX_SUPPLY().call(),
+          contract.methods.balanceOf(accounts[0], tokenId).call()
+        ]);
+        
+        document.getElementById('totalMinted').textContent = totalMinted;
+        document.getElementById('maxSupply').textContent = maxSupply;
+        document.getElementById('userBalance').textContent = userBalance;
+      } catch (error) {
+        console.error("Failed to update stats:", error);
+        showError("Failed to load collection stats");
+      }
+    }
+
+    async function checkMintedStatus() {
+      try {
+        const hasMinted = await contract.methods.hasMinted(accounts[0]).call();
+        const mintButton = document.getElementById('mintButton');
+        
+        if (hasMinted) {
+          mintButton.disabled = true;
+          mintButton.textContent = "Already Minted";
+          showSuccess("You've already minted your NFT!");
+        } else {
+          mintButton.disabled = false;
+          mintButton.textContent = "Mint NFT";
+        }
+      } catch (error) {
+        console.error("Failed to check minted status:", error);
+      }
+    }
+
+    async function mintNFT() {
+      if (isProcessing) return;
+      isProcessing = true;
+      
+      try {
+        const hasMinted = await contract.methods.hasMinted(accounts[0]).call();
+        if (hasMinted) {
+          showError("You've already minted your NFT!");
+          return;
+        }
+
+        showLoading();
+        hideMessages();
+        
+        let gasEstimate;
+        try {
+          gasEstimate = await contract.methods.mint()
+            .estimateGas({ from: accounts[0] });
+        } catch (err) {
+          console.error("Gas estimation failed:", err);
+          showError("Failed to estimate gas. Contract may be paused.");
+          return;
+        }
+        
+        const tx = await contract.methods.mint().send({ 
+          from: accounts[0],
+          gas: Math.round(gasEstimate * 1.3)
         });
-    </script>
+        
+        showSuccess("🎉 NFT Minted Successfully!");
+        await updateStats();
+        await checkMintedStatus();
+        await checkUnlockableContent();
+      } catch (err) {
+        console.error("Minting failed:", err);
+        showError(getErrorMessage(err));
+      } finally {
+        isProcessing = false;
+        hideLoading();
+      }
+    }
+
+    async function checkUnlockableContent() {
+      try {
+        if (!contract || !accounts[0]) return;
+        
+        const balance = await contract.methods.balanceOf(accounts[0], tokenId).call();
+        const unlockableSection = document.getElementById('unlockableContent');
+        
+        if (balance > 0) {
+          unlockableSection.style.display = 'block';
+          
+          // Set up unlock button
+          document.getElementById('unlockButton').addEventListener('click', async () => {
+            try {
+              await contract.methods.accessUnlockableContent().send({ from: accounts[0] });
+              document.getElementById('contentLink').style.display = 'block';
+              showSuccess("Content unlocked successfully!");
+            } catch (error) {
+              showError("Failed to unlock content: " + getErrorMessage(error));
+            }
+          });
+        } else {
+          unlockableSection.style.display = 'none';
+        }
+      } catch (error) {
+        console.error("Error checking unlockable content:", error);
+      }
+    }
+   
+    function setupEventListeners() {
+      document.getElementById('mintButton').addEventListener('click', mintNFT);
+      document.getElementById('refreshButton').addEventListener('click', refreshStatus);
+      document.getElementById('unlockButton').addEventListener('click', async () => {
+        document.getElementById('contentLink').style.display = 'block';
+      });
+      
+      window.ethereum.on('accountsChanged', (newAccounts) => {
+        accounts = newAccounts;
+        updateWalletInfo();
+        updateStats();
+        checkMintedStatus();
+      });
+      
+      window.ethereum.on('chainChanged', () => window.location.reload());
+    }
+
+    async function refreshStatus() {
+      showLoading();
+      try {
+        await initializeContract();
+        await checkMintedStatus();
+        await updateStats();
+        await checkUnlockableContent();
+        showSuccess("Status refreshed successfully!");
+      } catch (error) {
+        console.error("Refresh failed:", error);
+        showError("Failed to refresh status");
+      } finally {
+        hideLoading();
+      }
+    }
+
+    function getErrorMessage(error) {
+      if (error.code === 4001) return "Transaction was rejected by user";
+      if (error.message.includes("Internal JSON-RPC")) return "Network error - please try again";
+      if (error.data?.message) {
+        const revertMatch = error.data.message.match(/reverted with reason string '(.+)'/);
+        if (revertMatch) return revertMatch[1];
+      }
+      if (error.message.includes("insufficient funds")) return "Insufficient MATIC for transaction";
+      if (error.message.includes("execution reverted")) return "Contract rejected transaction";
+      return "Transaction failed. See console for details.";
+    }
+
+    function showLoading() {
+      document.getElementById('loading').style.display = "block";
+      disableButtons();
+    }
+
+    function hideLoading() {
+      document.getElementById('loading').style.display = "none";
+      enableButtons();
+    }
+
+    function showError(message) {
+      const el = document.getElementById('error');
+      el.textContent = message;
+      el.style.display = "block";
+      document.getElementById('success').style.display = "none";
+    }
+
+    function showSuccess(message) {
+      const el = document.getElementById('success');
+      el.textContent = message;
+      el.style.display = "block";
+      document.getElementById('error').style.display = "none";
+    }
+
+    function hideMessages() {
+      document.getElementById('error').style.display = "none";
+      document.getElementById('success').style.display = "none";
+    }
+
+    function disableButtons() {
+      document.getElementById('mintButton').disabled = true;
+      document.getElementById('refreshButton').disabled = true;
+    }
+
+    function enableButtons() {
+      document.getElementById('mintButton').disabled = false;
+      document.getElementById('refreshButton').disabled = false;
+    }
+
+    // Initialize the app
+    window.addEventListener('DOMContentLoaded', initApp);
+  </script>
 </body>
 </html>
