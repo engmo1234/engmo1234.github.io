@@ -4,38 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>engmo1234 Blog | NFT Website Designs</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://cdn.ethers.io/lib/ethers-5.2.umd.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        /* === ULTRA-TRANSPARENT THEME === */
         body {
             margin: 0;
             padding: 0;
             font-family: 'Space Grotesk', sans-serif;
             color: #e0e0e0;
             background: #000;
-            overflow-x: hidden;
             line-height: 1.6;
-        }
-
-        #starfield {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
         }
 
         .container {
             max-width: 900px;
-            margin: 5% auto;
+            margin: 0 auto;
             padding: 40px;
-            background: rgba(0, 0, 0, 0.1) !important;
-            backdrop-filter: blur(5px);
-            border-radius: 15px;
-            border: 1px solid rgba(96, 239, 255, 0.1);
         }
 
         h1, h2, h3 {
@@ -52,52 +35,13 @@
         }
 
         .blog-post {
-            background: rgba(0, 0, 0, 0.2) !important;
-            border: 1px solid rgba(96, 239, 255, 0.1);
-            border-radius: 12px;
+            background: rgba(0, 0, 0, 0.2);
             padding: 25px;
+            border-radius: 12px;
             margin-bottom: 30px;
-            transition: all 0.3s;
-            position: relative;
+            border: 1px solid rgba(96, 239, 255, 0.1);
         }
 
-        .blog-post:hover {
-            background: rgba(30, 30, 50, 0.3) !important;
-            border-color: rgba(96, 239, 255, 0.3);
-        }
-
-        /* === ADMIN CONTROLS === */
-        .admin-controls {
-            display: none;
-            background: rgba(255, 50, 50, 0.2);
-            padding: 10px;
-            border-radius: 8px;
-            margin-top: 10px;
-        }
-
-        .admin-tools {
-            display: none;
-            position: absolute;
-            top: 10px;
-            right: 10px;
-        }
-
-        .edit-post, .delete-comment, .save-post {
-            background: #ff3a3a;
-            color: white;
-            border: none;
-            padding: 3px 8px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 12px;
-            margin-left: 5px;
-        }
-
-        .save-post {
-            background: #00ff87;
-        }
-
-        /* === COMMENT SECTION === */
         .comments {
             margin-top: 40px;
         }
@@ -146,33 +90,18 @@
             color: #888;
         }
 
-        .wallet-status {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: rgba(0, 0, 0, 0.7);
-            padding: 8px 15px;
-            border-radius: 20px;
-            font-size: 0.9em;
-            border: 1px solid #00ff87;
-        }
-
-        #connect-wallet {
-            background: linear-gradient(90deg, #00ff87, #60efff);
-            color: black;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-weight: bold;
-            margin-left: 10px;
+        .email-form input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(96, 239, 255, 0.2);
+            color: white;
+            border-radius: 8px;
         }
     </style>
 </head>
 <body>
-    <div id="starfield"></div>
-    <div class="wallet-status" id="wallet-status">Wallet not connected</div>
-    
     <div class="container">
         <header>
             <h1>engmo1234 Blog</h1>
@@ -180,227 +109,45 @@
         </header>
 
         <!-- Blog Post 1 -->
-        <div class="blog-post" data-post-id="1">
-            <div class="admin-tools">
-                <button class="edit-post" data-id="1">Edit</button>
-            </div>
-            <h2 contenteditable="false">How NFT Website Designs Can Future-Proof Your Business</h2>
-            <p><small contenteditable="false">Posted May 15, 2023 | 8 min read</small></p>
-            <div contenteditable="false">
-                <p>The digital landscape is evolving rapidly, and NFT-based website designs are at the forefront of this revolution. Unlike traditional websites, NFT websites provide:</p>
-                <ul>
-                    <li><strong>True Ownership</strong>: Your website becomes a tradeable asset on blockchain marketplaces</li>
-                    <li><strong>Royalty Streams</strong>: Earn 5-10% every time your design is resold</li>
-                    <li><strong>Anti-Counterfeiting</strong>: Cryptographic proof of authenticity</li>
-                </ul>
-                <p>Case Study: A Miami-based art gallery increased their revenue by 300% after converting their site to an NFT and selling limited editions.</p>
+        <div class="blog-post">
+            <h2>How NFT Website Designs Can Future-Proof Your Business</h2>
+            <p><small>Posted May 15, 2023 | 8 min read</small></p>
+            <div>
+                <p>The digital landscape is evolving rapidly, and NFT-based website designs are at the forefront of this revolution.</p>
             </div>
         </div>
 
         <!-- Blog Post 2 -->
-        <div class="blog-post" data-post-id="2">
-            <div class="admin-tools">
-                <button class="edit-post" data-id="2">Edit</button>
-            </div>
-            <h2 contenteditable="false">The Benefits of Paying for Web Design in Crypto</h2>
-            <p><small contenteditable="false">Posted May 10, 2023 | 6 min read</small></p>
-            <div contenteditable="false">
-                <p>Cryptocurrency payments eliminate traditional pain points:</p>
-                <ol>
-                    <li><strong>No Chargebacks</strong>: Transactions are irreversible</li>
-                    <li><strong>Global Payments</strong>: Serve clients anywhere without currency conversion</li>
-                    <li><strong>Tax Advantages</strong>: Potential capital gains deferral (consult your accountant)</li>
-                </ol>
-                <p>We accept ETH, SOL, and MATIC with instant conversion to stablecoins for designers.</p>
-            </div>
-        </div>
-
-        <!-- Blog Post 3 -->
-        <div class="blog-post" data-post-id="3">
-            <div class="admin-tools">
-                <button class="edit-post" data-id="3">Edit</button>
-            </div>
-            <h2 contenteditable="false">Step-by-Step: Buying a Website Design NFT</h2>
-            <p><small contenteditable="false">Posted May 5, 2023 | 10 min read</small></p>
-            <div contenteditable="false">
-                <p><strong>1. Connect Your Wallet</strong><br>
-                We support MetaMask, Phantom, and WalletConnect.</p>
-                
-                <p><strong>2. Browse Designs</strong><br>
-                Filter by industry (eCommerce, Portfolio, etc.) and price range.</p>
-                
-                <p><strong>3. Mint Your NFT</strong><br>
-                Gas fees typically $15-50 depending on network congestion.</p>
+        <div class="blog-post">
+            <h2>The Benefits of Paying for Web Design in Crypto</h2>
+            <p><small>Posted May 10, 2023 | 6 min read</small></p>
+            <div>
+                <p>Cryptocurrency payments eliminate traditional pain points in web design transactions.</p>
             </div>
         </div>
 
         <!-- Comment Section -->
         <div class="comments">
-            <h3>Discussion (<span id="comment-count">2</span> Comments)</h3>
+            <h3>Discussion (<span id="comment-count">0</span> Comments)</h3>
             <div class="comment-form">
+                <div class="email-form">
+                    <input type="text" id="commenter-name" placeholder="Your name (optional)">
+                    <input type="email" id="commenter-email" placeholder="Your email (optional)">
+                </div>
                 <textarea id="comment-text" placeholder="Add to the conversation..." rows="3"></textarea>
                 <button id="submit-comment">Post Comment</button>
             </div>
             
             <div class="comment-list" id="comment-list">
-                <!-- Sample Comments -->
-                <div class="comment" data-comment-id="1">
-                    <div class="comment-header">
-                        <span class="comment-author">CryptoDesignPro</span>
-                        <span class="comment-date">2 hours ago</span>
-                    </div>
-                    <p>Just sold my first NFT website through your platform - the royalty feature is genius!</p>
-                    <div class="admin-controls">
-                        <button class="delete-comment" data-id="1">Delete</button>
-                    </div>
-                </div>
-                
-                <div class="comment" data-comment-id="2">
-                    <div class="comment-header">
-                        <span class="comment-author">Web3Newbie</span>
-                        <span class="comment-date">1 day ago</span>
-                    </div>
-                    <p>How do I pay with Solana instead of ETH?</p>
-                    <div class="admin-controls">
-                        <button class="delete-comment" data-id="2">Delete</button>
-                    </div>
-                </div>
+                <!-- Comments will appear here -->
             </div>
         </div>
     </div>
 
-    <!-- === SUPERCHARGED STARFIELD + ENHANCED ADMIN SYSTEM === -->
     <script>
-        // 1. HYPERSPACE STARFIELD
-        const initStarfield = () => {
-            try {
-                const scene = new THREE.Scene();
-                const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
-                const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-                renderer.setSize(window.innerWidth, window.innerHeight);
-                document.getElementById('starfield').appendChild(renderer.domElement);
+        // Simple comment system
+        let commentIdCounter = 0;
 
-                const starCount = 10000;
-                const geometry = new THREE.BufferGeometry();
-                const vertices = [];
-                const sizes = [];
-                const colors = [];
-
-                for (let i = 0; i < starCount; i++) {
-                    vertices.push(
-                        (Math.random() - 0.5) * 2000,
-                        (Math.random() - 0.5) * 2000,
-                        (Math.random() - 0.5) * 2000
-                    );
-                    
-                    sizes.push(Math.random() * 0.8 + 0.3);
-                    
-                    colors.push(
-                        0.2 + Math.random() * 0.8,
-                        0.5 + Math.random() * 0.5,
-                        0.8 + Math.random() * 0.2
-                    );
-                }
-
-                geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
-                geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
-                
-                const material = new THREE.PointsMaterial({ 
-                    size: 0.5,
-                    sizeAttenuation: true,
-                    vertexColors: true,
-                    transparent: true,
-                    opacity: 1,
-                    blending: THREE.AdditiveBlending
-                });
-
-                const stars = new THREE.Points(geometry, material);
-                scene.add(stars);
-
-                camera.position.z = 1;
-
-                const animate = () => {
-                    requestAnimationFrame(animate);
-                    
-                    geometry.attributes.position.array.forEach((_, i) => {
-                        if ((i + 1) % 3 === 0) geometry.attributes.position.array[i] -= 5;
-                        if (geometry.attributes.position.array[i] < -1000) geometry.attributes.position.array[i] = 1000;
-                    });
-                    
-                    geometry.attributes.position.needsUpdate = true;
-                    renderer.render(scene, camera);
-                };
-                animate();
-
-                window.addEventListener('resize', () => {
-                    camera.aspect = window.innerWidth / window.innerHeight;
-                    camera.updateProjectionMatrix();
-                    renderer.setSize(window.innerWidth, window.innerHeight);
-                });
-            } catch (e) {
-                console.error("Starfield error:", e);
-                document.getElementById('starfield').style.background = 'radial-gradient(ellipse at center, #1B2735 0%, #090A0F 100%)';
-            }
-        };
-
-        // 2. ENHANCED ADMIN SYSTEM
-        const ADMIN_WALLET = "0x8Bd4bE269E9F1D18659450d9D794F136E1F1223a";
-        let isAdmin = false;
-        let currentAccount = null;
-        let commentIdCounter = 2; // Starting after the sample comments
-
-        // Connect Wallet Function
-        const connectWallet = async () => {
-            if (window.ethereum) {
-                try {
-                    const provider = new ethers.providers.Web3Provider(window.ethereum);
-                    const accounts = await provider.send("eth_requestAccounts", []);
-                    
-                    if (accounts.length === 0) {
-                        console.log("No accounts found");
-                        return;
-                    }
-                    
-                    currentAccount = accounts[0];
-                    
-                    document.getElementById('wallet-status').textContent = 
-                        `Connected: ${currentAccount.substring(0, 6)}...${currentAccount.substring(38)}`;
-                    
-                    // Remove connect button since we're connected
-                    const connectBtn = document.getElementById('connect-wallet');
-                    if (connectBtn) connectBtn.remove();
-                    
-                    // Check if admin
-                    isAdmin = currentAccount.toLowerCase() === ADMIN_WALLET.toLowerCase();
-                    
-                    if (isAdmin) {
-                        document.querySelectorAll('.admin-controls, .admin-tools').forEach(el => {
-                            el.style.display = 'block';
-                        });
-                        console.log("Admin mode activated");
-                    }
-                } catch (e) {
-                    console.error("Wallet connection error:", e);
-                    document.getElementById('wallet-status').textContent = "Connection failed";
-                    
-                    // If error is 4001 (user rejected request), show connect button again
-                    if (e.code === 4001) {
-                        const walletStatus = document.getElementById('wallet-status');
-                        if (!document.getElementById('connect-wallet')) {
-                            const connectBtn = document.createElement('button');
-                            connectBtn.id = 'connect-wallet';
-                            connectBtn.textContent = 'Connect Wallet';
-                            connectBtn.onclick = connectWallet;
-                            walletStatus.appendChild(connectBtn);
-                        }
-                    }
-                }
-            } else {
-                alert("Please install MetaMask or another Ethereum wallet!");
-            }
-        };
-
-        // Comment System - Now open to all without wallet
         document.getElementById('submit-comment').addEventListener('click', () => {
             const commentText = document.getElementById('comment-text').value.trim();
             if (!commentText) {
@@ -408,14 +155,13 @@
                 return;
             }
             
+            const name = document.getElementById('commenter-name').value.trim();
+            const email = document.getElementById('commenter-email').value.trim();
+            
             commentIdCounter++;
             const now = new Date();
             const timeAgo = "just now";
-            
-            // If wallet is connected, show address, otherwise show "Guest"
-            const authorName = currentAccount 
-                ? currentAccount.substring(0, 6) + "..." + currentAccount.substring(38)
-                : "Guest";
+            const authorName = name || "Guest";
             
             const commentHTML = `
                 <div class="comment" data-comment-id="${commentIdCounter}">
@@ -424,138 +170,15 @@
                         <span class="comment-date">${timeAgo}</span>
                     </div>
                     <p>${commentText}</p>
-                    ${isAdmin ? `<div class="admin-controls" style="display: block">
-                        <button class="delete-comment" data-id="${commentIdCounter}">Delete</button>
-                    </div>` : ''}
                 </div>
             `;
             
             document.getElementById('comment-list').insertAdjacentHTML('afterbegin', commentHTML);
             document.getElementById('comment-text').value = '';
+            document.getElementById('comment-count').textContent = commentIdCounter;
             
-            // Update comment count
-            updateCommentCount();
-        });
-
-        // Edit Post Functionality
-        document.addEventListener('click', (e) => {
-            // Delete comment (admin only)
-            if (e.target.classList.contains('delete-comment') && isAdmin) {
-                const commentId = e.target.getAttribute('data-id');
-                document.querySelector(`.comment[data-comment-id="${commentId}"]`).remove();
-                updateCommentCount();
-            }
-            
-            // Edit post (admin only)
-            if (e.target.classList.contains('edit-post') && isAdmin) {
-                const postId = e.target.getAttribute('data-id');
-                const post = document.querySelector(`.blog-post[data-post-id="${postId}"]`);
-                
-                // Toggle edit mode
-                const isEditing = post.querySelector('[contenteditable="true"]') !== null;
-                
-                if (isEditing) {
-                    // Save changes
-                    post.querySelectorAll('[contenteditable]').forEach(el => {
-                        el.setAttribute('contenteditable', 'false');
-                    });
-                    e.target.textContent = 'Edit';
-                    post.querySelector('.save-post')?.remove();
-                } else {
-                    // Enter edit mode
-                    post.querySelectorAll('h2, small, div[contenteditable]').forEach(el => {
-                        el.setAttribute('contenteditable', 'true');
-                    });
-                    e.target.textContent = 'Cancel';
-                    
-                    // Add save button
-                    if (!post.querySelector('.save-post')) {
-                        const saveBtn = document.createElement('button');
-                        saveBtn.className = 'save-post';
-                        saveBtn.textContent = 'Save';
-                        saveBtn.onclick = () => {
-                            post.querySelectorAll('[contenteditable]').forEach(el => {
-                                el.setAttribute('contenteditable', 'false');
-                            });
-                            e.target.textContent = 'Edit';
-                            saveBtn.remove();
-                        };
-                        e.target.insertAdjacentElement('afterend', saveBtn);
-                    }
-                }
-            }
-        });
-
-        function updateCommentCount() {
-            const commentCount = document.querySelectorAll('.comment').length;
-            document.getElementById('comment-count').textContent = commentCount;
-        }
-
-        // Initialize
-        window.addEventListener('load', () => {
-            initStarfield();
-            
-            // Add connect wallet button
-            const walletStatus = document.getElementById('wallet-status');
-            const connectBtn = document.createElement('button');
-            connectBtn.id = 'connect-wallet';
-            connectBtn.textContent = 'Connect Wallet';
-            connectBtn.onclick = connectWallet;
-            walletStatus.appendChild(connectBtn);
-            
-            // Check if wallet is already connected
-            if (window.ethereum) {
-                // Handle account changes
-                window.ethereum.on('accountsChanged', (accounts) => {
-                    if (accounts.length > 0) {
-                        currentAccount = accounts[0];
-                        document.getElementById('wallet-status').textContent = 
-                            `Connected: ${currentAccount.substring(0, 6)}...${currentAccount.substring(38)}`;
-                        
-                        // Check if admin
-                        isAdmin = currentAccount.toLowerCase() === ADMIN_WALLET.toLowerCase();
-                        
-                        if (isAdmin) {
-                            document.querySelectorAll('.admin-controls, .admin-tools').forEach(el => {
-                                el.style.display = 'block';
-                            });
-                        } else {
-                            document.querySelectorAll('.admin-controls, .admin-tools').forEach(el => {
-                                el.style.display = 'none';
-                            });
-                        }
-                        
-                        // Remove connect button if it exists
-                        const connectBtn = document.getElementById('connect-wallet');
-                        if (connectBtn) connectBtn.remove();
-                    } else {
-                        // Disconnected
-                        currentAccount = null;
-                        isAdmin = false;
-                        document.getElementById('wallet-status').textContent = "Wallet not connected";
-                        document.querySelectorAll('.admin-controls, .admin-tools').forEach(el => {
-                            el.style.display = 'none';
-                        });
-                        
-                        // Add connect button back if not present
-                        if (!document.getElementById('connect-wallet')) {
-                            const connectBtn = document.createElement('button');
-                            connectBtn.id = 'connect-wallet';
-                            connectBtn.textContent = 'Connect Wallet';
-                            connectBtn.onclick = connectWallet;
-                            walletStatus.appendChild(connectBtn);
-                        }
-                    }
-                });
-                
-                // Try to connect automatically if already connected
-                window.ethereum.request({ method: 'eth_accounts' })
-                    .then(accounts => {
-                        if (accounts.length > 0) {
-                            connectWallet();
-                        }
-                    });
-            }
+            // Simple console log instead of email for now
+            console.log("New comment from:", authorName, "Content:", commentText);
         });
     </script>
 </body>
