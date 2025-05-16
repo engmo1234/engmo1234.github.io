@@ -2,19 +2,29 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>engmo1234 | Blockchain Web Design & Blogging</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
     <style>
         /* === DARK SPACE THEME === */
+        :root {
+            --primary: #00ff88;
+            --primary-dark: #007744;
+            --primary-transparent: rgba(0, 255, 136, 0.1);
+            --bg-dark: #000;
+            --bg-transparent: rgba(0, 0, 0, 0.85);
+        }
+        
         body {
             margin: 0;
             padding: 0;
             font-family: 'Courier New', monospace;
-            color: #00ff88;
-            background: #000;
+            color: var(--primary);
+            background: var(--bg-dark);
             overflow-x: hidden;
+            line-height: 1.6;
+            -webkit-text-size-adjust: 100%;
         }
         
         #starfield {
@@ -30,95 +40,339 @@
             max-width: 800px;
             margin: 50px auto;
             padding: 30px;
-            background: rgba(0, 0, 0, 0.7);
-            border: 1px solid #00ff88;
+            background: var(--bg-transparent);
+            border: 1px solid var(--primary);
             border-radius: 5px;
-            box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
-            backdrop-filter: blur(5px);
+            box-shadow: 0 0 20px var(--primary-transparent);
+            backdrop-filter: blur(8px);
+            animation: pulse-glow 8s infinite alternate;
+        }
+        
+        @keyframes pulse-glow {
+            0% { box-shadow: 0 0 20px var(--primary-transparent); }
+            100% { box-shadow: 0 0 40px var(--primary-transparent); }
+        }
+        
+        h1, h2, h3 {
+            color: var(--primary);
+            text-shadow: 0 0 10px var(--primary-transparent);
+            word-break: break-word;
         }
         
         h1 {
             text-align: center;
             font-size: 2.5rem;
-            text-shadow: 0 0 10px #00ff88;
+            margin-bottom: 40px;
+            position: relative;
+        }
+        
+        h1::after {
+            content: "";
+            display: block;
+            width: 100px;
+            height: 3px;
+            background: var(--primary);
+            margin: 20px auto;
+            box-shadow: 0 0 10px var(--primary);
         }
         
         .blog-post {
             margin-bottom: 40px;
-            padding: 20px;
-            border-left: 3px solid #00ff88;
-            background: rgba(0, 0, 0, 0.5);
+            padding: 25px;
+            border-left: 3px solid var(--primary);
+            background: rgba(0, 5, 2, 0.3);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
         }
         
-        iframe {
+        .blog-post:hover {
+            background: rgba(0, 10, 5, 0.5);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 255, 136, 0.1);
+        }
+        
+        .blog-post::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
-            height: 400px;
-            border: 2px solid #00ff88;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, var(--primary-transparent), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.6s;
+        }
+        
+        .blog-post:hover::before {
+            transform: translateX(100%);
+        }
+        
+        .video-container {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
             margin: 20px 0;
+        }
+        
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 2px solid var(--primary);
+            background: #000;
         }
         
         .converter {
-            background: rgba(0, 0, 0, 0.5);
+            background: rgba(0, 5, 2, 0.3);
             padding: 20px;
             margin: 20px 0;
-            border: 1px dashed #00ff88;
+            border: 1px dashed var(--primary);
+            border-radius: 5px;
         }
         
-        textarea, button {
-            background: #000;
-            color: #00ff88;
-            border: 1px solid #00ff88;
-            padding: 10px;
-            margin: 5px 0;
+        textarea, button, .wallet-button {
+            background: rgba(0, 0, 0, 0.7);
+            color: var(--primary);
+            border: 1px solid var(--primary);
+            padding: 12px;
+            margin: 8px 0;
             width: 100%;
             font-family: 'Courier New', monospace;
+            transition: all 0.3s ease;
+            border-radius: 3px;
+            box-sizing: border-box;
         }
         
-        button:hover {
-            background: #00ff88;
+        textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+        
+        button:hover, .wallet-button:hover {
+            background: var(--primary);
             color: #000;
             cursor: pointer;
-            transition: all 0.3s ease;
+            box-shadow: 0 0 15px var(--primary);
         }
         
         #qr-container {
             display: flex;
             justify-content: center;
-            margin: 20px 0;
+            margin: 30px 0;
             perspective: 1000px;
         }
         
         #qr-code {
-            width: 150px;
-            height: 150px;
+            width: 180px;
+            height: 180px;
             background: white;
-            padding: 10px;
+            padding: 15px;
             transform-style: preserve-3d;
-            animation: rotateQR 10s infinite linear;
+            animation: rotateQR 15s infinite linear;
+            box-shadow: 0 0 20px var(--primary);
+            border: 2px solid var(--primary);
         }
         
         @keyframes rotateQR {
-            0% { transform: rotateY(0deg); }
-            100% { transform: rotateY(360deg); }
+            0% { transform: rotateY(0deg) rotateX(5deg); }
+            50% { transform: rotateY(180deg) rotateX(5deg); }
+            100% { transform: rotateY(360deg) rotateX(5deg); }
         }
         
         .wallet-button {
             display: block;
-            width: 200px;
-            margin: 20px auto;
+            width: 220px;
+            margin: 30px auto;
             padding: 15px;
             text-align: center;
             text-decoration: none;
-            background: #000;
-            color: #00ff88;
-            border: 1px solid #00ff88;
-            transition: all 0.3s ease;
+            font-weight: bold;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            font-size: 0.9rem;
         }
         
-        .wallet-button:hover {
-            background: #00ff88;
+        .address {
+            font-family: monospace;
+            word-wrap: break-word;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--primary);
+            border-radius: 5px;
+            text-align: center;
+            margin: 20px 0;
+            position: relative;
+        }
+        
+        .address::before {
+            content: "Polygon Address:";
+            display: block;
+            font-size: 0.8rem;
+            margin-bottom: 10px;
+            color: var(--primary-dark);
+        }
+        
+        #conversionResult {
+            padding: 15px;
+            margin-top: 15px;
+            background: rgba(0, 0, 0, 0.5);
+            border-left: 3px solid var(--primary);
+            font-family: monospace;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+        
+        /* Particle connection effect */
+        .particle-connections {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        /* Language toggle button */
+        .lang-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: var(--bg-transparent);
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+        
+        .lang-toggle:hover {
+            background: var(--primary);
             color: #000;
-            box-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
+            box-shadow: 0 0 15px var(--primary);
+        }
+        
+        /* Improved Arabic text styling */
+        .arabic {
+            direction: rtl;
+            font-family: 'Arial', 'Tahoma', sans-serif;
+            text-align: right;
+            word-spacing: normal;
+        }
+        
+        /* Fix container width for Arabic */
+        .container.arabic {
+            max-width: 95%;
+            margin: 50px auto;
+            padding: 20px;
+            word-break: keep-all;
+        }
+        
+        /* Improve Arabic text rendering */
+        .arabic p, .arabic li, .arabic h1, .arabic h2, .arabic h3 {
+            line-height: 1.8;
+            letter-spacing: 0;
+        }
+        
+        /* Fix button alignment in RTL */
+        .arabic button, .arabic .wallet-button {
+            text-align: center;
+        }
+        
+        /* Fix textarea direction for RTL */
+        .arabic textarea {
+            direction: rtl;
+            text-align: right;
+        }
+        
+        /* Fix placeholder alignment */
+        .arabic textarea::placeholder {
+            text-align: right;
+        }
+        
+        /* Video note styling */
+        .video-note {
+            text-align: center;
+            font-size: 0.9rem;
+            margin-top: 5px;
+            margin-bottom: 20px;
+            color: var(--primary-dark);
+            font-style: italic;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .container {
+                margin: 15px;
+                padding: 15px;
+            }
+            
+            .arabic .container {
+                margin: 15px auto;
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+                margin-bottom: 25px;
+            }
+            
+            .arabic h1 {
+                font-size: 1.8rem;
+                line-height: 2.2rem;
+            }
+            
+            h2 {
+                font-size: 1.3rem;
+            }
+            
+            .blog-post {
+                padding: 15px;
+            }
+            
+            .lang-toggle {
+                top: 10px;
+                right: 10px;
+                padding: 6px 12px;
+                font-size: 12px;
+            }
+            
+            #qr-code {
+                width: 150px;
+                height: 150px;
+            }
+            
+            .wallet-button {
+                width: 90%;
+                padding: 12px;
+                font-size: 0.8rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            h2 {
+                font-size: 1.2rem;
+            }
+            
+            .container {
+                margin: 10px;
+                padding: 10px;
+            }
+            
+            textarea, button, .wallet-button {
+                padding: 10px;
+            }
         }
     </style>
 </head>
@@ -126,50 +380,69 @@
     <!-- 3D Starfield Background -->
     <div id="starfield"></div>
     
-    <div class="container">
-        <h1>engmo1234 Blockchain Blog</h1>
+    <!-- Particle Connections -->
+    <canvas class="particle-connections" id="particles"></canvas>
+    
+    <!-- Language Toggle Button -->
+    <button class="lang-toggle" id="langToggle">العربية / English</button>
+    
+    <div class="container" id="contentContainer">
+        <h1 id="mainTitle">engmo1234 Blockchain Blog</h1>
         
         <!-- Blog Post 1 -->
         <div class="blog-post">
-            <h2>Buying Website Designs Without Fiat</h2>
-            <p>Traditional web design payments are being disrupted by blockchain technology. At engmo1234, all design purchases are made with cryptocurrency, eliminating banks and payment processors. When you buy a website NFT, you're not just getting code - you're acquiring a verifiable digital asset that can appreciate in value.</p>
-            <p>Our smart contracts automatically handle designer royalties (5-10% on resales), escrow services, and instant transfers. No chargebacks, no currency conversions, and no middlemen taking fees. The entire transaction happens peer-to-peer in under 2 minutes, with ownership recorded immutably on the Polygon blockchain.</p>
+            <h2 id="post1Title">Buying Website Designs Without Fiat</h2>
+            <p id="post1Content1">Traditional web design payments are being disrupted by blockchain technology. At engmo1234, all design purchases are made with cryptocurrency, eliminating banks and payment processors. When you buy a website NFT, you're not just getting code - you're acquiring a verifiable digital asset that can appreciate in value.</p>
+            <p id="post1Content2">.</p>
+            <p id="post1Content3"><strong>Blockchain benefits:</strong> Transparency, security, and true digital ownership.</p
         </div>
         
         <!-- Blog Post 2 -->
         <div class="blog-post">
-            <h2>Writing on the Blockchain</h2>
-            <p>Every blog post on engmo1234 is stored as a decentralized NFT. When you read this content, you're accessing it directly from IPFS (InterPlanetary File System) rather than a centralized server. The SHA-256 hash of this post is permanently recorded in our smart contract at block #42789105.</p>
-            <p>To submit your own blog post, you'll need to send the bleow polygon address a message and pay gas fees which should be less than one cent this will ensure your blog is encrypted into the polygon blockchain untill the end of days in sha Allah god willing.</p>
+            <h2 id="post2Title">Writing on the Blockchain</h2>
+            <p id="post2Content1">every blog post after these two will be stored on the block chain at the wallet id giveen just follow the video tutorial and in sha Allah you message will be stored till the end of days.</p>
+            <p id="post2Content2">To submit your own blog post,watch the video tutorial at 5;55 minutes and follow all the instructions use aour hexa encryptor and your message will reach the block chain to be  encrypted on the polygon blockchain in sha Allah</p>
+            <p id="post2Content3"><strong>Current gas fee:</strong> less than a cent</p>
         </div>
         
         <!-- Embedded Video -->
-        <h2>How Blockchain Web Design Works</h2>
-        <iframe src="https://www.youtube.com/embed/IO7KN8bhhTk" frameborder="0" allowfullscreen></iframe>
+        <h2 id="videoTitle">How Blockchain Web Design Works</h2>
+        <div class="video-container">
+            <iframe src="https://www.youtube.com/embed/IO7KN8bhhTk" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+        <p class="video-note" id="videoNote">Zoom to middle of video for English tutorial</p>
+        
+        <!-- Tutorial Video -->
+        <h2 id="tutorialTitle">Blockchain Web Design Tutorial</h2>
+        <div class="video-container">
+            <iframe src="https://www.youtube.com/embed/qD5h8wm7srs" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+        <p class="video-note" id="tutorialNote">Watch this step-by-step tutorial</p>
         
         <!-- Hex Converter -->
         <div class="converter">
-            <h3>Blockchain Text Converter</h3>
-            <textarea id="textInput" placeholder="Enter text to convert to HEX"></textarea>
-            <button onclick="textToHex()">Convert to HEX</button>
-            <textarea id="hexInput" placeholder="Enter HEX to convert to text"></textarea>
-            <button onclick="hexToText()">Convert to Text</button>
+            <h3 id="converterTitle">Blockchain Text Converter</h3>
+            <p id="converterDesc">Convert between text and hexadecimal format (used in smart contracts):</p>
+            <textarea id="textInput" placeholder="Enter text to convert to HEX (e.g., 'Hello Blockchain')"></textarea>
+            <button onclick="textToHex()" id="toHexBtn">Convert to HEX</button>
+            <textarea id="hexInput" placeholder="Enter HEX to convert to text (e.g., '48656c6c6f20426c6f636b636861696e')"></textarea>
+            <button onclick="hexToText()" id="toTextBtn">Convert to Text</button>
             <div id="conversionResult"></div>
         </div>
         
         <!-- Wallet Connection -->
-        <h2>Send Blockchain Messages</h2>
-        <p>Connect your wallet to send encrypted messages to our Polygon address:</p>
-        <p style="font-family: monospace; word-wrap: break-word;">
+        <h2 id="walletTitle">Send Blockchain Messages</h2>
+        <p id="walletDesc">Connect your wallet to send encrypted messages to our Polygon address:</p>
+        <div class="address">
             0xE1694922e97A8AB369Db1A55f46243149df864C4
-        </p>
+        </div>
         
         <div id="qr-container">
             <canvas id="qr-code"></canvas>
         </div>
         
-        <a href="https://www.myetherwallet.com/wallet/access" class="wallet-button" target="_blank">
-            Access MyEtherWallet
+        <a href="https://www.myetherwallet.com/wallet/access" class="wallet-button" target="_blank" id="walletBtn">
+            Connect Wallet
         </a>
     </div>
 
@@ -177,92 +450,235 @@
         // ===== IMPROVED 3D STARFIELD =====
         const scene = new THREE.Scene();
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        const renderer = new THREE.WebGLRenderer({ 
+            antialias: true, 
+            alpha: true,
+            powerPreference: "high-performance"
+        });
+        
         renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setClearColor(0x000000, 0);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2)); // Limit pixel ratio for performance
         document.getElementById('starfield').appendChild(renderer.domElement);
 
-        // Improved star creation with varying sizes and brightness
-        const starsGeometry = new THREE.BufferGeometry();
-        const starCount = 10000;
+        // Create star particles with varying properties
+        const particlesGeometry = new THREE.BufferGeometry();
+        const particleCount = window.innerWidth < 768 ? 5000 : 15000; // Reduce particles on mobile
         
-        const positions = new Float32Array(starCount * 3);
-        const sizes = new Float32Array(starCount);
-        const colors = new Float32Array(starCount * 3);
+        const posArray = new Float32Array(particleCount * 3);
+        const sizeArray = new Float32Array(particleCount);
+        const colorArray = new Float32Array(particleCount * 3);
         
-        const color = new THREE.Color(0x00ff88);
+        const primaryColor = new THREE.Color(0x00ff88);
         
-        for (let i = 0; i < starCount; i++) {
-            // Positions
-            positions[i * 3] = (Math.random() - 0.5) * 2000;
-            positions[i * 3 + 1] = (Math.random() - 0.5) * 2000;
-            positions[i * 3 + 2] = (Math.random() - 0.5) * 2000;
+        for (let i = 0; i < particleCount; i++) {
+            // Positions (spherical distribution)
+            const radius = Math.random() * 800 + 200;
+            const theta = Math.random() * Math.PI * 2;
+            const phi = Math.acos(2 * Math.random() - 1);
             
-            // Sizes (0.1 to 1.5)
-            sizes[i] = Math.random() * 1.4 + 0.1;
+            posArray[i * 3] = radius * Math.sin(phi) * Math.cos(theta);
+            posArray[i * 3 + 1] = radius * Math.sin(phi) * Math.sin(theta);
+            posArray[i * 3 + 2] = radius * Math.cos(phi);
             
-            // Colors with variation
-            const hueVariation = Math.random() * 0.2 - 0.1;
-            const tempColor = color.clone();
-            tempColor.offsetHSL(hueVariation, 0, Math.random() * 0.2 - 0.1);
-            tempColor.toArray(colors, i * 3);
+            // Sizes (0.1 to 2.0 with some larger stars)
+            sizeArray[i] = Math.random() > 0.9 ? 
+                Math.random() * 3 + 1 : 
+                Math.random() * 1.5 + 0.1;
+            
+            // Color variations
+            const hueVariation = (Math.random() - 0.5) * 0.2;
+            const brightnessVariation = Math.random() * 0.5 + 0.5;
+            const tempColor = primaryColor.clone();
+            tempColor.offsetHSL(hueVariation, 0, brightnessVariation - 0.5);
+            tempColor.toArray(colorArray, i * 3);
         }
         
-        starsGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-        starsGeometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
-        starsGeometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
+        particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+        particlesGeometry.setAttribute('color', new THREE.BufferAttribute(colorArray, 3));
+        particlesGeometry.setAttribute('size', new THREE.BufferAttribute(sizeArray, 1));
         
-        const starsMaterial = new THREE.PointsMaterial({
+        const particlesMaterial = new THREE.PointsMaterial({
             size: 1,
             vertexColors: true,
             transparent: true,
-            opacity: 1,
-            sizeAttenuation: true
+            opacity: 0.9,
+            sizeAttenuation: true,
+            blending: THREE.AdditiveBlending
         });
         
-        const stars = new THREE.Points(starsGeometry, starsMaterial);
-        scene.add(stars);
+        const particles = new THREE.Points(particlesGeometry, particlesMaterial);
+        scene.add(particles);
         
         camera.position.z = 1;
 
-        // Smoother animation with delta time
+        // Smooth animation with delta time
         let time = 0;
+        const clock = new THREE.Clock();
+        
         function animate() {
             requestAnimationFrame(animate);
             
-            time += 0.0005;
-            stars.rotation.x = time * 0.1;
-            stars.rotation.y = time * 0.05;
-            stars.rotation.z = time * 0.01;
+            const delta = clock.getDelta();
+            time += delta * 0.1;
+            
+            particles.rotation.x = time * 0.05;
+            particles.rotation.y = time * 0.1;
+            
+            // Pulsing effect for some stars
+            particlesMaterial.size = 0.8 + Math.sin(time) * 0.5;
             
             renderer.render(scene, camera);
         }
         animate();
 
-        // ===== HEX CONVERTER =====
+        // ===== PARTICLE CONNECTIONS =====
+        const particlesCanvas = document.getElementById('particles');
+        const pctx = particlesCanvas.getContext('2d');
+        
+        particlesCanvas.width = window.innerWidth;
+        particlesCanvas.height = window.innerHeight;
+        
+        const particleCount2 = window.innerWidth < 768 ? 20 : 50; // Fewer particles on mobile
+        const particles2 = [];
+        
+        for (let i = 0; i < particleCount2; i++) {
+            particles2.push({
+                x: Math.random() * particlesCanvas.width,
+                y: Math.random() * particlesCanvas.height,
+                size: Math.random() * 2 + 1,
+                speedX: (Math.random() - 0.5) * 0.5,
+                speedY: (Math.random() - 0.5) * 0.5
+            });
+        }
+        
+        function animateParticles() {
+            pctx.clearRect(0, 0, particlesCanvas.width, particlesCanvas.height);
+            
+            // Update and draw particles
+            for (let i = 0; i < particleCount2; i++) {
+                const p = particles2[i];
+                
+                // Move particles
+                p.x += p.speedX;
+                p.y += p.speedY;
+                
+                // Bounce off edges
+                if (p.x < 0 || p.x > particlesCanvas.width) p.speedX *= -1;
+                if (p.y < 0 || p.y > particlesCanvas.height) p.speedY *= -1;
+                
+                // Draw particle
+                pctx.fillStyle = 'rgba(0, 255, 136, 0.8)';
+                pctx.beginPath();
+                pctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                pctx.fill();
+                
+                // Draw connections
+                for (let j = i + 1; j < particleCount2; j++) {
+                    const p2 = particles2[j];
+                    const dist = Math.sqrt(Math.pow(p.x - p2.x, 2) + Math.pow(p.y - p2.y, 2));
+                    
+                    if (dist < 150) {
+                        pctx.strokeStyle = `rgba(0, 255, 136, ${1 - dist/150})`;
+                        pctx.lineWidth = 0.5;
+                        pctx.beginPath();
+                        pctx.moveTo(p.x, p.y);
+                        pctx.lineTo(p2.x, p2.y);
+                        pctx.stroke();
+                    }
+                }
+            }
+            
+            requestAnimationFrame(animateParticles);
+        }
+        
+        animateParticles();
+
+        // ===== IMPROVED HEX CONVERTER (FIXED FOR ARABIC) =====
         function textToHex() {
             const text = document.getElementById('textInput').value;
+            if (!text) {
+                document.getElementById('conversionResult').innerHTML = 
+                    `<strong>Error:</strong> Please enter text to convert`;
+                return;
+            }
+            
+            // Improved Unicode handling
             let hex = '';
             for (let i = 0; i < text.length; i++) {
-                hex += text.charCodeAt(i).toString(16).padStart(2, '0');
+                const charCode = text.charCodeAt(i);
+                // Handle surrogate pairs for characters outside BMP (like some emoji)
+                if (charCode >= 0xD800 && charCode <= 0xDBFF) {
+                    const nextCharCode = text.charCodeAt(i + 1);
+                    if (nextCharCode >= 0xDC00 && nextCharCode <= 0xDFFF) {
+                        const fullCode = (charCode - 0xD800) * 0x400 + nextCharCode - 0xDC00 + 0x10000;
+                        hex += fullCode.toString(16).padStart(8, '0');
+                        i++;
+                        continue;
+                    }
+                }
+                hex += charCode.toString(16).padStart(4, '0');
             }
+            
             document.getElementById('conversionResult').innerHTML = 
-                `<strong>HEX Result:</strong> 0x${hex}`;
+                `<strong>HEX Result:</strong> 0x${hex}\n\n<small>Copy this to use in smart contracts</small>`;
         }
 
         function hexToText() {
-            const hex = document.getElementById('hexInput').value.replace(/^0x/, '');
+            let hex = document.getElementById('hexInput').value.replace(/^0x/, '').replace(/\s/g, '');
+            if (!hex) {
+                document.getElementById('conversionResult').innerHTML = 
+                    `<strong>Error:</strong> Please enter HEX to convert`;
+                return;
+            }
+            
+            // Validate hex string
+            if (!/^[0-9a-fA-F]+$/.test(hex)) {
+                document.getElementById('conversionResult').innerHTML = 
+                    `<strong>Error:</strong> Invalid HEX input (must be hexadecimal string)`;
+                return;
+            }
+            
+            // Pad hex string to even length if needed
+            if (hex.length % 2 !== 0) {
+                hex = '0' + hex;
+            }
+            
             let text = '';
             try {
-                for (let i = 0; i < hex.length; i += 2) {
-                    const byte = hex.substr(i, 2);
-                    text += String.fromCharCode(parseInt(byte, 16));
+                // Handle both UTF-16 (4 digits) and UTF-8 (2 digits) representations
+                if (hex.length % 4 === 0) {
+                    // Likely UTF-16 encoding (4 digits per character)
+                    for (let i = 0; i < hex.length; i += 4) {
+                        const hexChar = hex.substr(i, 4);
+                        const charCode = parseInt(hexChar, 16);
+                        
+                        // Handle surrogate pairs
+                        if (charCode >= 0xD800 && charCode <= 0xDBFF) {
+                            const nextHexChar = hex.substr(i + 4, 4);
+                            const nextCharCode = parseInt(nextHexChar, 16);
+                            if (nextCharCode >= 0xDC00 && nextCharCode <= 0xDFFF) {
+                                const fullCode = (charCode - 0xD800) * 0x400 + nextCharCode - 0xDC00 + 0x10000;
+                                text += String.fromCodePoint(fullCode);
+                                i += 4;
+                                continue;
+                            }
+                        }
+                        
+                        text += String.fromCodePoint(charCode);
+                    }
+                } else {
+                    // Fallback to UTF-8 (2 digits per byte)
+                    for (let i = 0; i < hex.length; i += 2) {
+                        const byte = hex.substr(i, 2);
+                        text += String.fromCharCode(parseInt(byte, 16));
+                    }
                 }
+                
                 document.getElementById('conversionResult').innerHTML = 
                     `<strong>Text Result:</strong> ${text}`;
             } catch (e) {
                 document.getElementById('conversionResult').innerHTML = 
-                    `<strong>Error:</strong> Invalid HEX input`;
+                    `<strong>Error:</strong> Invalid HEX input (${e.message})`;
             }
         }
 
@@ -271,22 +687,188 @@
         const walletAddress = '0xE1694922e97A8AB369Db1A55f46243149df864C4';
         
         QRCode.toCanvas(qrCanvas, walletAddress, {
-            width: 150,
+            width: 180,
             margin: 2,
             color: {
                 dark: '#00ff88',
                 light: '#00000000'
-            }
+            },
+            errorCorrectionLevel: 'H'
         }, function(error) {
             if (error) console.error(error);
+            else {
+                // Add QR code styling
+                const ctx = qrCanvas.getContext('2d');
+                
+                // Add corner markers
+                ctx.strokeStyle = '#00ff88';
+                ctx.lineWidth = 5;
+                
+                // Top-left
+                ctx.beginPath();
+                ctx.moveTo(10, 10);
+                ctx.lineTo(40, 10);
+                ctx.lineTo(40, 40);
+                ctx.lineTo(10, 40);
+                ctx.lineTo(10, 10);
+                ctx.stroke();
+                
+                // Top-right
+                ctx.beginPath();
+                ctx.moveTo(qrCanvas.width - 10, 10);
+                ctx.lineTo(qrCanvas.width - 40, 10);
+                ctx.lineTo(qrCanvas.width - 40, 40);
+                ctx.lineTo(qrCanvas.width - 10, 40);
+                ctx.lineTo(qrCanvas.width - 10, 10);
+                ctx.stroke();
+                
+                // Bottom-left
+                ctx.beginPath();
+                ctx.moveTo(10, qrCanvas.height - 10);
+                ctx.lineTo(40, qrCanvas.height - 10);
+                ctx.lineTo(40, qrCanvas.height - 40);
+                ctx.lineTo(10, qrCanvas.height - 40);
+                ctx.lineTo(10, qrCanvas.height - 10);
+                ctx.stroke();
+            }
         });
 
+        // ===== IMPROVED LANGUAGE TOGGLE FUNCTIONALITY =====
+        const langToggle = document.getElementById('langToggle');
+        let currentLang = 'en';
+        
+        // Arabic translations
+        const translations = {
+            en: {
+                mainTitle: "engmo1234 Blockchain Blog",
+                post1Title: "Buying Website Designs Without Fiat",
+                post1Content1: "Traditional web design payments are being disrupted by blockchain technology. At engmo1234, all design purchases are made with cryptocurrency, eliminating banks and payment processors. When you buy a website NFT, you're not just getting code - you're acquiring a verifiable digital asset that can appreciate in value.",
+                post1Content2: "Our smart contracts automatically handle designer royalties (5-10% on resales), escrow services, and instant transfers. No chargebacks, no currency conversions, and no middlemen taking fees. The entire transaction happens peer-to-peer in under 2 minutes, with ownership recorded immutably on the Polygon blockchain.",
+                post1Content3: "Blockchain benefits: Transparency, security, automatic royalty payments, and true digital ownership.",
+                post2Title: "Writing on the Blockchain",
+                post2Content1: "Every blog post on engmo1234 is stored as a decentralized NFT. When you read this content, you're accessing it directly from IPFS (InterPlanetary File System) rather than a centralized server. The SHA-256 hash of this post is permanently recorded in our smart contract at block #42789105.",
+                post2Content2: "To submit your own blog post, you'll need to mint it as an NFT (0.01 MATIC fee). This gives you copyright protection, traceable ownership, and the ability to sell your writing as a digital collectible. Each post generates a unique cryptographic signature that proves its authenticity forever.",
+                post2Content3: "Current gas fee: ≈ 0.0005 ETH ($0.15)",
+                videoTitle: "How Blockchain Web Design Works",
+                videoNote: "Zoom to middle of video for English tutorial",
+                tutorialTitle: "Blockchain Web Design Tutorial",
+                tutorialNote: "Watch this step-by-step tutorial",
+                converterTitle: "Blockchain Text Converter",
+                converterDesc: "Convert between text and hexadecimal format (used in smart contracts):",
+                textInputPlaceholder: "Enter text to convert to HEX (e.g., 'Hello Blockchain')",
+                hexInputPlaceholder: "Enter HEX to convert to text (e.g., '48656c6c6f20426c6f636b636861696e')",
+                toHexBtn: "Convert to HEX",
+                toTextBtn: "Convert to Text",
+                walletTitle: "Send Blockchain Messages",
+                walletDesc: "Connect your wallet to send encrypted messages to our Polygon address:",
+                walletBtn: "Connect Wallet",
+                langToggle: "العربية / English"
+            },
+            ar: {
+                mainTitle: "مدونة engmo1234 للبلوكشين",
+                post1Title: "شراء تصاميم المواقع بدون العملات التقليدية",
+                post1Content1: "تقنية البلوكشين تعمل على تغيير طريقة الدفع لتصاميم المواقع. في engmo1234، جميع عمليات الشراء تتم باستخدام العملات الرقمية، مما يلغي الحاجة للبنوك وشركات معالجة الدفع. عندما تشتري موقعًا كـ NFT، فأنت لا تحصل على كود فقط، بل تحصل على أصل رقمي قابل للتحقق ويمكن أن يزداد قيمته.",
+                post1Content2: "",
+                post1Content3: "فوائد البلوكشين: الشفافية، الأمان، دفعات حقوق الملكية التلقائية، والملكية الرقمية الحقيقية.",
+                post2Title: "الكتابة على البلوكشين",
+                post2Content1: ".",
+                post2Content2: ".",
+                post2Content3: "رسوم الغاز الحالية: ≈  ",
+                videoTitle: "كيف يعمل تصميم المواقع بالبلوكشين",
+                videoNote: "تكبير لمنتصف الفيديو للشرح بالإنجليزية",
+                tutorialTitle: "برنامج تعليمي لتصميم مواقع البلوكشين",
+                tutorialNote: "شاهد هذا البرنامج التعليمي خطوة بخطوة",
+                converterTitle: "محول نصوص البلوكشين",
+                converterDesc: "تحويل بين النصوص والصيغة السداسية (المستخدمة في العقود الذكية):",
+                textInputPlaceholder: "أدخل النص للتحويل إلى HEX (مثال: 'مرحبا بالبلوكشين')",
+                hexInputPlaceholder: "أدخل HEX للتحويل إلى نص (مثال: '48656c6c6f20426c6f636b636861696e')",
+                toHexBtn: "تحويل إلى HEX",
+                toTextBtn: "تحويل إلى نص",
+                walletTitle: "إرسال رسائل البلوكشين",
+                walletDesc: "اتصل بمحفظتك لإرسال رسائل مشفرة إلى عنوان Polygon الخاص بنا:",
+                walletBtn: "اتصال المحفظة",
+                langToggle: "English / العربية"
+            }
+        };
+        
+        // Toggle language function
+        function toggleLanguage() {
+            currentLang = currentLang === 'en' ? 'ar' : 'en';
+            updateLanguage();
+        }
+        
+        // Update all text elements
+        function updateLanguage() {
+            const langData = translations[currentLang];
+            
+            // Update all elements with translations
+            for (const [key, value] of Object.entries(langData)) {
+                const element = document.getElementById(key);
+                if (element) {
+                    element.textContent = value;
+                }
+            }
+            
+            // Update placeholders separately
+            document.getElementById('textInput').placeholder = langData.textInputPlaceholder;
+            document.getElementById('hexInput').placeholder = langData.hexInputPlaceholder;
+            
+            // Toggle RTL for Arabic
+            if (currentLang === 'ar') {
+                document.body.classList.add('arabic');
+                document.body.setAttribute('dir', 'rtl');
+                document.getElementById('contentContainer').classList.add('arabic');
+            } else {
+                document.body.classList.remove('arabic');
+                document.body.setAttribute('dir', 'ltr');
+                document.getElementById('contentContainer').classList.remove('arabic');
+            }
+            
+            // Update button text
+            langToggle.textContent = langData.langToggle;
+            
+            // Reset conversion result to prevent layout issues
+            document.getElementById('conversionResult').innerHTML = '';
+            
+            // Force reflow to fix layout issues
+            document.body.style.display = 'none';
+            document.body.offsetHeight; // Trigger reflow
+            document.body.style.display = '';
+        }
+        
+        // Initialize language toggle
+        langToggle.addEventListener('click', toggleLanguage);
+        
+        // Handle text direction for input fields
+        document.getElementById('textInput').addEventListener('input', function() {
+            this.style.direction = /[\u0600-\u06FF]/.test(this.value) ? 'rtl' : 'ltr';
+            this.style.textAlign = /[\u0600-\u06FF]/.test(this.value) ? 'right' : 'left';
+        });
+        
         // Responsive resize
         window.addEventListener('resize', () => {
+            // Starfield
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
+            
+            // Particle connections
+            particlesCanvas.width = window.innerWidth;
+            particlesCanvas.height = window.innerHeight;
         });
+
+        // Initialize with some sample text
+        document.getElementById('textInput').value = "Hello Blockchain";
+        textToHex();
+        
+        // Fix for mobile viewport
+        function setViewportHeight() {
+            let vh = window.innerHeight * 0.01;
+            document.documentElement.style.setProperty('--vh', `${vh}px`);
+        }
+        
+        setViewportHeight();
+        window.addEventListener('resize', setViewportHeight);
     </script>
 </body>
 </html>
