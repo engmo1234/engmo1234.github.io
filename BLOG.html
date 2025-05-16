@@ -43,8 +43,8 @@
             background: var(--bg-transparent);
             border: 1px solid var(--primary);
             border-radius: 5px;
-            box-shadow: 0 0 20px var(--primary-transparent);
-            backdrop-filter: blur(8px);
+            box-shadow: 0 0 2px var(--primary-transparent);
+            backdrop-filter: blur(1px);
             animation: pulse-glow 8s infinite alternate;
         }
         
@@ -80,14 +80,14 @@
             margin-bottom: 40px;
             padding: 25px;
             border-left: 3px solid var(--primary);
-            background: rgba(0, 5, 2, 0.3);
+            background: transparent;
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
         }
         
         .blog-post:hover {
-            background: rgba(0, 10, 5, 0.5);
+            background: transparent;
             transform: translateY(-5px);
             box-shadow: 0 10px 20px rgba(0, 255, 136, 0.1);
         }
@@ -122,11 +122,11 @@
             width: 100%;
             height: 100%;
             border: 2px solid var(--primary);
-            background: #000;
+            background: transparent;
         }
         
         .converter {
-            background: rgba(0, 5, 2, 0.3);
+            background: transparent;
             padding: 20px;
             margin: 20px 0;
             border: 1px dashed var(--primary);
@@ -134,7 +134,7 @@
         }
         
         textarea, button, .wallet-button {
-            background: rgba(0, 0, 0, 0.7);
+            background: transparent;
             color: var(--primary);
             border: 1px solid var(--primary);
             padding: 12px;
@@ -152,7 +152,7 @@
         }
         
         button:hover, .wallet-button:hover {
-            background: var(--primary);
+            background: transparent;
             color: #000;
             cursor: pointer;
             box-shadow: 0 0 15px var(--primary);
@@ -199,7 +199,7 @@
             font-family: monospace;
             word-wrap: break-word;
             padding: 15px;
-            background: rgba(0, 0, 0, 0.5);
+            background: transparent;
             border: 1px solid var(--primary);
             border-radius: 5px;
             text-align: center;
@@ -218,7 +218,7 @@
         #conversionResult {
             padding: 15px;
             margin-top: 15px;
-            background: rgba(0, 0, 0, 0.5);
+            background: transparent;
             border-left: 3px solid var(--primary);
             font-family: monospace;
             white-space: pre-wrap;
@@ -254,7 +254,7 @@
         }
         
         .lang-toggle:hover {
-            background: var(--primary);
+            background: transparent;
             color: #000;
             box-shadow: 0 0 15px var(--primary);
         }
@@ -406,14 +406,14 @@
         </div>
         
         <!-- Embedded Video -->
-        <h2 id="videoTitle">How Blockchain Web Design Works</h2>
+        <h2 id="videoTitle">How Blockchain blog Works</h2>
         <div class="video-container">
             <iframe src="https://www.youtube.com/embed/IO7KN8bhhTk" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
         </div>
         <p class="video-note" id="videoNote">Zoom to middle of video for English tutorial</p>
         
         <!-- Tutorial Video -->
-        <h2 id="tutorialTitle">Blockchain Web Design Tutorial</h2>
+        <h2 id="tutorialTitle">Blockchain blog Tutorial</h2>
         <div class="video-container">
             <iframe src="https://www.youtube.com/embed/qD5h8wm7srs" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
         </div>
@@ -445,7 +445,10 @@
             Connect Wallet
         </a>
     </div>
-
+    <!-- Add this button where you want it to appear in your container -->
+<a href="https://www.engmo1234.com" class="wallet-button" target="_blank" id="MainpageButton" style="margin-top: 20px;">
+    Visit Main Page
+</a>
     <script>
         // ===== IMPROVED 3D STARFIELD =====
         const scene = new THREE.Scene();
@@ -743,12 +746,12 @@
                 mainTitle: "engmo1234 Blockchain Blog",
                 post1Title: "Buying Website Designs Without Fiat",
                 post1Content1: "Traditional web design payments are being disrupted by blockchain technology. At engmo1234, all design purchases are made with cryptocurrency, eliminating banks and payment processors. When you buy a website NFT, you're not just getting code - you're acquiring a verifiable digital asset that can appreciate in value.",
-                post1Content2: "Our smart contracts automatically handle designer royalties (5-10% on resales), escrow services, and instant transfers. No chargebacks, no currency conversions, and no middlemen taking fees. The entire transaction happens peer-to-peer in under 2 minutes, with ownership recorded immutably on the Polygon blockchain.",
-                post1Content3: "Blockchain benefits: Transparency, security, automatic royalty payments, and true digital ownership.",
+                post1Content2: "Our smart contracts have  instant transfers. No chargebacks, no currency conversions, and no middlemen taking fees. The entire transaction happens peer-to-peer in under 2 minutes, with ownership recorded immutably on the Polygon blockchain.",
+                post1Content3: "Blockchain benefits: Transparency, security, , and true digital ownership.",
                 post2Title: "Writing on the Blockchain",
                 post2Content1: "Every blog post on engmo1234 is stored as a decentralized NFT. When you read this content, you're accessing it directly from IPFS (InterPlanetary File System) rather than a centralized server. The SHA-256 hash of this post is permanently recorded in our smart contract at block #42789105.",
-                post2Content2: "To submit your own blog post, you'll need to mint it as an NFT (0.01 MATIC fee). This gives you copyright protection, traceable ownership, and the ability to sell your writing as a digital collectible. Each post generates a unique cryptographic signature that proves its authenticity forever.",
-                post2Content3: "Current gas fee: ≈ 0.0005 ETH ($0.15)",
+                post2Content2: "To submit your own blog post, you'll need to follow the video tutorial. Each post generates a unique cryptographic signature that proves its authenticity forever.",
+                post2Content3: "Current gas fee: ≈less than one uae phils",
                 videoTitle: "How Blockchain Web Design Works",
                 videoNote: "Zoom to middle of video for English tutorial",
                 tutorialTitle: "Blockchain Web Design Tutorial",
@@ -774,9 +777,9 @@
                 post2Content1: ".",
                 post2Content2: ".",
                 post2Content3: "رسوم الغاز الحالية: ≈  ",
-                videoTitle: "كيف يعمل تصميم المواقع بالبلوكشين",
+                videoTitle: "كيف يعمل ",
                 videoNote: "تكبير لمنتصف الفيديو للشرح بالإنجليزية",
-                tutorialTitle: "برنامج تعليمي لتصميم مواقع البلوكشين",
+                tutorialTitle: "برنامج تعليمي ",
                 tutorialNote: "شاهد هذا البرنامج التعليمي خطوة بخطوة",
                 converterTitle: "محول نصوص البلوكشين",
                 converterDesc: "تحويل بين النصوص والصيغة السداسية (المستخدمة في العقود الذكية):",
