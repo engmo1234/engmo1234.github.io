@@ -128,5 +128,372 @@ window.addEventListener('resize', () => {
   canvas.height = window.innerHeight;
 });
 </script>
+    <!-- Add this anywhere in your HTML body -->
+<div id="robotNavContainer">
+  <div id="robotArm">
+    <div class="arm-segment base">
+      <div class="arm-segment joint1">
+                <div class="arm-segment segment3">
+                  <div class="robot-hand" id="robotHand">
+                    <div class="menu-panel">
+                      <div class="menu-header">NAVIGATION TERMINAL</div>
+                      <div class="menu-items">
+                        <a href="https://www.engmo1234.com/" class="menu-item" data-sound="click1">
+                          <span class="menu-icon">⌂</span> HOME
+                        </a>
+                        <a href="https://www.engmo1234.com/BLOG" class="menu-item" data-sound="click2">
+                          <span class="menu-icon">✍</span> BLOG
+                        </a>
+                        <a href="https://www.engmo1234.com/vipreveal_bilingual_updated.html" class="menu-item" data-sound="click3">
+                          <span class="menu-icon">★</span> VIP PACKAGES
+                        </a>
+                        <a href="https://www.engmo1234.com/bidmintlast.html" class="menu-item" data-sound="click1">
+                          <span class="menu-icon">✧</span> BIDMINT
+                        </a>
+                        <a href="https://www.engmo1234.com/senior.html" class="menu-item" data-sound="click2">
+                          <span class="menu-icon">⚭</span> SENIOR
+                        </a>
+                        <a href="https://www.engmo1234.com/topvip4.html" class="menu-item" data-sound="click3">
+                          <span class="menu-icon">♛</span> TOP VIP
+                        </a>
+                        <a href="https://www.engmo1234.com/terms_green_organized.html" class="menu-item" data-sound="click1">
+                          <span class="menu-icon">⚖</span> TERMS
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="robotNavToggle">≡</div>
+</div>
+
+<style>
+  /* Robotic Navigation Styles */
+  #robotNavContainer {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+    transform-origin: top right;
+    transition: all 0.3s ease;
+  }
+
+  #robotArm {
+    position: relative;
+    width: 300px;
+    height: 400px;
+    transform: scale(0.8);
+    transition: all 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  #robotNavContainer.active #robotArm {
+    opacity: 1;
+    pointer-events: auto;
+    transform: scale(1);
+  }
+
+  .arm-segment {
+    position: absolute;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    border: 2px solid #00ff88;
+    box-shadow: 0 0 15px rgba(0, 255, 136, 0.5);
+  }
+
+  .base {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    top: 0;
+    right: 0;
+    background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+  }
+
+  .joint1 {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    top: 10px;
+    right: 10px;
+    background: linear-gradient(135deg, #3a3a3a 0%, #1a1a1a 100%);
+    animation: rotateJoint1 5s infinite alternate;
+  }
+
+  .segment1 {
+    width: 20px;
+    height: 120px;
+    top: 50px;
+    right: 20px;
+    border-radius: 10px;
+    transform-origin: top center;
+    animation: extendSegment1 6s infinite alternate;
+  }
+
+  .joint2 {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    top: 110px;
+    right: 5px;
+    background: linear-gradient(135deg, #3a3a3a 0%, #1a1a1a 100%);
+    animation: rotateJoint2 4s infinite alternate-reverse;
+  }
+
+  .segment2 {
+    width: 15px;
+    height: 100px;
+    top: 140px;
+    right: 7.5px;
+    border-radius: 8px;
+    transform-origin: top center;
+    animation: extendSegment2 5s infinite alternate;
+  }
+
+  .joint3 {
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    top: 240px;
+    right: 2.5px;
+    background: linear-gradient(135deg, #3a3a3a 0%, #1a1a1a 100%);
+    animation: rotateJoint3 3s infinite alternate;
+  }
+
+  .segment3 {
+    width: 12px;
+    height: 80px;
+    top: 265px;
+    right: 6px;
+    border-radius: 6px;
+    transform-origin: top center;
+  }
+
+  .robot-hand {
+    width: 180px;
+    height: 220px;
+    position: absolute;
+    top: 345px;
+    right: -80px;
+    transform-origin: top center;
+    transform: rotate(-15deg);
+  }
+
+  .menu-panel {
+    width: 100%;
+    height: 100%;
+    background: rgba(10, 10, 20, 0.95);
+    border: 3px solid #00ff88;
+    border-radius: 10px;
+    box-shadow: 0 0 30px rgba(0, 255, 136, 0.7);
+    padding: 15px;
+    color: #00ff88;
+    font-family: 'Courier New', monospace;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .menu-panel::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #00ff88, transparent);
+    animation: scanline 3s linear infinite;
+  }
+
+  .menu-header {
+    font-size: 16px;
+    text-align: center;
+    margin-bottom: 15px;
+    padding-bottom: 8px;
+    border-bottom: 1px dashed #00ff88;
+    text-shadow: 0 0 5px #00ff88;
+    letter-spacing: 2px;
+  }
+
+  .menu-items {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .menu-item {
+    color: #00ff88;
+    text-decoration: none;
+    padding: 8px 12px;
+    border: 1px solid #00ff88;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(0, 255, 136, 0.1);
+  }
+
+  .menu-item:hover {
+    background: rgba(0, 255, 136, 0.3);
+    box-shadow: 0 0 15px rgba(0, 255, 136, 0.5);
+    transform: translateX(-5px);
+  }
+
+  .menu-icon {
+    font-size: 18px;
+  }
+
+  #robotNavToggle {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+    border: 2px solid #00ff88;
+    border-radius: 50%;
+    color: #00ff88;
+    font-size: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 10000;
+    box-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
+    transition: all 0.3s ease;
+  }
+
+  #robotNavToggle:hover {
+    background: linear-gradient(135deg, #302b63 0%, #0f0c29 100%);
+    transform: rotate(90deg);
+  }
+
+  /* Animations */
+  @keyframes rotateJoint1 {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(45deg); }
+  }
+
+  @keyframes extendSegment1 {
+    0% { transform: scaleY(1); }
+    100% { transform: scaleY(1.1); }
+  }
+
+  @keyframes rotateJoint2 {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(-30deg); }
+  }
+
+  @keyframes extendSegment2 {
+    0% { transform: scaleY(1); }
+    100% { transform: scaleY(1.05); }
+  }
+
+  @keyframes rotateJoint3 {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(15deg); }
+  }
+
+  @keyframes scanline {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(220px); }
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    #robotArm {
+      transform: scale(0.6);
+      transform-origin: top right;
+    }
+    
+    #robotNavContainer.active #robotArm {
+      transform: scale(0.7);
+    }
+    
+    .robot-hand {
+      width: 150px;
+      height: 180px;
+      right: -60px;
+    }
+    
+    .menu-panel {
+      padding: 10px;
+    }
+    
+    .menu-header {
+      font-size: 14px;
+    }
+    
+    .menu-item {
+      padding: 6px 8px;
+      font-size: 14px;
+    }
+  }
+</style>
+
+<script>
+  // Toggle menu visibility
+  const navToggle = document.getElementById('robotNavToggle');
+  const navContainer = document.getElementById('robotNavContainer');
+  
+  navToggle.addEventListener('click', function() {
+    navContainer.classList.toggle('active');
+    playSound('servo');
+  });
+  
+  // Add click sounds to menu items
+  const menuItems = document.querySelectorAll('.menu-item');
+  menuItems.forEach(item => {
+    item.addEventListener('click', function() {
+      const soundType = this.getAttribute('data-sound');
+      playSound(soundType);
+    });
+  });
+  
+  // Sound effects (using Web Audio API)
+  function playSound(type) {
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const oscillator = audioCtx.createOscillator();
+    const gainNode = audioCtx.createGain();
+    
+    oscillator.connect(gainNode);
+    gainNode.connect(audioCtx.destination);
+    
+    // Different sounds for different actions
+    switch(type) {
+      case 'click1':
+        oscillator.type = 'square';
+        oscillator.frequency.value = 300;
+        gainNode.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.3);
+        break;
+      case 'click2':
+        oscillator.type = 'sine';
+        oscillator.frequency.value = 500;
+        gainNode.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.2);
+        break;
+      case 'click3':
+        oscillator.type = 'triangle';
+        oscillator.frequency.value = 700;
+        gainNode.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.25);
+        break;
+      case 'servo':
+        oscillator.type = 'sawtooth';
+        oscillator.frequency.setValueAtTime(100, audioCtx.currentTime);
+        oscillator.frequency.exponentialRampToValueAtTime(400, audioCtx.currentTime + 0.1);
+        gainNode.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.3);
+        break;
+    }
+    
+    oscillator.start();
+    oscillator.stop(audioCtx.currentTime + 0.5);
+  }
+</script>
+
 </body>
 </html>
