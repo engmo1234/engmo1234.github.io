@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Website Requirements Questionnaire</title>
+    <style>
+        :root {
+            --primary: #00ff00;
+            --background: #000000;
+            --text: #e0e0e0;
+        }
+        body {
+            background-color: var(--background);
+            color: var(--primary);
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+            padding: 20px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        h1, h2 {
+            color: var(--primary);
+            border-bottom: 1px dashed var(--primary);
+            padding-bottom: 10px;
+        }
+        .form-section {
+            background-color: rgba(0, 0, 0, 0.7);
+            border: 1px solid var(--primary);
+            border-radius: 5px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        input[type="text"],
+        input[type="email"],
+        input[type="url"],
+        input[type="number"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 10px;
+            background-color: #111;
+            border: 1px solid var(--primary);
+            color: var(--text);
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        button {
+            background-color: var(--primary);
+            color: #000;
+            border: none;
+            padding: 12px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 4px;
+            font-weight: bold;
+            display: block;
+            width: 100%;
+            margin-top: 20px;
+        }
+        button:hover {
+            opacity: 0.9;
+        }
+        .signature-container {
+            margin: 20px 0;
+        }
+        #signaturePad {
+            border: 1px dashed var(--primary);
+            background-color: #111;
+            width: 100%;
+            height: 150px;
+            cursor: crosshair;
+        }
+        .signature-actions {
+            margin-top: 10px;
+        }
+        .signature-actions button {
+            width: auto;
+            display: inline-block;
+            margin-right: 10px;
+            background-color: #333;
+            color: var(--primary);
+        }
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            .form-section {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Website Design Questionnaire</h1>
+    
+    <form action="https://formspree.io/f/engmo1234@hotmail.com" method="POST">
+        <input type="hidden" name="_subject" value="New Website Questionnaire Submission">
+        <input type="text" name="_gotcha" style="display:none"> <!-- Anti-spam -->
+
+
+        <!-- Section 1: Business Basics -->
+        <div class="form-section">
+            <h2>1. Business Basics</h2>
+            
+            <div class="form-group">
+                <label for="business-description">What does your business/organization do?</label>
+                <textarea id="business-description" name="Business Description" required></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="unique-selling">What makes you unique compared to competitors?</label>
+                <textarea id="unique-selling" name="Unique Selling Point" required></textarea>
+            </div>
+        </div>
+
+        <!-- Section 2: Website Purpose -->
+        <div class="form-section">
+            <h2>2. Website Purpose</h2>
+            
+            <div class="form-group">
+                <label for="primary-goal">What's the #1 goal for your website?</label>
+                <select id="primary-goal" name="Primary Goal" required>
+                    <option value="">-- Select --</option>
+                    <option value="Sell products">Sell products</option>
+                    <option value="Generate leads">Generate leads</option>
+                    <option value="Share information">Share information</option>
+                    <option value="Book appointments">Book appointments</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="visitor-action">What action should visitors take first?</label>
+                <input type="text" id="visitor-action" name="Visitor Action" placeholder="e.g., Call, Buy, Sign up" required>
+            </div>
+        </div>
+
+        <!-- Section 3: Target Audience -->
+        <div class="form-section">
+            <h2>3. Target Audience</h2>
+            
+            <div class="form-group">
+                <label for="ideal-customer">Who is your ideal customer? (Age, interests, problems)</label>
+                <textarea id="ideal-customer" name="Ideal Customer" required></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="current-traffic">How do they usually find you now?</label>
+                <select id="current-traffic" name="Current Traffic Source" required>
+                    <option value="">-- Select --</option>
+                    <option value="Google search">Google search</option>
+                    <option value="Social media">Social media</option>
+                    <option value="Word of mouth">Word of mouth</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Section 4: Design Preferences -->
+        <div class="form-section">
+            <h2>4. Design Preferences</h2>
+            
+            <div class="form-group">
+                <label for="liked-websites">Show 2-3 websites you like (include URLs)</label>
+                <textarea id="liked-websites" name="Liked Websites" placeholder="e.g., https://example.com - I like the clean layout" required></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="disliked-websites">Show 2-3 websites you dislike (include URLs)</label>
+                <textarea id="disliked-websites" name="Disliked Websites" placeholder="e.g., https://example.com - Too cluttered" required></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="brand-colors">Do you have brand colors/fonts?</label>
+                <select id="brand-colors" name="Brand Colors" required>
+                    <option value="">-- Select --</option>
+                    <option value="Yes, I have them">Yes, I have them</option>
+                    <option value="No, I need help">No, I need help</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Section 5: Content & Features -->
+        <div class="form-section">
+            <h2>5. Content & Features</h2>
+            
+            <div class="form-group">
+                <label for="content-ready">Do you have photos, logos, or text ready?</label>
+                <select id="content-ready" name="Content Ready" required>
+                    <option value="">-- Select --</option>
+                    <option value="Yes, I have everything">Yes, I have everything</option>
+                    <option value="Some materials">Some materials</option>
+                    <option value="No, I need help">No, I need help</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="must-have-features">What features are must-haves? (Check all that apply)</label>
+                <div style="margin-top: 10px;">
+                    <input type="checkbox" id="contact-form" name="Must-Have Features" value="Contact form">
+                    <label for="contact-form" style="display: inline;">Contact form</label><br>
+                    
+                    <input type="checkbox" id="online-store" name="Must-Have Features" value="Online store">
+                    <label for="online-store" style="display: inline;">Online store</label><br>
+                    
+                    <input type="checkbox" id="booking-system" name="Must-Have Features" value="Booking system">
+                    <label for="booking-system" style="display: inline;">Booking system</label><br>
+                    
+                    <input type="checkbox" id="blog" name="Must-Have Features" value="Blog">
+                    <label for="blog" style="display: inline;">Blog</label><br>
+                    
+                    <input type="checkbox" id="other-features" name="Must-Have Features" value="Other">
+                    <label for="other-features" style="display: inline;">Other (please specify)</label>
+                    <input type="text" id="other-features-text" name="Other Features" style="width: 100%; margin-top: 5px;">
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 6: Technical Setup -->
+        <div class="form-section">
+            <h2>6. Technical Setup</h2>
+            
+            <div class="form-group">
+                <label for="domain-owned">Do you already own a domain?</label>
+                <select id="domain-owned" name="Domain Owned" required>
+                    <option value="">-- Select --</option>
+                    <option value="Yes">Yes</option>
+                    <option value="No">No</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="self-update">Will you need to update the site yourself?</label>
+                <select id="self-update" name="Self Update" required>
+                    <option value="">-- Select --</option>
+                    <option value="Yes">Yes</option>
+                    <option value="No">No</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Section 7: Budget & Timeline -->
+        <div class="form-section">
+            <h2>7. Budget & Timeline</h2>
+            
+            <div class="form-group">
+                <label for="budget-range">What's your budget range?</label>
+                <select id="budget-range" name="Budget Range" required>
+                    <option value="">-- Select --</option>
+                    <option value="$1,000 - $3,000">$1,000 - $3,000 (Basic)</option>
+                    <option value="$3,000 - $5,000">$3,000 - $5,000 (Standard)</option>
+                    <option value="$5,000+">$5,000+ (Advanced)</option>
+                    <option value="Not sure">Not sure</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="launch-date">When do you need the website launched?</label>
+                <input type="text" id="launch-date" name="Launch Date" placeholder="e.g., ASAP, 3 months, specific date" required>
+            </div>
+        </div>
+
+        <!-- Section 8: Post-Launch -->
+        <div class="form-section">
+            <h2>8. Post-Launch</h2>
+            
+            <div class="form-group">
+                <label for="tracking">Do you want help tracking visitors/sales?</label>
+                <select id="tracking" name="Tracking Needed" required>
+                    <option value="">-- Select --</option>
+                    <option value="Yes">Yes</option>
+                    <option value="No">No</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="maintenance">Would you like ongoing maintenance?</label>
+                <select id="maintenance" name="Maintenance Needed" required>
+                    <option value="">-- Select --</option>
+                    <option value="Yes">Yes</option>
+                    <option value="No">No</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Section 9: Concerns -->
+        <div class="form-section">
+            <h2>9. Concerns</h2>
+            
+            <div class="form-group">
+                <label for="main-concern">What worries you most about getting a new website?</label>
+                <textarea id="main-concern" name="Main Concern" required></textarea>
+            </div>
+        </div>
+
+        <!-- Section 10: Contact Information -->
+        <div class="form-section">
+            <h2>10. Your Information</h2>
+            
+            <div class="form-group">
+                <label for="name">Your Name</label>
+                <input type="text" id="name" name="Name" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" name="Email" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="phone">Phone Number</label>
+                <input type="text" id="phone" name="Phone">
+            </div>
+        </div>
+
+           <div class="form-section">
+            <h2>11. Page Structure</h2>
+            
+            <div class="form-group">
+                <label for="page-count">How many main pages do you need?</label>
+                <input type="number" id="page-count" name="Number of Pages" min="1" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="page-names">What should these pages be called? (List all, separated by commas)</label>
+                <textarea id="page-names" name="Page Names" placeholder="e.g., Home, About Us, Services, Contact" required></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="extra-functionality">Describe any extra functionalities you need:</label>
+                <textarea id="extra-functionality" name="Extra Functionality" placeholder="e.g., User login system, appointment scheduler, live chat"></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="payment-system">Do you need an integrated payment system?</label>
+                <select id="payment-system" name="Payment System Needed" required>
+                    <option value="">-- Select --</option>
+                    <option value="Yes, for products">Yes, for products</option>
+                    <option value="Yes, for services">Yes, for services</option>
+                    <option value="Yes, for donations">Yes, for donations</option>
+                    <option value="No">No</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- NEW SECTION: Follow-Up Scheduling -->
+        <div class="form-section">
+            <h2>12. Preferred Follow-Up</h2>
+            
+            <div class="form-group">
+                <label>When should Engmo contact you?</label>
+                <div class="datetime-group">
+                    <div>
+                        <label for="contact-date">Date</label>
+                        <input type="date" id="contact-date" name="Preferred Contact Date" required>
+                    </div>
+                    <div>
+                        <label for="contact-time">Time</label>
+                        <input type="time" id="contact-time" name="Preferred Contact Time" required>
+                    </div>
+                    <div>
+                        <label for="timezone">Timezone</label>
+                        <select id="timezone" name="Timezone" required>
+                            <option value="">-- Select --</option>
+                            <option value="GMT">GMT</option>
+                            <option value="EST">EST</option>
+                            <option value="PST">PST</option>
+                            <option value="CET">CET</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Signature Section -->
+        <div class="form-section">
+            <h2>Signature</h2>
+            
+            <div class="form-group">
+                <label>Please sign below:</label>
+                <canvas id="signaturePad"></canvas>
+                <div class="signature-actions">
+                    <button type="button" id="clearSignature">Clear Signature</button>
+                </div>
+                <input type="hidden" id="signatureData" name="Signature">
+            </div>
+            
+            <div class="form-group">
+                <label for="agreement">
+                    <input type="checkbox" id="agreement" name="Agreement" required>
+                    I confirm that the information provided is accurate
+                </label>
+            </div>
+        </div>
+
+        <button type="submit">Submit Questionnaire</button>
+    </form>
+
+    <script>
+        // Signature Pad Functionality
+        const canvas = document.getElementById('signaturePad');
+        const ctx = canvas.getContext('2d');
+        const signatureInput = document.getElementById('signatureData');
+        const clearBtn = document.getElementById('clearSignature');
+        let isDrawing = false;
+        let lastX = 0;
+        let lastY = 0;
+
+        // Set canvas size
+        function resizeCanvas() {
+            const rect = canvas.parentElement.getBoundingClientRect();
+            canvas.width = rect.width - 40; // Account for padding
+            canvas.height = 150;
+            ctx.strokeStyle = '#00ff00';
+            ctx.lineWidth = 2;
+            ctx.lineCap = 'round';
+            ctx.fillStyle = '#111';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        // Drawing functions
+        canvas.addEventListener('mousedown', startDrawing);
+        canvas.addEventListener('touchstart', handleTouchStart);
+        canvas.addEventListener('mousemove', draw);
+        canvas.addEventListener('touchmove', handleTouchMove);
+        canvas.addEventListener('mouseup', stopDrawing);
+        canvas.addEventListener('touchend', stopDrawing);
+        canvas.addEventListener('mouseout', stopDrawing);
+
+        clearBtn.addEventListener('click', clearSignature);
+
+        function startDrawing(e) {
+            isDrawing = true;
+            [lastX, lastY] = getPosition(e);
+        }
+
+        function handleTouchStart(e) {
+            e.preventDefault();
+            const touch = e.touches[0];
+            const mouseEvent = new MouseEvent('mousedown', {
+                clientX: touch.clientX,
+                clientY: touch.clientY
+            });
+            canvas.dispatchEvent(mouseEvent);
+        }
+
+        function draw(e) {
+            if (!isDrawing) return;
+            const [x, y] = getPosition(e);
+            ctx.beginPath();
+            ctx.moveTo(lastX, lastY);
+            ctx.lineTo(x, y);
+            ctx.stroke();
+            [lastX, lastY] = [x, y];
+            updateSignatureData();
+        }
+
+        function handleTouchMove(e) {
+            e.preventDefault();
+            const touch = e.touches[0];
+            const mouseEvent = new MouseEvent('mousemove', {
+                clientX: touch.clientX,
+                clientY: touch.clientY
+            });
+            canvas.dispatchEvent(mouseEvent);
+        }
+
+        function stopDrawing() {
+            isDrawing = false;
+            updateSignatureData();
+        }
+
+        function clearSignature() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#111';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            signatureInput.value = '';
+        }
+
+        function getPosition(e) {
+            const rect = canvas.getBoundingClientRect();
+            return [
+                e.clientX - rect.left,
+                e.clientY - rect.top
+            ];
+        }
+
+        function updateSignatureData() {
+            signatureInput.value = canvas.toDataURL();
+        }
+    </script>
+</body>
+</html>
