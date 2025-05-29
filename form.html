@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Website Requirements Questionnaire</title>
+    <title>ENGMO1234 Website Questionnaire</title>
     <style>
         :root {
             --primary: #00ff00;
@@ -43,6 +43,8 @@
         input[type="email"],
         input[type="url"],
         input[type="number"],
+        input[type="date"],
+        input[type="time"],
         select,
         textarea {
             width: 100%;
@@ -93,6 +95,20 @@
             background-color: #333;
             color: var(--primary);
         }
+        .datetime-group {
+            display: flex;
+            gap: 10px;
+        }
+        .datetime-group > div {
+            flex: 1;
+        }
+        .checkbox-group {
+            margin: 10px 0;
+        }
+        .checkbox-group label {
+            display: inline-block;
+            margin-left: 5px;
+        }
         @media (max-width: 768px) {
             body {
                 padding: 10px;
@@ -100,17 +116,27 @@
             .form-section {
                 padding: 15px;
             }
+            .datetime-group {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
 <body>
     <h1>Website Design Questionnaire</h1>
     
-    <form action="https://formsubmit.co/engmo1234@hotmail.com" method="POST" enctype="multipart/form-data">
-        <input type="hidden" name="_subject" value="New Website Questionnaire Submission">
-        <input type="hidden" name="_captcha" value="false">
-        <input type="hidden" name="_template" value="table">
-        <input type="hidden" name="_next" value="https://yourdomain.com/thank-you.html">
+   <form
+  action="https://formspree.io/f/xqaqropk"
+  method="POST"
+>
+  <label>
+    Your email:
+    <input type="email" name="engmo1234@hotmail.com">
+  </label>
+  <label>
+    Your message:
+    <textarea name="message"></textarea>
+  </label>
 
         <!-- Section 1: Business Basics -->
         <div class="form-section">
@@ -209,22 +235,26 @@
             </div>
             
             <div class="form-group">
-                <label for="must-have-features">What features are must-haves? (Check all that apply)</label>
-                <div style="margin-top: 10px;">
+                <label>What features are must-haves? (Check all that apply)</label>
+                <div class="checkbox-group">
                     <input type="checkbox" id="contact-form" name="Must-Have Features" value="Contact form">
-                    <label for="contact-form" style="display: inline;">Contact form</label><br>
-                    
+                    <label for="contact-form">Contact form</label>
+                </div>
+                <div class="checkbox-group">
                     <input type="checkbox" id="online-store" name="Must-Have Features" value="Online store">
-                    <label for="online-store" style="display: inline;">Online store</label><br>
-                    
+                    <label for="online-store">Online store</label>
+                </div>
+                <div class="checkbox-group">
                     <input type="checkbox" id="booking-system" name="Must-Have Features" value="Booking system">
-                    <label for="booking-system" style="display: inline;">Booking system</label><br>
-                    
+                    <label for="booking-system">Booking system</label>
+                </div>
+                <div class="checkbox-group">
                     <input type="checkbox" id="blog" name="Must-Have Features" value="Blog">
-                    <label for="blog" style="display: inline;">Blog</label><br>
-                    
+                    <label for="blog">Blog</label>
+                </div>
+                <div class="checkbox-group">
                     <input type="checkbox" id="other-features" name="Must-Have Features" value="Other">
-                    <label for="other-features" style="display: inline;">Other (please specify)</label>
+                    <label for="other-features">Other (please specify)</label>
                     <input type="text" id="other-features-text" name="Other Features" style="width: 100%; margin-top: 5px;">
                 </div>
             </div>
@@ -253,7 +283,7 @@
             </div>
         </div>
 
-        <!-- Section 7: Budget & Timeline -->
+        <!-- Section 7: PLAN AND TIMELINE -->
         <div class="form-section">
             <h2>7. Budget & Timeline</h2>
             
@@ -261,9 +291,10 @@
                 <label for="budget-range">What's your budget range?</label>
                 <select id="budget-range" name="Budget Range" required>
                     <option value="">-- Select --</option>
-                    <option value="$1,000 - $3,000">$1,000 - $3,000 (Basic)</option>
-                    <option value="$3,000 - $5,000">$3,000 - $5,000 (Standard)</option>
-                    <option value="$5,000+">$5,000+ (Advanced)</option>
+                    <option value="A">A(Basic)</option>
+                    <option value="B">B (SENIOR)</option>
+                    <option value="C">C(VIP)</option>
+                    <option value="D">D(LEGENDARY)</option>
                     <option value="Not sure">Not sure</option>
                 </select>
             </div>
@@ -307,28 +338,9 @@
             </div>
         </div>
 
-        <!-- Section 10: Contact Information -->
+        <!-- Section 10: Page Structure -->
         <div class="form-section">
-            <h2>10. Your Information</h2>
-            
-            <div class="form-group">
-                <label for="name">Your Name</label>
-                <input type="text" id="name" name="Name" required>
-            </div>
-            
-            <div class="form-group">
-                <label for="email">Email Address</label>
-                <input type="email" id="email" name="Email" required>
-            </div>
-            
-            <div class="form-group">
-                <label for="phone">Phone Number</label>
-                <input type="text" id="phone" name="Phone">
-            </div>
-        </div>
-
-           <div class="form-section">
-            <h2>11. Page Structure</h2>
+            <h2>10. Page Structure</h2>
             
             <div class="form-group">
                 <label for="page-count">How many main pages do you need?</label>
@@ -357,9 +369,9 @@
             </div>
         </div>
 
-        <!-- NEW SECTION: Follow-Up Scheduling -->
+        <!-- Section 11: Preferred Follow-Up -->
         <div class="form-section">
-            <h2>12. Preferred Follow-Up</h2>
+            <h2>11. Preferred Follow-Up</h2>
             
             <div class="form-group">
                 <label>When should Engmo contact you?</label>
@@ -377,13 +389,42 @@
                         <select id="timezone" name="Timezone" required>
                             <option value="">-- Select --</option>
                             <option value="GMT">GMT</option>
-                            <option value="EST">EST</option>
-                            <option value="PST">PST</option>
-                            <option value="CET">CET</option>
+                            <option value="GMT+1">GMT+1</option>
+                            <option value="GMT+2">GMT+2</option>
+                            <option value="GMT+3">GMT+3</option>
+                            <option value="GMT+4">GMT+4</option>
+                            <option value="GMT+5">GMT+5</option>
+                            <option value="GMT+6">GMT+6</option>
+                            <option value="GMT+7">GMT+7</option>
+                            <option value="GMT+8">GMT+8</option>
+                            <option value="GMT+9">GMT+9</option>
+                            <option value="GMT+10">GMT+10</option>
+                            <option value="GMT+11">GMT+11</option>
+                            <option value="GMT+12">GMT+12</option>
                             <option value="Other">Other</option>
                         </select>
                     </div>
                 </div>
+            </div>
+        </div>
+
+        <!-- Section 12: Contact Information -->
+        <div class="form-section">
+            <h2>12. Your Information</h2>
+            
+            <div class="form-group">
+                <label for="name">Your Name</label>
+                <input type="text" id="name" name="Name" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" name="Email" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="phone">Phone Number</label>
+                <input type="text" id="phone" name="Phone">
             </div>
         </div>
 
@@ -505,6 +546,16 @@
         function updateSignatureData() {
             signatureInput.value = canvas.toDataURL();
         }
+
+        // Form submission feedback
+        const form = document.querySelector('form');
+        form.addEventListener('submit', function(e) {
+            const submitButton = form.querySelector('button[type="submit"]');
+            submitButton.disabled = true;
+            submitButton.textContent = 'Sending...';
+            
+            // You can add additional submission handling here if needed
+        });
     </script>
 </body>
 </html>
