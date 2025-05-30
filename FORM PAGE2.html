@@ -1,509 +1,1633 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Website Requirements Questionnaire</title>
-    <style>
-        :root {
-            --primary: #00ff00;
-            --background: #000000;
-            --text: #e0e0e0;
-        }
-        body {
-            background-color: var(--background);
-            color: var(--primary);
-            font-family: 'Arial', sans-serif;
-            line-height: 1.6;
-            padding: 20px;
-            max-width: 1000px;
-            margin: 0 auto;
-        }
-        h1, h2 {
-            color: var(--primary);
-            border-bottom: 1px dashed var(--primary);
-            padding-bottom: 10px;
-        }
-        .form-section {
-            background-color: rgba(0, 0, 0, 0.7);
-            border: 1px solid var(--primary);
-            border-radius: 5px;
-            padding: 20px;
-            margin-bottom: 30px;
-        }
-        .form-group {
-            margin-bottom: 20px;
-        }
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: bold;
-        }
-        input[type="text"],
-        input[type="email"],
-        input[type="url"],
-        input[type="number"],
-        select,
-        textarea {
-            width: 100%;
-            padding: 10px;
-            background-color: #111;
-            border: 1px solid var(--primary);
-            color: var(--text);
-            border-radius: 4px;
-            box-sizing: border-box;
-        }
-        textarea {
-            min-height: 100px;
-            resize: vertical;
-        }
-        button {
-            background-color: var(--primary);
-            color: #000;
-            border: none;
-            padding: 12px 20px;
-            font-size: 16px;
-            cursor: pointer;
-            border-radius: 4px;
-            font-weight: bold;
-            display: block;
-            width: 100%;
-            margin-top: 20px;
-        }
-        button:hover {
-            opacity: 0.9;
-        }
-        .signature-container {
-            margin: 20px 0;
-        }
-        #signaturePad {
-            border: 1px dashed var(--primary);
-            background-color: #111;
-            width: 100%;
-            height: 150px;
-            cursor: crosshair;
-        }
-        .signature-actions {
-            margin-top: 10px;
-        }
-        .signature-actions button {
-            width: auto;
-            display: inline-block;
-            margin-right: 10px;
-            background-color: #333;
-            color: var(--primary);
-        }
-        @media (max-width: 768px) {
-            body {
-                padding: 10px;
-            }
-            .form-section {
-                padding: 15px;
-            }
-        }
-    </style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta property="og:description" content="Professional website design & development services exclusively accepting Polygon (MATIC) crypto and NFT payments.">
+<meta property="og:description" content="خدمات تصميم مواقع ويب احترافية بقبول دفعات العملات الرقمية NFT عبر شبكة بوليجون (MATIC)">
+<title>Bism Allah - ENGMO1234 Web3 Services</title>
+<!-- Three.js for 3D background -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet"/>
+<!-- Remix Icons -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" rel="stylesheet"/>
+
+<!-- Comprehensive Favicon Setup -->
+<link rel="icon" href="/favicons/favicon.ico" type="image/x-icon" sizes="any">
+<link rel="icon" href="/favicons/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/favicons/apple-touch-icon.png">
+<link rel="manifest" href="/favicons/site.webmanifest">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicons/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicons/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="48x48" href="/favicons/favicon-48x48.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/favicons/favicon-192x192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="/favicons/favicon-512x512.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/favicons/apple-touch-icon-180x180.png">
+
+<!-- Sitemap Link -->
+<link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml">
+
+<style>
+  :root {
+    --primary: #00ff88;
+    --primary-dark: #00cc6a;
+    --dark-bg: rgba(10,10,10,0.3); /* More transparent background */
+    --darker-bg: rgba(5,5,5,0.3);  /* More transparent background */
+    --text-light: rgba(255,255,255,0.9);
+    --modal-bg: rgba(10,10,10,0.95);
+  }
+  
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  body, html {
+    width: 100%;
+    height: 100%;
+    font-family: 'Cairo', sans-serif;
+    color: var(--text-light);
+    background-color: transparent; /* Fully transparent */
+    scroll-behavior: smooth;
+    overflow-x: hidden;
+  }
+
+  #bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+  }
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+
+  header {
+    padding: 30px 0;
+    text-align: center;
+    position: relative;
+    z-index: 10;
+    background-color: transparent;
+    margin: 20px;
+  }
+
+  h1 {
+    font-size: clamp(2rem, 5vw, 3rem);
+    margin-bottom: 15px;
+    color: var(--primary);
+    text-shadow: 0 0 15px var(--primary);
+    font-weight: 900;
+  }
+
+  .subtitle {
+    font-size: 1.2rem;
+    margin-bottom: 30px;
+    color: rgba(255,255,255,0.8);
+  }
+
+  .cta-section {
+    text-align: center;
+    padding: 50px 0;
+    background-color: transparent;
+    margin: 20px;
+    position: relative;
+    z-index: 10;
+  }
+
+  .qr-container {
+    margin: 30px auto;
+    max-width: 250px;
+    position: relative;
+    transform-style: preserve-3d;
+    animation: rotate 15s linear infinite;
+  }
+
+  @keyframes rotate {
+    0% { transform: rotateY(0deg); }
+    100% { transform: rotateY(360deg); }
+  }
+
+  .qr-code {
+    width: 100%;
+    border-radius: 15px;
+    box-shadow: 0 0 30px rgba(0, 255, 136, 0.5);
+    transition: all 0.3s ease;
+    transform-style: preserve-3d;
+  }
+
+  .qr-code:hover {
+    transform: scale(1.05) rotateY(10deg);
+    box-shadow: 0 0 40px rgba(0, 255, 136, 0.8);
+    animation-play-state: paused;
+  }
+
+  .legal-notice {
+    background-color: rgba(0, 255, 136, 0.1);
+    border: 1px solid var(--primary);
+    border-radius: 12px;
+    padding: 20px;
+    margin: 30px auto;
+    max-width: 600px;
+    text-align: center;
+    backdrop-filter: blur(5px);
+    position: relative;
+    z-index: 10;
+  }
+
+  .legal-notice a {
+    color: var(--primary);
+    font-weight: bold;
+    text-decoration: none;
+    border-bottom: 1px dotted var(--primary);
+  }
+
+  .btn {
+    display: inline-block;
+    padding: 12px 30px;
+    background-color: var(--primary);
+    color: #001f1f;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    margin: 10px;
+    font-size: 1rem;
+    box-shadow: 0 0 15px rgba(0, 255, 136, 0.5);
+    position: relative;
+    z-index: 10;
+  }
+
+  .btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 0 25px var(--primary);
+    background-color: var(--primary-dark);
+  }
+
+  .btn-outline {
+    background-color: transparent;
+    border: 2px solid var(--primary);
+    color: var(--primary);
+  }
+
+  .btn-outline:hover {
+    background-color: rgba(0, 255, 136, 0.1);
+  }
+
+  .tutorial-section {
+    padding: 60px 0;
+    background-color: transparent;
+    position: relative;
+    z-index: 10;
+    margin: 20px;
+  }
+
+  .section-title {
+    text-align: center;
+    margin-bottom: 40px;
+    color: var(--primary);
+    font-size: 2rem;
+    text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+  }
+
+  .video-container {
+    position: relative;
+    padding-bottom: 56.25%;
+    height: 0;
+    overflow: hidden;
+    max-width: 800px;
+    margin: 0 auto 30px;
+    border-radius: 12px;
+    box-shadow: 0 0 20px rgba(0,255,136,0.3);
+    border: 1px solid var(--primary);
+  }
+
+  .video-container iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+  }
+
+  .steps {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 30px;
+    margin-top: 50px;
+  }
+
+  .step {
+    flex: 1;
+    min-width: 250px;
+    max-width: 350px;
+    background-color: rgba(0, 255, 136, 0.05);
+    border: 1px solid rgba(0, 255, 136, 0.2);
+    border-radius: 12px;
+    padding: 25px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    backdrop-filter: blur(5px);
+  }
+
+  .step:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 255, 136, 0.2);
+    border-color: var(--primary);
+  }
+
+  .step-number {
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    background-color: var(--primary);
+    color: #001f1f;
+    border-radius: 50%;
+    text-align: center;
+    line-height: 40px;
+    font-weight: bold;
+    margin-bottom: 15px;
+  }
+
+  .step-title {
+    font-size: 1.3rem;
+    margin-bottom: 15px;
+    color: var(--primary);
+  }
+
+  /* Tutorial video sections */
+  .tutorial-video-section {
+    margin: 40px auto;
+    max-width: 800px;
+  }
+
+  .tutorial-video-container {
+    position: relative;
+    padding-bottom: 56.25%;
+    height: 0;
+    overflow: hidden;
+    border-radius: 12px;
+    box-shadow: 0 0 20px rgba(0,255,136,0.3);
+    border: 1px solid var(--primary);
+    margin-bottom: 20px;
+  }
+
+  .tutorial-video-container iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+  }
+
+  .tutorial-description {
+    background-color: rgba(0, 255, 136, 0.05);
+    border: 1px solid rgba(0, 255, 136, 0.2);
+    border-radius: 12px;
+    padding: 20px;
+    margin-top: 20px;
+    backdrop-filter: blur(5px);
+  }
+
+  /* Modal styles */
+  .modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--modal-bg);
+    z-index: 1000;
+    overflow-y: auto;
+    backdrop-filter: blur(5px);
+  }
+
+  .modal-content {
+    background-color: var(--darker-bg);
+    margin: 2% auto;
+    padding: 30px;
+    border: 2px solid var(--primary);
+    border-radius: 15px;
+    width: 90%;
+    max-width: 900px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 0 30px rgba(0, 255, 136, 0.3);
+    position: relative;
+    backdrop-filter: blur(5px);
+  }
+
+  .close-modal {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    color: var(--primary);
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 1001;
+  }
+
+  .close-modal:hover {
+    transform: rotate(90deg);
+    color: #fff;
+  }
+
+  .modal-text-content {
+    padding: 20px;
+    background-color: rgba(0,0,0,0.3);
+    border-radius: 10px;
+    margin-top: 20px;
+    backdrop-filter: blur(5px);
+  }
+
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    background-color: rgba(0,0,0,0.3);
+    margin-top: 50px;
+    position: relative;
+    z-index: 10;
+    backdrop-filter: blur(5px);
+    border-top: 1px solid rgba(0, 255, 136, 0.2);
+  }
+
+  .language-toggle {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 100;
+  }
+
+  /* Animation classes */
+  .pulse {
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(0, 255, 136, 0.7); }
+    70% { box-shadow: 0 0 0 15px rgba(0, 255, 136, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(0, 255, 136, 0); }
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .steps {
+      flex-direction: column;
+      align-items: center;
+    }
+    
+    .step {
+      width: 100%;
+      max-width: 100%;
+    }
+    
+    .btn {
+      display: block;
+      width: calc(100% - 20px);
+      margin: 10px auto;
+    }
+    
+    .modal-content {
+      padding: 20px;
+    }
+    
+    .qr-container {
+      animation: none;
+    }
+    
+    .qr-code:hover {
+      animation: none;
+    }
+    
+    header, .cta-section, .tutorial-section {
+      margin: 10px;
+    }
+  }
+
+  /* Arabic specific styles */
+  .arabic {
+    direction: rtl;
+    font-family: 'Cairo', sans-serif;
+  }
+  
+  .hidden {
+    display: none;
+  }
+  
+  .section-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--primary), transparent);
+    margin: 60px auto;
+    max-width: 800px;
+  }
+</style>
 </head>
 <body>
-    <h1>Website Design Questionnaire</h1>
+<!-- Three.js Background Canvas -->
+<div id="bg"></div>
+
+<!-- Main Content -->
+<div class="container">
+  <header>
+    <h1 id="title">Bism Allah</h1>
+    <p class="subtitle english">Professional Website and Web3 design Services | Accepting Polygon (MATIC) & NFT Payments to scroll down swipe the sides</p>
+    <p class="subtitle arabic hidden">خدمات تصميم مواقع و ويب 3 احترافية | قبول دفعات امسح الاجناب للنزول Polygon (MATIC) و NFT</p>
+  </header>
+
+  <section class="cta-section">
+    <div class="qr-container">
+      <a href="https://www.engmo1234.com/vipreveal_bilingual_updated.html" target="_blank">
+        <img class="qr-code pulse" alt="ENMO1234 QR Code" 
+             src="https://api.qrserver.com/v1/create-qr-code/?data=https://www.engmo1234.com/vipreveal_bilingual_updated.html&size=250x250&bgcolor=0a0a0a&color=00ff88&qzone=1"/>
+      </a>
+    </div>
     
-    <form action="https://formspree.io/f/engmo1234@hotmail.com" method="POST">
-        <input type="hidden" name="_subject" value="New Website Questionnaire Submission">
-        <input type="text" name="_gotcha" style="display:none"> <!-- Anti-spam -->
+    <div class="legal-notice">
+      <div class="english">
+        <p>By CLICKING OR scanning this QR, you accept our <a href="#" id="termsLink">terms and conditions</a>.</p>
+        <p>BID WHAT YOU CAN AFFORD FOR YOUR CUSTOM WEBSITE</p>
+      </div>
+      <div class="arabic hidden">
+        <p>اضغط او بمسح هذا الرمز، فإنك تقبل <a href="#" id="termsLinkAr">الشروط والأحكام</a>.</p>
+        <p>اقترح ما يمكنك دفعه لتحصل على موقعك المخصص</p>
+      </div>
+    </div>
+    
+    <a href="#tutorials" class="btn">Get Started</a>
+    <a href="#how-it-works" class="btn btn-outline">How It Works</a>
+  </section>
 
+  <div class="section-divider"></div>
 
-        <!-- Section 1: Business Basics -->
-        <div class="form-section">
-            <h2>1. Business Basics</h2>
-            
-            <div class="form-group">
-                <label for="business-description">What does your business/organization do?</label>
-                <textarea id="business-description" name="Business Description" required></textarea>
-            </div>
-            
-            <div class="form-group">
-                <label for="unique-selling">What makes you unique compared to competitors?</label>
-                <textarea id="unique-selling" name="Unique Selling Point" required></textarea>
-            </div>
-        </div>
+  <section id="tutorials" class="tutorial-section">
+    <h2 class="section-title english">Video Tutorials</h2>
+    <h2 class="section-title arabic hidden">فيديوهات تعليمية</h2>
+    
+    <div class="video-container">
+      <iframe id="mainVideo" src="https://www.youtube.com/embed/IO7KN8bhhTk?autoplay=0" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    </div>
+    
+    <!-- Arabic Tutorial Section -->
+    <div id="arabicTutorial" class="tutorial-video-section">
+      <h3 class="step-title english">For Arabic Speakers</h3>
+      <h3 class="step-title arabic hidden">للناطقين بالعربية</h3>
+      
+      <div class="tutorial-video-container">
+        <iframe src="https://www.youtube.com/embed/eXkMm1bLUl8?autoplay=0" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      </div>
+      
+      <div class="tutorial-description">
+        <p class="english">Learn how to interact with our Arabic packages and services. This tutorial will guide you through the process of placing your bid, making payment with MATIC, and receiving your custom website.</p>
+        <p class="arabic hidden">تعلم كيفية التفاعل مع باقاتنا وخدماتنا العربية. سيرشدك هذا البرنامج التعليمي خلال عملية تقديم عرضك والدفع باستخدام MATIC واستلام موقعك المخصص.</p>
+      </div>
+    </div>
+    
+    <!-- English Tutorial Section -->
+    <div id="englishTutorial" class="tutorial-video-section">
+      <h3 class="step-title english">For English Speakers</h3>
+      <h3 class="step-title arabic hidden">للناطقين بالإنجليزية</h3>
+      
+      <div class="tutorial-video-container">
+        <iframe src="https://www.youtube.com/embed/RqGm8O3tht4?autoplay=0" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      </div>
+      
+      <div class="tutorial-description">
+        <p class="english">Learn how to interact with our English packages and services. This tutorial will guide you through the process of placing your bid, making payment with MATIC, and receiving your custom website.</p>
+        <p class="arabic hidden">تعلم كيفية التفاعل مع باقاتنا وخدماتنا الإنجليزية. سيرشدك هذا البرنامج التعليمي خلال عملية تقديم عرضك والدفع باستخدام MATIC واستلام موقعك المخصص.</p>
+      </div>
+    </div>
+    
+    <div class="steps">
+      <div class="step" onclick="document.getElementById('arabicTutorial').scrollIntoView({behavior: 'smooth'})">
+        <div class="step-number">1</div>
+        <h3 class="step-title english">For Arabic Speakers</h3>
+        <h3 class="step-title arabic hidden">للناطقين بالعربية</h3>
+        <p class="english">Learn how to interact with our Arabic packages and services</p>
+        <p class="arabic hidden">تعلم كيفية التفاعل مع باقاتنا وخدماتنا العربية</p>
+      </div>
+      
+      <div class="step" onclick="document.getElementById('englishTutorial').scrollIntoView({behavior: 'smooth'})">
+        <div class="step-number">2</div>
+        <h3 class="step-title english">For English Speakers</h3>
+        <h3 class="step-title arabic hidden">للناطقين بالإنجليزية</h3>
+        <p class="english">Learn how to interact with our English packages and services</p>
+        <p class="arabic hidden">تعلم كيفية التفاعل مع باقاتنا وخدماتنا الإنجليزية</p>
+      </div>
+      
+      <div class="step" id="termsBtn">
+        <div class="step-number">3</div>
+        <h3 class="step-title english">Terms & Conditions</h3>
+        <h3 class="step-title arabic hidden">الشروط والأحكام</h3>
+        <p class="english">Review our terms before proceeding with your purchase</p>
+        <p class="arabic hidden">راجع شروطنا قبل المتابعة مع عملية الشراء</p>
+      </div>
+    </div>
+  </section>
 
-        <!-- Section 2: Website Purpose -->
-        <div class="form-section">
-            <h2>2. Website Purpose</h2>
-            
-            <div class="form-group">
-                <label for="primary-goal">What's the #1 goal for your website?</label>
-                <select id="primary-goal" name="Primary Goal" required>
-                    <option value="">-- Select --</option>
-                    <option value="Sell products">Sell products</option>
-                    <option value="Generate leads">Generate leads</option>
-                    <option value="Share information">Share information</option>
-                    <option value="Book appointments">Book appointments</option>
-                    <option value="Other">Other</option>
-                </select>
-            </div>
-            
-            <div class="form-group">
-                <label for="visitor-action">What action should visitors take first?</label>
-                <input type="text" id="visitor-action" name="Visitor Action" placeholder="e.g., Call, Buy, Sign up" required>
-            </div>
-        </div>
+  <div class="section-divider"></div>
 
-        <!-- Section 3: Target Audience -->
-        <div class="form-section">
-            <h2>3. Target Audience</h2>
-            
-            <div class="form-group">
-                <label for="ideal-customer">Who is your ideal customer? (Age, interests, problems)</label>
-                <textarea id="ideal-customer" name="Ideal Customer" required></textarea>
-            </div>
-            
-            <div class="form-group">
-                <label for="current-traffic">How do they usually find you now?</label>
-                <select id="current-traffic" name="Current Traffic Source" required>
-                    <option value="">-- Select --</option>
-                    <option value="Google search">Google search</option>
-                    <option value="Social media">Social media</option>
-                    <option value="Word of mouth">Word of mouth</option>
-                    <option value="Other">Other</option>
-                </select>
-            </div>
-        </div>
+  <section id="how-it-works" class="tutorial-section">
+    <h2 class="section-title english">How It Works</h2>
+    <h2 class="section-title arabic hidden">كيفية العمل</h2>
+    
+    <div class="steps">
+      <div class="step">
+        <div class="step-number">1</div>
+        <h3 class="step-title english">Place Your Bid</h3>
+        <h3 class="step-title arabic hidden">ضع عرضك</h3>
+        <p class="english">Submit what you can afford for your custom website</p>
+        <p class="arabic hidden">قدم ما يمكنك دفعه لموقعك المخصص</p>
+      </div>
+      
+      <div class="step">
+        <div class="step-number">2</div>
+        <h3 class="step-title english">Wait for Approval</h3>
+        <h3 class="step-title arabic hidden">انتظر الموافقة</h3>
+        <p class="english">Our team will review your bid and respond promptly</p>
+        <p class="arabic hidden">سيقوم فريقنا بمراجعة عرضك والرد في أسرع وقت</p>
+      </div>
+      
+      <div class="step">
+        <div class="step-number">3</div>
+        <h3 class="step-title english">Mint Your NFT</h3>
+        <h3 class="step-title arabic hidden">سك NFT الخاص بك</h3>
+        <p class="english">Once approved, mint your NFT to claim your website</p>
+        <p class="arabic hidden">بعد الموافقة، قم بسك NFT الخاص بك للمطالبة بموقعك</p>
+      </div>
+      
+      <div class="step">
+        <div class="step-number">4</div>
+        <h3 class="step-title english">Receive Your Site</h3>
+        <h3 class="step-title arabic hidden">استلم موقعك</h3>
+        <p class="english">After minting, you'll receive access to your custom website</p>
+        <p class="arabic hidden">بعد السك، ستحصل على حق الوصول إلى موقعك المخصص</p>
+      </div>
+    </div>
+    <!-- Add this where you want the button/videos to appear -->
+<!-- Add this where you want the button/videos to appear -->
+<div class="crypto-video-transparent">
+  <button id="showVideosBtn" onclick="toggleVideos()">Don't know what is crypto?ما هم العملات المشمفرة</button>
+  <div id="videoWrapper" style="display: none;">
+    <div class="video-embed">
+      <iframe width="560" height="315" src="https://www.youtube.com/embed/GHXGCMU0rng" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    </div>
+    <div class="video-embed">
+      <iframe width="560" height="315" src="https://www.youtube.com/embed/pqKuDKn109c" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    </div>
+  </div>
+</div>
 
-        <!-- Section 4: Design Preferences -->
-        <div class="form-section">
-            <h2>4. Design Preferences</h2>
-            
-            <div class="form-group">
-                <label for="liked-websites">Show 2-3 websites you like (include URLs)</label>
-                <textarea id="liked-websites" name="Liked Websites" placeholder="e.g., https://example.com - I like the clean layout" required></textarea>
-            </div>
-            
-            <div class="form-group">
-                <label for="disliked-websites">Show 2-3 websites you dislike (include URLs)</label>
-                <textarea id="disliked-websites" name="Disliked Websites" placeholder="e.g., https://example.com - Too cluttered" required></textarea>
-            </div>
-            
-            <div class="form-group">
-                <label for="brand-colors">Do you have brand colors/fonts?</label>
-                <select id="brand-colors" name="Brand Colors" required>
-                    <option value="">-- Select --</option>
-                    <option value="Yes, I have them">Yes, I have them</option>
-                    <option value="No, I need help">No, I need help</option>
-                </select>
-            </div>
-        </div>
+<style>
+  /* Transparent container with glass-morphism effect */
+  .crypto-video-transparent {
+    text-align: center;
+    margin: 30px 0;
+    padding: 20px;
+    background: transparent; /* Semi-transparent black */
+    backdrop-filter: blur(2px); /* Frosted glass effect */
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.1); /* Subtle border */
+  }
 
-        <!-- Section 5: Content & Features -->
-        <div class="form-section">
-            <h2>5. Content & Features</h2>
-            
-            <div class="form-group">
-                <label for="content-ready">Do you have photos, logos, or text ready?</label>
-                <select id="content-ready" name="Content Ready" required>
-                    <option value="">-- Select --</option>
-                    <option value="Yes, I have everything">Yes, I have everything</option>
-                    <option value="Some materials">Some materials</option>
-                    <option value="No, I need help">No, I need help</option>
-                </select>
-            </div>
-            
-            <div class="form-group">
-                <label for="must-have-features">What features are must-haves? (Check all that apply)</label>
-                <div style="margin-top: 10px;">
-                    <input type="checkbox" id="contact-form" name="Must-Have Features" value="Contact form">
-                    <label for="contact-form" style="display: inline;">Contact form</label><br>
-                    
-                    <input type="checkbox" id="online-store" name="Must-Have Features" value="Online store">
-                    <label for="online-store" style="display: inline;">Online store</label><br>
-                    
-                    <input type="checkbox" id="booking-system" name="Must-Have Features" value="Booking system">
-                    <label for="booking-system" style="display: inline;">Booking system</label><br>
-                    
-                    <input type="checkbox" id="blog" name="Must-Have Features" value="Blog">
-                    <label for="blog" style="display: inline;">Blog</label><br>
-                    
-                    <input type="checkbox" id="other-features" name="Must-Have Features" value="Other">
-                    <label for="other-features" style="display: inline;">Other (please specify)</label>
-                    <input type="text" id="other-features-text" name="Other Features" style="width: 100%; margin-top: 5px;">
-                </div>
-            </div>
-        </div>
+  /* Modern neon button */
+  #showVideosBtn {
+    background: transparent;
+    color: #fff;
+    padding: 14px 28px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 50px;
+    border: 2px solid #00d4ff;
+    transition: all 0.4s;
+    text-shadow: 0 0 5px rgba(0,212,255,0.5);
+    box-shadow: 
+      0 0 10px rgba(0,212,255,0.3),
+      inset 0 0 10px rgba(0,212,255,0.1);
+  }
 
-        <!-- Section 6: Technical Setup -->
-        <div class="form-section">
-            <h2>6. Technical Setup</h2>
-            
-            <div class="form-group">
-                <label for="domain-owned">Do you already own a domain?</label>
-                <select id="domain-owned" name="Domain Owned" required>
-                    <option value="">-- Select --</option>
-                    <option value="Yes">Yes</option>
-                    <option value="No">No</option>
-                </select>
-            </div>
-            
-            <div class="form-group">
-                <label for="self-update">Will you need to update the site yourself?</label>
-                <select id="self-update" name="Self Update" required>
-                    <option value="">-- Select --</option>
-                    <option value="Yes">Yes</option>
-                    <option value="No">No</option>
-                </select>
-            </div>
-        </div>
+  #showVideosBtn:hover {
+    background: rgba(0,212,255,0.1);
+    box-shadow: 
+      0 0 20px rgba(0,212,255,0.5),
+      inset 0 0 15px rgba(0,212,255,0.2);
+    transform: translateY(-2px);
+  }
 
-        <!-- Section 7: Budget & Timeline -->
-        <div class="form-section">
-            <h2>7. Budget & Timeline</h2>
-            
-            <div class="form-group">
-                <label for="budget-range">What's your budget range?</label>
-                <select id="budget-range" name="Budget Range" required>
-                    <option value="">-- Select --</option>
-                    <option value="$1,000 - $3,000">$1,000 - $3,000 (Basic)</option>
-                    <option value="$3,000 - $5,000">$3,000 - $5,000 (Standard)</option>
-                    <option value="$5,000+">$5,000+ (Advanced)</option>
-                    <option value="Not sure">Not sure</option>
-                </select>
-            </div>
-            
-            <div class="form-group">
-                <label for="launch-date">When do you need the website launched?</label>
-                <input type="text" id="launch-date" name="Launch Date" placeholder="e.g., ASAP, 3 months, specific date" required>
-            </div>
-        </div>
+  /* Video styling */
+  .video-embed {
+    position: relative;
+    padding-bottom: 56.25%; /* 16:9 aspect ratio */
+    height: 0;
+    overflow: hidden;
+    margin: 25px 0;
+    border-radius: 8px;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+  }
 
-        <!-- Section 8: Post-Launch -->
-        <div class="form-section">
-            <h2>8. Post-Launch</h2>
-            
-            <div class="form-group">
-                <label for="tracking">Do you want help tracking visitors/sales?</label>
-                <select id="tracking" name="Tracking Needed" required>
-                    <option value="">-- Select --</option>
-                    <option value="Yes">Yes</option>
-                    <option value="No">No</option>
-                </select>
-            </div>
-            
-            <div class="form-group">
-                <label for="maintenance">Would you like ongoing maintenance?</label>
-                <select id="maintenance" name="Maintenance Needed" required>
-                    <option value="">-- Select --</option>
-                    <option value="Yes">Yes</option>
-                    <option value="No">No</option>
-                </select>
-            </div>
-        </div>
+  .video-embed iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+  }
+</style>
 
-        <!-- Section 9: Concerns -->
-        <div class="form-section">
-            <h2>9. Concerns</h2>
-            
-            <div class="form-group">
-                <label for="main-concern">What worries you most about getting a new website?</label>
-                <textarea id="main-concern" name="Main Concern" required></textarea>
-            </div>
-        </div>
+<script>
+  function toggleVideos() {
+    const wrapper = document.getElementById('videoWrapper');
+    const btn = document.getElementById('showVideosBtn');
+    
+    if (wrapper.style.display === 'none') {
+      wrapper.style.display = 'block';
+      btn.textContent = 'Hide Videos';
+      btn.style.borderColor = '#ff3a3a';
+      btn.style.textShadow = '0 0 5px rgba(255,58,58,0.5)';
+      btn.style.boxShadow = '0 0 20px rgba(255,58,58,0.5), inset 0 0 15px rgba(255,58,58,0.2)';
+    } else {
+      wrapper.style.display = 'none';
+      btn.textContent = 'Don\'t know what is crypto? Click me';
+      btn.style.borderColor = '#00ff88';
+      btn.style.textShadow = '0 0 5px rgba(0,212,255,0.5)';
+      btn.style.boxShadow = '0 0 10px rgba(0,212,255,0.3), inset 0 0 10px rgba(0,212,255,0.1)';
+    }
+  }
+</script>
+    <div style="text-align: center; margin-top: 50px;">
+      <a href="#tutorials" class="btn">Watch Tutorial Videos</a>
+<div class="website-card">
+      <h3>ENGMO1234 BLOG</h3>
+      <p>MY BLOG</p>
+      <a href="https://ENGMO1234.COM/BLOG" target="_blank" class="website-link">VISIT ENGMO1234/BLOG</a>
+    </div>
 
-        <!-- Section 10: Contact Information -->
-        <div class="form-section">
-            <h2>10. Your Information</h2>
-            
-            <div class="form-group">
-                <label for="name">Your Name</label>
-                <input type="text" id="name" name="Name" required>
-            </div>
-            
-            <div class="form-group">
-                <label for="email">Email Address</label>
-                <input type="email" id="email" name="Email" required>
-            </div>
-            
-            <div class="form-group">
-                <label for="phone">Phone Number</label>
-                <input type="text" id="phone" name="Phone">
-            </div>
-        </div>
+    </div>
+  </section>
+</div>
+<div class="completed-websites">
+  <button id="showWebsitesBtn" onclick="toggleWebsites()">View Completed Websites</button>
+  <div id="websitesWrapper" style="display: none;">
+    <div class="website-card">
+      <h3>Saraya VIP</h3>
+      <p>A premium Engineering consultant services platform</p>
+      <a href="https://saraya.vip" target="_blank" class="website-link">Visit saraya.vip</a>
+    </div>
+    <!-- Add more website cards here as needed -->
+  </div>
+</div>
+<style>
+  /* Base transparent container */
+  .crypto-video-transparent, .completed-websites {
+    text-align: center;
+    margin: 30px 0;
+    padding: 20px;
+    background: rgba(0,0,0,0.05);
+    backdrop-filter: blur(2px);
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.1);
+  }
 
-           <div class="form-section">
-            <h2>11. Page Structure</h2>
-            
-            <div class="form-group">
-                <label for="page-count">How many main pages do you need?</label>
-                <input type="number" id="page-count" name="Number of Pages" min="1" required>
-            </div>
-            
-            <div class="form-group">
-                <label for="page-names">What should these pages be called? (List all, separated by commas)</label>
-                <textarea id="page-names" name="Page Names" placeholder="e.g., Home, About Us, Services, Contact" required></textarea>
-            </div>
-            
-            <div class="form-group">
-                <label for="extra-functionality">Describe any extra functionalities you need:</label>
-                <textarea id="extra-functionality" name="Extra Functionality" placeholder="e.g., User login system, appointment scheduler, live chat"></textarea>
-            </div>
-            
-            <div class="form-group">
-                <label for="payment-system">Do you need an integrated payment system?</label>
-                <select id="payment-system" name="Payment System Needed" required>
-                    <option value="">-- Select --</option>
-                    <option value="Yes, for products">Yes, for products</option>
-                    <option value="Yes, for services">Yes, for services</option>
-                    <option value="Yes, for donations">Yes, for donations</option>
-                    <option value="No">No</option>
-                </select>
-            </div>
-        </div>
+  /* Button styling */
+  #showVideosBtn, #showWebsitesBtn {
+    background: transparent;
+    color: #fff;
+    padding: 14px 28px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 50px;
+    border: 2px solid #00ff88;
+    transition: all 0.4s;
+    text-shadow: 0 0 5px rgba(0,255,136,0.5);
+    box-shadow: 
+      0 0 10px rgba(0,255,136,0.3),
+      inset 0 0 10px rgba(0,255,136,0.1);
+    margin: 10px;
+  }
 
-        <!-- NEW SECTION: Follow-Up Scheduling -->
-        <div class="form-section">
-            <h2>12. Preferred Follow-Up</h2>
-            
-            <div class="form-group">
-                <label>When should Engmo contact you?</label>
-                <div class="datetime-group">
-                    <div>
-                        <label for="contact-date">Date</label>
-                        <input type="date" id="contact-date" name="Preferred Contact Date" required>
+  #showVideosBtn:hover, #showWebsitesBtn:hover {
+    background: rgba(0,255,136,0.1);
+    box-shadow: 
+      0 0 20px rgba(0,255,136,0.5),
+      inset 0 0 15px rgba(0,255,136,0.2);
+    transform: translateY(-2px);
+  }
+
+  /* Video styling */
+  .video-embed {
+    position: relative;
+    padding-bottom: 56.25%;
+    height: 0;
+    overflow: hidden;
+    margin: 25px 0;
+    border-radius: 8px;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+  }
+
+  .video-embed iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+  }
+
+  /* Website cards styling */
+  .website-card {
+    background: rgba(0,0,0,0.2);
+    padding: 20px;
+    border-radius: 8px;
+    margin: 20px auto;
+    max-width: 500px;
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+
+  .website-card h3 {
+    color: #00ff88;
+    margin-top: 0;
+  }
+
+  .website-link {
+    display: inline-block;
+    padding: 10px 20px;
+    background: rgba(0,255,136,0.1);
+    color: #00ff88;
+    text-decoration: none;
+    border-radius: 50px;
+    border: 1px solid #00ff88;
+    transition: all 0.3s;
+    margin-top: 10px;
+  }
+
+  .website-link:hover {
+    background: rgba(0,255,136,0.2);
+    box-shadow: 0 0 15px rgba(0,255,136,0.3);
+  }
+</style>
+
+<script>
+  function toggleVideos() {
+    const wrapper = document.getElementById('videoWrapper');
+    const btn = document.getElementById('showVideosBtn');
+    
+    if (wrapper.style.display === 'none') {
+      wrapper.style.display = 'block';
+      btn.textContent = 'Hide Videos';
+      btn.style.borderColor = '#ff3a3a';
+      btn.style.textShadow = '0 0 5px rgba(255,58,58,0.5)';
+      btn.style.boxShadow = '0 0 20px rgba(255,58,58,0.5), inset 0 0 15px rgba(255,58,58,0.2)';
+    } else {
+      wrapper.style.display = 'none';
+      btn.textContent = 'Don\'t know what is crypto? Click me';
+      btn.style.borderColor = '#00ff88';
+      btn.style.textShadow = '0 0 5px rgba(0,255,136,0.5)';
+      btn.style.boxShadow = '0 0 10px rgba(0,255,136,0.3), inset 0 0 10px rgba(0,255,136,0.1)';
+    }
+  }
+
+  function toggleWebsites() {
+    const wrapper = document.getElementById('websitesWrapper');
+    const btn = document.getElementById('showWebsitesBtn');
+    
+    if (wrapper.style.display === 'none') {
+      wrapper.style.display = 'block';
+      btn.textContent = 'Hide Websites';
+      btn.style.borderColor = '#ff3a3a';
+      btn.style.textShadow = '0 0 5px rgba(255,58,58,0.5)';
+      btn.style.boxShadow = '0 0 20px rgba(255,58,58,0.5), inset 0 0 15px rgba(255,58,58,0.2)';
+    } else {
+      wrapper.style.display = 'none';
+      btn.textContent = 'View Completed Websites';
+      btn.style.borderColor = '#00ff88';
+      btn.style.textShadow = '0 0 5px rgba(0,255,136,0.5)';
+      btn.style.boxShadow = '0 0 10px rgba(0,255,136,0.3), inset 0 0 10px rgba(0,255,136,0.1)';
+    }
+  }
+</script>
+<footer>
+  <p class="english">&copy; 2023 ENGMO1234. All rights reserved. 
+  <p class="arabic hidden">&copy; 2023 ENGMO1234. جميع الحقوق محفوظة. 
+</footer>
+
+<div class="language-toggle">
+  <button id="translateBtn" class="btn btn-outline" style="padding: 10px 15px;">
+    <span class="english">العربية</span>
+    <span class="arabic hidden">English</span>
+  </button>
+</div>
+
+<!-- Modal for Terms and Conditions -->
+<div id="contentModal" class="modal">
+  <div class="modal-content">
+    <span class="close-modal">&times;</span>
+    <div id="modalTextContent" class="modal-text-content">
+      <!-- Terms content will be loaded here -->
+    </div>
+  </div>
+</div>
+
+<script>
+  // Enhanced Three.js Galaxy Background
+  const bgContainer = document.getElementById('bg');
+  
+  // Scene setup
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 2000);
+  const renderer = new THREE.WebGLRenderer({ 
+    antialias: true, 
+    alpha: true,
+    powerPreference: "high-performance"
+  });
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setClearColor(0x000000); 
+  bgContainer.appendChild(renderer.domElement);
+
+  // Create galaxy particles
+  const particlesGeometry = new THREE.BufferGeometry();
+  const particlesMaterial = new THREE.PointsMaterial({
+    color: 0x00ff88,
+    size: 1.5,
+    transparent: true,
+    opacity: 0.8,
+    blending: THREE.AdditiveBlending,
+    sizeAttenuation: true
+  });
+
+  // Create 15,000 particles for denser galaxy
+  const particleCount = 15000;
+  const positions = new Float32Array(particleCount * 3);
+  const colors = new Float32Array(particleCount * 3);
+
+  for (let i = 0; i < particleCount; i++) {
+    // Positions (spread in a sphere)
+    const radius = Math.random() * 1000;
+    const theta = Math.random() * Math.PI * 2;
+    const phi = Math.random() * Math.PI;
+    
+    positions[i * 3] = radius * Math.sin(phi) * Math.cos(theta);
+    positions[i * 3 + 1] = radius * Math.sin(phi) * Math.sin(theta);
+    positions[i * 3 + 2] = radius * Math.cos(phi);
+    
+    // Colors (varying shades of green)
+    colors[i * 3] = 0.0; // R
+    colors[i * 3 + 1] = Math.random() * 0.5 + 0.5; // G (0.5-1.0)
+    colors[i * 3 + 2] = Math.random() * 0.3 + 0.2; // B (0.2-0.5)
+  }
+
+  particlesGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+  particlesGeometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+  const particles = new THREE.Points(particlesGeometry, particlesMaterial);
+  scene.add(particles);
+
+  // Camera position
+  camera.position.z = 500;
+
+  // Animation variables
+  let mouseX = 0;
+  let mouseY = 0;
+  let windowHalfX = window.innerWidth / 2;
+  let windowHalfY = window.innerHeight / 2;
+
+  // Mouse movement tracking
+  document.addEventListener('mousemove', (event) => {
+    mouseX = (event.clientX - windowHalfX) * 0.05;
+    mouseY = (event.clientY - windowHalfY) * 0.05;
+  });
+
+  // Animation loop
+  function animate() {
+    requestAnimationFrame(animate);
+    
+    // Slow rotation of the galaxy
+    particles.rotation.x += 0.0005;
+    particles.rotation.y += 0.001;
+    
+    // Parallax effect
+    camera.position.x += (mouseX - camera.position.x) * 0.05;
+    camera.position.y += (-mouseY - camera.position.y) * 0.05;
+    camera.lookAt(scene.position);
+    
+    renderer.render(scene, camera);
+  }
+  
+  animate();
+
+  // Handle window resize
+  function handleResize() {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    windowHalfX = window.innerWidth / 2;
+    windowHalfY = window.innerHeight / 2;
+  }
+  
+  window.addEventListener('resize', handleResize);
+
+  // Language Toggle
+  let isArabic = false;
+  function toggleLanguage() {
+    const englishElements = document.querySelectorAll('.english');
+    const arabicElements = document.querySelectorAll('.arabic');
+    
+    if (!isArabic) {
+      // Switch to Arabic
+      document.getElementById('title').innerText = 'بسم الله';
+      document.body.classList.add('arabic');
+      
+      englishElements.forEach(el => el.classList.add('hidden'));
+      arabicElements.forEach(el => el.classList.remove('hidden'));
+    } else {
+      // Switch to English
+      document.getElementById('title').innerText = 'Bism Allah';
+      document.body.classList.remove('arabic');
+      
+      englishElements.forEach(el => el.classList.remove('hidden'));
+      arabicElements.forEach(el => el.classList.add('hidden'));
+    }
+    isArabic = !isArabic;
+  }
+
+  // Modal functionality
+  const modal = document.getElementById('contentModal');
+  const closeBtn = document.querySelector('.close-modal');
+  const modalTextContent = document.getElementById('modalTextContent');
+  
+  // Close modal
+  closeBtn.onclick = function() {
+    modal.style.display = "none";
+  }
+  
+  // Close when clicking outside
+  window.onclick = function(event) {
+    if (event.target == modal) {
+      modal.style.display = "none";
+    }
+  }
+  
+  // Escape key closes modal
+  document.addEventListener('keydown', function(event) {
+    if (event.key === "Escape") {
+      modal.style.display = "none";
+    }
+  });
+
+  // Load terms and conditions
+  document.getElementById('termsLink').addEventListener('click', function(e) {
+    e.preventDefault();
+    showTermsModal();
+  });
+  
+  document.getElementById('termsLinkAr').addEventListener('click', function(e) {
+    e.preventDefault();
+    showTermsModal();
+  });
+  
+  document.getElementById('termsBtn').addEventListener('click', showTermsModal);
+  
+  function showTermsModal() {
+    modal.style.display = "block";
+    modalTextContent.style.display = "block";
+    
+    // Load terms content
+    modalTextContent.innerHTML = `
+      <h2 class="english" style="color: var(--primary); margin-bottom: 20px;">Terms and Conditions</h2>
+      <h2 class="arabic hidden" style="color: var(--primary); margin-bottom: 20px;">الشروط والأحكام</h2>
+      
+      <div class="english">
+        <p>Please review our full terms and conditions:</p>
+        <iframe src="https://engmo1234.com/terms_green_organized.html" style="width: 100%; height: 500px; border: none;"></iframe>
+        <p style="margin-top: 20px;">By proceeding, you agree to these terms.</p>
+      </div>
+      
+      <div class="arabic hidden">
+        <p>يرجى مراجعة الشروط والأحكام الكاملة:</p>
+        <iframe src="https://engmo1234.com/terms_green_organized.html" style="width: 100%; height: 500px; border: none;"></iframe>
+        <p style="margin-top: 20px;">بالمتابعة، فإنك توافق على هذه الشروط.</p>
+      </div>
+    `;
+    
+    // Ensure proper language display
+    const englishElements = modalTextContent.querySelectorAll('.english');
+    const arabicElements = modalTextContent.querySelectorAll('.arabic');
+    
+    if (isArabic) {
+      englishElements.forEach(el => el.classList.add('hidden'));
+      arabicElements.forEach(el => el.classList.remove('hidden'));
+    } else {
+      englishElements.forEach(el => el.classList.remove('hidden'));
+      arabicElements.forEach(el => el.classList.add('hidden'));
+    }
+  }
+
+  // Initialize event listeners
+  document.getElementById('translateBtn').addEventListener('click', toggleLanguage);
+
+  // Video lazy loading for all videos
+  document.addEventListener('DOMContentLoaded', function() {
+    const lazyLoadVideo = (iframe) => {
+      if (iframe && !iframe.src.includes('autoplay=1')) {
+        iframe.src = iframe.src.replace('autoplay=0', 'autoplay=1');
+      }
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const iframes = entry.target.querySelectorAll('iframe');
+          iframes.forEach(iframe => lazyLoadVideo(iframe));
+        }
+      });
+    }, { threshold: 0.5 });
+
+    // Observe all video containers
+    const videoContainers = document.querySelectorAll('.video-container, .tutorial-video-container');
+    videoContainers.forEach(container => {
+      observer.observe(container);
+    });
+  });
+
+  // Initialize Three.js properly
+  handleResize(); // Set initial size
+</script>
+  <!-- Add this anywhere in your HTML body -->
+<div id="robotNavContainer">
+  <div id="robotArm">
+    <div class="arm-segment base">
+      <div class="arm-segment joint1">
+                <div class="arm-segment segment3">
+                  <div class="robot-hand" id="robotHand">
+                    <div class="menu-panel">
+                      <div class="menu-header">NAVIGATION TERMINAL</div>
+                      <div class="menu-items">
+                        <a href="https://www.engmo1234.com/" class="menu-item" data-sound="click1">
+                          <span class="menu-icon">⌂</span> HOME
+                        </a>
+                        <a href="https://www.engmo1234.com/BLOG" class="menu-item" data-sound="click2">
+                          <span class="menu-icon">✍</span> BLOG
+                        </a>
+                        <a href="https://www.engmo1234.com/vipreveal_bilingual_updated.html" class="menu-item" data-sound="click3">
+                          <span class="menu-icon">★</span> VIP PACKAGES
+                        </a>
+                        <a href="https://www.engmo1234.com/bidmintlast.html" class="menu-item" data-sound="click1">
+                          <span class="menu-icon">✧</span> BIDMINT
+                        </a>
+                        <a href="https://www.engmo1234.com/senior.html" class="menu-item" data-sound="click2">
+                          <span class="menu-icon">⚭</span> SENIOR
+                        </a>
+                        <a href="https://www.engmo1234.com/topvip4.html" class="menu-item" data-sound="click3">
+                          <span class="menu-icon">♛</span> TOP VIP
+                        </a>
+                        <a href="https://www.engmo1234.com/terms_green_organized.html" class="menu-item" data-sound="click1">
+                          <span class="menu-icon">⚖</span> TERMS
+                        </a>
+                      </div>
                     </div>
-                    <div>
-                        <label for="contact-time">Time</label>
-                        <input type="time" id="contact-time" name="Preferred Contact Time" required>
-                    </div>
-                    <div>
-                        <label for="timezone">Timezone</label>
-                        <select id="timezone" name="Timezone" required>
-                            <option value="">-- Select --</option>
-                            <option value="GMT">GMT</option>
-                            <option value="EST">EST</option>
-                            <option value="PST">PST</option>
-                            <option value="CET">CET</option>
-                            <option value="Other">Other</option>
-                        </select>
-                    </div>
+                  </div>
                 </div>
+              </div>
             </div>
+          </div>
         </div>
+      </div>
+    </div>
+  </div>
+  <div id="robotNavToggle">≡</div>
+</div>
 
-        <!-- Signature Section -->
-        <div class="form-section">
-            <h2>Signature</h2>
-            
-            <div class="form-group">
-                <label>Please sign below:</label>
-                <canvas id="signaturePad"></canvas>
-                <div class="signature-actions">
-                    <button type="button" id="clearSignature">Clear Signature</button>
-                </div>
-                <input type="hidden" id="signatureData" name="Signature">
-            </div>
-            
-            <div class="form-group">
-                <label for="agreement">
-                    <input type="checkbox" id="agreement" name="Agreement" required>
-                    I confirm that the information provided is accurate
-                </label>
-            </div>
+<style>
+  /* Robotic Navigation Styles */
+  #robotNavContainer {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+    transform-origin: top right;
+    transition: all 0.3s ease;
+  }
+
+  #robotArm {
+    position: relative;
+    width: 300px;
+    height: 400px;
+    transform: scale(0.8);
+    transition: all 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  #robotNavContainer.active #robotArm {
+    opacity: 1;
+    pointer-events: auto;
+    transform: scale(1);
+  }
+
+  .arm-segment {
+    position: absolute;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    border: 2px solid #00ff88;
+    box-shadow: 0 0 15px rgba(0, 255, 136, 0.5);
+  }
+
+  .base {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    top: 0;
+    right: 0;
+    background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+  }
+
+  .joint1 {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    top: 10px;
+    right: 10px;
+    background: linear-gradient(135deg, #3a3a3a 0%, #1a1a1a 100%);
+    animation: rotateJoint1 5s infinite alternate;
+  }
+
+  .segment1 {
+    width: 20px;
+    height: 120px;
+    top: 50px;
+    right: 20px;
+    border-radius: 10px;
+    transform-origin: top center;
+    animation: extendSegment1 6s infinite alternate;
+  }
+
+  .joint2 {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    top: 110px;
+    right: 5px;
+    background: linear-gradient(135deg, #3a3a3a 0%, #1a1a1a 100%);
+    animation: rotateJoint2 4s infinite alternate-reverse;
+  }
+
+  .segment2 {
+    width: 15px;
+    height: 100px;
+    top: 140px;
+    right: 7.5px;
+    border-radius: 8px;
+    transform-origin: top center;
+    animation: extendSegment2 5s infinite alternate;
+  }
+
+  .joint3 {
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    top: 240px;
+    right: 2.5px;
+    background: linear-gradient(135deg, #3a3a3a 0%, #1a1a1a 100%);
+    animation: rotateJoint3 3s infinite alternate;
+  }
+
+  .segment3 {
+    width: 12px;
+    height: 80px;
+    top: 265px;
+    right: 6px;
+    border-radius: 6px;
+    transform-origin: top center;
+  }
+
+  .robot-hand {
+    width: 180px;
+    height: 220px;
+    position: absolute;
+    top: 345px;
+    right: -80px;
+    transform-origin: top center;
+    transform: rotate(-15deg);
+  }
+
+  .menu-panel {
+    width: 100%;
+    height: 100%;
+    background: rgba(10, 10, 20, 0.95);
+    border: 3px solid #00ff88;
+    border-radius: 10px;
+    box-shadow: 0 0 30px rgba(0, 255, 136, 0.7);
+    padding: 15px;
+    color: #00ff88;
+    font-family: 'Courier New', monospace;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .menu-panel::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #00ff88, transparent);
+    animation: scanline 3s linear infinite;
+  }
+
+  .menu-header {
+    font-size: 16px;
+    text-align: center;
+    margin-bottom: 15px;
+    padding-bottom: 8px;
+    border-bottom: 1px dashed #00ff88;
+    text-shadow: 0 0 5px #00ff88;
+    letter-spacing: 2px;
+  }
+
+  .menu-items {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .menu-item {
+    color: #00ff88;
+    text-decoration: none;
+    padding: 8px 12px;
+    border: 1px solid #00ff88;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(0, 255, 136, 0.1);
+  }
+
+  .menu-item:hover {
+    background: rgba(0, 255, 136, 0.3);
+    box-shadow: 0 0 15px rgba(0, 255, 136, 0.5);
+    transform: translateX(-5px);
+  }
+
+  .menu-icon {
+    font-size: 18px;
+  }
+
+  #robotNavToggle {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+    border: 2px solid #00ff88;
+    border-radius: 50%;
+    color: #00ff88;
+    font-size: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 10000;
+    box-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
+    transition: all 0.3s ease;
+  }
+
+  #robotNavToggle:hover {
+    background: linear-gradient(135deg, #302b63 0%, #0f0c29 100%);
+    transform: rotate(90deg);
+  }
+
+  /* Animations */
+  @keyframes rotateJoint1 {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(45deg); }
+  }
+
+  @keyframes extendSegment1 {
+    0% { transform: scaleY(1); }
+    100% { transform: scaleY(1.1); }
+  }
+
+  @keyframes rotateJoint2 {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(-30deg); }
+  }
+
+  @keyframes extendSegment2 {
+    0% { transform: scaleY(1); }
+    100% { transform: scaleY(1.05); }
+  }
+
+  @keyframes rotateJoint3 {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(15deg); }
+  }
+
+  @keyframes scanline {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(220px); }
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    #robotArm {
+      transform: scale(0.6);
+      transform-origin: top right;
+    }
+    
+    #robotNavContainer.active #robotArm {
+      transform: scale(0.7);
+    }
+    
+    .robot-hand {
+      width: 150px;
+      height: 180px;
+      right: -60px;
+    }
+    
+    .menu-panel {
+      padding: 10px;
+    }
+    
+    .menu-header {
+      font-size: 14px;
+    }
+    
+    .menu-item {
+      padding: 6px 8px;
+      font-size: 14px;
+    }
+  }
+</style>
+
+<script>
+  // Toggle menu visibility
+  const navToggle = document.getElementById('robotNavToggle');
+  const navContainer = document.getElementById('robotNavContainer');
+  
+  navToggle.addEventListener('click', function() {
+    navContainer.classList.toggle('active');
+    playSound('servo');
+  });
+  
+  // Add click sounds to menu items
+  const menuItems = document.querySelectorAll('.menu-item');
+  menuItems.forEach(item => {
+    item.addEventListener('click', function() {
+      const soundType = this.getAttribute('data-sound');
+      playSound(soundType);
+    });
+  });
+  
+  // Sound effects (using Web Audio API)
+  function playSound(type) {
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const oscillator = audioCtx.createOscillator();
+    const gainNode = audioCtx.createGain();
+    
+    oscillator.connect(gainNode);
+    gainNode.connect(audioCtx.destination);
+    
+    // Different sounds for different actions
+    switch(type) {
+      case 'click1':
+        oscillator.type = 'square';
+        oscillator.frequency.value = 300;
+        gainNode.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.3);
+        break;
+      case 'click2':
+        oscillator.type = 'sine';
+        oscillator.frequency.value = 500;
+        gainNode.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.2);
+        break;
+      case 'click3':
+        oscillator.type = 'triangle';
+        oscillator.frequency.value = 700;
+        gainNode.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.25);
+        break;
+      case 'servo':
+        oscillator.type = 'sawtooth';
+        oscillator.frequency.setValueAtTime(100, audioCtx.currentTime);
+        oscillator.frequency.exponentialRampToValueAtTime(400, audioCtx.currentTime + 0.1);
+        gainNode.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.3);
+        break;
+    }
+    
+    oscillator.start();
+    oscillator.stop(audioCtx.currentTime + 0.5);
+  }
+</script>
+<div id="space-chat-container" style="position: fixed !important; bottom: 20px !important; right: 20px !important; z-index: 9999 !important; transform: none !important;">
+  <div id="space-chat-inner" style="width: 350px; height: 500px; background: #0f0c29; border-radius: 15px; overflow: hidden; box-shadow: 0 0 20px rgba(138, 43, 226, 0.5); border: 1px solid #4b0082; display: flex; flex-direction: column; transition: all 0.3s ease;">
+    <!-- Header with minimize button -->
+    <div style="background: linear-gradient(90deg, #0f0c29, #302b63); color: white; padding: 15px; text-align: center; font-family: 'Arial', sans-serif; font-weight: bold; font-size: 18px; letter-spacing: 1px; display: flex; justify-content: space-between; align-items: center;">
+      <div>
+        <span style="color: #9370DB;">🚀</span> Engmo Space Bot <span style="color: #9370DB;">✨</span>
+      </div>
+      <button id="space-chat-minimize" style="background: none; border: none; color: #9370DB; font-size: 20px; cursor: pointer;">−</button>
+    </div>
+    
+    <!-- Messages -->
+    <div id="space-chat-messages" style="flex: 1; padding: 15px; overflow-y: auto; background: url('https://images.unsplash.com/photo-1534796636912-3b95b3ab5986?w=500&auto=format') center/cover; background-blend-mode: overlay; background-color: rgba(15, 12, 41, 0.8);">
+      <div class="space-message" style="background: rgba(75, 0, 130, 0.7); color: white; padding: 10px 15px; border-radius: 18px; margin-bottom: 10px; max-width: 80%; width: fit-content; border-bottom-right-radius: 5px; backdrop-filter: blur(5px);">
+        Hello! I'm your spacefaring AI assistant. Ask me about stars, NFTs, or web design!
+      </div>
+    </div>
+    
+    <!-- Input -->
+    <div id="space-chat-input-container" style="padding: 15px; background: rgba(15, 12, 41, 0.9); border-top: 1px solid #4b0082;">
+      <div style="display: flex; gap: 10px;">
+        <input id="space-chat-input" type="text" placeholder="Type your message..." style="flex: 1; padding: 12px; border-radius: 25px; border: none; background: rgba(255, 255, 255, 0.1); color: white; outline: none;">
+        <button id="space-chat-send" style="background: linear-gradient(135deg, #9370DB, #8A2BE2); color: white; border: none; border-radius: 25px; padding: 0 20px; cursor: pointer; transition: all 0.3s;">Send</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Minimized state -->
+  <div id="space-chat-minimized" style="display: none; width: 60px; height: 60px; background: linear-gradient(135deg, #9370DB, #8A2BE2); border-radius: 50%; box-shadow: 0 0 15px rgba(138, 43, 226, 0.7); position: absolute; bottom: 0; right: 0; cursor: pointer; text-align: center; line-height: 60px; font-size: 24px; color: white;">
+    🚀
+  </div>
+</div>
+
+<script>
+  // Configuration - Replace with your n8n webhook
+  const N8N_WEBHOOK = 'https://engmo1234.app.n8n.cloud/webhook-test/57780ac9-b28c-4442-b494-d7bb61489037';
+  
+  // DOM Elements
+  const chatContainer = document.getElementById('space-chat-container');
+  const chatInner = document.getElementById('space-chat-inner');
+  const chatMessages = document.getElementById('space-chat-messages');
+  const chatInput = document.getElementById('space-chat-input');
+  const sendButton = document.getElementById('space-chat-send');
+  const minimizeButton = document.getElementById('space-chat-minimize');
+  const minimizedView = document.getElementById('space-chat-minimized');
+  
+  // Minimize/expand toggle
+  let isMinimized = false;
+  
+  function toggleMinimize() {
+    isMinimized = !isMinimized;
+    
+    if (isMinimized) {
+      chatInner.style.display = 'none';
+      minimizedView.style.display = 'block';
+    } else {
+      chatInner.style.display = 'flex';
+      minimizedView.style.display = 'none';
+    }
+  }
+  
+  minimizeButton.addEventListener('click', toggleMinimize);
+  minimizedView.addEventListener('click', toggleMinimize);
+  
+  // Mobile responsiveness
+  function checkMobile() {
+    if (window.innerWidth <= 768) {
+      chatInner.style.width = '90vw';
+      chatInner.style.maxWidth = '350px';
+      chatInner.style.height = '70vh';
+      chatContainer.style.bottom = '10px';
+      chatContainer.style.right = '10px';
+    } else {
+      chatInner.style.width = '350px';
+      chatInner.style.height = '500px';
+      chatContainer.style.bottom = '20px';
+      chatContainer.style.right = '20px';
+    }
+  }
+  
+  window.addEventListener('resize', checkMobile);
+  checkMobile();
+  
+  // Rest of your chat functionality...
+  // Add a message to the chat
+  function addSpaceMessage(text, isUser) {
+    const messageDiv = document.createElement('div');
+    messageDiv.className = 'space-message';
+    messageDiv.style.cssText = `
+      background: ${isUser ? 'rgba(106, 90, 205, 0.8)' : 'rgba(75, 0, 130, 0.7)'};
+      color: white;
+      padding: 10px 15px;
+      border-radius: 18px;
+      margin-bottom: 10px;
+      max-width: 80%;
+      width: fit-content;
+      ${isUser ? 'margin-left: auto; border-bottom-right-radius: 5px;' : 'border-bottom-left-radius: 5px;'}
+      backdrop-filter: blur(5px);
+      animation: float-up 0.3s ease-out;
+    `;
+    messageDiv.textContent = text;
+    chatMessages.appendChild(messageDiv);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  }
+  
+  // Send message to n8n
+  async function sendToN8N(message) {
+    try {
+      addSpaceMessage(message, true);
+      chatInput.value = '';
+      
+      // Show loading indicator
+      const loadingMsg = document.createElement('div');
+      loadingMsg.innerHTML = `
+        <div style="display: flex; align-items: center; gap: 8px; color: #9370DB; font-size: 14px;">
+          <div class="loading-dots">
+            <div style="width: 6px; height: 6px; background: #9370DB; border-radius: 50%; animation: dot-pulse 1.4s infinite ease-in-out;"></div>
+            <div style="width: 6px; height: 6px; background: #9370DB; border-radius: 50%; animation: dot-pulse 1.4s infinite ease-in-out 0.2s;"></div>
+            <div style="width: 6px; height: 6px; background: #9370DB; border-radius: 50%; animation: dot-pulse 1.4s infinite ease-in-out 0.4s;"></div>
+          </div>
+          <span>Engmo Bot is thinking...</span>
         </div>
-
-        <button type="submit">Submit Questionnaire</button>
-    </form>
-
-    <script>
-        // Signature Pad Functionality
-        const canvas = document.getElementById('signaturePad');
-        const ctx = canvas.getContext('2d');
-        const signatureInput = document.getElementById('signatureData');
-        const clearBtn = document.getElementById('clearSignature');
-        let isDrawing = false;
-        let lastX = 0;
-        let lastY = 0;
-
-        // Set canvas size
-        function resizeCanvas() {
-            const rect = canvas.parentElement.getBoundingClientRect();
-            canvas.width = rect.width - 40; // Account for padding
-            canvas.height = 150;
-            ctx.strokeStyle = '#00ff00';
-            ctx.lineWidth = 2;
-            ctx.lineCap = 'round';
-            ctx.fillStyle = '#111';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-        }
-        window.addEventListener('resize', resizeCanvas);
-        resizeCanvas();
-
-        // Drawing functions
-        canvas.addEventListener('mousedown', startDrawing);
-        canvas.addEventListener('touchstart', handleTouchStart);
-        canvas.addEventListener('mousemove', draw);
-        canvas.addEventListener('touchmove', handleTouchMove);
-        canvas.addEventListener('mouseup', stopDrawing);
-        canvas.addEventListener('touchend', stopDrawing);
-        canvas.addEventListener('mouseout', stopDrawing);
-
-        clearBtn.addEventListener('click', clearSignature);
-
-        function startDrawing(e) {
-            isDrawing = true;
-            [lastX, lastY] = getPosition(e);
-        }
-
-        function handleTouchStart(e) {
-            e.preventDefault();
-            const touch = e.touches[0];
-            const mouseEvent = new MouseEvent('mousedown', {
-                clientX: touch.clientX,
-                clientY: touch.clientY
-            });
-            canvas.dispatchEvent(mouseEvent);
-        }
-
-        function draw(e) {
-            if (!isDrawing) return;
-            const [x, y] = getPosition(e);
-            ctx.beginPath();
-            ctx.moveTo(lastX, lastY);
-            ctx.lineTo(x, y);
-            ctx.stroke();
-            [lastX, lastY] = [x, y];
-            updateSignatureData();
-        }
-
-        function handleTouchMove(e) {
-            e.preventDefault();
-            const touch = e.touches[0];
-            const mouseEvent = new MouseEvent('mousemove', {
-                clientX: touch.clientX,
-                clientY: touch.clientY
-            });
-            canvas.dispatchEvent(mouseEvent);
-        }
-
-        function stopDrawing() {
-            isDrawing = false;
-            updateSignatureData();
-        }
-
-        function clearSignature() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = '#111';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            signatureInput.value = '';
-        }
-
-        function getPosition(e) {
-            const rect = canvas.getBoundingClientRect();
-            return [
-                e.clientX - rect.left,
-                e.clientY - rect.top
-            ];
-        }
-
-        function updateSignatureData() {
-            signatureInput.value = canvas.toDataURL();
-        }
-    </script>
-</body>
+      `;
+      loadingMsg.style.marginBottom = '10px';
+      chatMessages.appendChild(loadingMsg);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+      
+      const response = await fetch(N8N_WEBHOOK, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message })
+      });
+      
+      const data = await response.json();
+      chatMessages.removeChild(loadingMsg);
+      
+      if (data.response) {
+        addSpaceMessage(data.response, false);
+      } else {
+        addSpaceMessage("I couldn't process that. Try again later.", false);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      chatMessages.removeChild(loadingMsg);
+      addSpaceMessage("Connection to the mothership failed 🛸", false);
+    }
+  }
+  
+  // Event Listeners
+  sendButton.addEventListener('click', sendMessage);
+  chatInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') sendMessage();
+  });
+  
+  function sendMessage() {
+    const message = chatInput.value.trim();
+    if (message) sendToN8N(message);
+  }
+  
+  // Add some space-themed styles
+  const style = document.createElement('style');
+  style.textContent = `
+    @keyframes float-up {
+      from { transform: translateY(10px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    @keyframes dot-pulse {
+      0%, 60%, 100% { transform: translateY(0); }
+      30% { transform: translateY(-5px); }
+    }
+    #space-chat-input::placeholder {
+      color: rgba(255, 255, 255, 0.5);
+    }
+    #space-chat-send:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 10px rgba(138, 43, 226, 0.7);
+    }
+    #space-chat-container {
+      position: fixed !important;
+      bottom: 20px !important;
+      right: 20px !important;
+      z-index: 9999 !important;
+      transform: none !important;
+    }
+    #space-chat-minimize:hover {
+      transform: scale(1.2);
+    }
+  `;
+  document.head.appendChild(style);
+  
+  // Nuclear positioning lock
+  setInterval(() => {
+    chatContainer.style.position = 'fixed';
+    chatContainer.style.bottom = window.innerWidth <= 768 ? '10px' : '20px';
+    chatContainer.style.right = window.innerWidth <= 768 ? '10px' : '20px';
+    chatContainer.style.transform = 'none';
+  }, 1000);
+</script></body>
 </html>
