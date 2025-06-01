@@ -1475,17 +1475,11 @@ document.addEventListener('DOMContentLoaded', function() {
       });
 
       const responseData = await response.json();
+      console.log('Webhook Response:', responseData);
       hideTyping();
 
-      const botResponse = Array.isArray(responseData) 
-        ? responseData[0].output
-        : responseData.output;
-
-      if (botResponse) {
-        addMessage(botResponse, 'bot');
-      } else {
-        addMessage("Our packages: BASIC (2706 MATIC), SENIOR (7861 MATIC), VIP (61,901 MATIC)", 'bot');
-      }
+      const botResponse = responseData.output || "Our packages: BASIC (2706 MATIC), SENIOR (7861 MATIC), VIP (61,901 MATIC)";
+      addMessage(botResponse, 'bot');
     } catch (error) {
       hideTyping();
       addMessage("Connection issue - here are our packages: BASIC (2706 MATIC), SENIOR (7861 MATIC), VIP (61,901 MATIC)", 'bot');
