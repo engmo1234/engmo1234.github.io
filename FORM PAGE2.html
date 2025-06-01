@@ -1433,20 +1433,30 @@
     oscillator.stop(audioCtx.currentTime + 0.5);
   }
 </script>
- <div id="engmo-chat-container">
-  <div id="engmo-chat-header">
+<div id="engmo-chat-widget">
+  <div class="chat-header">
     <h3>ENGMO Assistant</h3>
-    <button id="engmo-chat-minimize">−</button>
+    <button class="minimize-btn">−</button>
   </div>
-  <div id="engmo-chat-messages"></div>
-  <div id="engmo-chat-input-area">
-    <input type="text" id="engmo-user-input" placeholder="Ask about our packages..." />
-    <button id="engmo-send-btn">Send</button>
+  <div class="chat-messages">
+    <div class="message bot-message">
+      Hello! I can help you with:
+      <ul>
+        <li>Package pricing (BASIC/SENIOR/VIP)</li>
+        <li>Feature comparisons</li>
+        <li>Purchase process</li>
+      </ul>
+      What would you like to know?
+    </div>
+  </div>
+  <div class="chat-input">
+    <input type="text" placeholder="Type your question..." class="user-input">
+    <button class="send-btn">Send</button>
   </div>
 </div>
 
 <style>
-#engmo-chat-container {
+#engmo-chat-widget {
   position: fixed;
   bottom: 20px;
   right: 20px;
@@ -1455,58 +1465,57 @@
   border: 1px solid #00ff80;
   border-radius: 10px;
   overflow: hidden;
-  box-shadow: 0 0 15px rgba(0,255,128,0.3);
   font-family: Arial, sans-serif;
+  box-shadow: 0 0 20px rgba(0,255,128,0.3);
   z-index: 1000;
 }
 
-#engmo-chat-header {
+.chat-header {
   background: linear-gradient(to right, #003300, #006600);
   color: white;
   padding: 12px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  cursor: pointer;
 }
 
-#engmo-chat-messages {
+.chat-messages {
   height: 300px;
-  overflow-y: auto;
   padding: 15px;
+  overflow-y: auto;
   background: #000;
-  color: #ddd;
+  color: #eee;
 }
 
 .message {
   margin-bottom: 15px;
   padding: 10px 15px;
-  border-radius: 18px;
-  max-width: 80%;
+  border-radius: 8px;
+  max-width: 85%;
   line-height: 1.4;
-}
-
-.user-message {
-  background: #003300;
-  margin-left: auto;
-  color: #00ff80;
-  border: 1px solid #006600;
 }
 
 .bot-message {
   background: #002200;
-  margin-right: auto;
   border: 1px solid #004400;
+  margin-right: auto;
 }
 
-#engmo-chat-input-area {
+.user-message {
+  background: #003300;
+  border: 1px solid #006600;
+  color: #00ff80;
+  margin-left: auto;
+}
+
+.chat-input {
   display: flex;
   padding: 10px;
   background: #111;
   border-top: 1px solid #00ff80;
 }
 
-#engmo-user-input {
+.user-input {
   flex: 1;
   padding: 10px;
   border: 1px solid #00ff80;
@@ -1516,7 +1525,7 @@
   outline: none;
 }
 
-#engmo-send-btn {
+.send-btn {
   margin-left: 10px;
   padding: 10px 15px;
   background: #00aa55;
@@ -1527,14 +1536,14 @@
 }
 
 .typing-indicator {
-  display: inline-block;
+  display: inline-flex;
   padding: 10px 15px;
   background: #002200;
   border-radius: 18px;
+  align-items: center;
 }
 
 .typing-dot {
-  display: inline-block;
   width: 8px;
   height: 8px;
   background: #00ff80;
@@ -1551,17 +1560,15 @@
 
 <script>
 const WEBHOOK_URL = 'https://engmo1234.app.n8n.cloud/webhook/engmo-chat';
-let isTyping = false;
 
 document.addEventListener('DOMContentLoaded', function() {
-  const chatContainer = document.getElementById('engmo-chat-container');
-  const chatMessages = document.getElementById('engmo-chat-messages');
-  const userInput = document.getElementById('engmo-user-input');
-  const sendBtn = document.getElementById('engmo-send-btn');
-  const minimizeBtn = document.getElementById('engmo-chat-minimize');
-
-  // Initial greeting
-  addMessage("Hello! I'm your ENGMO assistant. I can help you compare our BASIC, SENIOR, and VIP packages. What would you like to know?", 'bot');
+  const chatWidget = document.getElementById('engmo-chat-widget');
+  const chatMessages = document.querySelector('.chat-messages');
+  const userInput = document.querySelector('.user-input');
+  const sendBtn = document.querySelector('.send-btn');
+  const minimizeBtn = document.querySelector('.minimize-btn');
+  
+  let isTyping = false;
 
   // Send message function
   async function sendMessage() {
@@ -1570,7 +1577,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     addMessage(message, 'user');
     userInput.value = '';
-    showTypingIndicator();
+    showTyping();
     
     try {
       const response = await fetch(WEBHOOK_URL, {
@@ -1583,36 +1590,35 @@ document.addEventListener('DOMContentLoaded', function() {
       });
       
       const data = await response.json();
-      hideTypingIndicator();
+      hideTyping();
       
-      if (data.response) {
+      if (data && data.response) {
         addMessage(data.response, 'bot');
       } else {
-        addMessage("I didn't get that. Could you rephrase your question?", 'bot');
+        addMessage("Let me check that for you. Could you please rephrase your question?", 'bot');
       }
     } catch (error) {
-      hideTypingIndicator();
-      addMessage("Connection issue. Please try again shortly.", 'bot');
+      hideTyping();
+      addMessage("I'm having connection issues. Please try again in a moment.", 'bot');
       console.error('Error:', error);
     }
   }
 
   // Helper functions
   function addMessage(text, sender) {
-    const msgDiv = document.createElement('div');
-    msgDiv.className = `message ${sender}-message`;
-    msgDiv.textContent = text;
-    chatMessages.appendChild(msgDiv);
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `message ${sender}-message`;
+    messageDiv.textContent = text;
+    chatMessages.appendChild(messageDiv);
     chatMessages.scrollTop = chatMessages.scrollHeight;
   }
 
-  function showTypingIndicator() {
+  function showTyping() {
     if (isTyping) return;
     isTyping = true;
     
     const typingDiv = document.createElement('div');
     typingDiv.className = 'message bot-message typing-indicator';
-    typingDiv.id = 'typing-indicator';
     typingDiv.innerHTML = `
       <span class="typing-dot"></span>
       <span class="typing-dot"></span>
@@ -1622,10 +1628,10 @@ document.addEventListener('DOMContentLoaded', function() {
     chatMessages.scrollTop = chatMessages.scrollHeight;
   }
 
-  function hideTypingIndicator() {
+  function hideTyping() {
     isTyping = false;
-    const indicator = document.getElementById('typing-indicator');
-    if (indicator) indicator.remove();
+    const typing = document.querySelector('.typing-indicator');
+    if (typing) typing.remove();
   }
 
   // Event listeners
@@ -1635,7 +1641,7 @@ document.addEventListener('DOMContentLoaded', function() {
   });
   
   minimizeBtn.addEventListener('click', () => {
-    chatContainer.classList.toggle('minimized');
+    chatWidget.classList.toggle('minimized');
   });
 });
 </script>
