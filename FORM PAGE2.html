@@ -1433,68 +1433,62 @@
     oscillator.stop(audioCtx.currentTime + 0.5);
   }
 </script>
-<div id="engmo-chat" style="position:fixed;bottom:20px;right:20px;width:350px;background:#111;border:1px solid #00ff80;border-radius:10px;font-family:Arial;z-index:1000;">
-  <div style="background:#006600;color:white;padding:12px;display:flex;justify-content:space-between;align-items:center;">
-    <h3 style="margin:0;">ENGMO Assistant</h3>
-    <button id="engmo-minimize" style="background:none;border:none;color:white;font-size:16px;cursor:pointer;">−</button>
+<div id="engmo-chat-widget" style="position: fixed; bottom: 20px; right: 20px; width: 350px; background: #111; border: 1px solid #00ff80; border-radius: 10px; font-family: Arial; z-index: 1000;">
+  <div style="background: #006600; color: white; padding: 12px; display: flex; justify-content: space-between; align-items: center;">
+    <h3 style="margin: 0;">ENGMO Assistant</h3>
+    <button id="engmo-minimize-btn" style="background: none; border: none; color: white; font-size: 16px; cursor: pointer;">−</button>
   </div>
-  <div id="engmo-messages" style="height:300px;padding:15px;overflow-y:auto;background:#000;color:#eee;"></div>
-  <div style="display:flex;padding:10px;background:#111;border-top:1px solid #00ff80;">
-    <input type="text" id="engmo-input" placeholder="Type your message..." style="flex:1;padding:10px;border:1px solid #00ff80;border-radius:20px;background:#002200;color:white;outline:none;">
-    <button id="engmo-send" style="margin-left:10px;padding:10px 15px;background:#00aa55;color:white;border:none;border-radius:20px;cursor:pointer;">Send</button>
+  <div id="engmo-chat-messages" style="height: 300px; padding: 15px; overflow-y: auto; background: #000; color: #eee;"></div>
+  <div style="display: flex; padding: 10px; background: #111; border-top: 1px solid #00ff80;">
+    <input type="text" id="engmo-user-input" placeholder="Type your message..." style="flex: 1; padding: 10px; border: 1px solid #00ff80; border-radius: 20px; background: #002200; color: white; outline: none;">
+    <button id="engmo-send-btn" style="margin-left: 10px; padding: 10px 15px; background: #00aa55; color: white; border: none; border-radius: 20px; cursor: pointer;">Send</button>
   </div>
 </div>
 
 <script>
-// Configuration - USE YOUR ACTUAL WEBHOOK URL HERE
+// Configuration
 const WEBHOOK_URL = 'https://engmo1234.app.n8n.cloud/webhook-test/0bb1dd73-f80a-4408-8185-b70585e6198f';
 
+// Initialize chat
 document.addEventListener('DOMContentLoaded', function() {
-  const chat = document.getElementById('engmo-chat');
-  const messages = document.getElementById('engmo-messages');
-  const input = document.getElementById('engmo-input');
-  const sendBtn = document.getElementById('engmo-send');
-  const minimizeBtn = document.getElementById('engmo-minimize');
+  const chatWidget = document.getElementById('engmo-chat-widget');
+  const messagesDiv = document.getElementById('engmo-chat-messages');
+  const userInput = document.getElementById('engmo-user-input');
+  const sendBtn = document.getElementById('engmo-send-btn');
+  const minimizeBtn = document.getElementById('engmo-minimize-btn');
+  
+  // Add welcome message
+  addMessage("Hello! I'm your ENGMO assistant. Ask me about our BASIC, SENIOR, or VIP packages.", 'bot');
 
-  // Initial message
-  addMessage("Hello! I'm your ENGMO assistant. Ask me about our packages.", 'bot');
-
-  // Send message function - UPDATED FOR YOUR WORKFLOW
+  // Send message function
   async function sendMessage() {
-    const message = input.value.trim();
+    const message = userInput.value.trim();
     if (!message) return;
     
     addMessage(message, 'user');
-    input.value = '';
-    showTyping();
+    userInput.value = '';
+    showTypingIndicator();
     
     try {
       const response = await fetch(WEBHOOK_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          body: {  // Matches your workflow's expected format
-            question: message
-          }
+          sessionId: 'user-' + Date.now(),
+          question: message
         })
       });
       
-      // PROCESS RESPONSE SPECIFICALLY FOR YOUR WORKFLOW
-      const responseData = await response.json();
-      hideTyping();
+      const data = await response.json();
+      hideTypingIndicator();
       
-      // Your workflow returns the response in $json.output
-      const botResponse = Array.isArray(responseData) 
-        ? responseData[0].output  // Handle array response
-        : responseData.output;    // Handle object response
-        
-      if (botResponse) {
-        addMessage(botResponse, 'bot');
-      } else {
-        addMessage("Our packages: BASIC (2706 MATIC), SENIOR (7861 MATIC), VIP (61,901 MATIC)", 'bot');
-      }
+      // Handle both response formats
+      const botResponse = data.response || data.output || data.reply || 
+                         "Our packages: BASIC (2706 MATIC), SENIOR (7861 MATIC), VIP (61,901 MATIC)";
+      
+      addMessage(botResponse, 'bot');
     } catch (error) {
-      hideTyping();
+      hideTypingIndicator();
       addMessage("Connection issue - here are our packages: BASIC (2706 MATIC), SENIOR (7861 MATIC), VIP (61,901 MATIC)", 'bot');
       console.error('Error:', error);
     }
@@ -1502,57 +1496,60 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Helper functions
   function addMessage(text, sender) {
-    const div = document.createElement('div');
-    div.style.margin = '10px 0';
-    div.style.padding = '10px 15px';
-    div.style.borderRadius = '18px';
-    div.style.maxWidth = '80%';
-    div.style.wordWrap = 'break-word';
+    const messageDiv = document.createElement('div');
+    messageDiv.style.margin = '10px 0';
+    messageDiv.style.padding = '10px 15px';
+    messageDiv.style.borderRadius = '18px';
+    messageDiv.style.maxWidth = '80%';
+    messageDiv.style.wordWrap = 'break-word';
     
     if (sender === 'user') {
-      div.style.background = '#003300';
-      div.style.color = '#00ff80';
-      div.style.marginLeft = 'auto';
-      div.style.border = '1px solid #006600';
+      messageDiv.style.background = '#003300';
+      messageDiv.style.color = '#00ff80';
+      messageDiv.style.marginLeft = 'auto';
+      messageDiv.style.border = '1px solid #006600';
     } else {
-      div.style.background = '#002200';
-      div.style.marginRight = 'auto';
-      div.style.border = '1px solid #004400';
+      messageDiv.style.background = '#002200';
+      messageDiv.style.marginRight = 'auto';
+      messageDiv.style.border = '1px solid #004400';
     }
     
-    div.textContent = text;
-    messages.appendChild(div);
-    messages.scrollTop = messages.scrollHeight;
+    messageDiv.textContent = text;
+    messagesDiv.appendChild(messageDiv);
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
   }
 
-  function showTyping() {
-    const typing = document.createElement('div');
-    typing.id = 'typing-indicator';
-    typing.style.display = 'inline-block';
-    typing.style.padding = '10px 15px';
-    typing.style.background = '#002200';
-    typing.style.borderRadius = '18px';
-    typing.innerHTML = `
+  function showTypingIndicator() {
+    const typingDiv = document.createElement('div');
+    typingDiv.id = 'engmo-typing-indicator';
+    typingDiv.style.display = 'inline-block';
+    typingDiv.style.padding = '10px 15px';
+    typingDiv.style.background = '#002200';
+    typingDiv.style.borderRadius = '18px';
+    typingDiv.innerHTML = `
       <span style="display:inline-block;width:8px;height:8px;background:#00ff80;border-radius:50%;margin:0 2px;animation:bounce 1.4s infinite;"></span>
       <span style="display:inline-block;width:8px;height:8px;background:#00ff80;border-radius:50%;margin:0 2px;animation:bounce 1.4s infinite;animation-delay:0.2s"></span>
       <span style="display:inline-block;width:8px;height:8px;background:#00ff80;border-radius:50%;margin:0 2px;animation:bounce 1.4s infinite;animation-delay:0.4s"></span>
     `;
-    messages.appendChild(typing);
-    messages.scrollTop = messages.scrollHeight;
+    messagesDiv.appendChild(typingDiv);
+    messagesDiv.scrollTop = messagesDiv.scrollHeight;
   }
 
-  function hideTyping() {
-    const typing = document.getElementById('typing-indicator');
-    if (typing) typing.remove();
+  function hideTypingIndicator() {
+    const indicator = document.getElementById('engmo-typing-indicator');
+    if (indicator) indicator.remove();
   }
 
   // Event listeners
   sendBtn.addEventListener('click', sendMessage);
-  input.addEventListener('keypress', (e) => e.key === 'Enter' && sendMessage());
+  userInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') sendMessage();
+  });
+  
   minimizeBtn.addEventListener('click', () => {
-    chat.style.transform = chat.style.transform === 'translateY(calc(100% - 50px))' 
-      ? 'translateY(0)' 
-      : 'translateY(calc(100% - 50px))';
+    chatWidget.style.transform = chatWidget.style.transform === 'translateY(calc(100% - 50px))' ? 
+                                'translateY(0)' : 
+                                'translateY(calc(100% - 50px))';
   });
 });
 
