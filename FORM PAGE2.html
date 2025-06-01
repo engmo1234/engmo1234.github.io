@@ -1433,7 +1433,8 @@
     oscillator.stop(audioCtx.currentTime + 0.5);
   }
 </script>
-   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ENGMO1234 Cosmic Assistant</title>
     <style>
         #engmo-chatbot {
@@ -1655,12 +1656,17 @@
     </div>
 
     <script>
-        // REPLACE WITH YOUR ACTUAL N8N WEBHOOK URL
-        const WEBHOOK_URL = 'https://engmo1234.app.n8n.cloud/webhook-test/engmo-chat';
+        // 1. CONFIGURE YOUR WEBHOOK URL (REQUIRED)
+        const WEBHOOK_URL = 'https://engmo1234.app.n8n.cloud/webhook/engmo-chat';
         
-        // Generate a session ID for conversation history
-        const sessionId = 'cosmic-session-' + Math.random().toString(36).substr(2, 9);
+        // 2. SYSTEM CONFIGURATION
+        const sessionId = 'cosmic-' + Math.random().toString(36).substr(2, 9);
         let isTyping = false;
+        
+        // 3. DEBUGGING SETUP
+        console.log('%cENGMO1234 Chat Widget Debug Mode', 'color: #00ff80; font-size: 16px;');
+        console.log('Webhook URL:', WEBHOOK_URL);
+        console.log('Session ID:', sessionId);
         
         document.addEventListener('DOMContentLoaded', function() {
             const chatWidget = document.getElementById('engmo-chatbot');
@@ -1670,7 +1676,7 @@
             const userInput = document.getElementById('user-input');
             const sendBtn = document.getElementById('send-btn');
             
-            // Check if mobile device
+            // Mobile detection and setup
             if (window.innerWidth <= 768) {
                 chatWidget.style.display = 'none';
                 toggleBtn.style.display = 'block';
@@ -1690,45 +1696,58 @@
                 toggleBtn.style.display = 'block';
             });
             
-            // Handle sending messages
+            // Enhanced sendMessage function with debugging
             async function sendMessage() {
                 const message = userInput.value.trim();
                 if (message === '') return;
                 
-                // Add user message to chat
+                console.log('[DEBUG] Sending message:', message);
+                
                 addMessage(message, 'user');
                 userInput.value = '';
-                
-                // Show typing indicator
                 showTypingIndicator();
                 
                 try {
-                    // Send to n8n webhook
+                    console.log('[DEBUG] Contacting n8n webhook...');
+                    
                     const response = await fetch(WEBHOOK_URL, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
+                            'Accept': 'application/json'
                         },
                         body: JSON.stringify({
                             sessionId: sessionId,
                             question: message
-                        })
+                        }),
+                        mode: 'cors'
                     });
                     
-                    if (!response.ok) throw new Error('Network response was not ok');
+                    console.log('[DEBUG] HTTP Status:', response.status);
+                    
+                    if (!response.ok) {
+                        const errorText = await response.text();
+                        console.error('[ERROR] Server response:', errorText);
+                        throw new Error(`HTTP ${response.status}`);
+                    }
                     
                     const data = await response.json();
+                    console.log('[DEBUG] Full response:', data);
+                    
                     hideTypingIndicator();
                     
+                    // Handle different response formats
                     if (data && data.response) {
                         addMessage(data.response, 'bot');
+                    } else if (data && data.output) {
+                        addMessage(data.output, 'bot');
                     } else {
-                        addMessage("🌠 Cosmic connection unstable. Please try your query again.", 'bot');
+                        addMessage("🌠 Received cosmic static... Please try again.", 'bot');
                     }
                 } catch (error) {
+                    console.error('[CRITICAL ERROR]', error);
                     hideTypingIndicator();
-                    addMessage("⚠️ Stellar communication error. Please try again later.", 'bot');
-                    console.error('Error:', error);
+                    addMessage("⚠️ Interstellar communication failure. Please refresh or try again later.", 'bot');
                 }
             }
             
@@ -1771,10 +1790,28 @@
                 }
             }
             
-            // Initial greeting with package information after a short delay
+            // Initial package information
             setTimeout(() => {
-                addMessage("🌠 Our cosmic web design packages:\n\n1. 🚀 Basic Orbit (2706 MATIC)\n2. 🌟 Senior Constellation (7861 MATIC)\n3. 🪐 VIP Black Hole (61,901 MATIC)\n\nWhich stellar package would you like to explore?", 'bot');
+                addMessage("🌠 Our cosmic web design packages:\n\n1. 🚀 Basic Orbit (2706 MATIC)\n2. 🌟 Senior Constellation (7861 MATIC)\n3. 🪐 VIP Black Hole (61,901 MATIC)\n\nWhich stellar package calls to you?", 'bot');
             }, 2000);
+            
+            // Connection test function (run in console: testConnection())
+            window.testConnection = async () => {
+                console.log('%cRunning connection test...', 'color: #00ff80');
+                try {
+                    const test = await fetch(WEBHOOK_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ test: true, sessionId: 'test-' + Date.now() })
+                    });
+                    const result = await test.json();
+                    console.log('%cConnection test successful!', 'color: #00ff80', result);
+                    return true;
+                } catch (e) {
+                    console.error('%cConnection failed!', 'color: red', e);
+                    return false;
+                }
+            };
         });
     </script>
 </body>
