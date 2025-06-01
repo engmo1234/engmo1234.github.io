@@ -1433,126 +1433,239 @@
     oscillator.stop(audioCtx.currentTime + 0.5);
   }
 </script>
-<div id="engmo-chat-container" style="position:fixed;bottom:20px;left:20px;width:350px;height:500px;background:white;border-radius:15px;box-shadow:0 5px 25px rgba(0,0,0,0.2);font-family:'Segoe UI';z-index:1000;display:flex;flex-direction:column;">
-  <div style="background:linear-gradient(135deg, #6e3bde, #4a1ca4);color:white;padding:15px;display:flex;justify-content:space-between;align-items:center;">
-    <h3 style="margin:0;font-size:1rem;">💬 ENGMO Assistant</h3>
-    <div>
-      <button id="engmo-minimize-btn" style="background:none;border:none;color:white;cursor:pointer;">−</button>
-      <button id="engmo-close-btn" style="background:none;border:none;color:white;cursor:pointer;">×</button>
+<div id="space-chat-container" style="position: fixed !important; bottom: 20px !important; right: 20px !important; z-index: 9999 !important; transform: none !important;">
+  <div id="space-chat-inner" style="width: 350px; height: 500px; background: #0f0c29; border-radius: 15px; overflow: hidden; box-shadow: 0 0 20px rgba(138, 43, 226, 0.5); border: 1px solid #4b0082; display: flex; flex-direction: column; transition: all 0.3s ease;">
+    <!-- Header with minimize button -->
+    <div style="background: linear-gradient(90deg, #0f0c29, #302b63); color: white; padding: 15px; text-align: center; font-family: 'Arial', sans-serif; font-weight: bold; font-size: 18px; letter-spacing: 1px; display: flex; justify-content: space-between; align-items: center;">
+      <div>
+        <span style="color: #9370DB;">🚀</span> ENGMO NFT Agent <span style="color: #9370DB;">✨</span>
+      </div>
+      <button id="space-chat-minimize" style="background: none; border: none; color: #9370DB; font-size: 20px; cursor: pointer;">−</button>
+    </div>
+    
+    <!-- Messages -->
+    <div id="space-chat-messages" style="flex: 1; padding: 15px; overflow-y: auto; background: url('https://images.unsplash.com/photo-1534796636912-3b95b3ab5986?w=500&auto=format') center/cover; background-blend-mode: overlay; background-color: rgba(15, 12, 41, 0.8);">
+      <div class="space-message" style="background: rgba(75, 0, 130, 0.7); color: white; padding: 10px 15px; border-radius: 18px; margin-bottom: 10px; max-width: 80%; width: fit-content; border-bottom-right-radius: 5px; backdrop-filter: blur(5px);">
+        Welcome to ENGMO1234 NFT Solutions! I can help you compare our Basic, Senior, and VIP packages. What are your project needs?
+      </div>
+      <div class="space-message" style="background: rgba(75, 0, 130, 0.7); color: white; padding: 10px 15px; border-radius: 18px; margin-bottom: 10px; max-width: 80%; width: fit-content; border-bottom-right-radius: 5px; backdrop-filter: blur(5px); font-size: 13px; line-height: 1.4;">
+        <div style="margin-bottom: 5px;">💎 <strong>Quick Guide:</strong></div>
+        <div>• Ask "Compare packages"</div>
+        <div>• "What's included in VIP?"</div>
+        <div>• "Show Arabic options"</div>
+      </div>
+    </div>
+    
+    <!-- Input -->
+    <div id="space-chat-input-container" style="padding: 15px; background: rgba(15, 12, 41, 0.9); border-top: 1px solid #4b0082;">
+      <div style="display: flex; gap: 10px;">
+        <input id="space-chat-input" type="text" placeholder="Ask about NFT packages..." style="flex: 1; padding: 12px; border-radius: 25px; border: none; background: rgba(255, 255, 255, 0.1); color: white; outline: none;">
+        <button id="space-chat-send" style="background: linear-gradient(135deg, #9370DB, #8A2BE2); color: white; border: none; border-radius: 25px; padding: 0 20px; cursor: pointer; transition: all 0.3s;">Send</button>
+      </div>
     </div>
   </div>
-  <div id="engmo-chat-messages" style="flex-grow:1;padding:15px;overflow-y:auto;background:#f9f9ff;display:flex;flex-direction:column;gap:10px;"></div>
-  <div style="padding:10px;background:white;border-top:1px solid #eee;display:flex;gap:8px;">
-    <input id="engmo-user-input" type="text" placeholder="Type your message..." style="flex-grow:1;padding:10px 15px;border:1px solid #ddd;border-radius:25px;outline:none;">
-    <button id="engmo-send-btn" style="background:#6e3bde;color:white;border:none;border-radius:50%;width:40px;height:40px;cursor:pointer;">↑</button>
+  
+  <!-- Minimized state -->
+  <div id="space-chat-minimized" style="display: none; width: 60px; height: 60px; background: linear-gradient(135deg, #9370DB, #8A2BE2); border-radius: 50%; box-shadow: 0 0 15px rgba(138, 43, 226, 0.7); position: absolute; bottom: 0; right: 0; cursor: pointer; text-align: center; line-height: 60px; font-size: 24px; color: white;">
+    💎
   </div>
 </div>
 
 <script>
-// Persistent connection retry system
-const MAX_RETRIES = 10;
-const RETRY_DELAY = 3000;
-let connectionAttempts = 0;
-
-// Webhook configuration
-const WEBHOOK_URL = 'https://engmo1234.app.n8n.cloud/webhook/53c136fe-3e77-4709-a143-fe82746dd8b6/chat';
-
-// Core chat functions
-function showMessage(text, isUser = false) {
-  const messagesDiv = document.getElementById('engmo-chat-messages');
-  const msg = document.createElement('div');
-  msg.style.maxWidth = '80%';
-  msg.style.padding = '10px 15px';
-  msg.style.borderRadius = '18px';
-  msg.style.lineHeight = '1.4';
-  msg.textContent = text;
+  // Configuration - Replace with your actual values
+  const N8N_WEBHOOK = 'https://your-n8n-server.com/webhook/engmo-nft-bot';
+  const SECRET_KEY = '4a8f2c7e1b9d0a5f3c6e9b2d8a1f7e5c3d6b9a0e4f7c2d5b8a3f6e9c1d0a7b4';
   
-  if (isUser) {
-    msg.style.background = '#6e3bde';
-    msg.style.color = 'white';
-    msg.style.alignSelf = 'flex-end';
-  } else {
-    msg.style.background = '#e0e0e0';
-    msg.style.alignSelf = 'flex-start';
+  // DOM Elements
+  const chatContainer = document.getElementById('space-chat-container');
+  const chatInner = document.getElementById('space-chat-inner');
+  const chatMessages = document.getElementById('space-chat-messages');
+  const chatInput = document.getElementById('space-chat-input');
+  const sendButton = document.getElementById('space-chat-send');
+  const minimizeButton = document.getElementById('space-chat-minimize');
+  const minimizedView = document.getElementById('space-chat-minimized');
+  
+  // State management
+  let isMinimized = false;
+  let conversationId = generateConversationId();
+  
+  function generateConversationId() {
+    return 'conv-' + Math.random().toString(36).substr(2, 9);
   }
   
-  messagesDiv.appendChild(msg);
-  messagesDiv.scrollTop = messagesDiv.scrollHeight;
-}
-
-function sendMessage() {
-  const input = document.getElementById('engmo-user-input');
-  const message = input.value.trim();
-  if (!message) return;
-
-  showMessage(message, true);
-  input.value = '';
+  // Toggle chat visibility
+  function toggleMinimize() {
+    isMinimized = !isMinimized;
+    chatInner.style.display = isMinimized ? 'none' : 'flex';
+    minimizedView.style.display = isMinimized ? 'block' : 'none';
+  }
   
-  // Show typing indicator
-  const typing = document.createElement('div');
-  typing.id = 'engmo-typing';
-  typing.style.display = 'inline-flex';
-  typing.style.padding = '10px 15px';
-  typing.style.background = '#e0e0e0';
-  typing.style.borderRadius = '18px';
-  typing.style.alignSelf = 'flex-start';
-  typing.innerHTML = '<div style="width:8px;height:8px;background:#0a0418;border-radius:50%;margin:0 2px;animation:typing 1.4s infinite ease-in-out;"></div>'.repeat(3);
-  document.getElementById('engmo-chat-messages').appendChild(typing);
+  minimizeButton.addEventListener('click', toggleMinimize);
+  minimizedView.addEventListener('click', toggleMinimize);
   
-  // Attempt to send with retry logic
-  attemptSend(message);
-}
-
-function attemptSend(message, attempt = 1) {
-  fetch(WEBHOOK_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ message })
-  })
-  .then(response => {
-    if (!response.ok) throw new Error('Bad response');
-    return response.json();
-  })
-  .then(data => {
-    document.getElementById('engmo-typing')?.remove();
-    showMessage(data?.reply || "Thanks for your message!");
-  })
-  .catch(error => {
-    if (attempt <= MAX_RETRIES) {
-      setTimeout(() => attemptSend(message, attempt + 1), RETRY_DELAY);
+  // Responsive adjustments
+  function checkMobile() {
+    const isMobile = window.innerWidth <= 768;
+    chatInner.style.width = isMobile ? '90vw' : '350px';
+    chatInner.style.maxWidth = '350px';
+    chatInner.style.height = isMobile ? '70vh' : '500px';
+    chatContainer.style.bottom = isMobile ? '10px' : '20px';
+    chatContainer.style.right = isMobile ? '10px' : '20px';
+  }
+  
+  window.addEventListener('resize', checkMobile);
+  checkMobile();
+  
+  // Message handling
+  function addMessage(text, isUser) {
+    const messageDiv = document.createElement('div');
+    messageDiv.className = 'space-message';
+    messageDiv.style.cssText = `
+      background: ${isUser ? 'rgba(106, 90, 205, 0.8)' : 'rgba(75, 0, 130, 0.7)'};
+      color: white;
+      padding: 10px 15px;
+      border-radius: 18px;
+      margin-bottom: 10px;
+      max-width: 80%;
+      width: fit-content;
+      ${isUser ? 'margin-left: auto; border-bottom-right-radius: 5px;' : 'border-bottom-left-radius: 5px;'}
+      backdrop-filter: blur(5px);
+      animation: float-up 0.3s ease-out;
+    `;
+    
+    // Handle package links specially
+    if (!isUser && text.includes('https://www.engmo1234.com')) {
+      messageDiv.innerHTML = text.replace(/(https:\/\/www\.engmo1234\.com\/[^"\s]+)/g, 
+        '<a href="$1" target="_blank" style="color: #FFD700; text-decoration: underline;">$1</a>');
     } else {
-      document.getElementById('engmo-typing')?.remove();
-      showMessage("Still connecting... Try again in a moment. We won't give up!");
-      connectionAttempts++;
-      if (connectionAttempts % 3 === 0) {
-        setTimeout(() => location.reload(), 10000); // Full reload every 3 failures
-      }
+      messageDiv.textContent = text;
     }
-  });
-}
-
-// Event listeners
-document.getElementById('engmo-send-btn').addEventListener('click', sendMessage);
-document.getElementById('engmo-user-input').addEventListener('keypress', (e) => {
-  if (e.key === 'Enter') sendMessage();
-});
-
-// Initial welcome message
-setTimeout(() => {
-  showMessage("Welcome to ENGMO1234! Ask about our NFT memberships:");
-  showMessage("1. Type your question");
-  showMessage("2. We'll keep retrying until connected");
-}, 500);
-
-// Minimize/close handlers
-document.getElementById('engmo-minimize-btn').addEventListener('click', () => {
-  const chat = document.getElementById('engmo-chat-container');
-  chat.style.height = chat.style.height === '60px' ? '500px' : '60px';
-});
-
-document.getElementById('engmo-close-btn').addEventListener('click', () => {
-  document.getElementById('engmo-chat-container').style.display = 'none';
-});
+    
+    chatMessages.appendChild(messageDiv);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  }
+  
+  // Enhanced API call with security
+  async function sendToN8N(message) {
+    try {
+      addMessage(message, true);
+      chatInput.value = '';
+      
+      // Show loading indicator
+      const loadingMsg = document.createElement('div');
+      loadingMsg.innerHTML = `
+        <div style="display: flex; align-items: center; gap: 8px; color: #9370DB; font-size: 14px;">
+          <div class="loading-dots">
+            <div style="width: 6px; height: 6px; background: #9370DB; border-radius: 50%; animation: dot-pulse 1.4s infinite ease-in-out;"></div>
+            <div style="width: 6px; height: 6px; background: #9370DB; border-radius: 50%; animation: dot-pulse 1.4s infinite ease-in-out 0.2s;"></div>
+            <div style="width: 6px; height: 6px; background: #9370DB; border-radius: 50%; animation: dot-pulse 1.4s infinite ease-in-out 0.4s;"></div>
+          </div>
+          <span>Checking NFT options...</span>
+        </div>
+      `;
+      loadingMsg.style.marginBottom = '10px';
+      chatMessages.appendChild(loadingMsg);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+      
+      // Secure API call
+      const response = await fetch(N8N_WEBHOOK, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'X-ENGMO-Secret': SECRET_KEY,
+          'X-Conversation-ID': conversationId
+        },
+        body: JSON.stringify({ 
+          message,
+          metadata: {
+            userAgent: navigator.userAgent,
+            screenResolution: `${window.screen.width}x${window.screen.height}`
+          }
+        })
+      });
+      
+      const data = await response.json();
+      chatMessages.removeChild(loadingMsg);
+      
+      if (data.response) {
+        addMessage(data.response, false);
+        
+        // Show package matrix if available
+        if (data.packages) {
+          const packagesDiv = document.createElement('div');
+          packagesDiv.style.background = 'rgba(70, 0, 120, 0.6)';
+          packagesDiv.style.borderRadius = '12px';
+          packagesDiv.style.padding = '10px';
+          packagesDiv.style.marginTop = '5px';
+          
+          data.packages.forEach(pkg => {
+            const pkgDiv = document.createElement('div');
+            pkgDiv.style.marginBottom = '8px';
+            pkgDiv.innerHTML = `
+              <strong>${pkg.name}</strong>: ${pkg.price}<br>
+              <small>${pkg.comparison.join(' • ')}</small>
+            `;
+            packagesDiv.appendChild(pkgDiv);
+          });
+          
+          chatMessages.appendChild(packagesDiv);
+        }
+      } else {
+        addMessage("I couldn't retrieve NFT options. Please try again.", false);
+      }
+    } catch (error) {
+      console.error('API Error:', error);
+      chatMessages.removeChild(loadingMsg);
+      addMessage("Connection error. Please check your network.", false);
+    }
+  }
+  
+  // Event listeners
+  function sendMessage() {
+    const message = chatInput.value.trim();
+    if (message) sendToN8N(message);
+  }
+  
+  sendButton.addEventListener('click', sendMessage);
+  chatInput.addEventListener('keypress', (e) => e.key === 'Enter' && sendMessage());
+  
+  // Dynamic styles
+  const style = document.createElement('style');
+  style.textContent = `
+    @keyframes float-up {
+      from { transform: translateY(10px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    @keyframes dot-pulse {
+      0%, 60%, 100% { transform: translateY(0); }
+      30% { transform: translateY(-5px); }
+    }
+    #space-chat-input::placeholder {
+      color: rgba(255, 255, 255, 0.5);
+    }
+    #space-chat-send:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 10px rgba(138, 43, 226, 0.7);
+    }
+    #space-chat-minimize:hover {
+      transform: scale(1.2);
+    }
+    .space-message a {
+      color: #FFD700 !important;
+      text-decoration: underline !important;
+      word-break: break-all;
+    }
+  `;
+  document.head.appendChild(style);
+  
+  // Ensure chat stays positioned correctly
+  setInterval(() => {
+    chatContainer.style.position = 'fixed';
+    chatContainer.style.bottom = window.innerWidth <= 768 ? '10px' : '20px';
+    chatContainer.style.right = window.innerWidth <= 768 ? '10px' : '20px';
+    chatContainer.style.transform = 'none';
+  }, 1000);
 </script>
+
 </body>
 </html>
