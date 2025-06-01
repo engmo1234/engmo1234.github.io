@@ -1446,7 +1446,6 @@
 </div>
 
 <script>
-// Configuration - USE YOUR ACTUAL WEBHOOK URL HERE
 const WEBHOOK_URL = 'https://engmo1234.app.n8n.cloud/webhook-test/0bb1dd73-f80a-4408-8185-b70585e6198f';
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -1456,38 +1455,32 @@ document.addEventListener('DOMContentLoaded', function() {
   const sendBtn = document.getElementById('engmo-send');
   const minimizeBtn = document.getElementById('engmo-minimize');
 
-  // Initial message
   addMessage("Hello! I'm your ENGMO assistant. Ask me about our packages.", 'bot');
 
-  // Send message function - UPDATED FOR YOUR WORKFLOW
   async function sendMessage() {
     const message = input.value.trim();
     if (!message) return;
-    
+
     addMessage(message, 'user');
     input.value = '';
     showTyping();
-    
+
     try {
       const response = await fetch(WEBHOOK_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          body: {  // Matches your workflow's expected format
-            question: message
-          }
+          question: message
         })
       });
-      
-      // PROCESS RESPONSE SPECIFICALLY FOR YOUR WORKFLOW
+
       const responseData = await response.json();
       hideTyping();
-      
-      // Your workflow returns the response in $json.output
+
       const botResponse = Array.isArray(responseData) 
-        ? responseData[0].output  // Handle array response
-        : responseData.output;    // Handle object response
-        
+        ? responseData[0].output
+        : responseData.output;
+
       if (botResponse) {
         addMessage(botResponse, 'bot');
       } else {
@@ -1500,7 +1493,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   }
 
-  // Helper functions
   function addMessage(text, sender) {
     const div = document.createElement('div');
     div.style.margin = '10px 0';
@@ -1508,7 +1500,7 @@ document.addEventListener('DOMContentLoaded', function() {
     div.style.borderRadius = '18px';
     div.style.maxWidth = '80%';
     div.style.wordWrap = 'break-word';
-    
+
     if (sender === 'user') {
       div.style.background = '#003300';
       div.style.color = '#00ff80';
@@ -1519,7 +1511,7 @@ document.addEventListener('DOMContentLoaded', function() {
       div.style.marginRight = 'auto';
       div.style.border = '1px solid #004400';
     }
-    
+
     div.textContent = text;
     messages.appendChild(div);
     messages.scrollTop = messages.scrollHeight;
@@ -1546,7 +1538,6 @@ document.addEventListener('DOMContentLoaded', function() {
     if (typing) typing.remove();
   }
 
-  // Event listeners
   sendBtn.addEventListener('click', sendMessage);
   input.addEventListener('keypress', (e) => e.key === 'Enter' && sendMessage());
   minimizeBtn.addEventListener('click', () => {
@@ -1556,7 +1547,6 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 });
 
-// Add animation
 const style = document.createElement('style');
 style.textContent = `
   @keyframes bounce {
@@ -1566,5 +1556,6 @@ style.textContent = `
 `;
 document.head.appendChild(style);
 </script>
+
 </body>
 </html>
