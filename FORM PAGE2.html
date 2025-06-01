@@ -1470,30 +1470,15 @@ document.addEventListener('DOMContentLoaded', function() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          body: {  // KEY FIX: Match your workflow's expected structure
-            question: message
-          }
+          question: message
         })
       });
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
       const responseData = await response.json();
+      console.log('Webhook Response:', responseData);
       hideTyping();
 
-      // KEY FIX: Properly extract the response from your workflow structure
-      let botResponse = "Our packages: BASIC (2706 MATIC), SENIOR (7861 MATIC), VIP (61,901 MATIC)";
-      
-      if (Array.isArray(responseData)) {
-        // Handle array response format
-        botResponse = responseData[0]?.output || botResponse;
-      } else if (responseData && typeof responseData === 'object') {
-        // Handle object response format
-        botResponse = responseData.output || botResponse;
-      }
-
+      const botResponse = responseData.output || "Our packages: BASIC (2706 MATIC), SENIOR (7861 MATIC), VIP (61,901 MATIC)";
       addMessage(botResponse, 'bot');
     } catch (error) {
       hideTyping();
@@ -1565,5 +1550,6 @@ style.textContent = `
 `;
 document.head.appendChild(style);
 </script>
+
 </body>
 </html>
