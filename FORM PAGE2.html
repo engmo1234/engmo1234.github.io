@@ -1446,20 +1446,41 @@
 </div>
 
 <script>
-// Configuration - USE YOUR ACTUAL WEBHOOK URL HERE
-const WEBHOOK_URL = 'https://engmo1234.app.n8n.cloud/webhook-test/0bb1dd73-f80a-4408-8185-b70585e6198f';
+// 1. CONFIGURATION - MUST CHANGE THIS TO YOUR URL
+const WEBHOOK_URL = 'https://your-n8n-cloud.com/webhook/0bb1dd73-f80a-4408-8185-b70585e6198f';
 
+// 2. DEBUGGING TOOLS - Will help identify issues
+console.log('ENGMO Chat Widget Initialized');
+window.debugEngmo = {
+  testConnection: async () => {
+    console.log('Testing connection to:', WEBHOOK_URL);
+    try {
+      const test = await fetch(WEBHOOK_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ body: { question: "test" } })
+      });
+      const result = await test.json();
+      console.log('Connection successful! Response:', result);
+      return result;
+    } catch (e) {
+      console.error('Connection failed:', e);
+      return null;
+    }
+  }
+};
+
+// 3. CHAT IMPLEMENTATION
 document.addEventListener('DOMContentLoaded', function() {
   const chat = document.getElementById('engmo-chat');
   const messages = document.getElementById('engmo-messages');
   const input = document.getElementById('engmo-input');
   const sendBtn = document.getElementById('engmo-send');
-  const minimizeBtn = document.getElementById('engmo-minimize');
-
+  
   // Initial message
   addMessage("Hello! I'm your ENGMO assistant. Ask me about our packages.", 'bot');
 
-  // Send message function - UPDATED FOR YOUR WORKFLOW
+  // Send message function - UPDATED WITH COMPLETE ERROR HANDLING
   async function sendMessage() {
     const message = input.value.trim();
     if (!message) return;
@@ -1469,56 +1490,69 @@ document.addEventListener('DOMContentLoaded', function() {
     showTyping();
     
     try {
+      console.log('Sending message:', message);
       const response = await fetch(WEBHOOK_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          body: {  // Matches your workflow's expected format
-            question: message
+        body: JSON.stringify({ 
+          body: { 
+            question: message,
+            sessionId: 'user-' + Date.now()
           }
         })
       });
       
-      // PROCESS RESPONSE SPECIFICALLY FOR YOUR WORKFLOW
-      const responseData = await response.json();
-      hideTyping();
-      
-      // Your workflow returns the response in $json.output
-      const botResponse = Array.isArray(responseData) 
-        ? responseData[0].output  // Handle array response
-        : responseData.output;    // Handle object response
-        
-      if (botResponse) {
-        addMessage(botResponse, 'bot');
-      } else {
-        addMessage("Our packages: BASIC (2706 MATIC), SENIOR (7861 MATIC), VIP (61,901 MATIC)", 'bot');
+      // EXTENDED RESPONSE HANDLING
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
-    } catch (error) {
+      
+      const contentType = response.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        const text = await response.text();
+        console.warn('Non-JSON response:', text);
+        addMessage("Our packages: BASIC (2706 MATIC), SENIOR (7861 MATIC), VIP (61,901 MATIC)", 'bot');
+        return;
+      }
+      
+      const data = await response.json();
+      console.log('Full response data:', data);
+      
+      // MULTIPLE RESPONSE FORMAT HANDLING
+      let botResponse = '';
+      if (data.output) { // Your workflow's format
+        botResponse = data.output;
+      } else if (data.response) { // Alternative format
+        botResponse = data.response;
+      } else if (Array.isArray(data) && data[0]?.output) {
+        botResponse = data[0].output;
+      } else {
+        botResponse = JSON.stringify(data); // Fallback
+      }
+      
       hideTyping();
-      addMessage("Connection issue - here are our packages: BASIC (2706 MATIC), SENIOR (7861 MATIC), VIP (61,901 MATIC)", 'bot');
-      console.error('Error:', error);
+      addMessage(botResponse, 'bot');
+      
+    } catch (error) {
+      console.error('Full error details:', error);
+      hideTyping();
+      addMessage("Here are our packages: BASIC (2706 MATIC), SENIOR (7861 MATIC), VIP (61,901 MATIC)", 'bot');
     }
   }
 
-  // Helper functions
+  // HELPER FUNCTIONS
   function addMessage(text, sender) {
     const div = document.createElement('div');
+    div.className = 'engmo-message';
     div.style.margin = '10px 0';
     div.style.padding = '10px 15px';
     div.style.borderRadius = '18px';
     div.style.maxWidth = '80%';
     div.style.wordWrap = 'break-word';
-    
-    if (sender === 'user') {
-      div.style.background = '#003300';
-      div.style.color = '#00ff80';
-      div.style.marginLeft = 'auto';
-      div.style.border = '1px solid #006600';
-    } else {
-      div.style.background = '#002200';
-      div.style.marginRight = 'auto';
-      div.style.border = '1px solid #004400';
-    }
+    div.style.color = sender === 'user' ? '#00ff80' : '#eee';
+    div.style.backgroundColor = sender === 'user' ? '#003300' : '#002200';
+    div.style.border = sender === 'user' ? '1px solid #006600' : '1px solid #004400';
+    div.style.marginLeft = sender === 'user' ? 'auto' : '0';
     
     div.textContent = text;
     messages.appendChild(div);
@@ -1527,39 +1561,39 @@ document.addEventListener('DOMContentLoaded', function() {
 
   function showTyping() {
     const typing = document.createElement('div');
-    typing.id = 'typing-indicator';
+    typing.id = 'engmo-typing';
     typing.style.display = 'inline-block';
     typing.style.padding = '10px 15px';
     typing.style.background = '#002200';
     typing.style.borderRadius = '18px';
     typing.innerHTML = `
-      <span style="display:inline-block;width:8px;height:8px;background:#00ff80;border-radius:50%;margin:0 2px;animation:bounce 1.4s infinite;"></span>
-      <span style="display:inline-block;width:8px;height:8px;background:#00ff80;border-radius:50%;margin:0 2px;animation:bounce 1.4s infinite;animation-delay:0.2s"></span>
-      <span style="display:inline-block;width:8px;height:8px;background:#00ff80;border-radius:50%;margin:0 2px;animation:bounce 1.4s infinite;animation-delay:0.4s"></span>
+      <span style="display:inline-block;width:8px;height:8px;background:#00ff80;border-radius:50%;margin:0 2px;animation:engmo-bounce 1.4s infinite;"></span>
+      <span style="display:inline-block;width:8px;height:8px;background:#00ff80;border-radius:50%;margin:0 2px;animation:engmo-bounce 1.4s infinite;animation-delay:0.2s"></span>
+      <span style="display:inline-block;width:8px;height:8px;background:#00ff80;border-radius:50%;margin:0 2px;animation:engmo-bounce 1.4s infinite;animation-delay:0.4s"></span>
     `;
     messages.appendChild(typing);
     messages.scrollTop = messages.scrollHeight;
   }
 
   function hideTyping() {
-    const typing = document.getElementById('typing-indicator');
+    const typing = document.getElementById('engmo-typing');
     if (typing) typing.remove();
   }
 
-  // Event listeners
+  // EVENT LISTENERS
   sendBtn.addEventListener('click', sendMessage);
   input.addEventListener('keypress', (e) => e.key === 'Enter' && sendMessage());
-  minimizeBtn.addEventListener('click', () => {
+  document.getElementById('engmo-minimize').addEventListener('click', () => {
     chat.style.transform = chat.style.transform === 'translateY(calc(100% - 50px))' 
       ? 'translateY(0)' 
       : 'translateY(calc(100% - 50px))';
   });
 });
 
-// Add animation
+// ANIMATION STYLE
 const style = document.createElement('style');
 style.textContent = `
-  @keyframes bounce {
+  @keyframes engmo-bounce {
     0%, 80%, 100% { transform: translateY(0); }
     40% { transform: translateY(-5px); }
   }
