@@ -1433,8 +1433,8 @@
     oscillator.stop(audioCtx.currentTime + 0.5);
   }
 </script>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ENGMO1234 AI Assistant</title>
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ENGMO1234 Cosmic Assistant</title>
     <style>
         #engmo-chatbot {
             position: fixed;
@@ -1655,8 +1655,8 @@
     </div>
 
     <script>
-        // Replace with your n8n webhook URL
-        const WEBHOOK_URL = 'https://engmo1234.app.n8n.cloud/webhook-test/engmo-chat';
+        // REPLACE WITH YOUR ACTUAL N8N WEBHOOK URL
+        const WEBHOOK_URL = 'https://your-n8n-server.com/webhook/engmo-chat';
         
         // Generate a session ID for conversation history
         const sessionId = 'cosmic-session-' + Math.random().toString(36).substr(2, 9);
@@ -1681,6 +1681,7 @@
                 chatWidget.style.display = chatWidget.style.display === 'none' ? 'flex' : 'none';
                 if (chatWidget.style.display === 'flex') {
                     toggleBtn.style.display = 'none';
+                    userInput.focus();
                 }
             });
             
@@ -1690,7 +1691,7 @@
             });
             
             // Handle sending messages
-            function sendMessage() {
+            async function sendMessage() {
                 const message = userInput.value.trim();
                 if (message === '') return;
                 
@@ -1701,31 +1702,34 @@
                 // Show typing indicator
                 showTypingIndicator();
                 
-                // Send to n8n webhook
-                fetch(WEBHOOK_URL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        sessionId: sessionId,
-                        question: message
-                    })
-                })
-                .then(response => response.json())
-                .then(data => {
+                try {
+                    // Send to n8n webhook
+                    const response = await fetch(WEBHOOK_URL, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            sessionId: sessionId,
+                            question: message
+                        })
+                    });
+                    
+                    if (!response.ok) throw new Error('Network response was not ok');
+                    
+                    const data = await response.json();
                     hideTypingIndicator();
+                    
                     if (data && data.response) {
                         addMessage(data.response, 'bot');
                     } else {
                         addMessage("🌠 Cosmic connection unstable. Please try your query again.", 'bot');
                     }
-                })
-                .catch(error => {
+                } catch (error) {
                     hideTypingIndicator();
                     addMessage("⚠️ Stellar communication error. Please try again later.", 'bot');
                     console.error('Error:', error);
-                });
+                }
             }
             
             // Send message on button click or Enter key
@@ -1769,7 +1773,7 @@
             
             // Initial greeting with package information after a short delay
             setTimeout(() => {
-                addMessage("🌠 Our cosmic web design packages:\n\n1. 🚀 Basic Package (2706 MATIC)\n2. 💎 Senior Package (7861 MATIC)\n3. 👑 VIP Package (61,901 MATIC)\n\nWhich stellar package would you like to explore?", 'bot');
+                addMessage("🌠 Our cosmic web design packages:\n\n1. 🚀 Basic Orbit (2706 MATIC)\n2. 🌟 Senior Constellation (7861 MATIC)\n3. 🪐 VIP Black Hole (61,901 MATIC)\n\nWhich stellar package would you like to explore?", 'bot');
             }, 2000);
         });
     </script>
