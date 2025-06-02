@@ -1446,7 +1446,7 @@
 </div>
 
 <script>
-const WEBHOOK_URL = 'https://engmo1234.app.n8n.cloud/webhook-test/0bb1dd73-f80a-4408-8185-b70585e6198f';
+const WEBHOOK_URL = 'https://engmo1234.app.n8n.cloud/webhook/0bb1dd73-f80a-4408-8185-b70585e6198f';
 
 document.addEventListener('DOMContentLoaded', function() {
   const chat = document.getElementById('engmo-chat');
@@ -1480,34 +1480,44 @@ document.addEventListener('DOMContentLoaded', function() {
 
       // Get the raw response text first
       const responseText = await response.text();
+      console.log('Raw response:', responseText);
       
       // Try to parse as JSON, fallback to raw text if needed
       let responseData;
       try {
         responseData = JSON.parse(responseText);
+        console.log('Parsed JSON:', responseData);
       } catch {
         responseData = responseText;
       }
 
-      console.log('Full response:', responseData);
       hideTyping();
 
       // Extract the actual message from different possible response formats
       let botResponse = "Our packages: BASIC (2706 MATIC), SENIOR (7861 MATIC), VIP (61,901 MATIC)";
       
       if (typeof responseData === 'string') {
+        // If response is already a string, use it directly
         botResponse = responseData;
+      } else if (responseData?.message) {
+        // If response has a 'message' field
+        botResponse = responseData.message;
       } else if (responseData?.output) {
+        // If response has an 'output' field
         botResponse = responseData.output;
       } else if (Array.isArray(responseData) && responseData[0]?.output) {
+        // If response is an array with output
         botResponse = responseData[0].output;
+      } else if (typeof responseData === 'object') {
+        // If all else fails, stringify the object
+        botResponse = JSON.stringify(responseData);
       }
 
       addMessage(botResponse, 'bot');
     } catch (error) {
+      console.error('Full error:', error);
       hideTyping();
       addMessage("Here are our packages: BASIC (2706 MATIC), SENIOR (7861 MATIC), VIP (61,901 MATIC)", 'bot');
-      console.error('Error:', error);
     }
   }
 
@@ -1530,7 +1540,8 @@ document.addEventListener('DOMContentLoaded', function() {
       div.style.border = '1px solid #004400';
     }
 
-    div.textContent = text;
+    // Ensure text is properly displayed (handle undefined/null)
+    div.textContent = text || "No response received";
     messages.appendChild(div);
     messages.scrollTop = messages.scrollHeight;
   }
