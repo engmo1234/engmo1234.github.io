@@ -1433,6 +1433,7 @@
     oscillator.stop(audioCtx.currentTime + 0.5);
   }
 </script>
+<div id="engmo-chat" style="position:fixed;bottom:20px;right:20px;width:350px;background:#111;border:1px solid #00ff80;border-radius:10px;font-family:Arial;z-index:1000;">
   <div style="background:#006600;color:white;padding:12px;display:flex;justify-content:space-between;align-items:center;">
     <h3 style="margin:0;">ENGMO Assistant</h3>
     <button id="engmo-minimize" style="background:none;border:none;color:white;font-size:16px;cursor:pointer;">−</button>
@@ -1454,6 +1455,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const sendBtn = document.getElementById('engmo-send');
   const minimizeBtn = document.getElementById('engmo-minimize');
 
+  // Initial message
   addMessage("Hello! I'm your ENGMO assistant. Ask me about our packages.", 'bot');
 
   async function sendMessage() {
@@ -1465,23 +1467,46 @@ document.addEventListener('DOMContentLoaded', function() {
     showTyping();
 
     try {
+      // Send request with proper body structure
       const response = await fetch(WEBHOOK_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          question: message
+          body: {  // Key fix: Match your n8n workflow's expected structure
+            question: message
+          }
         })
       });
 
-      const responseData = await response.json();
-      console.log('Webhook Response:', responseData);
+      // Get the raw response text first
+      const responseText = await response.text();
+      
+      // Try to parse as JSON, fallback to raw text if needed
+      let responseData;
+      try {
+        responseData = JSON.parse(responseText);
+      } catch {
+        responseData = responseText;
+      }
+
+      console.log('Full response:', responseData);
       hideTyping();
 
-      const botResponse = responseData.output || "Our packages: BASIC (2706 MATIC), SENIOR (7861 MATIC), VIP (61,901 MATIC)";
+      // Extract the actual message from different possible response formats
+      let botResponse = "Our packages: BASIC (2706 MATIC), SENIOR (7861 MATIC), VIP (61,901 MATIC)";
+      
+      if (typeof responseData === 'string') {
+        botResponse = responseData;
+      } else if (responseData?.output) {
+        botResponse = responseData.output;
+      } else if (Array.isArray(responseData) && responseData[0]?.output) {
+        botResponse = responseData[0].output;
+      }
+
       addMessage(botResponse, 'bot');
     } catch (error) {
       hideTyping();
-      addMessage("Connection issue - here are our packages: BASIC (2706 MATIC), SENIOR (7861 MATIC), VIP (61,901 MATIC)", 'bot');
+      addMessage("Here are our packages: BASIC (2706 MATIC), SENIOR (7861 MATIC), VIP (61,901 MATIC)", 'bot');
       console.error('Error:', error);
     }
   }
