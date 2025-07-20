@@ -130,6 +130,23 @@
       visibility: visible;
       opacity: 1;
     }
+    .engmo-button {
+      background: linear-gradient(135deg, #8b00ff 0%, #ff00cc 100%);
+      border: 1px solid rgba(255, 0, 204, 0.5);
+      animation: engmoGlow 2s infinite alternate;
+    }
+    @keyframes engmoGlow {
+      from {
+        box-shadow: 0 0 10px rgba(139, 0, 255, 0.7);
+      }
+      to {
+        box-shadow: 0 0 30px rgba(255, 0, 204, 0.9);
+      }
+    }
+    .engmo-button:hover {
+      background: linear-gradient(135deg, #7a00e0 0%, #e000b7 100%);
+      transform: translateY(-5px);
+    }
 </style>
 </head>
 <body>
@@ -192,9 +209,17 @@
               <span class="block text-lg">Senior</span>
               <span class="text-sm text-green-300">7861 MATIC</span>
             </th>
-            <th class="p-4 text-center vip-tier">
+            <th class="p-4 text-center border-r border-green-500/20 vip-tier">
               <span class="block text-lg">VIP</span>
               <span class="text-sm text-yellow-300">61901 MATIC</span>
+            </th>
+            <th class="p-4 text-center border-r border-green-500/20 legendary-tier">
+              <span class="block text-lg">Legendary</span>
+              <span class="text-sm text-orange-300">999,194 MATIC</span>
+            </th>
+            <th class="p-4 text-center engmo-tier">
+              <span class="block text-lg">ENGMØ</span>
+              <span class="text-sm text-purple-300">99,000,000 MATIC</span>
             </th>
           </tr>
         </thead>
@@ -202,9 +227,11 @@
           <!-- Domain Row -->
           <tr class="hover:bg-green-900/10 transition-all duration-200">
             <td class="p-4 text-left border-t border-green-500/10">Domain + Edits</td>
-            <td class="p-4 text-center border-t border-green-500/10">3YR Domain<br>+1YR Edits</td>
-            <td class="p-4 text-center border-t border-green-500/10">4YR Domain<br>+2YR Edits</td>
-            <td class="p-4 text-center border-t border-green-500/10">7YR Domain<br>Lifetime Edits</td>
+            <td class="p-4 text-center border-t border-green-500/10">3YR Domain<br>+4 Edits</td>
+            <td class="p-4 text-center border-t border-green-500/10">4YR Domain<br>+8 Edits</td>
+            <td class="p-4 text-center border-t border-green-500/10">7YR Domain<br>7MONTH Edits</td>
+            <td class="p-4 text-center border-t border-green-500/10">10YR Domain<br>2YR Edits</td>
+            <td class="p-4 text-center border-t border-green-500/10 text-purple-300 font-bold">Lifetime Domain<br>Unlimited Edits</td>
           </tr>
           
           <!-- SEO Row -->
@@ -213,6 +240,8 @@
             <td class="p-4 text-center border-t border-green-500/10 text-green-400">✓ Basic</td>
             <td class="p-4 text-center border-t border-green-500/10 text-green-400">✓ Advanced</td>
             <td class="p-4 text-center border-t border-green-500/10 text-green-400">✓ Global</td>
+            <td class="p-4 text-center border-t border-green-500/10 text-orange-400">✓ Enterprise</td>
+            <td class="p-4 text-center border-t border-green-500/10 text-purple-300 font-bold">✓ AI-Powered Global Dominance</td>
           </tr>
           
           <!-- Content Row -->
@@ -236,6 +265,18 @@
                 <span class="tooltip-text">Live sessions and masterclasses</span>
               </div>
             </td>
+            <td class="p-4 text-center border-t border-green-500/10">
+              <div class="tooltip">
+                <span class="text-orange-300 cursor-pointer">🔒 Legendary Content</span>
+                <span class="tooltip-text">Proprietary marketing strategies</span>
+              </div>
+            </td>
+            <td class="p-4 text-center border-t border-green-500/10">
+              <div class="tooltip">
+                <span class="text-purple-300 cursor-pointer font-bold">🔓 ENGMØ Black Book</span>
+                <span class="tooltip-text">All trade secrets and future developments</span>
+              </div>
+            </td>
           </tr>
           
           <!-- Support Row -->
@@ -244,6 +285,8 @@
             <td class="p-4 text-center border-t border-green-500/10">Email (48h)</td>
             <td class="p-4 text-center border-t border-green-500/10">Priority + Discord</td>
             <td class="p-4 text-center border-t border-green-500/10">24/7 WhatsApp</td>
+            <td class="p-4 text-center border-t border-green-500/10 text-orange-300">Dedicated Team</td>
+            <td class="p-4 text-center border-t border-green-500/10 text-purple-300 font-bold">Personal CTO</td>
           </tr>
           
           <!-- Special Row -->
@@ -252,6 +295,18 @@
             <td class="p-4 text-center">-</td>
             <td class="p-4 text-center">-</td>
             <td class="p-4 text-center text-yellow-300">✓ Unlocks App</td>
+            <td class="p-4 text-center text-orange-300">✓ AI Marketing Suite</td>
+            <td class="p-4 text-center text-purple-300 font-bold">✓ Full IP Ownership</td>
+          </tr>
+          
+          <!-- Web3 Features Row -->
+          <tr class="hover:bg-green-900/10 transition-all duration-200">
+            <td class="p-4 text-left border-t border-green-500/10">Web3 Features</td>
+            <td class="p-4 text-center border-t border-green-500/10">Basic NFT</td>
+            <td class="p-4 text-center border-t border-green-500/10">Smart Contract</td>
+            <td class="p-4 text-center border-t border-green-500/10">Token Creation</td>
+            <td class="p-4 text-center border-t border-green-500/10 text-orange-300">Custom WEB3 DEV</td>
+            <td class="p-4 text-center border-t border-green-500/10 text-purple-300 font-bold">Complete Web3 Ecosystem</td>
           </tr>
         </tbody>
       </table>
@@ -273,58 +328,18 @@
           👑 Mint VIP Package ( 61901 MATIC )or pay cash
         </a> 
         <a class="custom-button pulse" href="https://www.engmo1234.com/LEGENDARY4.html" target="_blank" style="background-color: #FFA500; color: white;">
-           ♛⚡ Mint LEGENDARY Package ALL THE ABOVE+MARKETING+SOCIALMEDIA+COMMUNICATION ROBOTS (999,194 MATIC) or pay cash
+           ♛⚡ Mint LEGENDARY Package (999,194 MATIC) or pay cash
         </a>
-<!-- Add this to your button container -->
-<a class="custom-button terms-button" href="terms_green_organized.html" target="_blank">
-  <span class="flex items-center justify-center gap-2">
-    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-      <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
-    </svg>
-    TERMS & CONDITIONS | الشروط والأحكام
-  </span>
-</a>
-
-<style>
-  .terms-button {
-    background: linear-gradient(135deg, 
-      rgba(185, 28, 28, 0.7) 0%, 
-      rgba(153, 27, 27, 0.9) 100%);
-    border: 1px solid rgba(248, 113, 113, 0.5);
-    position: relative;
-    overflow: hidden;
-  }
-  
-  .terms-button:hover {
-    background: linear-gradient(135deg, 
-      rgba(153, 27, 27, 0.9) 0%, 
-      rgba(127, 29, 29, 1) 100%);
-    transform: translateY(-3px);
-    box-shadow: 0 4px 15px rgba(220, 38, 38, 0.4);
-  }
-  
-  .terms-button::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: linear-gradient(
-      to bottom right,
-      rgba(255,255,255,0) 0%,
-      rgba(255,255,255,0.2) 50%,
-      rgba(255,255,255,0) 100%
-    );
-    transform: rotate(30deg);
-    animation: shine 3s infinite;
-  }
-  
-  @keyframes shine {
-    0% { left: -50%; }
-    100% { left: 150%; }
-  }
-</style>
+        <a class="custom-button pulse engmo-button" href="https://www.engmo1234.com/engmo4.html" target="_blank">
+           🏆 ENGMØ LIFETIME PACKAGE (99,000,000 MATIC) or pay cash
+        </a>
+        <a class="custom-button terms-button" href="terms_green_organized.html" target="_blank">
+          <span class="flex items-center justify-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+            </svg>
+            TERMS & CONDITIONS | الشروط والأحكام
+          </span>
         </a>
       </div>
     </div>
@@ -339,6 +354,9 @@
       </div>
       <div class="text-xs bg-black/30 px-3 py-1 rounded-full border border-green-500/20">
         🌐 Free Website Included
+      </div>
+      <div class="text-xs bg-black/30 px-3 py-1 rounded-full border border-purple-500/20">
+        💎 Ultra Exclusive
       </div>
     </div>
   </div>
@@ -454,11 +472,22 @@ window.addEventListener('resize', () => {
   .basic-tier { border-left: 3px solid #8BC34A; }
   .senior-tier { border-left: 3px solid #4CAF50; }
   .vip-tier { border-left: 3px solid #FFD700; }
+  .legendary-tier { border-left: 3px solid #FFA500; }
+  .engmo-tier { border-left: 3px solid #8b00ff; }
   
   /* Responsive Adjustments */
   @media (max-width: 768px) {
     .fade-box {
       padding: 1.5rem;
+    }
+    
+    .cosmic-table-container {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+    
+    .cosmic-table {
+      min-width: 800px;
     }
     
     .cosmic-table th, .cosmic-table td {
