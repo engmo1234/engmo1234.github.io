@@ -1,0 +1,1400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ENGMOlifetimepackage NFT Minting Access</title>
+  <script src="https://cdn.jsdelivr.net/npm/web3@1.8.2/dist/web3.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vanta@0.5.24/dist/vanta.net.min.js"></script>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Arial', sans-serif;
+    }
+    body {
+      background: #000;
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+      position: relative;
+      overflow-x: hidden;
+    }
+    #bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+    }
+    .header {
+      text-align: center;
+      margin-bottom: 20px;
+      width: 100%;
+    }
+    .logo-link {
+      display: inline-block;
+      margin-bottom: 10px;
+      transition: transform 0.3s;
+    }
+    .polygon-logo {
+      width: 70px;
+      height: auto;
+      border-radius: 50%;
+      box-shadow: 0 0 15px rgba(0, 255, 204, 0.5);
+    }
+    .polygon-logo:hover {
+      transform: scale(1.1);
+      box-shadow: 0 0 20px rgba(0, 255, 204, 0.8);
+    }
+    h1 {
+      font-size: 24px;
+      margin-bottom: 10px;
+      color: #00ffcc;
+      text-shadow: 0 0 10px rgba(0, 255, 204, 0.5);
+    }
+    .container {
+      width: 100%;
+      max-width: 500px;
+    }
+    .card {
+      background: rgba(0,30,0,0.8);
+      border: 2px solid #00ff00;
+      border-radius: 15px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 0 15px rgba(0, 255, 0, 0.7);
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #00ffcc, #0099ff);
+      color: #000;
+    }
+    .btn-primary:hover {
+      opacity: 0.9;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0, 255, 204, 0.4);
+    }
+    button:disabled {
+      background: #333;
+      color: #666;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+    .loading {
+      display: none;
+      width: 30px;
+      height: 30px;
+      margin: 15px auto;
+      border: 4px solid rgba(0,255,204,0.3);
+      border-top: 4px solid #00ffcc;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    .message {
+      padding: 12px;
+      margin: 15px 0;
+      border-radius: 8px;
+      text-align: center;
+    }
+    .error {
+      background: rgba(255,50,50,0.2);
+      border: 1px solid #ff3232;
+      color: #ff6b6b;
+    }
+    .success {
+      background: rgba(0,255,153,0.2);
+      border: 1px solid #00ff99;
+      color: #00ff99;
+    }
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+      margin-top: 20px;
+    }
+    .stat-item {
+      text-align: center;
+      padding: 12px;
+      background: rgba(0,0,0,0.5);
+      border-radius: 8px;
+      border: 1px solid #333;
+    }
+    .stat-value {
+      font-size: 18px;
+      font-weight: bold;
+      color: #00ffcc;
+    }
+    .wallet-info {
+      margin-top: 15px;
+      padding: 12px;
+      background: rgba(0,0,0,0.5);
+      border-radius: 8px;
+      border: 1px solid #333;
+      font-size: 14px;
+      text-align: center;
+    }
+    @media (max-width: 600px) {
+      body {
+        padding: 15px;
+      }
+      .card {
+        padding: 15px;
+      }
+      .stats {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="bg"></div>
+
+  <header class="header">
+    <a href="https://www.engmo1234.com/index" target="_blank" class="logo-link">
+      <img src="http://www.engmo1234.com/polygon-logo.png" 
+           alt="Polygon Logo" class="polygon-logo" onerror="this.src='https://polygon.technology/images/polygon-logo.png'">
+    </a>
+    <h1>ENGMOlifetimepackage NFT Minting Access</h1>
+  </header>
+   <div style="width: 100%; max-width: 560px; margin: 0 auto;">
+  <iframe 
+    width="100%" 
+    height="315" 
+    src="https://www.youtube.com/embed/IO7KN8bhhTk" 
+    frameborder="0" 
+    allowfullscreen>
+  </iframe>
+</div>
+     <main class="container">
+    <div class="card">
+      <h2>Mint Your ENGMOlifetimepackage NFT</h2>
+      <button id="mintButton" class="btn-primary" disabled>checkingfornftowner</button>
+      <button id="refreshButton" class="btn-primary" style="margin-top: 10px;">Refresh Status</button>
+      
+      <div class="loading" id="loading"></div>
+      <div class="message error" id="error" style="display:none;"></div>
+      <div class="message success" id="success" style="display:none;"></div>
+      
+      <div class="stats">
+        <div class="stat-item">
+          <div>Total Minted</div>
+          <div class="stat-value" id="totalMinted">0</div>
+        </div>
+        <div class="stat-item">
+          <div>Max Supply</div>
+          <div class="stat-value" id="maxSupply">0</div>
+        </div>
+        <div class="stat-item">
+          <div>Your Balance</div>
+          <div class="stat-value" id="userBalance">0</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="wallet-info" id="walletInfo">Wallet not connected</div>
+    </div>
+
+    <div class="card" id="unlockableContent" style="display:block;">
+      <h2>Exclusive Content</h2>
+      <p>Thank you for being a collector! Here's your exclusive content:</p>
+      <button id="unlockButton" class="btn-primary">Reveal FINAL Private Link</button>
+      <div id="contentLink" style="display:none; margin-top:15px;">
+        <a href="https://engmo1234.com/form" target="_blank" style="color:#00ffcc;">Access Your Exclusive Content</a>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // App state
+    let web3;
+    let contract;
+    let accounts = [];
+    let tokenId = 0;
+    let isProcessing = false;
+    let vantaEffect;
+
+    // Initialize the app
+    async function initApp() {
+      try {
+        // Initialize Vanta.js effect
+        initVanta();
+
+        // Check for Web3 wallet
+        if (!window.ethereum) {
+          showError("Please install MetaMask or another Web3 wallet.");
+          disableButtons();
+          return;
+        }
+
+        // Initialize Web3
+        web3 = new Web3(window.ethereum);
+        
+        // Check and switch to Polygon network
+        await checkNetwork();
+        
+        // Connect to wallet
+        await connectWallet();
+        
+        // Initialize contract
+        await initializeContract();
+        
+        // Set up UI
+        updateWalletInfo();
+        await updateStats();
+        await checkMintedStatus();
+
+        // Set up event listeners
+        setupEventListeners();
+
+      } catch (error) {
+        console.error("Initialization error:", error);
+        showError("Failed to connect. Please refresh and ensure you're on Polygon network.");
+        disableButtons();
+      }
+    }
+
+    async function initializeContract() {
+      contract = new web3.eth.Contract([
+	{
+		"inputs": [],
+		"stateMutability": "nonpayable",
+		"type": "constructor"
+	},
+	{
+		"inputs": [
+	{
+		"inputs": [],
+		"name": "accessUnlockableContent",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "bidder",
+				"type": "address"
+			}
+		],
+		"name": "approveBid",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"stateMutability": "nonpayable",
+		"type": "constructor"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "sender",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "balance",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "needed",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "tokenId",
+				"type": "uint256"
+			}
+		],
+		"name": "ERC1155InsufficientBalance",
+		"type": "error"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "approver",
+				"type": "address"
+			}
+		],
+		"name": "ERC1155InvalidApprover",
+		"type": "error"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "idsLength",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "valuesLength",
+				"type": "uint256"
+			}
+		],
+		"name": "ERC1155InvalidArrayLength",
+		"type": "error"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "operator",
+				"type": "address"
+			}
+		],
+		"name": "ERC1155InvalidOperator",
+		"type": "error"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "receiver",
+				"type": "address"
+			}
+		],
+		"name": "ERC1155InvalidReceiver",
+		"type": "error"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "sender",
+				"type": "address"
+			}
+		],
+		"name": "ERC1155InvalidSender",
+		"type": "error"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "operator",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "owner",
+				"type": "address"
+			}
+		],
+		"name": "ERC1155MissingApprovalForAll",
+		"type": "error"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "owner",
+				"type": "address"
+			}
+		],
+		"name": "OwnableInvalidOwner",
+		"type": "error"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "account",
+				"type": "address"
+			}
+		],
+		"name": "OwnableUnauthorizedAccount",
+		"type": "error"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "account",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "operator",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "bool",
+				"name": "approved",
+				"type": "bool"
+			}
+		],
+		"name": "ApprovalForAll",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "bidder",
+				"type": "address"
+			}
+		],
+		"name": "BidApproved",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "bidder",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "timestamp",
+				"type": "uint256"
+			}
+		],
+		"name": "BidRejected",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "bidder",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "amount",
+				"type": "uint256"
+			}
+		],
+		"name": "BidSubmitted",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "to",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "amount",
+				"type": "uint256"
+			}
+		],
+		"name": "FundsWithdrawn",
+		"type": "event"
+	},
+	{
+		"inputs": [],
+		"name": "mint",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "minter",
+				"type": "address"
+			}
+		],
+		"name": "NFTMinted",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "previousOwner",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "newOwner",
+				"type": "address"
+			}
+		],
+		"name": "OwnershipTransferred",
+		"type": "event"
+	},
+	{
+		"inputs": [],
+		"name": "pause",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "account",
+				"type": "address"
+			}
+		],
+		"name": "Paused",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "bidder",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "amount",
+				"type": "uint256"
+			}
+		],
+		"name": "RefundIssued",
+		"type": "event"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "bidder",
+				"type": "address"
+			}
+		],
+		"name": "rejectBid",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "renounceOwnership",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "from",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "to",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256[]",
+				"name": "ids",
+				"type": "uint256[]"
+			},
+			{
+				"internalType": "uint256[]",
+				"name": "values",
+				"type": "uint256[]"
+			},
+			{
+				"internalType": "bytes",
+				"name": "data",
+				"type": "bytes"
+			}
+		],
+		"name": "safeBatchTransferFrom",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "from",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "to",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "id",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "value",
+				"type": "uint256"
+			},
+			{
+				"internalType": "bytes",
+				"name": "data",
+				"type": "bytes"
+			}
+		],
+		"name": "safeTransferFrom",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "operator",
+				"type": "address"
+			},
+			{
+				"internalType": "bool",
+				"name": "approved",
+				"type": "bool"
+			}
+		],
+		"name": "setApprovalForAll",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "submitBid",
+		"outputs": [],
+		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "bool",
+				"name": "_status",
+				"type": "bool"
+			}
+		],
+		"name": "toggleWithdrawals",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "operator",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "from",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "to",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256[]",
+				"name": "ids",
+				"type": "uint256[]"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256[]",
+				"name": "values",
+				"type": "uint256[]"
+			}
+		],
+		"name": "TransferBatch",
+		"type": "event"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "newOwner",
+				"type": "address"
+			}
+		],
+		"name": "transferOwnership",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "operator",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "from",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "to",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "id",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "value",
+				"type": "uint256"
+			}
+		],
+		"name": "TransferSingle",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "string",
+				"name": "value",
+				"type": "string"
+			},
+			{
+				"indexed": true,
+				"internalType": "uint256",
+				"name": "id",
+				"type": "uint256"
+			}
+		],
+		"name": "URI",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "owner",
+				"type": "address"
+			}
+		],
+		"name": "UnlockableContentAccessed",
+		"type": "event"
+	},
+	{
+		"inputs": [],
+		"name": "unpause",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "account",
+				"type": "address"
+			}
+		],
+		"name": "Unpaused",
+		"type": "event"
+	},
+	{
+		"inputs": [],
+		"name": "withdraw",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "withdrawBid",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "allowWithdrawals",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "account",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "id",
+				"type": "uint256"
+			}
+		],
+		"name": "balanceOf",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address[]",
+				"name": "accounts",
+				"type": "address[]"
+			},
+			{
+				"internalType": "uint256[]",
+				"name": "ids",
+				"type": "uint256[]"
+			}
+		],
+		"name": "balanceOfBatch",
+		"outputs": [
+			{
+				"internalType": "uint256[]",
+				"name": "",
+				"type": "uint256[]"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"name": "bids",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "amount",
+				"type": "uint256"
+			},
+			{
+				"internalType": "bool",
+				"name": "approved",
+				"type": "bool"
+			},
+			{
+				"internalType": "bool",
+				"name": "refunded",
+				"type": "bool"
+			},
+			{
+				"internalType": "uint256",
+				"name": "timestamp",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"name": "hasMinted",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "account",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "operator",
+				"type": "address"
+			}
+		],
+		"name": "isApprovedForAll",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "MAX_SUPPLY",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "MIN_BID",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "owner",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "paused",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "bytes4",
+				"name": "interfaceId",
+				"type": "bytes4"
+			}
+		],
+		"name": "supportsInterface",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "TOKEN_ID",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "totalMinted",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "uri",
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
+			}
+		],
+		"stateMutability": "pure",
+		"type": "function"
+	}
+], "0x74885b20544d7786968f9aa1ce8e0584f6b93f34");
+      tokenId = await contract.methods.TOKEN_ID().call();
+    }
+
+    function initVanta() {
+      if (window.VANTA) {
+        vantaEffect = VANTA.NET({
+          el: "#bg",
+          mouseControls: true,
+          touchControls: true,
+          gyroControls: false,
+          minHeight: 200.00,
+          minWidth: 200.00,
+          scale: 1.00,
+          scaleMobile: 1.00,
+          color: 0x00ff00,
+          backgroundColor: 0x0000,
+          points: 12.00,
+          maxDistance: 22.00,
+          spacing: 18.00
+        });
+      } else {
+        setTimeout(initVanta, 100);
+      }
+    }
+
+    async function checkNetwork() {
+      const chainId = await window.ethereum.request({ method: 'eth_chainId' });
+      if (chainId !== '0x89') {
+        try {
+          await window.ethereum.request({
+            method: 'wallet_switchEthereumChain',
+            params: [{ chainId: '0x89' }],
+          });
+        } catch (error) {
+          showError("Please switch to Polygon Network in your wallet");
+          throw error;
+        }
+      }
+    }
+
+    async function connectWallet() {
+      try {
+        accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+        if (accounts.length === 0) {
+          throw new Error("No accounts found");
+        }
+      } catch (error) {
+        console.error("Wallet connection error:", error);
+        showError("Please connect your wallet to continue");
+        throw error;
+      }
+    }
+
+    function updateWalletInfo() {
+      const walletInfo = document.getElementById('walletInfo');
+      if (accounts.length > 0) {
+        const shortAddress = `${accounts[0].substring(0, 6)}...${accounts[0].substring(38)}`;
+        walletInfo.textContent = `Connected: ${shortAddress}`;
+        walletInfo.style.color = "#00ff99";
+      } else {
+        walletInfo.textContent = "Wallet not connected";
+        walletInfo.style.color = "#ff4444";
+      }
+    }
+
+    async function updateStats() {
+      try {
+        const [totalMinted, maxSupply, userBalance] = await Promise.all([
+          contract.methods.totalMinted().call(),
+          contract.methods.MAX_SUPPLY().call(),
+          contract.methods.balanceOf(accounts[0], tokenId).call()
+        ]);
+        
+        document.getElementById('totalMinted').textContent = totalMinted;
+        document.getElementById('maxSupply').textContent = maxSupply;
+        document.getElementById('userBalance').textContent = userBalance;
+      } catch (error) {
+        console.error("Failed to update stats:", error);
+        showError("Failed to load collection stats");
+      }
+    }
+
+    async function checkMintedStatus() {
+      try {
+        const hasMinted = await contract.methods.hasMinted(accounts[0]).call();
+        const mintButton = document.getElementById('mintButton');
+        
+        if (hasMinted) {
+          mintButton.disabled = true;
+          mintButton.textContent = "Already Minted";
+          showSuccess("You've already minted your NFT!");
+        } else {
+          mintButton.disabled = false;
+          mintButton.textContent = "checkingforwalletowner";
+        }
+      } catch (error) {
+        console.error("Failed to check minted status:", error);
+      }
+    }
+
+    async function mintNFT() {
+      if (isProcessing) return;
+      isProcessing = true;
+      
+      try {
+        const hasMinted = await contract.methods.hasMinted(accounts[0]).call();
+        if (hasMinted) {
+          showError("You've already minted your NFT!");
+          return;
+        }
+
+        showLoading();
+        hideMessages();
+        
+        let gasEstimate;
+        try {
+          gasEstimate = await contract.methods.mint()
+            .estimateGas({ from: accounts[0] });
+        } catch (err) {
+          console.error("Gas estimation failed:", err);
+          showError("Failed to estimate gas. Contract may be paused.");
+          return;
+        }
+        
+        const tx = await contract.methods.mint().send({ 
+          from: accounts[0],
+          gas: Math.round(gasEstimate * 1.3)
+        });
+        
+        showSuccess("🎉 NFT Minted Successfully!");
+        await updateStats();
+        await checkMintedStatus();
+        await checkUnlockableContent();
+      } catch (err) {
+        console.error("Minting failed:", err);
+        showError(getErrorMessage(err));
+      } finally {
+        isProcessing = false;
+        hideLoading();
+      }
+    }
+
+    async function checkUnlockableContent() {
+      try {
+        if (!contract || !accounts[0]) return;
+        
+        const balance = await contract.methods.balanceOf(accounts[0], tokenId).call();
+        const unlockableSection = document.getElementById('unlockableContent');
+        
+        if (balance > 0) {
+          unlockableSection.style.display = 'block';
+          
+          // Set up unlock button
+          document.getElementById('unlockButton').addEventListener('click', async () => {
+            try {
+              await contract.methods.accessUnlockableContent().send({ from: accounts[0] });
+              document.getElementById('contentLink').style.display = 'block';
+              showSuccess("Content unlocked successfully!");
+            } catch (error) {
+              showError("Failed to unlock content: " + getErrorMessage(error));
+            }
+          });
+        } else {
+          unlockableSection.style.display = 'none';
+        }
+      } catch (error) {
+        console.error("Error checking unlockable content:", error);
+      }
+    }
+   
+    function setupEventListeners() {
+      document.getElementById('mintButton').addEventListener('click', mintNFT);
+      document.getElementById('refreshButton').addEventListener('click', refreshStatus);
+      document.getElementById('unlockButton').addEventListener('click', async () => {
+        document.getElementById('contentLink').style.display = 'block';
+      });
+      
+      window.ethereum.on('accountsChanged', (newAccounts) => {
+        accounts = newAccounts;
+        updateWalletInfo();
+        updateStats();
+        checkMintedStatus();
+      });
+      
+      window.ethereum.on('chainChanged', () => window.location.reload());
+    }
+
+    async function refreshStatus() {
+      showLoading();
+      try {
+        await initializeContract();
+        await checkMintedStatus();
+        await updateStats();
+        await checkUnlockableContent();
+        showSuccess("Status refreshed successfully!");
+      } catch (error) {
+        console.error("Refresh failed:", error);
+        showError("Failed to refresh status");
+      } finally {
+        hideLoading();
+      }
+    }
+
+    function getErrorMessage(error) {
+      if (error.code === 4001) return "Transaction was rejected by user";
+      if (error.message.includes("Internal JSON-RPC")) return "Network error - please try again";
+      if (error.data?.message) {
+        const revertMatch = error.data.message.match(/reverted with reason string '(.+)'/);
+        if (revertMatch) return revertMatch[1];
+      }
+      if (error.message.includes("insufficient funds")) return "Insufficient MATIC for transaction";
+      if (error.message.includes("execution reverted")) return "Contract rejected transaction";
+      return "Transaction failed. See console for details.";
+    }
+
+    function showLoading() {
+      document.getElementById('loading').style.display = "block";
+      disableButtons();
+    }
+
+    function hideLoading() {
+      document.getElementById('loading').style.display = "none";
+      enableButtons();
+    }
+
+    function showError(message) {
+      const el = document.getElementById('error');
+      el.textContent = message;
+      el.style.display = "block";
+      document.getElementById('success').style.display = "none";
+    }
+
+    function showSuccess(message) {
+      const el = document.getElementById('success');
+      el.textContent = message;
+      el.style.display = "block";
+      document.getElementById('error').style.display = "none";
+    }
+
+    function hideMessages() {
+      document.getElementById('error').style.display = "none";
+      document.getElementById('success').style.display = "none";
+    }
+
+    function disableButtons() {
+      document.getElementById('mintButton').disabled = true;
+      document.getElementById('refreshButton').disabled = true;
+    }
+
+    function enableButtons() {
+      document.getElementById('mintButton').disabled = false;
+      document.getElementById('refreshButton').disabled = false;
+    }
+
+    // Initialize the app
+    window.addEventListener('DOMContentLoaded', initApp);
+  </script>
+</body>
+</html>
