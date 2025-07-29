@@ -32,8 +32,8 @@
   :root {
     --primary: #00ff88;
     --primary-dark: #00cc6a;
-    --dark-bg: rgba(10,10,10,0.3); /* More transparent background */
-    --darker-bg: rgba(5,5,5,0.3);  /* More transparent background */
+    --dark-bg: rgba(10,10,10,0.3);
+    --darker-bg: rgba(5,5,5,0.3);
     --text-light: rgba(255,255,255,0.9);
     --modal-bg: rgba(10,10,10,0.95);
   }
@@ -44,14 +44,24 @@
     box-sizing: border-box;
   }
 
-  body, html {
+  /* Mobile scrolling fixes */
+  html {
+    -webkit-overflow-scrolling: touch;
+    overflow-x: hidden;
     width: 100%;
     height: 100%;
+  }
+  
+  body {
+    width: 100%;
+    min-height: 100%;
     font-family: 'Cairo', sans-serif;
     color: var(--text-light);
-    background-color: transparent; /* Fully transparent */
-    scroll-behavior: smooth;
+    background-color: transparent;
     overflow-x: hidden;
+    position: relative;
+    -webkit-text-size-adjust: 100%;
+    touch-action: manipulation;
   }
 
   #bg {
@@ -67,6 +77,28 @@
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 20px;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* iOS specific fixes */
+  @supports (-webkit-touch-callout: none) {
+    body {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+    }
+    
+    .container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      overflow-y: scroll;
+      -webkit-overflow-scrolling: touch;
+    }
   }
 
   header {
@@ -164,6 +196,7 @@
     box-shadow: 0 0 15px rgba(0, 255, 136, 0.5);
     position: relative;
     z-index: 10;
+    min-height: 44px; /* Better touch target */
   }
 
   .btn:hover {
@@ -416,6 +449,16 @@
     header, .cta-section, .tutorial-section {
       margin: 10px;
     }
+    
+    /* Disable heavy animations on mobile */
+    .pulse {
+      animation: none;
+    }
+    
+    /* Optimize Three.js for mobile */
+    #bg canvas {
+      transform: scale(1) !important;
+    }
   }
 
   /* Arabic specific styles */
@@ -433,6 +476,367 @@
     background: linear-gradient(90deg, transparent, var(--primary), transparent);
     margin: 60px auto;
     max-width: 800px;
+  }
+  
+  /* Fix for sticky elements */
+  #robotNavContainer, #translate-btn-container {
+    touch-action: none;
+    pointer-events: none;
+  }
+  
+  #robotNavToggle, #translate-btn {
+    pointer-events: auto;
+  }
+  
+  /* Website cards styling */
+  .website-card {
+    background: rgba(0,0,0,0.2);
+    padding: 20px;
+    border-radius: 8px;
+    margin: 20px auto;
+    max-width: 500px;
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+
+  .website-card h3 {
+    color: #00ff88;
+    margin-top: 0;
+  }
+
+  .website-link {
+    display: inline-block;
+    padding: 10px 20px;
+    background: rgba(0,255,136,0.1);
+    color: #00ff88;
+    text-decoration: none;
+    border-radius: 50px;
+    border: 1px solid #00ff88;
+    transition: all 0.3s;
+    margin-top: 10px;
+  }
+
+  .website-link:hover {
+    background: rgba(0,255,136,0.2);
+    box-shadow: 0 0 15px rgba(0,255,136,0.3);
+  }
+  
+  /* Crypto video section */
+  .crypto-video-transparent, .completed-websites {
+    text-align: center;
+    margin: 30px 0;
+    padding: 20px;
+    background: rgba(0,0,0,0.05);
+    backdrop-filter: blur(2px);
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+
+  #showVideosBtn, #showWebsitesBtn {
+    background: transparent;
+    color: #fff;
+    padding: 14px 28px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 50px;
+    border: 2px solid #00ff88;
+    transition: all 0.4s;
+    text-shadow: 0 0 5px rgba(0,255,136,0.5);
+    box-shadow: 
+      0 0 10px rgba(0,255,136,0.3),
+      inset 0 0 10px rgba(0,255,136,0.1);
+    margin: 10px;
+    min-height: 44px;
+  }
+
+  #showVideosBtn:hover, #showWebsitesBtn:hover {
+    background: rgba(0,255,136,0.1);
+    box-shadow: 
+      0 0 20px rgba(0,255,136,0.5),
+      inset 0 0 15px rgba(0,255,136,0.2);
+    transform: translateY(-2px);
+  }
+
+  .video-embed {
+    position: relative;
+    padding-bottom: 56.25%;
+    height: 0;
+    overflow: hidden;
+    margin: 25px 0;
+    border-radius: 8px;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+  }
+
+  .video-embed iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+  }
+  
+  /* Robotic Navigation Styles */
+  #robotNavContainer {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+    transform-origin: top right;
+    transition: all 0.3s ease;
+  }
+
+  #robotArm {
+    position: relative;
+    width: 300px;
+    height: 400px;
+    transform: scale(0.8);
+    transition: all 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  #robotNavContainer.active #robotArm {
+    opacity: 1;
+    pointer-events: auto;
+    transform: scale(1);
+  }
+
+  .arm-segment {
+    position: absolute;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    border: 2px solid #00ff88;
+    box-shadow: 0 0 15px rgba(0, 255, 136, 0.5);
+  }
+
+  .base {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    top: 0;
+    right: 0;
+    background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+  }
+
+  .joint1 {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    top: 10px;
+    right: 10px;
+    background: linear-gradient(135deg, #3a3a3a 0%, #1a1a1a 100%);
+    animation: rotateJoint1 5s infinite alternate;
+  }
+
+  .segment1 {
+    width: 20px;
+    height: 120px;
+    top: 50px;
+    right: 20px;
+    border-radius: 10px;
+    transform-origin: top center;
+    animation: extendSegment1 6s infinite alternate;
+  }
+
+  .joint2 {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    top: 110px;
+    right: 5px;
+    background: linear-gradient(135deg, #3a3a3a 0%, #1a1a1a 100%);
+    animation: rotateJoint2 4s infinite alternate-reverse;
+  }
+
+  .segment2 {
+    width: 15px;
+    height: 100px;
+    top: 140px;
+    right: 7.5px;
+    border-radius: 8px;
+    transform-origin: top center;
+    animation: extendSegment2 5s infinite alternate;
+  }
+
+  .joint3 {
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    top: 240px;
+    right: 2.5px;
+    background: linear-gradient(135deg, #3a3a3a 0%, #1a1a1a 100%);
+    animation: rotateJoint3 3s infinite alternate;
+  }
+
+  .segment3 {
+    width: 12px;
+    height: 80px;
+    top: 265px;
+    right: 6px;
+    border-radius: 6px;
+    transform-origin: top center;
+  }
+
+  .robot-hand {
+    width: 180px;
+    height: 220px;
+    position: absolute;
+    top: 345px;
+    right: -80px;
+    transform-origin: top center;
+    transform: rotate(-15deg);
+  }
+
+  .menu-panel {
+    width: 100%;
+    height: 100%;
+    background: rgba(10, 10, 20, 0.95);
+    border: 3px solid #00ff88;
+    border-radius: 10px;
+    box-shadow: 0 0 30px rgba(0, 255, 136, 0.7);
+    padding: 15px;
+    color: #00ff88;
+    font-family: 'Courier New', monospace;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .menu-panel::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #00ff88, transparent);
+    animation: scanline 3s linear infinite;
+  }
+
+  .menu-header {
+    font-size: 16px;
+    text-align: center;
+    margin-bottom: 15px;
+    padding-bottom: 8px;
+    border-bottom: 1px dashed #00ff88;
+    text-shadow: 0 0 5px #00ff88;
+    letter-spacing: 2px;
+  }
+
+  .menu-items {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .menu-item {
+    color: #00ff88;
+    text-decoration: none;
+    padding: 8px 12px;
+    border: 1px solid #00ff88;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(0, 255, 136, 0.1);
+    min-height: 44px;
+  }
+
+  .menu-item:hover {
+    background: rgba(0, 255, 136, 0.3);
+    box-shadow: 0 0 15px rgba(0, 255, 136, 0.5);
+    transform: translateX(-5px);
+  }
+
+  .menu-icon {
+    font-size: 18px;
+  }
+
+  #robotNavToggle {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+    border: 2px solid #00ff88;
+    border-radius: 50%;
+    color: #00ff88;
+    font-size: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 10000;
+    box-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
+    transition: all 0.3s ease;
+  }
+
+  #robotNavToggle:hover {
+    background: linear-gradient(135deg, #302b63 0%, #0f0c29 100%);
+    transform: rotate(90deg);
+  }
+
+  /* Animations */
+  @keyframes rotateJoint1 {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(45deg); }
+  }
+
+  @keyframes extendSegment1 {
+    0% { transform: scaleY(1); }
+    100% { transform: scaleY(1.1); }
+  }
+
+  @keyframes rotateJoint2 {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(-30deg); }
+  }
+
+  @keyframes extendSegment2 {
+    0% { transform: scaleY(1); }
+    100% { transform: scaleY(1.05); }
+  }
+
+  @keyframes rotateJoint3 {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(15deg); }
+  }
+
+  @keyframes scanline {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(220px); }
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    #robotArm {
+      transform: scale(0.6);
+      transform-origin: top right;
+    }
+    
+    #robotNavContainer.active #robotArm {
+      transform: scale(0.7);
+    }
+    
+    .robot-hand {
+      width: 150px;
+      height: 180px;
+      right: -60px;
+    }
+    
+    .menu-panel {
+      padding: 10px;
+    }
+    
+    .menu-header {
+      font-size: 14px;
+    }
+    
+    .menu-item {
+      padding: 6px 8px;
+      font-size: 14px;
+    }
   }
 </style>
 </head>
@@ -577,255 +981,49 @@
         <p class="arabic hidden">بعد السك، ستحصل على حق الوصول إلى موقعك المخصص</p>
       </div>
     </div>
-    <!-- Add this where you want the button/videos to appear -->
-<!-- Add this where you want the button/videos to appear -->
-<div class="crypto-video-transparent">
-  <button id="showVideosBtn" onclick="toggleVideos()">Don't know what is crypto?ما هم العملات المشمفرة</button>
-  <div id="videoWrapper" style="display: none;">
-    <div class="video-embed">
-      <iframe width="560" height="315" src="https://www.youtube.com/embed/GHXGCMU0rng" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-    </div>
-    <div class="video-embed">
-      <iframe width="560" height="315" src="https://www.youtube.com/embed/pqKuDKn109c" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-    </div>
-  </div>
-</div>
-
-<style>
-  /* Transparent container with glass-morphism effect */
-  .crypto-video-transparent {
-    text-align: center;
-    margin: 30px 0;
-    padding: 20px;
-    background: transparent; /* Semi-transparent black */
-    backdrop-filter: blur(2px); /* Frosted glass effect */
-    border-radius: 12px;
-    border: 1px solid rgba(255,255,255,0.1); /* Subtle border */
-  }
-
-  /* Modern neon button */
-  #showVideosBtn {
-    background: transparent;
-    color: #fff;
-    padding: 14px 28px;
-    font-size: 18px;
-    font-weight: bold;
-    cursor: pointer;
-    border-radius: 50px;
-    border: 2px solid #00d4ff;
-    transition: all 0.4s;
-    text-shadow: 0 0 5px rgba(0,212,255,0.5);
-    box-shadow: 
-      0 0 10px rgba(0,212,255,0.3),
-      inset 0 0 10px rgba(0,212,255,0.1);
-  }
-
-  #showVideosBtn:hover {
-    background: rgba(0,212,255,0.1);
-    box-shadow: 
-      0 0 20px rgba(0,212,255,0.5),
-      inset 0 0 15px rgba(0,212,255,0.2);
-    transform: translateY(-2px);
-  }
-
-  /* Video styling */
-  .video-embed {
-    position: relative;
-    padding-bottom: 56.25%; /* 16:9 aspect ratio */
-    height: 0;
-    overflow: hidden;
-    margin: 25px 0;
-    border-radius: 8px;
-    box-shadow: 0 10px 20px rgba(0,0,0,0.3);
-  }
-
-  .video-embed iframe {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    border: none;
-  }
-</style>
-
-<script>
-  function toggleVideos() {
-    const wrapper = document.getElementById('videoWrapper');
-    const btn = document.getElementById('showVideosBtn');
     
-    if (wrapper.style.display === 'none') {
-      wrapper.style.display = 'block';
-      btn.textContent = 'Hide Videos';
-      btn.style.borderColor = '#ff3a3a';
-      btn.style.textShadow = '0 0 5px rgba(255,58,58,0.5)';
-      btn.style.boxShadow = '0 0 20px rgba(255,58,58,0.5), inset 0 0 15px rgba(255,58,58,0.2)';
-    } else {
-      wrapper.style.display = 'none';
-      btn.textContent = 'Don\'t know what is crypto? Click me';
-      btn.style.borderColor = '#00ff88';
-      btn.style.textShadow = '0 0 5px rgba(0,212,255,0.5)';
-      btn.style.boxShadow = '0 0 10px rgba(0,212,255,0.3), inset 0 0 10px rgba(0,212,255,0.1)';
-    }
-  }
-</script>
+    <!-- Crypto Video Section -->
+    <div class="crypto-video-transparent">
+      <button id="showVideosBtn" onclick="toggleVideos()">Don't know what is crypto? ما هم العملات المشمفرة</button>
+      <div id="videoWrapper" style="display: none;">
+        <div class="video-embed">
+          <iframe width="560" height="315" src="https://www.youtube.com/embed/GHXGCMU0rng" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+        <div class="video-embed">
+          <iframe width="560" height="315" src="https://www.youtube.com/embed/pqKuDKn109c" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+      </div>
+    </div>
+
     <div style="text-align: center; margin-top: 50px;">
       <a href="#tutorials" class="btn">Watch Tutorial Videos</a>
-<div class="website-card">
-      <h3>ENGMO1234 BLOG</h3>
-      <p>MY BLOG</p>
-      <a href="https://ENGMO1234.COM/BLOG" target="_blank" class="website-link">VISIT ENGMO1234/BLOG</a>
     </div>
-
+    
+    <!-- Completed Websites Section -->
+    <div class="completed-websites">
+      <button id="showWebsitesBtn" onclick="toggleWebsites()">View Completed Websites</button>
+      <div id="websitesWrapper" style="display: none;">
+        <div class="website-card">
+          <h3>Saraya VIP</h3>
+          <p>A premium Engineering consultant services platform</p>
+          <a href="https://saraya.vip" target="_blank" class="website-link">Visit saraya.vip</a>
+        </div>
+        <div class="website-card">
+          <h3>ENGMO1234 BLOG</h3>
+          <p>MY BLOG</p>
+          <a href="https://ENGMO1234.COM/BLOG" target="_blank" class="website-link">VISIT ENGMO1234/BLOG</a>
+        </div>
+      </div>
     </div>
   </section>
 </div>
-<div class="completed-websites">
-  <button id="showWebsitesBtn" onclick="toggleWebsites()">View Completed Websites</button>
-  <div id="websitesWrapper" style="display: none;">
-    <div class="website-card">
-      <h3>Saraya VIP</h3>
-      <p>A premium Engineering consultant services platform</p>
-      <a href="https://saraya.vip" target="_blank" class="website-link">Visit saraya.vip</a>
-    </div>
-    <!-- Add more website cards here as needed -->
-  </div>
-</div>
-<style>
-  /* Base transparent container */
-  .crypto-video-transparent, .completed-websites {
-    text-align: center;
-    margin: 30px 0;
-    padding: 20px;
-    background: rgba(0,0,0,0.05);
-    backdrop-filter: blur(2px);
-    border-radius: 12px;
-    border: 1px solid rgba(255,255,255,0.1);
-  }
 
-  /* Button styling */
-  #showVideosBtn, #showWebsitesBtn {
-    background: transparent;
-    color: #fff;
-    padding: 14px 28px;
-    font-size: 18px;
-    font-weight: bold;
-    cursor: pointer;
-    border-radius: 50px;
-    border: 2px solid #00ff88;
-    transition: all 0.4s;
-    text-shadow: 0 0 5px rgba(0,255,136,0.5);
-    box-shadow: 
-      0 0 10px rgba(0,255,136,0.3),
-      inset 0 0 10px rgba(0,255,136,0.1);
-    margin: 10px;
-  }
-
-  #showVideosBtn:hover, #showWebsitesBtn:hover {
-    background: rgba(0,255,136,0.1);
-    box-shadow: 
-      0 0 20px rgba(0,255,136,0.5),
-      inset 0 0 15px rgba(0,255,136,0.2);
-    transform: translateY(-2px);
-  }
-
-  /* Video styling */
-  .video-embed {
-    position: relative;
-    padding-bottom: 56.25%;
-    height: 0;
-    overflow: hidden;
-    margin: 25px 0;
-    border-radius: 8px;
-    box-shadow: 0 10px 20px rgba(0,0,0,0.3);
-  }
-
-  .video-embed iframe {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    border: none;
-  }
-
-  /* Website cards styling */
-  .website-card {
-    background: rgba(0,0,0,0.2);
-    padding: 20px;
-    border-radius: 8px;
-    margin: 20px auto;
-    max-width: 500px;
-    border: 1px solid rgba(255,255,255,0.1);
-  }
-
-  .website-card h3 {
-    color: #00ff88;
-    margin-top: 0;
-  }
-
-  .website-link {
-    display: inline-block;
-    padding: 10px 20px;
-    background: rgba(0,255,136,0.1);
-    color: #00ff88;
-    text-decoration: none;
-    border-radius: 50px;
-    border: 1px solid #00ff88;
-    transition: all 0.3s;
-    margin-top: 10px;
-  }
-
-  .website-link:hover {
-    background: rgba(0,255,136,0.2);
-    box-shadow: 0 0 15px rgba(0,255,136,0.3);
-  }
-</style>
-
-<script>
-  function toggleVideos() {
-    const wrapper = document.getElementById('videoWrapper');
-    const btn = document.getElementById('showVideosBtn');
-    
-    if (wrapper.style.display === 'none') {
-      wrapper.style.display = 'block';
-      btn.textContent = 'Hide Videos';
-      btn.style.borderColor = '#ff3a3a';
-      btn.style.textShadow = '0 0 5px rgba(255,58,58,0.5)';
-      btn.style.boxShadow = '0 0 20px rgba(255,58,58,0.5), inset 0 0 15px rgba(255,58,58,0.2)';
-    } else {
-      wrapper.style.display = 'none';
-      btn.textContent = 'Don\'t know what is crypto? Click me';
-      btn.style.borderColor = '#00ff88';
-      btn.style.textShadow = '0 0 5px rgba(0,255,136,0.5)';
-      btn.style.boxShadow = '0 0 10px rgba(0,255,136,0.3), inset 0 0 10px rgba(0,255,136,0.1)';
-    }
-  }
-
-  function toggleWebsites() {
-    const wrapper = document.getElementById('websitesWrapper');
-    const btn = document.getElementById('showWebsitesBtn');
-    
-    if (wrapper.style.display === 'none') {
-      wrapper.style.display = 'block';
-      btn.textContent = 'Hide Websites';
-      btn.style.borderColor = '#ff3a3a';
-      btn.style.textShadow = '0 0 5px rgba(255,58,58,0.5)';
-      btn.style.boxShadow = '0 0 20px rgba(255,58,58,0.5), inset 0 0 15px rgba(255,58,58,0.2)';
-    } else {
-      wrapper.style.display = 'none';
-      btn.textContent = 'View Completed Websites';
-      btn.style.borderColor = '#00ff88';
-      btn.style.textShadow = '0 0 5px rgba(0,255,136,0.5)';
-      btn.style.boxShadow = '0 0 10px rgba(0,255,136,0.3), inset 0 0 10px rgba(0,255,136,0.1)';
-    }
-  }
-</script>
 <footer>
-  <p class="english">&copy; 2023 ENGMO1234. All rights reserved. 
-  <p class="arabic hidden">&copy; 2023 ENGMO1234. جميع الحقوق محفوظة. 
+  <p class="english">&copy; 2023 ENGMO1234. All rights reserved.</p>
+  <p class="arabic hidden">&copy; 2023 ENGMO1234. جميع الحقوق محفوظة.</p>
 </footer>
 
+<!-- Language Toggle Button -->
 <div class="language-toggle">
   <button id="translateBtn" class="btn btn-outline" style="padding: 10px 15px;">
     <span class="english">العربية</span>
@@ -842,6 +1040,61 @@
     </div>
   </div>
 </div>
+
+<!-- Robotic Navigation -->
+<div id="robotNavContainer">
+  <div id="robotArm">
+    <div class="arm-segment base">
+      <div class="arm-segment joint1">
+                <div class="arm-segment segment3">
+                  <div class="robot-hand" id="robotHand">
+                    <div class="menu-panel">
+                      <div class="menu-header">NAVIGATION TERMINAL</div>
+                      <div class="menu-items">
+                        <a href="https://www.engmo1234.com/" class="menu-item" data-sound="click1">
+                          <span class="menu-icon">⌂</span> HOME
+                        </a>
+                        <a href="https://www.engmo1234.com/BLOG" class="menu-item" data-sound="click2">
+                          <span class="menu-icon">✍</span> BLOG
+                        </a>
+                        <a href="https://www.engmo1234.com/vipreveal_bilingual_updated.html" class="menu-item" data-sound="click3">
+                          <span class="menu-icon">★</span> VIP PACKAGES
+                        </a>
+                        <a href="https://www.engmo1234.com/bidmintlast.html" class="menu-item" data-sound="click1">
+                          <span class="menu-icon">✧</span> BIDMINT
+                        </a>
+                        <a href="https://www.engmo1234.com/senior.html" class="menu-item" data-sound="click2">
+                          <span class="menu-icon">⚭</span> SENIOR
+                        </a>
+                        <a href="https://www.engmo1234.com/topvip4.html" class="menu-item" data-sound="click3">
+                          <span class="menu-icon">♛</span> TOP VIP
+                        </a>
+                        <a href="https://www.engmo1234.com/terms_green_organized.html" class="menu-item" data-sound="click1">
+                          <span class="menu-icon">⚖</span> TERMS
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="robotNavToggle">≡</div>
+</div>
+
+<!-- Landbot Chat -->
+<script SameSite="None; Secure" type="module" src="https://cdn.landbot.io/landbot-3/landbot-3.0.0.mjs"></script>
+<div id="myLandbot" style="width: 100%; height: 400px"></div>
+<script type="module">
+  var myLandbot = new Landbot.Container({
+    container: '#myLandbot',
+    configUrl: 'https://storage.googleapis.com/landbot.online/v3/H-2968918-K3BL394FTT16C83Y/index.json',
+  });
+</script>
 
 <script>
   // Enhanced Three.js Galaxy Background
@@ -1064,319 +1317,6 @@
     });
   });
 
-  // Initialize Three.js properly
-  handleResize(); // Set initial size
-</script>
-  <!-- Add this anywhere in your HTML body -->
-<div id="robotNavContainer">
-  <div id="robotArm">
-    <div class="arm-segment base">
-      <div class="arm-segment joint1">
-                <div class="arm-segment segment3">
-                  <div class="robot-hand" id="robotHand">
-                    <div class="menu-panel">
-                      <div class="menu-header">NAVIGATION TERMINAL</div>
-                      <div class="menu-items">
-                        <a href="https://www.engmo1234.com/" class="menu-item" data-sound="click1">
-                          <span class="menu-icon">⌂</span> HOME
-                        </a>
-                        <a href="https://www.engmo1234.com/BLOG" class="menu-item" data-sound="click2">
-                          <span class="menu-icon">✍</span> BLOG
-                        </a>
-                        <a href="https://www.engmo1234.com/vipreveal_bilingual_updated.html" class="menu-item" data-sound="click3">
-                          <span class="menu-icon">★</span> VIP PACKAGES
-                        </a>
-                        <a href="https://www.engmo1234.com/bidmintlast.html" class="menu-item" data-sound="click1">
-                          <span class="menu-icon">✧</span> BIDMINT
-                        </a>
-                        <a href="https://www.engmo1234.com/senior.html" class="menu-item" data-sound="click2">
-                          <span class="menu-icon">⚭</span> SENIOR
-                        </a>
-                        <a href="https://www.engmo1234.com/topvip4.html" class="menu-item" data-sound="click3">
-                          <span class="menu-icon">♛</span> TOP VIP
-                        </a>
-                        <a href="https://www.engmo1234.com/terms_green_organized.html" class="menu-item" data-sound="click1">
-                          <span class="menu-icon">⚖</span> TERMS
-                        </a>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div id="robotNavToggle">≡</div>
-</div>
-
-<style>
-  /* Robotic Navigation Styles */
-  #robotNavContainer {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    z-index: 9999;
-    transform-origin: top right;
-    transition: all 0.3s ease;
-  }
-
-  #robotArm {
-    position: relative;
-    width: 300px;
-    height: 400px;
-    transform: scale(0.8);
-    transition: all 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
-    opacity: 0;
-    pointer-events: none;
-  }
-
-  #robotNavContainer.active #robotArm {
-    opacity: 1;
-    pointer-events: auto;
-    transform: scale(1);
-  }
-
-  .arm-segment {
-    position: absolute;
-    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-    border: 2px solid #00ff88;
-    box-shadow: 0 0 15px rgba(0, 255, 136, 0.5);
-  }
-
-  .base {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    top: 0;
-    right: 0;
-    background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
-  }
-
-  .joint1 {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    top: 10px;
-    right: 10px;
-    background: linear-gradient(135deg, #3a3a3a 0%, #1a1a1a 100%);
-    animation: rotateJoint1 5s infinite alternate;
-  }
-
-  .segment1 {
-    width: 20px;
-    height: 120px;
-    top: 50px;
-    right: 20px;
-    border-radius: 10px;
-    transform-origin: top center;
-    animation: extendSegment1 6s infinite alternate;
-  }
-
-  .joint2 {
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    top: 110px;
-    right: 5px;
-    background: linear-gradient(135deg, #3a3a3a 0%, #1a1a1a 100%);
-    animation: rotateJoint2 4s infinite alternate-reverse;
-  }
-
-  .segment2 {
-    width: 15px;
-    height: 100px;
-    top: 140px;
-    right: 7.5px;
-    border-radius: 8px;
-    transform-origin: top center;
-    animation: extendSegment2 5s infinite alternate;
-  }
-
-  .joint3 {
-    width: 25px;
-    height: 25px;
-    border-radius: 50%;
-    top: 240px;
-    right: 2.5px;
-    background: linear-gradient(135deg, #3a3a3a 0%, #1a1a1a 100%);
-    animation: rotateJoint3 3s infinite alternate;
-  }
-
-  .segment3 {
-    width: 12px;
-    height: 80px;
-    top: 265px;
-    right: 6px;
-    border-radius: 6px;
-    transform-origin: top center;
-  }
-
-  .robot-hand {
-    width: 180px;
-    height: 220px;
-    position: absolute;
-    top: 345px;
-    right: -80px;
-    transform-origin: top center;
-    transform: rotate(-15deg);
-  }
-
-  .menu-panel {
-    width: 100%;
-    height: 100%;
-    background: rgba(10, 10, 20, 0.95);
-    border: 3px solid #00ff88;
-    border-radius: 10px;
-    box-shadow: 0 0 30px rgba(0, 255, 136, 0.7);
-    padding: 15px;
-    color: #00ff88;
-    font-family: 'Courier New', monospace;
-    overflow: hidden;
-    position: relative;
-  }
-
-  .menu-panel::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 2px;
-    background: linear-gradient(90deg, transparent, #00ff88, transparent);
-    animation: scanline 3s linear infinite;
-  }
-
-  .menu-header {
-    font-size: 16px;
-    text-align: center;
-    margin-bottom: 15px;
-    padding-bottom: 8px;
-    border-bottom: 1px dashed #00ff88;
-    text-shadow: 0 0 5px #00ff88;
-    letter-spacing: 2px;
-  }
-
-  .menu-items {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .menu-item {
-    color: #00ff88;
-    text-decoration: none;
-    padding: 8px 12px;
-    border: 1px solid #00ff88;
-    border-radius: 5px;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    background: rgba(0, 255, 136, 0.1);
-  }
-
-  .menu-item:hover {
-    background: rgba(0, 255, 136, 0.3);
-    box-shadow: 0 0 15px rgba(0, 255, 136, 0.5);
-    transform: translateX(-5px);
-  }
-
-  .menu-icon {
-    font-size: 18px;
-  }
-
-  #robotNavToggle {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    width: 50px;
-    height: 50px;
-    background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
-    border: 2px solid #00ff88;
-    border-radius: 50%;
-    color: #00ff88;
-    font-size: 30px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    z-index: 10000;
-    box-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
-    transition: all 0.3s ease;
-  }
-
-  #robotNavToggle:hover {
-    background: linear-gradient(135deg, #302b63 0%, #0f0c29 100%);
-    transform: rotate(90deg);
-  }
-
-  /* Animations */
-  @keyframes rotateJoint1 {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(45deg); }
-  }
-
-  @keyframes extendSegment1 {
-    0% { transform: scaleY(1); }
-    100% { transform: scaleY(1.1); }
-  }
-
-  @keyframes rotateJoint2 {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(-30deg); }
-  }
-
-  @keyframes extendSegment2 {
-    0% { transform: scaleY(1); }
-    100% { transform: scaleY(1.05); }
-  }
-
-  @keyframes rotateJoint3 {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(15deg); }
-  }
-
-  @keyframes scanline {
-    0% { transform: translateY(0); }
-    100% { transform: translateY(220px); }
-  }
-
-  /* Responsive adjustments */
-  @media (max-width: 768px) {
-    #robotArm {
-      transform: scale(0.6);
-      transform-origin: top right;
-    }
-    
-    #robotNavContainer.active #robotArm {
-      transform: scale(0.7);
-    }
-    
-    .robot-hand {
-      width: 150px;
-      height: 180px;
-      right: -60px;
-    }
-    
-    .menu-panel {
-      padding: 10px;
-    }
-    
-    .menu-header {
-      font-size: 14px;
-    }
-    
-    .menu-item {
-      padding: 6px 8px;
-      font-size: 14px;
-    }
-  }
-</style>
-
-<script>
   // Toggle menu visibility
   const navToggle = document.getElementById('robotNavToggle');
   const navContainer = document.getElementById('robotNavContainer');
@@ -1432,15 +1372,49 @@
     oscillator.start();
     oscillator.stop(audioCtx.currentTime + 0.5);
   }
-</script>
-<script SameSite="None; Secure"  type="module" src="https://cdn.landbot.io/landbot-3/landbot-3.0.0.mjs"></script>
-<div id="myLandbot" style="width: 100%; height: 400px"></div>
-<script type="module">
-  var myLandbot = new Landbot.Container({
-    container: '#myLandbot',
-    configUrl: 'https://storage.googleapis.com/landbot.online/v3/H-2968918-K3BL394FTT16C83Y/index.json',
-  });
-</script>
 
+  // Toggle videos function
+  function toggleVideos() {
+    const wrapper = document.getElementById('videoWrapper');
+    const btn = document.getElementById('showVideosBtn');
+    
+    if (wrapper.style.display === 'none') {
+      wrapper.style.display = 'block';
+      btn.textContent = 'Hide Videos';
+      btn.style.borderColor = '#ff3a3a';
+      btn.style.textShadow = '0 0 5px rgba(255,58,58,0.5)';
+      btn.style.boxShadow = '0 0 20px rgba(255,58,58,0.5), inset 0 0 15px rgba(255,58,58,0.2)';
+    } else {
+      wrapper.style.display = 'none';
+      btn.textContent = 'Don\'t know what is crypto? Click me';
+      btn.style.borderColor = '#00ff88';
+      btn.style.textShadow = '0 0 5px rgba(0,255,136,0.5)';
+      btn.style.boxShadow = '0 0 10px rgba(0,255,136,0.3), inset 0 0 10px rgba(0,255,136,0.1)';
+    }
+  }
+
+  // Toggle websites function
+  function toggleWebsites() {
+    const wrapper = document.getElementById('websitesWrapper');
+    const btn = document.getElementById('showWebsitesBtn');
+    
+    if (wrapper.style.display === 'none') {
+      wrapper.style.display = 'block';
+      btn.textContent = 'Hide Websites';
+      btn.style.borderColor = '#ff3a3a';
+      btn.style.textShadow = '0 0 5px rgba(255,58,58,0.5)';
+      btn.style.boxShadow = '0 0 20px rgba(255,58,58,0.5), inset 0 0 15px rgba(255,58,58,0.2)';
+    } else {
+      wrapper.style.display = 'none';
+      btn.textContent = 'View Completed Websites';
+      btn.style.borderColor = '#00ff88';
+      btn.style.textShadow = '0 0 5px rgba(0,255,136,0.5)';
+      btn.style.boxShadow = '0 0 10px rgba(0,255,136,0.3), inset 0 0 10px rgba(0,255,136,0.1)';
+    }
+  }
+
+  // Initialize Three.js properly
+  handleResize(); // Set initial size
+</script>
 </body>
 </html>
