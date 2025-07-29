@@ -147,9 +147,45 @@
       background: linear-gradient(135deg, #7a00e0 0%, #e000b7 100%);
       transform: translateY(-5px);
     }
+    /* Translation Button Styles */
+    #translate-btn-container {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 1000;
+    }
+    #translate-btn {
+      background: linear-gradient(135deg, #8b00ff 0%, #ff00cc 100%);
+      border: none;
+      color: white;
+      padding: 10px 15px;
+      border-radius: 50px;
+      cursor: pointer;
+      font-family: 'Orbitron', sans-serif;
+      font-weight: bold;
+      box-shadow: 0 0 15px rgba(139, 0, 255, 0.7);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.3s ease;
+    }
+    #translate-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 25px rgba(139, 0, 255, 0.9);
+    }
+    .rtl-dir {
+      direction: rtl;
+    }
 </style>
 </head>
 <body>
+<!-- Translation Button -->
+<div id="translate-btn-container">
+  <button id="translate-btn">
+    <span style="font-size: 18px;">🌐</span> AR
+  </button>
+</div>
+
 <canvas id="canvas"></canvas>
 
 <!-- Main Content -->
@@ -157,21 +193,21 @@
   <div class="fade-box max-w-4xl w-full space-y-6">
     <!-- Hero Section -->
     <div class="mb-8">
-      <h1 class="text-3xl md:text-4xl font-bold text-green-400 glow-text mb-4">
+      <h1 class="text-3xl md:text-4xl font-bold text-green-400 glow-text mb-4" data-en="EXCLUSIVE NFT MEMBERSHIPS" data-ar="عضوية NFT الحصرية">
         EXCLUSIVE <span class="text-white">NFT MEMBERSHIPS</span>
       </h1>
-      <p class="text-green-300 mb-6 text-lg">
+      <p class="text-green-300 mb-6 text-lg" data-en="Your Gateway to Premium Web3 Services" data-ar="بوابتك إلى خدمات ويب 3 المميزة">
         Your Gateway to Premium Web3 Services
       </p>
     </div>
 
     <!-- Warning Alert -->
     <div class="bg-red-900/80 text-white p-4 rounded-lg border border-red-600 text-center mb-8 animate-pulse">
-      <p class="font-bold mb-2 text-sm md:text-base">❗ SPECIAL OFFER FOR LIMITED BUDGETS ❗</p>
-      <p class="text-xs md:text-sm text-white/90 mb-1">
+      <p class="font-bold mb-2 text-sm md:text-base" data-en="❗ SPECIAL OFFER FOR LIMITED BUDGETS ❗" data-ar="❗ عرض خاص للميزانيات المحدودة ❗">❗ SPECIAL OFFER FOR LIMITED BUDGETS ❗</p>
+      <p class="text-xs md:text-sm text-white/90 mb-1" data-en="Can't afford standard packages? Email engmo1234@hotmail.com with your offer do not bid until receiving confirmation reply." data-ar="لا تستطيع تحمل تكاليف الباقات العادية؟ راسلنا عبر البريد الإلكتروني engmo1234@hotmail.com مع عرضك ولا تقدم عرضًا حتى تتلقى ردًا بالتأكيد">
         Can't afford standard packages? Email <span class="font-bold">engmo1234@hotmail.com</span> with your offer do not bid until receiving confirmation reply.
       </p>
-      <p class="text-xs md:text-sm text-white/90">
+      <p class="text-xs md:text-sm text-white/90" data-en="Limited budget offer" data-ar="عرض للميزانيات المحدودة">
         .ما عندك الامكانية تدفع؟ راسلنا عبر البريد فقط مع عرضك وانتظر الرد والموافقة
       </p>
     </div>
@@ -180,18 +216,18 @@
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
       <div class="bg-black/30 p-4 rounded-lg border border-green-500/20">
         <div class="text-green-400 text-2xl mb-2">⚡</div>
-        <h3 class="text-green-400 font-bold mb-1">Fast Delivery</h3>
-        <p class="text-xs text-white/80">Priority service for minting through ENGMO</p>
+        <h3 class="text-green-400 font-bold mb-1" data-en="Fast Delivery" data-ar="توصيل سريع">Fast Delivery</h3>
+        <p class="text-xs text-white/80" data-en="Priority service for minting through ENGMO" data-ar="خدمة أولوية للسك عبر ENGMO">Priority service for minting through ENGMO</p>
       </div>
       <div class="bg-black/30 p-4 rounded-lg border border-green-500/20">
         <div class="text-green-400 text-2xl mb-2">🔐</div>
-        <h3 class="text-green-400 font-bold mb-1">Secure</h3>
-        <p class="text-xs text-white/80">Blockchain-powered ownership</p>
+        <h3 class="text-green-400 font-bold mb-1" data-en="Secure" data-ar="آمن">Secure</h3>
+        <p class="text-xs text-white/80" data-en="Blockchain-powered ownership" data-ar="ملكية مدعومة بتقنية البلوكشين">Blockchain-powered ownership</p>
       </div>
       <div class="bg-black/30 p-4 rounded-lg border border-green-500/20">
         <div class="text-green-400 text-2xl mb-2">🎁</div>
-        <h3 class="text-green-400 font-bold mb-1">Bonus Website</h3>
-        <p class="text-xs text-white/80">Free with every successful mint</p>
+        <h3 class="text-green-400 font-bold mb-1" data-en="Bonus Website" data-ar="موقع ويب مجاني">Bonus Website</h3>
+        <p class="text-xs text-white/80" data-en="Free with every successful mint" data-ar="مجاني مع كل عملية سك ناجحة">Free with every successful mint</p>
       </div>
     </div>
 
@@ -200,25 +236,25 @@
       <table class="w-full cosmic-table">
         <thead>
           <tr class="bg-gradient-to-r from-black/80 to-green-900/20 text-green-400">
-            <th class="p-4 text-left border-r border-green-500/20">FEATURES</th>
+            <th class="p-4 text-left border-r border-green-500/20" data-en="FEATURES" data-ar="المميزات">FEATURES</th>
             <th class="p-4 text-center border-r border-green-500/20 basic-tier">
-              <span class="block text-lg">Basic</span>
+              <span class="block text-lg" data-en="Basic" data-ar="أساسي">Basic</span>
               <span class="text-sm text-green-300">2706 MATIC</span>
             </th>
             <th class="p-4 text-center border-r border-green-500/20 senior-tier">
-              <span class="block text-lg">Senior</span>
+              <span class="block text-lg" data-en="Senior" data-ar="متقدم">Senior</span>
               <span class="text-sm text-green-300">7861 MATIC</span>
             </th>
             <th class="p-4 text-center border-r border-green-500/20 vip-tier">
-              <span class="block text-lg">VIP</span>
+              <span class="block text-lg" data-en="VIP" data-ar="VIP">VIP</span>
               <span class="text-sm text-yellow-300">61901 MATIC</span>
             </th>
             <th class="p-4 text-center border-r border-green-500/20 legendary-tier">
-              <span class="block text-lg">Legendary</span>
+              <span class="block text-lg" data-en="Legendary" data-ar="أسطوري">Legendary</span>
               <span class="text-sm text-orange-300">999,194 MATIC</span>
             </th>
             <th class="p-4 text-center engmo-tier">
-              <span class="block text-lg">ENGMØ</span>
+              <span class="block text-lg" data-en="ENGMØ" data-ar="ENGMØ">ENGMØ</span>
               <span class="text-sm text-purple-300">99,000,000 MATIC</span>
             </th>
           </tr>
@@ -226,87 +262,87 @@
         <tbody>
           <!-- Domain Row -->
           <tr class="hover:bg-green-900/10 transition-all duration-200">
-            <td class="p-4 text-left border-t border-green-500/10">Domain + Edits</td>
-            <td class="p-4 text-center border-t border-green-500/10">3YR Domain<br>+4 Edits</td>
-            <td class="p-4 text-center border-t border-green-500/10">4YR Domain<br>+8 Edits</td>
-            <td class="p-4 text-center border-t border-green-500/10">7YR Domain<br>7MONTH Edits</td>
-            <td class="p-4 text-center border-t border-green-500/10">10YR Domain<br>2YR Edits</td>
-            <td class="p-4 text-center border-t border-green-500/10 text-purple-300 font-bold">Lifetime Domain<br>Unlimited Edits</td>
+            <td class="p-4 text-left border-t border-green-500/10" data-en="Domain + Edits" data-ar="نطاق + تعديلات">Domain + Edits</td>
+            <td class="p-4 text-center border-t border-green-500/10" data-en="3YR Domain<br>+4 Edits" data-ar="نطاق 3 سنوات<br>+4 تعديلات">3YR Domain<br>+4 Edits</td>
+            <td class="p-4 text-center border-t border-green-500/10" data-en="4YR Domain<br>+8 Edits" data-ar="نطاق 4 سنوات<br>+8 تعديلات">4YR Domain<br>+8 Edits</td>
+            <td class="p-4 text-center border-t border-green-500/10" data-en="7YR Domain<br>7MONTH Edits" data-ar="نطاق 7 سنوات<br>7 شهور تعديلات">7YR Domain<br>7MONTH Edits</td>
+            <td class="p-4 text-center border-t border-green-500/10" data-en="10YR Domain<br>2YR Edits" data-ar="نطاق 10 سنوات<br>سنتين تعديلات">10YR Domain<br>2YR Edits</td>
+            <td class="p-4 text-center border-t border-green-500/10 text-purple-300 font-bold" data-en="Lifetime Domain<br>Unlimited Edits" data-ar="نطاق مدى الحياة<br>تعديلات غير محدودة">Lifetime Domain<br>Unlimited Edits</td>
           </tr>
           
           <!-- SEO Row -->
           <tr class="hover:bg-green-900/10 transition-all duration-200">
-            <td class="p-4 text-left border-t border-green-500/10">SEO Services</td>
-            <td class="p-4 text-center border-t border-green-500/10 text-green-400">✓ Basic</td>
-            <td class="p-4 text-center border-t border-green-500/10 text-green-400">✓ Advanced</td>
-            <td class="p-4 text-center border-t border-green-500/10 text-green-400">✓ Global</td>
-            <td class="p-4 text-center border-t border-green-500/10 text-orange-400">✓ Enterprise</td>
-            <td class="p-4 text-center border-t border-green-500/10 text-purple-300 font-bold">✓ AI-Powered Global Dominance</td>
+            <td class="p-4 text-left border-t border-green-500/10" data-en="SEO Services" data-ar="خدمات SEO">SEO Services</td>
+            <td class="p-4 text-center border-t border-green-500/10 text-green-400" data-en="✓ Basic" data-ar="✓ أساسي">✓ Basic</td>
+            <td class="p-4 text-center border-t border-green-500/10 text-green-400" data-en="✓ Advanced" data-ar="✓ متقدم">✓ Advanced</td>
+            <td class="p-4 text-center border-t border-green-500/10 text-green-400" data-en="✓ Global" data-ar="✓ عالمي">✓ Global</td>
+            <td class="p-4 text-center border-t border-green-500/10 text-orange-400" data-en="✓ Enterprise" data-ar="✓ مؤسسي">✓ Enterprise</td>
+            <td class="p-4 text-center border-t border-green-500/10 text-purple-300 font-bold" data-en="✓ AI-Powered Global Dominance" data-ar="✓ هيمنة عالمية بالذكاء الاصطناعي">✓ AI-Powered Global Dominance</td>
           </tr>
           
           <!-- Content Row -->
           <tr class="hover:bg-green-900/10 transition-all duration-200">
-            <td class="p-4 text-left border-t border-green-500/10">Exclusive Content</td>
+            <td class="p-4 text-left border-t border-green-500/10" data-en="Exclusive Content" data-ar="محتوى حصري">Exclusive Content</td>
             <td class="p-4 text-center border-t border-green-500/10">
               <div class="tooltip">
-                <span class="text-green-300 cursor-pointer">🔒 Basic Blog</span>
-                <span class="tooltip-text">Access to exclusive articles</span>
+                <span class="text-green-300 cursor-pointer" data-en="🔒 Basic Blog" data-ar="🔒 مدونة أساسية">🔒 Basic Blog</span>
+                <span class="tooltip-text" data-en="Access to exclusive articles" data-ar="الوصول إلى مقالات حصرية">Access to exclusive articles</span>
               </div>
             </td>
             <td class="p-4 text-center border-t border-green-500/10">
               <div class="tooltip">
-                <span class="text-green-300 cursor-pointer">🔒 Senior Blog</span>
-                <span class="tooltip-text">VIP previews and early access</span>
+                <span class="text-green-300 cursor-pointer" data-en="🔒 Senior Blog" data-ar="🔒 مدونة متقدمة">🔒 Senior Blog</span>
+                <span class="tooltip-text" data-en="VIP previews and early access" data-ar="معاينات VIP ووصول مبكر">VIP previews and early access</span>
               </div>
             </td>
             <td class="p-4 text-center border-t border-green-500/10">
               <div class="tooltip">
-                <span class="text-yellow-300 cursor-pointer">🔒 VIP Vault</span>
-                <span class="tooltip-text">Live sessions and masterclasses</span>
+                <span class="text-yellow-300 cursor-pointer" data-en="🔒 VIP Vault" data-ar="🔒 خزينة VIP">🔒 VIP Vault</span>
+                <span class="tooltip-text" data-en="Live sessions and masterclasses" data-ar="جلسات مباشرة وفصول رئيسية">Live sessions and masterclasses</span>
               </div>
             </td>
             <td class="p-4 text-center border-t border-green-500/10">
               <div class="tooltip">
-                <span class="text-orange-300 cursor-pointer">🔒 Legendary Content</span>
-                <span class="tooltip-text">Proprietary marketing strategies</span>
+                <span class="text-orange-300 cursor-pointer" data-en="🔒 Legendary Content" data-ar="🔒 محتوى أسطوري">🔒 Legendary Content</span>
+                <span class="tooltip-text" data-en="Proprietary marketing strategies" data-ar="استراتيجيات تسويق حصرية">Proprietary marketing strategies</span>
               </div>
             </td>
             <td class="p-4 text-center border-t border-green-500/10">
               <div class="tooltip">
-                <span class="text-purple-300 cursor-pointer font-bold">🔓 ENGMØ Black Book</span>
-                <span class="tooltip-text">All trade secrets and future developments</span>
+                <span class="text-purple-300 cursor-pointer font-bold" data-en="🔓 ENGMØ Black Book" data-ar="🔓 الكتاب الأسود لـ ENGMØ">🔓 ENGMØ Black Book</span>
+                <span class="tooltip-text" data-en="All trade secrets and future developments" data-ar="كل الأسرار التجارية والتطورات المستقبلية">All trade secrets and future developments</span>
               </div>
             </td>
           </tr>
           
           <!-- Support Row -->
           <tr class="hover:bg-green-900/10 transition-all duration-200">
-            <td class="p-4 text-left border-t border-green-500/10">Support</td>
-            <td class="p-4 text-center border-t border-green-500/10">Email (48h)</td>
-            <td class="p-4 text-center border-t border-green-500/10">Priority + Discord</td>
-            <td class="p-4 text-center border-t border-green-500/10">24/7 WhatsApp</td>
-            <td class="p-4 text-center border-t border-green-500/10 text-orange-300">Dedicated Team</td>
-            <td class="p-4 text-center border-t border-green-500/10 text-purple-300 font-bold">Personal CTO</td>
+            <td class="p-4 text-left border-t border-green-500/10" data-en="Support" data-ar="الدعم">Support</td>
+            <td class="p-4 text-center border-t border-green-500/10" data-en="Email (48h)" data-ar="بريد إلكتروني (48 ساعة)">Email (48h)</td>
+            <td class="p-4 text-center border-t border-green-500/10" data-en="Priority + Discord" data-ar="أولوية + ديسكورد">Priority + Discord</td>
+            <td class="p-4 text-center border-t border-green-500/10" data-en="24/7 WhatsApp" data-ar="واتساب 24/7">24/7 WhatsApp</td>
+            <td class="p-4 text-center border-t border-green-500/10 text-orange-300" data-en="Dedicated Team" data-ar="فريق مخصص">Dedicated Team</td>
+            <td class="p-4 text-center border-t border-green-500/10 text-purple-300 font-bold" data-en="Personal CTO" data-ar="مدير تقني شخصي">Personal CTO</td>
           </tr>
           
           <!-- Special Row -->
           <tr class="hover:bg-green-900/10 transition-all duration-200">
-            <td class="p-4 text-left">Special Access</td>
+            <td class="p-4 text-left" data-en="Special Access" data-ar="وصول خاص">Special Access</td>
             <td class="p-4 text-center">-</td>
             <td class="p-4 text-center">-</td>
-            <td class="p-4 text-center text-yellow-300">✓ Unlocks App</td>
-            <td class="p-4 text-center text-orange-300">✓ AI Marketing Suite</td>
-            <td class="p-4 text-center text-purple-300 font-bold">✓ Full IP Ownership</td>
+            <td class="p-4 text-center text-yellow-300" data-en="✓ Unlocks App" data-ar="✓ يفتح التطبيق">✓ Unlocks App</td>
+            <td class="p-4 text-center text-orange-300" data-en="✓ AI Marketing Suite" data-ar="✓ مجموعة تسويق بالذكاء الاصطناعي">✓ AI Marketing Suite</td>
+            <td class="p-4 text-center text-purple-300 font-bold" data-en="✓ Full IP Ownership" data-ar="✓ ملكية IP كاملة">✓ Full IP Ownership</td>
           </tr>
           
           <!-- Web3 Features Row -->
           <tr class="hover:bg-green-900/10 transition-all duration-200">
-            <td class="p-4 text-left border-t border-green-500/10">Web3 Features</td>
-            <td class="p-4 text-center border-t border-green-500/10">Basic NFT</td>
-            <td class="p-4 text-center border-t border-green-500/10">Smart Contract</td>
-            <td class="p-4 text-center border-t border-green-500/10">Token Creation</td>
-            <td class="p-4 text-center border-t border-green-500/10 text-orange-300">Custom WEB3 DEV</td>
-            <td class="p-4 text-center border-t border-green-500/10 text-purple-300 font-bold">Complete Web3 Ecosystem</td>
+            <td class="p-4 text-left border-t border-green-500/10" data-en="Web3 Features" data-ar="ميزات ويب 3">Web3 Features</td>
+            <td class="p-4 text-center border-t border-green-500/10" data-en="Basic NFT" data-ar="NFT أساسي">Basic NFT</td>
+            <td class="p-4 text-center border-t border-green-500/10" data-en="Smart Contract" data-ar="عقد ذكي">Smart Contract</td>
+            <td class="p-4 text-center border-t border-green-500/10" data-en="Token Creation" data-ar="إنشاء توكن">Token Creation</td>
+            <td class="p-4 text-center border-t border-green-500/10 text-orange-300" data-en="Custom WEB3 DEV" data-ar="تطوير ويب 3 مخصص">Custom WEB3 DEV</td>
+            <td class="p-4 text-center border-t border-green-500/10 text-purple-300 font-bold" data-en="Complete Web3 Ecosystem" data-ar="نظام ويب 3 متكامل">Complete Web3 Ecosystem</td>
           </tr>
         </tbody>
       </table>
@@ -314,23 +350,23 @@
 
     <!-- CTA Section -->
     <div class="text-center">
-      <h3 class="text-xl font-bold text-green-400 mb-4">READY TO UPGRADE YOUR DIGITAL PRESENCE?</h3>
-      <p class="text-sm text-white/80 mb-6">Mint your membership NFT today and receive your free website instantly</p>
+      <h3 class="text-xl font-bold text-green-400 mb-4" data-en="READY TO UPGRADE YOUR DIGITAL PRESENCE?" data-ar="هل أنت مستعد لترقية وجودك الرقمي؟">READY TO UPGRADE YOUR DIGITAL PRESENCE?</h3>
+      <p class="text-sm text-white/80 mb-6" data-en="Mint your membership NFT today and receive your free website instantly" data-ar="اسك عضوية NFT اليوم واحصل على موقعك المجاني فورًا">Mint your membership NFT today and receive your free website instantly</p>
       
       <div class="button-container">
-        <a class="custom-button pulse" href="https://www.engmo1234.com/bidmintlast.html" target="_blank">
+        <a class="custom-button pulse" href="https://www.engmo1234.com/bidmintlast.html" target="_blank" data-en="🚀 Mint Basic Package ( 2706 MATIC )or pay cash" data-ar="🚀 سك الباقة الأساسية (2706 MATIC) أو دفع نقدي">
           🚀 Mint Basic Package ( 2706 MATIC )or pay cash
         </a>
-        <a class="custom-button pulse" href="https://www.engmo1234.com/senior.html" target="_blank">
+        <a class="custom-button pulse" href="https://www.engmo1234.com/senior.html" target="_blank" data-en="💎 Mint Senior Package ( 7861 MATIC )or pay cash" data-ar="💎 سك الباقة المتقدمة (7861 MATIC) أو دفع نقدي">
           💎 Mint Senior Package ( 7861 MATIC )or pay cash
         </a>
-        <a class="custom-button pulse" href="https://www.engmo1234.com/topvip4.html" target="_blank">
+        <a class="custom-button pulse" href="https://www.engmo1234.com/topvip4.html" target="_blank" data-en="👑 Mint VIP Package ( 61901 MATIC )or pay cash" data-ar="👑 سك باقة VIP (61901 MATIC) أو دفع نقدي">
           👑 Mint VIP Package ( 61901 MATIC )or pay cash
         </a> 
-        <a class="custom-button pulse" href="https://www.engmo1234.com/LEGENDARY4.html" target="_blank" style="background-color: #FFA500; color: white;">
+        <a class="custom-button pulse" href="https://www.engmo1234.com/LEGENDARY4.html" target="_blank" style="background-color: #FFA500; color: white;" data-en="♛⚡ Mint LEGENDARY Package (999,194 MATIC) or pay cash" data-ar="♛⚡ سك الباقة الأسطورية (999,194 MATIC) أو دفع نقدي">
            ♛⚡ Mint LEGENDARY Package (999,194 MATIC) or pay cash
         </a>
-        <a class="custom-button pulse engmo-button" href="https://www.engmo1234.com/engmo4.html" target="_blank">
+        <a class="custom-button pulse engmo-button" href="https://www.engmo1234.com/engmo4.html" target="_blank" data-en="🏆 ENGMØ LIFETIME PACKAGE (99,000,000 MATIC) or pay cash" data-ar="🏆 باقة ENGMØ مدى الحياة (99,000,000 MATIC) أو دفع نقدي">
            🏆 ENGMØ LIFETIME PACKAGE (99,000,000 MATIC) or pay cash
         </a>
         <a class="custom-button terms-button" href="terms_green_organized.html" target="_blank">
@@ -338,7 +374,7 @@
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
               <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
             </svg>
-            TERMS & CONDITIONS | الشروط والأحكام
+            <span data-en="TERMS & CONDITIONS" data-ar="الشروط والأحكام">TERMS & CONDITIONS</span> | <span>الشروط والأحكام</span>
           </span>
         </a>
       </div>
@@ -346,25 +382,20 @@
 
     <!-- Trust Badges -->
     <div class="flex flex-wrap justify-center gap-4 mt-8">
-      <div class="text-xs bg-black/30 px-3 py-1 rounded-full border border-green-500/20">
+      <div class="text-xs bg-black/30 px-3 py-1 rounded-full border border-green-500/20" data-en="🔒 Blockchain Secured" data-ar="🔒 مؤمن بتقنية البلوكشين">
         🔒 Blockchain Secured
       </div>
-      <div class="text-xs bg-black/30 px-3 py-1 rounded-full border border-green-500/20">
+      <div class="text-xs bg-black/30 px-3 py-1 rounded-full border border-green-500/20" data-en="⚡ Instant Delivery" data-ar="⚡ توصيل فوري">
         ⚡ Instant Delivery
       </div>
-      <div class="text-xs bg-black/30 px-3 py-1 rounded-full border border-green-500/20">
+      <div class="text-xs bg-black/30 px-3 py-1 rounded-full border border-green-500/20" data-en="🌐 Free Website Included" data-ar="🌐 موقع ويب مجاني شامل">
         🌐 Free Website Included
       </div>
-      <div class="text-xs bg-black/30 px-3 py-1 rounded-full border border-purple-500/20">
+      <div class="text-xs bg-black/30 px-3 py-1 rounded-full border border-purple-500/20" data-en="💎 Ultra Exclusive" data-ar="💎 حصري للغاية">
         💎 Ultra Exclusive
       </div>
     </div>
   </div>
-</div>
-
-<!-- Robotic Navigation (Keep your original code) -->
-<div id="robotNavContainer">
-  <!-- Your existing robot nav code -->
 </div>
 
 <script>
@@ -445,7 +476,46 @@ window.addEventListener('resize', () => {
   canvas.height = window.innerHeight;
 });
 
-// Robot Nav Toggle (Keep your original code)
+// Translation Functionality
+let currentLang = 'en';
+const translateBtn = document.getElementById('translate-btn');
+
+translateBtn.addEventListener('click', function() {
+  currentLang = currentLang === 'en' ? 'ar' : 'en';
+  
+  // Update button text
+  this.innerHTML = `<span style="font-size: 18px;">🌐</span> ${currentLang === 'en' ? 'AR' : 'EN'}`;
+  
+  // Toggle RTL direction for Arabic
+  document.body.classList.toggle('rtl-dir', currentLang === 'ar');
+  
+  // Translate all elements with data attributes
+  document.querySelectorAll('[data-en], [data-ar]').forEach(element => {
+    if (element.dataset[currentLang]) {
+      if (element.classList.contains('tooltip-text')) {
+        // Special handling for tooltips
+        element.textContent = element.dataset[currentLang];
+      } else if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
+        // Handle input placeholders
+        element.placeholder = element.dataset[currentLang];
+      } else {
+        // Handle HTML content for other elements
+        element.innerHTML = element.dataset[currentLang];
+      }
+    }
+  });
+  
+  // Special handling for the hero title (contains HTML span)
+  const heroTitle = document.querySelector('h1.text-green-400');
+  if (heroTitle) {
+    if (currentLang === 'ar') {
+      heroTitle.innerHTML = 'عضوية <span class="text-white">NFT الحصرية</span>';
+    } else {
+      heroTitle.innerHTML = 'EXCLUSIVE <span class="text-white">NFT MEMBERSHIPS</span>';
+    }
+  }
+});
+
 </script>
 
 <style>
