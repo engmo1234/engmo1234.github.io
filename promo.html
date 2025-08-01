@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cosmic Payment Portal</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.net.min.js"></script>
+    <style>
+        :root {
+            --primary: #00ff88;
+            --gold: #ffd700;
+            --platinum: #e5e4e2;
+            --diamond: #b9f2ff;
+            --space-blue: #0b0e23;
+        }
+        
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Orbitron', sans-serif;
+            color: white;
+            overflow-x: hidden;
+            background: var(--space-blue);
+        }
+        
+        #vanta-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+        
+        .content-wrapper {
+            position: relative;
+            z-index: 1;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+            animation: glow 2s infinite alternate;
+        }
+        
+        @keyframes glow {
+            from { text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px var(--primary), 0 0 40px var(--primary); }
+            to { text-shadow: 0 0 20px #fff, 0 0 30px #00ff88, 0 0 40px #00ff88, 0 0 50px #00ff88; }
+        }
+        
+        h1 {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            background: linear-gradient(90deg, #00ff88, #0066ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.6;
+            color: rgba(255,255,255,0.8);
+        }
+        
+        .qr-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            width: 100%;
+            max-width: 1200px;
+            margin: 50px auto;
+        }
+        
+        .qr-card {
+            background: rgba(10, 15, 30, 0.7);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            transition: all 0.5s ease;
+            border: 1px solid rgba(0,255,136,0.3);
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .qr-card::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #00ff88, #0066ff, #00ff88);
+            background-size: 200% 200%;
+            z-index: -1;
+            animation: gradient 3s ease infinite;
+            border-radius: 22px;
+            opacity: 0.7;
+        }
+        
+        .qr-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,255,136,0.2);
+        }
+        
+        .qr-title {
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            color: var(--primary);
+        }
+        
+        .qr-description {
+            font-size: 1rem;
+            margin-bottom: 20px;
+            color: rgba(255,255,255,0.7);
+            min-height: 60px;
+        }
+        
+        .qr-container {
+            perspective: 1000px;
+            width: 180px;
+            height: 180px;
+            margin: 0 auto 20px;
+            cursor: pointer;
+        }
+        
+        .qr-code {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            animation: rotateQR 20s infinite linear;
+            transition: transform 0.5s ease;
+        }
+        
+        .qr-code:hover {
+            animation: rotateQR 5s infinite linear;
+        }
+        
+        .qr-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border: 2px solid var(--primary);
+            border-radius: 15px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: white;
+            box-shadow: 0 0 30px rgba(0,255,136,0.5);
+        }
+        
+        .qr-face img {
+            width: 90%;
+            height: 90%;
+            object-fit: contain;
+        }
+        
+        .qr-face-front {
+            transform: rotateY(0deg);
+        }
+        
+        .qr-face-back {
+            transform: rotateY(180deg);
+            background: linear-gradient(45deg, var(--primary), #0066ff);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            text-align: center;
+            padding: 10px;
+            font-size: 0.9rem;
+        }
+        
+        .qr-button {
+            background: linear-gradient(135deg, var(--primary), #0066ff);
+            color: black;
+            border: none;
+            padding: 12px 25px;
+            font-size: 1rem;
+            border-radius: 50px;
+            margin-top: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .qr-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0,255,136,0.3);
+        }
+        
+        @keyframes rotateQR {
+            0% { transform: rotateY(0deg); }
+            100% { transform: rotateY(360deg); }
+        }
+        
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        /* Spacecraft animations */
+        .spacecraft {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            background-size: contain;
+            background-repeat: no-repeat;
+            z-index: 0;
+            animation-timing-function: linear;
+        }
+        
+        .ship1 {
+            background-image: url('https://cdn-icons-png.flaticon.com/512/3142/3142099.png');
+            top: 10%;
+            left: -100px;
+            animation: flyRight 25s infinite;
+        }
+        
+        .ship2 {
+            background-image: url('https://cdn-icons-png.flaticon.com/512/3142/3142151.png');
+            top: 40%;
+            right: -100px;
+            animation: flyLeft 30s infinite 5s;
+        }
+        
+        .ship3 {
+            background-image: url('https://cdn-icons-png.flaticon.com/512/3142/3142140.png');
+            bottom: 20%;
+            left: -100px;
+            animation: flyRight 35s infinite 10s;
+        }
+        
+        @keyframes flyRight {
+            0% { transform: translateX(-100px) rotateY(180deg); }
+            100% { transform: translateX(calc(100vw + 100px)) rotateY(180deg); }
+        }
+        
+        @keyframes flyLeft {
+            0% { transform: translateX(calc(100vw + 100px)); }
+            100% { transform: translateX(-100px); }
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+            
+            .qr-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .qr-card {
+                padding: 20px;
+            }
+            
+            .qr-title {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div id="vanta-bg"></div>
+    
+    <!-- Spacecraft elements -->
+    <div class="spacecraft ship1"></div>
+    <div class="spacecraft ship2"></div>
+    <div class="spacecraft ship3"></div>
+    
+    <div class="content-wrapper">
+        <div class="header">
+            <h1>GALACTIC PAYMENT PORTAL</h1>
+            <p class="subtitle">Select your cosmic payment tier to unlock exclusive 10% discounts across the universe</p>
+        </div>
+        
+        <div class="qr-grid">
+            <!-- Basic Tier -->
+            <div class="qr-card">
+                <h3 class="qr-title">BASIC TIER</h3>
+                <p class="qr-description">Perfect for cosmic beginners - 10% discount on all standard services</p>
+                
+                <div class="qr-container" onclick="window.open('https://www.paypal.com/invoice/p/#XJBYAVY2NZYAJAXN', '_blank')">
+                    <div class="qr-code">
+                        <div class="qr-face qr-face-front">
+                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=https://www.paypal.com/invoice/p/#XJBYAVY2NZYAJAXN" alt="QR Code">
+                        </div>
+                        <div class="qr-face qr-face-back">
+                            BASIC 10% DISCOUNT
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="qr-button" onclick="window.open('https://www.paypal.com/invoice/p/#XJBYAVY2NZYAJAXN', '_blank')">Pay Now</button>
+            </div>
+            
+            <!-- Senior Tier -->
+            <div class="qr-card">
+                <h3 class="qr-title">SENIOR TIER</h3>
+                <p class="qr-description">For experienced space travelers - 10% discount with priority support</p>
+                
+                <div class="qr-container" onclick="window.open('https://www.paypal.com/invoice/p/#QJXAWTQ3VNJ6SEWK', '_blank')">
+                    <div class="qr-code">
+                        <div class="qr-face qr-face-front">
+                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=https://www.paypal.com/invoice/p/#QJXAWTQ3VNJ6SEWK" alt="QR Code">
+                        </div>
+                        <div class="qr-face qr-face-back">
+                            SENIOR 10% DISCOUNT
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="qr-button" onclick="window.open('https://www.paypal.com/invoice/p/#QJXAWTQ3VNJ6SEWK', '_blank')">Pay Now</button>
+            </div>
+            
+            <!-- VIP Tier -->
+            <div class="qr-card">
+                <h3 class="qr-title">VIP TIER</h3>
+                <p class="qr-description">Exclusive benefits for elite members - 10% discount with VIP perks</p>
+                
+                <div class="qr-container" onclick="window.open('https://www.paypal.com/invoice/p/#XQHQL8RHMQKA8VGS', '_blank')">
+                    <div class="qr-code">
+                        <div class="qr-face qr-face-front">
+                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=https://www.paypal.com/invoice/p/#XQHQL8RHMQKA8VGS" alt="QR Code">
+                        </div>
+                        <div class="qr-face qr-face-back">
+                            VIP 10% DISCOUNT
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="qr-button" onclick="window.open('https://www.paypal.com/invoice/p/#XQHQL8RHMQKA8VGS', '_blank')">Pay Now</button>
+            </div>
+            
+            <!-- Legendary Tier -->
+            <div class="qr-card">
+                <h3 class="qr-title">LEGENDARY TIER</h3>
+                <p class="qr-description">For the cosmic elite - 10% discount with legendary status</p>
+                
+                <div class="qr-container" onclick="window.open('https://www.paypal.com/invoice/p/#J67UWSPHAJY7BSQN', '_blank')">
+                    <div class="qr-code">
+                        <div class="qr-face qr-face-front">
+                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=https://www.paypal.com/invoice/p/#J67UWSPHAJY7BSQN" alt="QR Code">
+                        </div>
+                        <div class="qr-face qr-face-back">
+                            LEGENDARY 10% DISCOUNT
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="qr-button" onclick="window.open('https://www.paypal.com/invoice/p/#J67UWSPHAJY7BSQN', '_blank')">Pay Now</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Vanta.js cosmic background
+        VANTA.NET({
+            el: "#vanta-bg",
+            mouseControls: true,
+            touchControls: true,
+            gyroControls: false,
+            minHeight: 200.00,
+            minWidth: 200.00,
+            scale: 1.00,
+            scaleMobile: 1.00,
+            color: 0x00ff88,
+            backgroundColor: 0x0b0e23,
+            points: 12.00,
+            maxDistance: 25.00,
+            spacing: 18.00
+        });
+        
+        // Make QR codes clickable
+        document.querySelectorAll('.qr-container').forEach(container => {
+            container.addEventListener('click', function() {
+                const link = this.querySelector('img').src.split('data=')[1];
+                window.open(decodeURIComponent(link), '_blank');
+            });
+        });
+        
+        // Add random twinkling stars
+        function createStars() {
+            const space = document.querySelector('body');
+            for (let i = 0; i < 100; i++) {
+                const star = document.createElement('div');
+                star.style.position = 'fixed';
+                star.style.width = `${Math.random() * 3}px`;
+                star.style.height = star.style.width;
+                star.style.backgroundColor = 'white';
+                star.style.borderRadius = '50%';
+                star.style.left = `${Math.random() * 100}vw`;
+                star.style.top = `${Math.random() * 100}vh`;
+                star.style.opacity = Math.random();
+                star.style.animation = `twinkle ${2 + Math.random() * 3}s infinite alternate`;
+                space.appendChild(star);
+            }
+        }
+        
+        // Add CSS for twinkling animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes twinkle {
+                0% { opacity: 0.2; }
+                100% { opacity: 1; }
+            }
+        `;
+        document.head.appendChild(style);
+        
+        // Create stars when page loads
+        window.addEventListener('load', createStars);
+    </script>
+</body>
+</html>
