@@ -551,7 +551,7 @@
 
         <div style="text-align: center; padding: 40px 20px;">
             <div class="commission-info">
-                <p style="margin: 0; font-size: 1.1rem;">عند استخدام كود زينب، ستحصل زينب على <span style="color: var(--primary); font-weight: bold;">15% عمولة</span> ويحصل العميل على <span style="color: var(--gold); font-weight: bold;">10% خصم</span></p>
+                <p style="margin: 0; font-size: 1.1rem;">عند استخدام كود زينب، ستحصل زينب على <span style="color: var(--primary); font-weight: bold;">25% عمولة</span> ويحصل العميل على <span style="color: var(--gold); font-weight: bold;">10% خصم</span></p>
             </div>
             
             <h2 style="font-size: 2rem; margin-bottom: 20px; position: relative; display: inline-block;">
@@ -578,7 +578,7 @@
 
             <div class="tier-card">
                 <h3 style="margin-top: 0; font-size: 1.8rem;">مستواك الحالي: <span style="color: var(--gold); text-shadow: 0 0 5px rgba(255,215,0,0.5);">فضي</span></h3>
-                <p style="font-size: 1.1rem; margin-bottom: 0;">عمولة: 15% | الهدف القادم: 50 عملية بيع للترقية إلى الذهبي</p>
+                <p style="font-size: 1.1rem; margin-bottom: 0;">عمولة: 25% | الهدف القادم: 50 عملية بيع للترقية إلى الذهبي</p>
             </div>
 
             <div class="stats-container">
@@ -725,13 +725,13 @@
                 title: "زينب | وكيلة إنجمو 1234 المتميزة",
                 welcome: "مرحباً بك في عائلة إنجمو 1234",
                 elite: "زينب، أنتِ الآن جزء من النخبة",
-                commissionInfo: "عند استخدام كود زينب، ستحصل زينب على 15% عمولة ويحصل العميل على 10% خصم",
+                commissionInfo: "عند استخدام كود زينب، ستحصل زينب على 25% عمولة ويحصل العميل على 10% خصم",
                 codeTitle: "كودك السري:",
                 codeUsage: "استخدمي هذا الكود في جميع صفقاتك لتحصلي على عمولتك تلقائياً",
                 qrText: "انقر على QR Code لزيارة موقع إنجمو 1234",
                 currentTier: "مستواك الحالي:",
                 tierSilver: "فضي",
-                commissionRate: "عمولة: 15% | الهدف القادم: 20 عملية بيع للترقية إلى الذهبي",
+                commissionRate: "عمولة: 25% | الهدف القادم: 20 عملية بيع للترقية إلى الذهبي",
                 sales: "عمليات البيع",
                 thisMonth: "هذا الشهر",
                 totalProfits: "إجمالي الأرباح",
@@ -749,13 +749,13 @@
                 title: "Zaynab | Premium Engmo 1234 Agent",
                 welcome: "Welcome to the Engmo 1234 Family",
                 elite: "Zaynab, you are now part of the elite",
-                commissionInfo: "When using Zaynab's code, Zaynab will receive 15% commission and the customer will receive 10% discount",
+                commissionInfo: "When using Zaynab's code, Zaynab will receive 25% commission and the customer will receive 10% discount",
                 codeTitle: "Your Secret Code:",
                 codeUsage: "Use this code in all your deals to receive your commission automatically",
                 qrText: "Click QR Code to visit Engmo1234.com",
                 currentTier: "Your Current Tier:",
                 tierSilver: "Silver",
-                commissionRate: "Commission: 15% | Next Goal: 50 sales to upgrade to Gold",
+                commissionRate: "Commission: 25% | Next Goal: 50 sales to upgrade to Gold",
                 sales: "Sales",
                 thisMonth: "This Month",
                 totalProfits: "Total Profits",
@@ -781,7 +781,7 @@
             document.querySelector('.header h1').innerHTML = translations[currentLanguage].welcome.replace("Engmo 1234", `<span style="color: var(--primary);">Engmo 1234</span>`);
             document.querySelector('.header p').innerHTML = `<span style="color: var(--primary); font-weight: bold;">Zaynab</span>، ${translations[currentLanguage].elite.split("Zaynab")[1]}`;
             document.querySelector('.commission-info p').innerHTML = translations[currentLanguage].commissionInfo
-                .replace("15%", `<span style="color: var(--primary); font-weight: bold;">15%</span>`)
+                .replace("25%", `<span style="color: var(--primary); font-weight: bold;">25%</span>`)
                 .replace("10%", `<span style="color: var(--gold); font-weight: bold;">10%</span>`);
             document.querySelector('h2').textContent = translations[currentLanguage].codeTitle;
             document.querySelector('.code-box + p').textContent = translations[currentLanguage].codeUsage;
