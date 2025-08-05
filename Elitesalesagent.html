@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ENGMO Web3 NFT Memberships - Sales Agent Guide</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
+        
+        :root {
+            --primary: #00f7ff;
+            --secondary: #7b2dff;
+            --accent: #ff00e6;
+            --dark: #0a0a20;
+            --light: #e0e0ff;
+        }
+        
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Orbitron', sans-serif;
+            color: var(--light);
+            background-color: var(--dark);
+            background-image: 
+                radial-gradient(circle at 20% 30%, rgba(123, 45, 255, 0.15) 0%, transparent 30%),
+                radial-gradient(circle at 80% 70%, rgba(0, 247, 255, 0.15) 0%, transparent 30%),
+                url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><circle cx="50" cy="50" r="1" fill="white" opacity="0.5"/></svg>');
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle var(--duration, 5s) infinite ease-in-out;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.2; }
+            50% { opacity: 1; }
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+            position: relative;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin: 0;
+            background: linear-gradient(90deg, var(--primary), var(--secondary), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            position: relative;
+            display: inline-block;
+        }
+
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary), var(--accent));
+        }
+
+        h2 {
+            color: var(--primary);
+            font-size: 1.8rem;
+            margin-top: 2.5rem;
+            border-bottom: 2px solid var(--secondary);
+            padding-bottom: 0.5rem;
+            display: inline-block;
+        }
+
+        h3 {
+            color: var(--secondary);
+            font-size: 1.4rem;
+        }
+
+        .effective-date {
+            font-size: 1.1rem;
+            color: var(--accent);
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .parties {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .party {
+            flex: 1;
+            min-width: 250px;
+            margin: 0.5rem;
+            padding: 1rem;
+            background: rgba(10, 10, 32, 0.7);
+            border: 1px solid var(--secondary);
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(123, 45, 255, 0.3);
+        }
+
+        .tiers {
+            display: flex;
+            justify-content: space-between;
+            margin: 2rem 0;
+            flex-wrap: wrap;
+        }
+
+        .tier {
+            flex: 1;
+            min-width: 200px;
+            margin: 0.5rem;
+            padding: 1.5rem;
+            background: rgba(10, 10, 32, 0.7);
+            border: 1px solid;
+            border-radius: 8px;
+            text-align: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .tier:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 247, 255, 0.2);
+        }
+
+        .bronze {
+            border-color: #cd7f32;
+        }
+
+        .bronze h3 {
+            color: #cd7f32;
+        }
+
+        .silver {
+            border-color: #c0c0c0;
+        }
+
+        .silver h3 {
+            color: #c0c0c0;
+        }
+
+        .gold {
+            border-color: #ffd700;
+        }
+
+        .gold h3 {
+            color: #ffd700;
+        }
+
+        .term {
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            background: rgba(10, 10, 32, 0.5);
+            border-left: 4px solid var(--primary);
+            border-radius: 0 8px 8px 0;
+        }
+
+        .term-title {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .term-title .icon {
+            margin-right: 0.5rem;
+            color: var(--primary);
+            font-size: 1.2rem;
+        }
+
+        .termination-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .termination-item .icon {
+            margin-right: 0.5rem;
+            color: #ff3d3d;
+            font-size: 1.2rem;
+        }
+
+        .signature-area {
+            margin-top: 3rem;
+            padding: 2rem;
+            background: rgba(10, 10, 32, 0.7);
+            border: 1px solid var(--accent);
+            border-radius: 8px;
+        }
+
+        .signature-line {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .signature-box {
+            flex: 1;
+            min-width: 200px;
+            margin: 0.5rem;
+        }
+
+        .signature-box h3 {
+            margin-bottom: 1rem;
+        }
+
+        .signature-line-placeholder {
+            height: 2px;
+            background: var(--light);
+            margin-top: 3rem;
+            position: relative;
+        }
+
+        .signature-line-placeholder::after {
+            content: 'Signature';
+            position: absolute;
+            top: -1.5rem;
+            left: 0;
+            color: var(--light);
+            font-size: 0.8rem;
+        }
+
+        .arabic-section {
+            direction: rtl;
+            margin-top: 4rem;
+            padding-top: 2rem;
+            border-top: 2px solid var(--accent);
+        }
+
+        .arabic-section h2 {
+            text-align: right;
+        }
+
+        .floating-planets {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .planet {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(1px);
+            opacity: 0.7;
+        }
+
+        .planet-1 {
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle at 30% 30%, var(--primary), transparent 70%);
+            top: 10%;
+            left: -100px;
+            animation: float 25s infinite linear;
+        }
+
+        .planet-2 {
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle at 70% 30%, var(--secondary), transparent 70%);
+            bottom: 20%;
+            right: -50px;
+            animation: float 30s infinite linear reverse;
+        }
+
+        @keyframes float {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            25% { transform: translate(50px, 50px) rotate(90deg); }
+            50% { transform: translate(100px, 0) rotate(180deg); }
+            75% { transform: translate(50px, -50px) rotate(270deg); }
+            100% { transform: translate(0, 0) rotate(360deg); }
+        }
+
+        .glow-effect {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            background: radial-gradient(circle at center, rgba(0, 247, 255, 0.05) 0%, transparent 70%);
+            z-index: -2;
+            pointer-events: none;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+            background: rgba(10, 10, 32, 0.7);
+            border: 1px solid var(--secondary);
+        }
+
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--secondary);
+        }
+
+        th {
+            background-color: rgba(123, 45, 255, 0.3);
+            color: var(--primary);
+        }
+
+        tr:hover {
+            background-color: rgba(0, 247, 255, 0.1);
+        }
+
+        .sales-script {
+            background: rgba(10, 10, 32, 0.7);
+            padding: 1.5rem;
+            border-left: 4px solid var(--accent);
+            margin: 1.5rem 0;
+        }
+
+        .resource-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .resource-item {
+            flex: 1;
+            min-width: 200px;
+            background: rgba(123, 45, 255, 0.2);
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid var(--secondary);
+        }
+
+        .nft-section {
+            margin: 3rem 0;
+            padding: 2rem;
+            background: rgba(10, 10, 32, 0.7);
+            border: 1px solid var(--accent);
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(255, 0, 230, 0.2);
+        }
+
+        .payment-terms {
+            background: rgba(0, 247, 255, 0.1);
+            padding: 2rem;
+            border-radius: 8px;
+            border: 1px solid var(--primary);
+            margin: 2rem 0;
+        }
+
+        .payment-terms h3 {
+            color: var(--primary);
+            border-bottom: 1px solid var(--primary);
+            padding-bottom: 0.5rem;
+            display: inline-block;
+        }
+
+        @media (max-width: 768px) {
+            .tiers, .parties, .signature-line {
+                flex-direction: column;
+            }
+            
+            .tier, .party, .signature-box {
+                min-width: 100%;
+                margin: 0.5rem 0;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            h2 {
+                font-size: 1.5rem;
+            }
+
+            table {
+                display: block;
+                overflow-x: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="stars" id="stars"></div>
+    <div class="floating-planets">
+        <div class="planet planet-1"></div>
+        <div class="planet planet-2"></div>
+    </div>
+    <div class="glow-effect"></div>
+
+    <div class="container">
+        <header>
+            <h1>ENGMO Web3 NFT Memberships</h1>
+            <h1>عضوات إنجمو NFT</h1>
+            <div class="effective-date">Your Gateway to Premium Web3 Services | بوابتك إلى خدمات ويب 3 المتميزة</div>
+        </header>
+
+        <!-- Special Offer Section -->
+        <div class="nft-section">
+            <h2>❗ SPECIAL OFFER FOR LIMITED BUDGETS ❗</h2>
+            <h2>❗ عرض خاص للميزانيات المحدودة ❗</h2>
+            <p>Can't afford standard packages? Email engmo1234@hotmail.com with your offer do not bid until receiving confirmation reply.</p>
+            <p>ما عندك الامكانية تدفع؟ راسلنا عبر البريد فقط مع عرضك وانتظر الرد والموافقة</p>
+            
+            <div class="resource-list">
+                <div class="resource-item">
+                    <h3>⚡ Fast Delivery</h3>
+                    <p>Priority service for minting through ENGMO</p>
+                    <h3>⚡ توصيل سريع</h3>
+                    <p>خدمة أولوية للطباعة من خلال إنجمو</p>
+                </div>
+                <div class="resource-item">
+                    <h3>🔐 Secure</h3>
+                    <p>Blockchain-powered ownership</p>
+                    <h3>🔐 آمن</h3>
+                    <p>ملكية مدعومة بتقنية البلوكتشين</p>
+                </div>
+                <div class="resource-item">
+                    <h3>🎁 Bonus Website</h3>
+                    <p>Free with every successful mint</p>
+                    <h3>🎁 موقع ويب مجاني</h3>
+                    <p>مع كل عملية طباعة ناجحة</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- NFT Packages Table -->
+        <h2>NFT Membership Packages | باقات العضوية NFT</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Features | الميزات</th>
+                    <th>Basic | أساسي<br>2706 MATIC</th>
+                    <th>Senior | متقدم<br>7861 MATIC</th>
+                    <th>VIP | في أي بي<br>61901 MATIC</th>
+                    <th>Legendary | أسطوري<br>999,194 MATIC</th>
+                    <th>ENGMØ | إنجمو<br>99,000,000 MATIC</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Domain + Edits | دومين + تعديلات</td>
+                    <td>3YR Domain +4 Edits | 3 سنوات + 4 تعديلات</td>
+                    <td>4YR Domain +8 Edits | 4 سنوات + 8 تعديلات</td>
+                    <td>7YR Domain 7MONTH Edits | 7 سنوات + 7 أشهر تعديلات</td>
+                    <td>10YR Domain 2YR Edits | 10 سنوات + سنتين تعديلات</td>
+                    <td>Lifetime Domain Unlimited Edits | دومين مدى الحياة مع تعديلات غير محدودة</td>
+                </tr>
+                <tr>
+                    <td>SEO Services | خدمات SEO</td>
+                    <td>✓ Basic | أساسي</td>
+                    <td>✓ Advanced | متقدم</td>
+                    <td>✓ Global | عالمي</td>
+                    <td>✓ Enterprise | مؤسسي</td>
+                    <td>✓ AI-Powered Global Dominance | هيمنة عالمية بالذكاء الاصطناعي</td>
+                </tr>
+                <tr>
+                    <td>Exclusive Content | محتوى حصري</td>
+                    <td>🔒 Basic Blog | مدونة أساسية</td>
+                    <td>🔒 Senior Blog | مدونة متقدمة</td>
+                    <td>🔒 VIP Vault | خزينة VIP</td>
+                    <td>🔒 Legendary Content | محتوى أسطوري</td>
+                    <td>🔓 ENGMØ Black Book | الكتاب الأسود لإنجمو</td>
+                </tr>
+                <tr>
+                    <td>Support | الدعم</td>
+                    <td>Email (48h) | بريد إلكتروني (48 ساعة)</td>
+                    <td>Priority + Discord | أولوية + ديسكورد</td>
+                    <td>24/7 WhatsApp | واتساب 24/7</td>
+                    <td>Dedicated Team | فريق مخصص</td>
+                    <td>Personal CTO | مدير تقنية شخصي</td>
+                </tr>
+                <tr>
+                    <td>Special Access | وصول خاص</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>✓ Unlocks App | فتح التطبيق</td>
+                    <td>✓ AI Marketing Suite | حزمة تسويق بالذكاء الاصطناعي</td>
+                    <td>✓ Full IP Ownership | ملكية IP كاملة</td>
+                </tr>
+                <tr>
+                    <td>Web3 Features | ميزات ويب 3</td>
+                    <td>Basic NFT | NFT أساسي</td>
+                    <td>Smart Contract | عقد ذكي</td>
+                    <td>Token Creation | إنشاء توكن</td>
+                    <td>Custom WEB3 DEV | تطوير ويب 3 مخصص</td>
+                    <td>Complete Web3 Ecosystem | نظام ويب 3 كامل</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- ========== COMMISSION PAYMENT TERMS ========== -->
+        <div class="payment-terms">
+            <h3>Commission Payment Terms | شروط دفع العمولة</h3>
+            <div class="resource-list">
+                <div class="resource-item">
+                    <h4>Crypto Payments | المدفوعات الرقمية</h4>
+                    <p>• 25-35% commission paid within 14 days of clearance</p>
+                    <p>• Direct blockchain transfer</p>
+                    <p>• No holding period</p>
+                    <p style="direction: rtl; text-align: right;">• عمولة 25-35% تدفع خلال 14 يومًا من التأكيد</p>
+                    <p style="direction: rtl; text-align: right;">• تحويل بلوكتشين مباشر</p>
+                    <p style="direction: rtl; text-align: right;">• لا يوجد فترة انتظار</p>
+                </div>
+                <div class="resource-item">
+                    <h4>PayPal/Cash Payments | مدفوعات باي بال/نقدية</h4>
+                    <p>• Must wait for PayPal processing (up to 2 months)</p>
+                    <p>• Requires customer satisfaction confirmation</p>
+                    <p>• ENGMO provides freeze evidence but no liability</p>
+                    <p style="direction: rtl; text-align: right;">• يجب الانتظار حتى معالجة باي بال (حتى شهرين)</p>
+                    <p style="direction: rtl; text-align: right;">• يتطلب تأكيد رضا العميل</p>
+                    <p style="direction: rtl; text-align: right;">• إنجمو تقدم إثبات التجميد لكنها غير مسؤولة</p>
+                </div>
+            </div>
+            <p style="color: var(--accent); border-top: 1px dashed var(--primary); padding-top: 1rem; font-weight: bold;">
+                Note: For PayPal disputes, ENGMO will provide transaction evidence but cannot be held responsible for PayPal's decisions.
+            </p>
+            <p style="color: var(--accent); direction: rtl; text-align: right; font-weight: bold;">
+                ملاحظة: في حالة نزاعات باي بال، ستقدم إنجمو أدلة المعاملة لكنها غير مسؤولة عن قرارات باي بال.
+            </p>
+        </div>
+
+        <!-- Minting Options -->
+        <h2>Ready to Upgrade Your Digital Presence? | مستعد لترقية وجودك الرقمي؟</h2>
+        <div class="resource-list">
+            <div class="resource-item">
+                <h3>🚀 Mint Basic Package (2706 MATIC) or pay cash</h3>
+                <p>🚀 طباعة الباقة الأساسية (2706 MATIC) أو الدفع نقداً</p>
+            </div>
+            <div class="resource-item">
+                <h3>💎 Mint Senior Package (7861 MATIC) or pay cash</h3>
+                <p>💎 طباعة الباقة المتقدمة (7861 MATIC) أو الدفع نقداً</p>
+            </div>
+            <div class="resource-item">
+                <h3>👑 Mint VIP Package (61901 MATIC) or pay cash</h3>
+                <p>👑 طباعة باقة VIP (61901 MATIC) أو الدفع نقداً</p>
+            </div>
+            <div class="resource-item">
+                <h3>♛⚡ Mint LEGENDARY Package (999,194 MATIC) or pay cash</h3>
+                <p>♛⚡ طباعة الباقة الأسطورية (999,194 MATIC) أو الدفع نقداً</p>
+            </div>
+            <div class="resource-item">
+                <h3>🏆 ENGMØ LIFETIME PACKAGE (99,000,000 MATIC) or pay cash</h3>
+                <p>🏆 باقة إنجمو مدى الحياة (99,000,000 MATIC) أو الدفع نقداً</p>
+            </div>
+        </div>
+
+        <!-- Sales Agent Guide Section -->
+        <div class="nft-section">
+            <h2>ENGMO Web3 NFT Memberships – Sales Agent Guide</h2>
+            <h2>دليل مندوب مبيعات عضوية إنجمو NFT</h2>
+            
+            <h3>Commission Structure | هيكل العمولات</h3>
+            <p>Earn 25-35% commission on every NFT membership sold</p>
+            <p>اكسب 25-35٪ عمولة على كل عضوية NFT مباعة</p>
+            <p>Example: Selling 1 VIP Package (61,901 MATIC) = 15,475-21,665 MATIC commission</p>
+            <p>مثال: بيع باقة VIP واحدة (61,901 MATIC) = 15,475-21,665 MATIC عمولة</p>
+            
+            <!-- Reinforced Payment Terms -->
+            <div class="term">
+                <div class="term-title">
+                    <span class="icon">⚠️</span>
+                    <h3>Important Payment Notice | إشعار دفع مهم</h3>
+                </div>
+                <p><strong>PayPal Payments:</strong> Commissions only paid after successful PayPal transfer. ENGMO provides evidence of frozen transactions but assumes no liability for PayPal decisions.</p>
+                <p style="direction: rtl; text-align: right;"><strong>مدفوعات باي بال:</strong> تدفع العمولات فقط بعد التحويل الناجح عبر باي بال. تقدم إنجمو إثباتًا على المعاملات المجمدة لكنها غير مسؤولة عن قرارات باي بال.</p>
+            </div>
+            
+            <h3>Key Selling Points | نقاط البيع الرئيسية</h3>
+            <div class="resource-list">
+                <div class="resource-item">
+                    <p>Free website included with every NFT mint</p>
+                    <p>موقع ويب مجاني مع كل عملية minting للـNFT</p>
+                </div>
+                <div class="resource-item">
+                    <p>Blockchain-secured membership access</p>
+                    <p>عضوية مؤمنة بتقنية البلوكتشين</p>
+                </div>
+                <div class="resource-item">
+                    <p>VIP+ tiers get 24/7 dedicated support</p>
+                    <p>دعم فني على مدار الساعة للدرجات VIP وما فوق</p>
+                </div>
+            </div>
+            
+            <h3>Sales Scripts | نصوص مبيعات جاهزة</h3>
+            <div class="sales-script">
+                <p>For budget-conscious clients:</p>
+                <p>"Can't afford standard packages? Email your offer to engmo1234@hotmail.com and wait for confirmation before bidding."</p>
+                <p>للعملاء محدودي الميزانية:</p>
+                <p>"لا تستطيع دفع السعر الكامل؟ أرسل عرضك إلى engmo1234@hotmail.com وانتظر الموافقة قبل المزايدة."</p>
+            </div>
+            <div class="sales-script">
+                <p>For premium clients:</p>
+                <p>"The ENGMØ tier includes a personal CTO and complete Web3 ecosystem control - the ultimate digital asset package."</p>
+                <p>للعملاء المميزين:</p>
+                <p>"تتضمن درجة ENGMØ مدير تقنية شخصي وسيطرة كاملة على نظام Web3 - الحزمة المثالية للأصول الرقمية."</p>
+            </div>
+            
+            <h3>Agent Resources | أدوات مندوب المبيعات</h3>
+            <div class="resource-list">
+                <div class="resource-item">
+                    <p>Always check current MATIC/USD conversion rates</p>
+                    <p>تحقق دائماً من أسعار تحويل MATIC/USD الحالية</p>
+                </div>
+                <div class="resource-item">
+                    <p>Use the tier comparison table to show upgrade benefits</p>
+                    <p>استخدم جدول مقارنة الباقات لإظهار مزايا الترقية</p>
+                </div>
+                <div class="resource-item">
+                    <p>Highlight: "All sales are final - memberships are NFT-gated"</p>
+                    <p>أبرز: "جميع المبيعات نهائية - العضويات مؤمنة بـNFT"</p>
+                </div>
+            </div>
+            
+            <h3>Terms & Conditions | الشروط والأحكام</h3>
+            <p>All payments in MATIC or equivalent cash value</p>
+            <p>جميع المدفوعات بـMATIC أو ما يعادلها نقداً</p>
+            <p>No refunds after minting</p>
+            <p>لا يوجد استرجاع بعد عملية minting</p>
+            <p>Full terms at: [website URL]</p>
+            <p>الشروط الكاملة على: [رابط الموقع]</p>
+            
+            <h3>Contact | للتواصل</h3>
+            <p>For sales support: engmo1234@hotmail.com</p>
+            <p>لدعم المبيعات: engmo1234@hotmail.com</p>
+        </div>
+
+        <!-- Original Contract Content -->
+        <h2>ENGMO COMMISSION SALES AGREEMENT</h2>
+        <h2>عقد عمولة إنجمو</h2>
+        <div class="effective-date">Effective Date: <span id="current-date"></span> | تاريخ السريان: <span id="current-date-ar"></span></div>
+
+        <div class="parties">
+            <div class="party">
+                <h3>Company</h3>
+                <p>ENGMO FZ-LLC</p>
+            </div>
+            <div class="party">
+                <h3>Independent Sales Agent</h3>
+                <p>[Agent signature]</p>
+            </div>
+        </div>
+
+        <h2>1. Position & Commission Structure</h2>
+        <p>Agent selects one tier:</p>
+
+        <div class="tiers">
+            <div class="tier bronze">
+                <h3>BRONZE</h3>
+                <p>20% commission</p>
+                <p>≤$10K monthly sales</p>
+            </div>
+            <div class="tier silver">
+                <h3>SILVER</h3>
+                <p>25% commission</p>
+                <p>$10K-$50K monthly sales</p>
+            </div>
+            <div class="tier gold">
+                <h3>GOLD</h3>
+                <p>35% commission</p>
+                <p>≥$50K monthly sales</p>
+            </div>
+        </div>
+
+        <!-- Payment Terms in Contract -->
+        <div class="term">
+            <div class="term-title">
+                <span class="icon">💳</span>
+                <h3>Payment Terms | شروط الدفع</h3>
+            </div>
+            <p><strong>English:</strong> Commission paid within 14 days for crypto payments. For PayPal: must wait for funds clearance (up to 2 months). ENGMO provides freeze evidence but assumes no liability for PayPal decisions.</p>
+            <p><strong>العربية:</strong> تدفع العمولة خلال 14 يومًا للدفعات الرقمية. بالنسبة لباي بال: يجب الانتظار حتى تأكيد التحويل (حتى شهرين). تقدم إنجمو إثبات التجميد لكنها غير مسؤولة عن قرارات باي بال.</p>
+        </div>
+
+        <h2>2. Key Terms</h2>
+        <div class="term">
+            <div class="term-title">
+                <span class="icon">✅</span>
+                <h3>Non-Employment</h3>
+            </div>
+            <p>Agent is an independent contractor (no benefits/VISA provided).</p>
+        </div>
+        <div class="term">
+            <div class="term-title">
+                <span class="icon">✅</span>
+                <h3>No Minimum Guarantee</h3>
+            </div>
+            <p>Commission-only; no base salary.</p>
+        </div>
+        <div class="term">
+            <div class="term-title">
+                <span class="icon">✅</span>
+                <h3>Client Ownership</h3>
+            </div>
+            <p>All client data remains Company property.</p>
+        </div>
+        <div class="term">
+            <div class="term-title">
+                <span class="icon">✅</span>
+                <h3>Non-Compete</h3>
+            </div>
+            <p>No similar sales for competitors during + 6 months after contract.</p>
+        </div>
+
+        <h2>3. Agent Responsibilities</h2>
+        <ul>
+            <li>Generate own leads (no company-provided prospects)</li>
+            <li>Disclose exact commission tier to clients</li>
+            <li>No false claims about ENGMO services</li>
+        </ul>
+
+        <h2>4. Termination</h2>
+        <p>Immediate termination for:</p>
+        <div class="termination-item">
+            <span class="icon">✖</span>
+            <p>Fraudulent sales</p>
+        </div>
+        <div class="termination-item">
+            <span class="icon">✖</span>
+            <p>Sharing client data</p>
+        </div>
+        <div class="termination-item">
+            <span class="icon">✖</span>
+            <p>60+ days of no sales (Gold tier: 30 days)</p>
+        </div>
+
+        <h2>5. UAE Law Compliance</h2>
+        <ul>
+            <li>Governed by UAE Federal Law No. 5/1985 (Civil Code)</li>
+            <li>Disputes resolved in Dubai Courts</li>
+            <li>Agent covers all own licensing/tax obligations</li>
+        </ul>
+
+        <div class="signature-area">
+            <h2>Signatures</h2>
+            <div class="signature-line">
+                <div class="signature-box">
+                    <h3>Agent Signature</h3>
+                    <div class="signature-line-placeholder"></div>
+                    <p>Date: _______________</p>
+                </div>
+                <div class="signature-box">
+                    <h3>ENGMO Representative</h3>
+                    <div class="signature-line-placeholder"></div>
+                    <p>Date: _______________</p>
+                </div>
+            </div>
+            <p>Attach: Agent Emirates ID + Passport Copy</p>
+        </div>
+
+        <div class="arabic-section">
+            <h2>عقد عمولة إنجمو</h2>
+            <h3>المادة 1: العمولة (٢٠٪-٣٥٪) حسب المستوى</h3>
+            <h3>المادة 4: الفسخ الفوري لأي تلاعب بالمبيعات</h3>
+            <h3>المادة 5: يخضع العقد لقانون الإمارات</h3>
+            
+            <p>"تُدفع العمولة خلال ١٤ يوم من تأكيد استلام الدفع في حالة العقود المشفرة (كريبتو).</p>
+            <p>إذا تم الدفع عبر بوابة باي بال الوكيل:</p>
+            <ul style="direction: rtl; text-align: right;">
+                <li>تخضع مدة التحويل لسرعة إتمام باي بال للعمليات (قد تصل إلى شهرين)</li>
+                <li>في حال تقديم العميل شكوى وتم تجميد الأموال:</li>
+                <li>توفر إنجمو للوكيل إثبات تجميد الدفع</li>
+                <li>لا تتحمل إنجمو أي التزام بدفع العمولة ما لم يُفرج باي بال عن الأموال"</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // Set current dates in English and Arabic
+        const now = new Date();
+        const options = { year: 'numeric', month: 'long', day: 'numeric' };
+        document.getElementById('current-date').textContent = now.toLocaleDateString('en-US', options);
+        
+        // Arabic date formatting
+        const arabicOptions = { year: 'numeric', month: 'long', day: 'numeric', numberingSystem: 'arab' };
+        document.getElementById('current-date-ar').textContent = now.toLocaleDateString('ar-EG', arabicOptions);
+        
+        // Create stars
+        const starsContainer = document.getElementById('stars');
+        for (let i = 0; i < 200; i++) {
+            const star = document.createElement('div');
+            star.className = 'star';
+            star.style.width = `${Math.random() * 3}px`;
+            star.style.height = star.style.width;
+            star.style.left = `${Math.random() * 100}%`;
+            star.style.top = `${Math.random() * 100}%`;
+            star.style.setProperty('--duration', `${5 + Math.random() * 10}s`);
+            starsContainer.appendChild(star);
+        }
+
+        // Add floating animation to elements
+        const animateElements = document.querySelectorAll('.resource-item, .sales-script, .nft-section, .payment-terms');
+        animateElements.forEach((element, index) => {
+            element.style.animation = `float-up ${0.5 + index * 0.1}s ease-out forwards`;
+            element.style.opacity = '0';
+            element.style.transform = 'translateY(20px)';
+        });
+
+        document.head.insertAdjacentHTML('beforeend', `
+            <style>
+                @keyframes float-up {
+                    to {
+                        opacity: 1;
+                        transform: translateY(0);
+                    }
+                }
+            </style>
+        `);
+    </script>
+</body>
+</html>
