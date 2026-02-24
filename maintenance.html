@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta property="og:description" content="Professional website design & development services exclusively accepting Polygon (MATIC) crypto and NFT payments.">
+<meta property="og:description" content="خدمات تصميم مواقع ويب احترافية بقبول دفعات العملات الرقمية NFT عبر شبكة بوليجون (MATIC)">
+<title>Bism Allah - ENGMO1234 · Under Maintenance</title>
+<!-- Three.js for 3D background -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet"/>
+<!-- Remix Icons -->
+<link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css" rel="stylesheet"/>
+
+<!-- Comprehensive Favicon Setup (kept intact) -->
+<link rel="icon" href="/favicons/favicon.ico" type="image/x-icon" sizes="any">
+<link rel="icon" href="/favicons/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/favicons/apple-touch-icon.png">
+<link rel="manifest" href="/favicons/site.webmanifest">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicons/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicons/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="48x48" href="/favicons/favicon-48x48.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/favicons/favicon-192x192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="/favicons/favicon-512x512.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/favicons/apple-touch-icon-180x180.png">
+
+<!-- Sitemap Link -->
+<link rel="sitemap" type="application/xml" title="Sitemap" href="/sitemap.xml">
+
+<style>
+  :root {
+    --primary: #00ff88;
+    --primary-dark: #00cc6a;
+    --dark-bg: rgba(10,10,10,0.3);
+    --darker-bg: rgba(5,5,5,0.3);
+    --text-light: rgba(255,255,255,0.9);
+    --modal-bg: rgba(10,10,10,0.95);
+  }
+  
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  /* Mobile scrolling fixes */
+  html {
+    -webkit-overflow-scrolling: touch;
+    overflow-x: hidden;
+    width: 100%;
+    height: 100%;
+  }
+  
+  body {
+    width: 100%;
+    min-height: 100%;
+    font-family: 'Cairo', sans-serif;
+    color: var(--text-light);
+    background-color: transparent;
+    overflow-x: hidden;
+    position: relative;
+    -webkit-text-size-adjust: 100%;
+    touch-action: manipulation;
+  }
+
+  #bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+  }
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* iOS specific fixes */
+  @supports (-webkit-touch-callout: none) {
+    body {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+    }
+    
+    .container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      overflow-y: scroll;
+      -webkit-overflow-scrolling: touch;
+    }
+  }
+
+  header {
+    padding: 30px 0;
+    text-align: center;
+    position: relative;
+    z-index: 10;
+    background-color: transparent;
+    margin: 20px;
+  }
+
+  h1 {
+    font-size: clamp(2rem, 5vw, 3rem);
+    margin-bottom: 15px;
+    color: var(--primary);
+    text-shadow: 0 0 15px var(--primary);
+    font-weight: 900;
+  }
+
+  .logo-container {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0;
+  }
+
+  .logo {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    box-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
+    border: 2px solid var(--primary);
+    transition: all 0.5s ease;
+    cursor: pointer;
+  }
+
+  .logo:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 30px rgba(0, 255, 136, 0.8);
+  }
+
+  .logo.enlarged {
+    width: 200px;
+    height: 200px;
+  }
+
+  /* ----- MAINTENANCE SECTION ----- */
+  .maintenance-section {
+    min-height: 50vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 40px 20px;
+    margin: 30px 0;
+    background-color: transparent;
+    position: relative;
+    z-index: 10;
+  }
+
+  .maintenance-title {
+    font-size: clamp(2.5rem, 6vw, 4rem);
+    color: var(--primary);
+    text-shadow: 0 0 20px var(--primary);
+    margin-bottom: 20px;
+    line-height: 1.2;
+  }
+
+  .maintenance-message {
+    font-size: 1.5rem;
+    margin-bottom: 30px;
+    max-width: 800px;
+    color: rgba(255,255,255,0.9);
+  }
+
+  .maintenance-timer {
+    font-size: 2rem;
+    font-weight: bold;
+    color: white;
+    background: rgba(0,255,136,0.1);
+    padding: 20px 40px;
+    border-radius: 50px;
+    border: 1px solid var(--primary);
+    box-shadow: 0 0 30px rgba(0,255,136,0.3);
+    margin-top: 30px;
+    backdrop-filter: blur(5px);
+    display: inline-block;
+  }
+
+  .maintenance-timer span {
+    color: var(--primary);
+    font-family: monospace;
+    font-size: 2.2rem;
+    letter-spacing: 2px;
+  }
+
+  .sub-message {
+    font-size: 1.2rem;
+    margin-top: 40px;
+    opacity: 0.8;
+    border-top: 1px dashed rgba(0,255,136,0.3);
+    padding-top: 30px;
+    max-width: 600px;
+  }
+  /* ----- END MAINTENANCE SECTION ----- */
+
+  /* Language toggle (same as original) */
+  .language-toggle {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 100;
+  }
+
+  .btn {
+    display: inline-block;
+    padding: 12px 30px;
+    background-color: var(--primary);
+    color: #001f1f;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    margin: 10px;
+    font-size: 1rem;
+    box-shadow: 0 0 15px rgba(0, 255, 136, 0.5);
+    position: relative;
+    z-index: 10;
+    min-height: 44px;
+  }
+
+  .btn-outline {
+    background-color: transparent;
+    border: 2px solid var(--primary);
+    color: var(--primary);
+  }
+
+  .btn-outline:hover {
+    background-color: rgba(0, 255, 136, 0.1);
+  }
+
+  footer {
+    text-align: center;
+    padding: 30px 0;
+    background-color: rgba(0,0,0,0.3);
+    margin-top: 50px;
+    position: relative;
+    z-index: 10;
+    backdrop-filter: blur(5px);
+    border-top: 1px solid rgba(0, 255, 136, 0.2);
+  }
+
+  /* Robotic Navigation (kept exactly as original) */
+  #robotNavContainer {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+    transform-origin: top right;
+    transition: all 0.3s ease;
+  }
+
+  #robotArm {
+    position: relative;
+    width: 300px;
+    height: 400px;
+    transform: scale(0.8);
+    transition: all 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  #robotNavContainer.active #robotArm {
+    opacity: 1;
+    pointer-events: auto;
+    transform: scale(1);
+  }
+
+  .arm-segment {
+    position: absolute;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    border: 2px solid #00ff88;
+    box-shadow: 0 0 15px rgba(0, 255, 136, 0.5);
+  }
+
+  .base {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    top: 0;
+    right: 0;
+    background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+  }
+
+  .joint1 {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    top: 10px;
+    right: 10px;
+    background: linear-gradient(135deg, #3a3a3a 0%, #1a1a1a 100%);
+    animation: rotateJoint1 5s infinite alternate;
+  }
+
+  .segment1 {
+    width: 20px;
+    height: 120px;
+    top: 50px;
+    right: 20px;
+    border-radius: 10px;
+    transform-origin: top center;
+    animation: extendSegment1 6s infinite alternate;
+  }
+
+  .joint2 {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    top: 110px;
+    right: 5px;
+    background: linear-gradient(135deg, #3a3a3a 0%, #1a1a1a 100%);
+    animation: rotateJoint2 4s infinite alternate-reverse;
+  }
+
+  .segment2 {
+    width: 15px;
+    height: 100px;
+    top: 140px;
+    right: 7.5px;
+    border-radius: 8px;
+    transform-origin: top center;
+    animation: extendSegment2 5s infinite alternate;
+  }
+
+  .joint3 {
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    top: 240px;
+    right: 2.5px;
+    background: linear-gradient(135deg, #3a3a3a 0%, #1a1a1a 100%);
+    animation: rotateJoint3 3s infinite alternate;
+  }
+
+  .segment3 {
+    width: 12px;
+    height: 80px;
+    top: 265px;
+    right: 6px;
+    border-radius: 6px;
+    transform-origin: top center;
+  }
+
+  .robot-hand {
+    width: 180px;
+    height: 313px;
+    position: absolute;
+    top: 345px;
+    right: -80px;
+    transform-origin: top center;
+    transform: rotate(-30deg);
+  }
+
+  .menu-panel {
+    width: 100%;
+    height: 100%;
+    background: rgba(10, 10, 20, 0.95);
+    border: 3px solid #00ff88;
+    border-radius: 10px;
+    box-shadow: 0 0 30px rgba(0, 255, 136, 0.7);
+    padding: 15px;
+    color: #00ff88;
+    font-family: 'Courier New', monospace;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .menu-panel::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #00ff88, transparent);
+    animation: scanline 3s linear infinite;
+  }
+
+  .menu-header {
+    font-size: 16px;
+    text-align: center;
+    margin-bottom: 15px;
+    padding-bottom: 8px;
+    border-bottom: 1px dashed #00ff88;
+    text-shadow: 0 0 5px #00ff88;
+    letter-spacing: 2px;
+  }
+
+  .menu-items {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .menu-item {
+    color: #00ff88;
+    text-decoration: none;
+    padding: 8px 12px;
+    border: 1px solid #00ff88;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(0, 255, 136, 0.1);
+    min-height: 44px;
+  }
+
+  .menu-item:hover {
+    background: rgba(0, 255, 136, 0.3);
+    box-shadow: 0 0 15px rgba(0, 255, 136, 0.5);
+    transform: translateX(-5px);
+  }
+
+  .menu-icon {
+    font-size: 18px;
+  }
+
+  #robotNavToggle {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+    border: 2px solid #00ff88;
+    border-radius: 50%;
+    color: #00ff88;
+    font-size: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 10000;
+    box-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
+    transition: all 0.3s ease;
+  }
+
+  #robotNavToggle:hover {
+    background: linear-gradient(135deg, #302b63 0%, #0f0c29 100%);
+    transform: rotate(90deg);
+  }
+
+  /* Animations */
+  @keyframes rotateJoint1 {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(71deg); }
+  }
+
+  @keyframes extendSegment1 {
+    0% { transform: scaleY(1); }
+    100% { transform: scaleY(1.1); }
+  }
+
+  @keyframes rotateJoint2 {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(-45deg); }
+  }
+
+  @keyframes extendSegment2 {
+    0% { transform: scaleY(1); }
+    100% { transform: scaleY(1.05); }
+  }
+
+  @keyframes rotateJoint3 {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(30deg); }
+  }
+
+  @keyframes scanline {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(220px); }
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    #robotArm {
+      transform: scale(0.6);
+      transform-origin: top right;
+    }
+    
+    #robotNavContainer.active #robotArm {
+      transform: scale(0.7);
+    }
+    
+    .robot-hand {
+      width: 150px;
+      height: 281px;
+      right: -60px;
+    }
+    
+    .menu-panel {
+      padding: 10px;
+    }
+    
+    .menu-header {
+      font-size: 14px;
+    }
+    
+    .menu-item {
+      padding: 6px 8px;
+      font-size: 14px;
+    }
+  }
+
+  /* Landbot Chat Container Fix */
+  #landbot-container {
+    position: fixed;
+    bottom: 90px;
+    right: 20px;
+    width: 100px;
+    height: 100px;
+    z-index: 9998;
+    border-radius: 50%;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
+    border: 2px solid var(--primary);
+  }
+
+  #landbot-container.expanded {
+    width: 350px;
+    height: 500px;
+    border-radius: 12px;
+    bottom: 20px;
+    right: 20px;
+  }
+
+  #landbot-toggle {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+    border: 2px solid #00ff88;
+    border-radius: 50%;
+    color: #00ff88;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 9999;
+    box-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
+    font-size: 24px;
+  }
+
+  #landbot-toggle:hover {
+    transform: scale(1.1);
+  }
+
+  #myLandbot {
+    width: 100%;
+    height: 100%;
+    display: none;
+  }
+
+  #landbot-container.expanded #myLandbot {
+    display: block;
+  }
+
+  #landbot-container.expanded #landbot-toggle {
+    top: 10px;
+    right: 10px;
+    bottom: auto;
+    width: 30px;
+    height: 30px;
+    font-size: 16px;
+  }
+
+  /* iOS specific fixes for Landbot */
+  @supports (-webkit-touch-callout: none) {
+    #landbot-container {
+      position: fixed;
+      -webkit-overflow-scrolling: touch;
+    }
+    
+    #landbot-container iframe {
+      -webkit-overflow-scrolling: touch;
+    }
+  }
+</style>
+</head>
+<body>
+<!-- Three.js Background Canvas -->
+<div id="bg"></div>
+
+<!-- Main Content -->
+<div class="container">
+  <header>
+    <h1 id="title">Bism Allah</h1>
+    
+    <!-- Logo Container -->
+    <div class="logo-container">
+      <img src="https://www.engmo1234.com/logo.png" alt="ENGMO1234 Logo" class="logo" id="websiteLogo">
+    </div>
+    
+    <!-- Subtitle now shows maintenance status -->
+    <p class="subtitle english">🔧 Site under maintenance — we'll be back soon</p>
+    <p class="subtitle arabic hidden">🔧 الموقع تحت الصيانة — سنعود قريباً</p>
+  </header>
+
+  <!-- MAINTENANCE SECTION (replaces original cta, tutorials, how-it-works) -->
+  <section class="maintenance-section">
+    <!-- English content -->
+    <div class="english">
+      <h1 class="maintenance-title">🔧 Under Maintenance</h1>
+      <p class="maintenance-message">We're upgrading our systems to serve you better. The site will be back shortly with enhanced features and Web3 integrations.</p>
+      <div class="maintenance-timer">Estimated time: <span>2 hours</span></div>
+      <p class="sub-message">Thank you for your patience. For urgent inquiries, please use the chat button below.</p>
+    </div>
+    <!-- Arabic content -->
+    <div class="arabic hidden">
+      <h1 class="maintenance-title">🔧 تحت الصيانة</h1>
+      <p class="maintenance-message">نحن نطور أنظمتنا لنقدم لك خدمة أفضل. سيعود الموقع قريبًا مع تحسينات وتكاملات Web3 جديدة.</p>
+      <div class="maintenance-timer">الوقت التقديري: <span>ساعتين</span></div>
+      <p class="sub-message">شكرًا لصبرك. للاستفسارات العاجلة، يرجى استخدام زر الدردشة أدناه.</p>
+    </div>
+  </section>
+
+  <footer>
+    <p class="english">&copy; 2023 ENGMO1234. All rights reserved.</p>
+    <p class="arabic hidden">&copy; 2023 ENGMO1234. جميع الحقوق محفوظة.</p>
+  </footer>
+</div>
+
+<!-- Language Toggle Button -->
+<div class="language-toggle">
+  <button id="translateBtn" class="btn btn-outline" style="padding: 10px 15px;">
+    <span class="english">العربية</span>
+    <span class="arabic hidden">English</span>
+  </button>
+</div>
+
+<!-- Modal for Terms and Conditions (kept but not used in maintenance, just in case) -->
+<div id="contentModal" class="modal">
+  <div class="modal-content">
+    <span class="close-modal">&times;</span>
+    <div id="modalTextContent" class="modal-text-content"></div>
+  </div>
+</div>
+
+<!-- Robotic Navigation (kept fully functional) -->
+<div id="robotNavContainer">
+  <div id="robotArm">
+    <div class="arm-segment base">
+      <div class="arm-segment joint1">
+        <div class="arm-segment segment1">
+          <div class="arm-segment joint2">
+            <div class="arm-segment segment2">
+              <div class="arm-segment joint3">
+                <div class="arm-segment segment3">
+                  <div class="robot-hand" id="robotHand">
+                    <div class="menu-panel">
+                      <div class="menu-header">NAVIGATION TERMINAL</div>
+                      <div class="menu-items">
+                        <a href="#" class="menu-item" data-sound="click1">
+                          <span class="menu-icon">⌂</span> HOME (maintenance)
+                        </a>
+                        <a href="#" class="menu-item" data-sound="click2">
+                          <span class="menu-icon">✍</span> BLOG (offline)
+                        </a>
+                        <a href="#" class="menu-item" data-sound="click3">
+                          <span class="menu-icon">★</span> VIP PACKAGES
+                        </a>
+                        <a href="#" class="menu-item" data-sound="click1">
+                          <span class="menu-icon">✧</span> Elite Sales Agent
+                        </a>
+                        <a href="#" class="menu-item" data-sound="click2">
+                          <span class="menu-icon">⚭</span> SENIOR
+                        </a>
+                        <a href="#" class="menu-item" data-sound="click3">
+                          <span class="menu-icon">♛</span> TOP VIP
+                        </a>
+                        <a href="#" class="menu-item" data-sound="click1">
+                          <span class="menu-icon">⚖</span> TERMS
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="robotNavToggle">≡</div>
+</div>
+
+<!-- Landbot Chat Container (kept fully functional) -->
+<div id="landbot-container">
+  <div id="landbot-toggle">💬</div>
+  <div id="myLandbot"></div>
+</div>
+
+<!-- Landbot Chat Script -->
+<script SameSite="None; Secure" type="module" src="https://cdn.landbot.io/landbot-3/landbot-3.0.0.mjs"></script>
+<script type="module">
+  var myLandbot = new Landbot.Container({
+    container: '#myLandbot',
+    configUrl: 'https://storage.googleapis.com/landbot.online/v3/H-2968918-K3BL394FTT16C83Y/index.json',
+  });
+</script>
+
+<script>
+  // Enhanced Three.js Galaxy Background (identical to original)
+  const bgContainer = document.getElementById('bg');
+  
+  // Scene setup
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 2000);
+  const renderer = new THREE.WebGLRenderer({ 
+    antialias: true, 
+    alpha: true,
+    powerPreference: "high-performance"
+  });
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setClearColor(0x000000); 
+  bgContainer.appendChild(renderer.domElement);
+
+  // Create galaxy particles
+  const particlesGeometry = new THREE.BufferGeometry();
+  const particlesMaterial = new THREE.PointsMaterial({
+    color: 0x00ff88,
+    size: 1.5,
+    transparent: true,
+    opacity: 0.8,
+    blending: THREE.AdditiveBlending,
+    sizeAttenuation: true
+  });
+
+  const particleCount = 15000;
+  const positions = new Float32Array(particleCount * 3);
+  const colors = new Float32Array(particleCount * 3);
+
+  for (let i = 0; i < particleCount; i++) {
+    const radius = Math.random() * 1000;
+    const theta = Math.random() * Math.PI * 2;
+    const phi = Math.random() * Math.PI;
+    
+    positions[i * 3] = radius * Math.sin(phi) * Math.cos(theta);
+    positions[i * 3 + 1] = radius * Math.sin(phi) * Math.sin(theta);
+    positions[i * 3 + 2] = radius * Math.cos(phi);
+    
+    colors[i * 3] = 0.0;
+    colors[i * 3 + 1] = Math.random() * 0.5 + 0.5;
+    colors[i * 3 + 2] = Math.random() * 0.3 + 0.2;
+  }
+
+  particlesGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+  particlesGeometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+  const particles = new THREE.Points(particlesGeometry, particlesMaterial);
+  scene.add(particles);
+
+  camera.position.z = 500;
+
+  let mouseX = 0;
+  let mouseY = 0;
+  let windowHalfX = window.innerWidth / 2;
+  let windowHalfY = window.innerHeight / 2;
+
+  document.addEventListener('mousemove', (event) => {
+    mouseX = (event.clientX - windowHalfX) * 0.05;
+    mouseY = (event.clientY - windowHalfY) * 0.05;
+  });
+
+  function animate() {
+    requestAnimationFrame(animate);
+    
+    particles.rotation.x += 0.0005;
+    particles.rotation.y += 0.001;
+    
+    camera.position.x += (mouseX - camera.position.x) * 0.05;
+    camera.position.y += (-mouseY - camera.position.y) * 0.05;
+    camera.lookAt(scene.position);
+    
+    renderer.render(scene, camera);
+  }
+  
+  animate();
+
+  function handleResize() {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    windowHalfX = window.innerWidth / 2;
+    windowHalfY = window.innerHeight / 2;
+  }
+  
+  window.addEventListener('resize', handleResize);
+
+  // Language Toggle
+  let isArabic = false;
+  function toggleLanguage() {
+    const englishElements = document.querySelectorAll('.english');
+    const arabicElements = document.querySelectorAll('.arabic');
+    
+    if (!isArabic) {
+      document.getElementById('title').innerText = 'بسم الله';
+      document.body.classList.add('arabic');
+      
+      englishElements.forEach(el => el.classList.add('hidden'));
+      arabicElements.forEach(el => el.classList.remove('hidden'));
+    } else {
+      document.getElementById('title').innerText = 'Bism Allah';
+      document.body.classList.remove('arabic');
+      
+      englishElements.forEach(el => el.classList.remove('hidden'));
+      arabicElements.forEach(el => el.classList.add('hidden'));
+    }
+    isArabic = !isArabic;
+  }
+
+  // Modal functionality (kept but not used actively)
+  const modal = document.getElementById('contentModal');
+  const closeBtn = document.querySelector('.close-modal');
+  
+  closeBtn.onclick = function() {
+    modal.style.display = "none";
+  }
+  
+  window.onclick = function(event) {
+    if (event.target == modal) {
+      modal.style.display = "none";
+    }
+  }
+  
+  document.addEventListener('keydown', function(event) {
+    if (event.key === "Escape") {
+      modal.style.display = "none";
+    }
+  });
+
+  // Attach language toggle
+  document.getElementById('translateBtn').addEventListener('click', toggleLanguage);
+
+  // Toggle menu visibility (robotic arm)
+  const navToggle = document.getElementById('robotNavToggle');
+  const navContainer = document.getElementById('robotNavContainer');
+  
+  navToggle.addEventListener('click', function() {
+    navContainer.classList.toggle('active');
+    playSound('servo');
+  });
+  
+  // Add click sounds to menu items
+  const menuItems = document.querySelectorAll('.menu-item');
+  menuItems.forEach(item => {
+    item.addEventListener('click', function() {
+      const soundType = this.getAttribute('data-sound');
+      playSound(soundType);
+    });
+  });
+  
+  // Sound effects (Web Audio API)
+  function playSound(type) {
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const oscillator = audioCtx.createOscillator();
+    const gainNode = audioCtx.createGain();
+    
+    oscillator.connect(gainNode);
+    gainNode.connect(audioCtx.destination);
+    
+    switch(type) {
+      case 'click1':
+        oscillator.type = 'square';
+        oscillator.frequency.value = 300;
+        gainNode.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.3);
+        break;
+      case 'click2':
+        oscillator.type = 'sine';
+        oscillator.frequency.value = 500;
+        gainNode.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.2);
+        break;
+      case 'click3':
+        oscillator.type = 'triangle';
+        oscillator.frequency.value = 700;
+        gainNode.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.25);
+        break;
+      case 'servo':
+        oscillator.type = 'sawtooth';
+        oscillator.frequency.setValueAtTime(100, audioCtx.currentTime);
+        oscillator.frequency.exponentialRampToValueAtTime(400, audioCtx.currentTime + 0.1);
+        gainNode.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.3);
+        break;
+    }
+    
+    oscillator.start();
+    oscillator.stop(audioCtx.currentTime + 0.5);
+  }
+
+  // Landbot toggle
+  const landbotContainer = document.getElementById('landbot-container');
+  const landbotToggle = document.getElementById('landbot-toggle');
+  
+  landbotToggle.addEventListener('click', function() {
+    landbotContainer.classList.toggle('expanded');
+    if (landbotContainer.classList.contains('expanded')) {
+      landbotToggle.textContent = '×';
+    } else {
+      landbotToggle.textContent = '💬';
+    }
+  });
+
+  // Logo enlarge on click
+  const logo = document.getElementById('websiteLogo');
+  let isLogoEnlarged = false;
+  
+  logo.addEventListener('click', function() {
+    if (isLogoEnlarged) {
+      logo.classList.remove('enlarged');
+    } else {
+      logo.classList.add('enlarged');
+    }
+    isLogoEnlarged = !isLogoEnlarged;
+  });
+
+  // Initialize Three.js properly
+  handleResize();
+</script>
+</body>
+</html>
