@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>🃏 UNO · Password Room + Chat</title>
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+  <style>
+    * {
+      box-sizing: border-box;
+      user-select: none;
+    }
+    body {
+      background: linear-gradient(145deg, #1a2a3a 0%, #0f1a24 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: 'Segoe UI', 'Poppins', 'Inter', system-ui, sans-serif;
+      margin: 0;
+      padding: 20px;
+    }
+    .game-container {
+      max-width: 1000px;
+      width: 100%;
+      background: rgba(30,35,45,0.65);
+      backdrop-filter: blur(8px);
+      border-radius: 3rem;
+      padding: 1.5rem 1.8rem 2rem;
+      box-shadow: 0 25px 45px rgba(0,0,0,0.5), inset 0 1px 1px rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,215,150,0.3);
+    }
+    .room-panel {
+      background: #1e1f28cc;
+      border-radius: 2rem;
+      padding: 1rem;
+      margin-bottom: 1.5rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+      justify-content: center;
+    }
+    .room-panel input {
+      background: #2c2e3a;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 40px;
+      color: #ffe3b3;
+      font-size: 1rem;
+      font-family: monospace;
+      text-align: center;
+      outline: none;
+      border: 1px solid #e4b363;
+    }
+    .room-panel button {
+      background: #3e3f4a;
+      border: none;
+      padding: 10px 24px;
+      border-radius: 40px;
+      font-weight: bold;
+      color: #f0e2c5;
+      cursor: pointer;
+      transition: 0.15s;
+    }
+    .room-panel button:hover {
+      background: #5e5f6e;
+    }
+    .game-area {
+      display: none;
+    }
+    .game-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+    }
+    .title {
+      font-size: 1.7rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #F5E7D3, #E0C8A0);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+    .turn-badge {
+      background: #2c2e3a;
+      padding: 6px 20px;
+      border-radius: 60px;
+      font-weight: 600;
+      font-size: 1rem;
+    }
+    .status-area {
+      background: #1e1f28cc;
+      border-radius: 2rem;
+      padding: 0.5rem 1rem;
+      text-align: center;
+      margin: 12px 0 16px;
+      color: #FFE5B4;
+      border-left: 4px solid #e4b363;
+    }
+    .game-board {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .opponent-area {
+      text-align: center;
+    }
+    .opponent-hand {
+      display: flex;
+      justify-content: center;
+      gap: 5px;
+      flex-wrap: wrap;
+    }
+    .card-back {
+      width: 70px;
+      height: 100px;
+      background: radial-gradient(circle, #2c3e4e, #1a2a36);
+      border-radius: 12px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+      border: 1px solid #e4b363;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      color: #ffd966;
+      font-weight: bold;
+    }
+    .center-area {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .draw-pile, .discard-pile {
+      text-align: center;
+    }
+    .draw-card, .discard-card {
+      width: 90px;
+      height: 130px;
+      background: radial-gradient(circle, #2c3e4e, #1a2a36);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.5rem;
+      cursor: pointer;
+      transition: 0.1s;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+      border: 1px solid #e4b363;
+    }
+    .draw-card:hover {
+      transform: scale(1.02);
+      background: #3e5a6e;
+    }
+    .player-area {
+      margin-top: 20px;
+    }
+    .player-hand {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+      margin: 10px 0;
+    }
+    .card {
+      width: 70px;
+      height: 100px;
+      background: white;
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.05s linear;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      border: 1px solid #aaa;
+    }
+    .card:hover {
+      transform: scale(1.05);
+    }
+    .card.selected {
+      border: 3px solid gold;
+      transform: scale(1.02);
+    }
+    .card-disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+    .color-red { background: #ff6b6b; color: white; }
+    .color-blue { background: #4dabff; color: white; }
+    .color-green { background: #6fcf97; color: white; }
+    .color-yellow { background: #f4d03f; color: #2c3e50; }
+    .color-wild { background: linear-gradient(135deg, #ff6b6b, #4dabff, #6fcf97, #f4d03f); color: white; text-shadow: 1px 1px 0 #000; }
+    .action-buttons {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      margin: 20px 0;
+    }
+    .btn {
+      background: #2c2f36;
+      border: none;
+      padding: 8px 24px;
+      border-radius: 40px;
+      font-weight: 600;
+      color: #f0e2c5;
+      cursor: pointer;
+    }
+    .chat-panel {
+      margin-top: 20px;
+      background: #1e1c1aa0;
+      border-radius: 28px;
+      padding: 12px;
+    }
+    .chat-messages {
+      background: #0f0e0caa;
+      border-radius: 20px;
+      padding: 10px;
+      height: 150px;
+      overflow-y: auto;
+      font-size: 0.85rem;
+      margin-bottom: 8px;
+    }
+    .chat-message {
+      padding: 4px 8px;
+      border-bottom: 1px solid #e4b36333;
+      color: #ffe3c4;
+    }
+    .chat-message strong {
+      color: #ffd966;
+    }
+    .chat-input-area {
+      display: flex;
+      gap: 8px;
+    }
+    .chat-input-area input {
+      flex: 1;
+      background: #2c2e3a;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 40px;
+      color: #ffe3b3;
+      outline: none;
+    }
+    .uno-button {
+      background: #e67e22;
+      color: white;
+      font-weight: bold;
+    }
+    @media (max-width: 650px) {
+      .card, .card-back, .draw-card, .discard-card { width: 55px; height: 80px; font-size: 1rem; }
+    }
+  </style>
+</head>
+<body>
+<div class="game-container" id="app">
+  <div class="room-panel" id="roomPanel">
+    <input type="text" id="roomPassword" placeholder="Enter shared password (e.g., chaima-motasim)" autocomplete="off">
+    <button id="joinBtn">🔐 Join / Create Game</button>
+  </div>
+  <div class="game-area" id="gameArea">
+    <div class="game-header">
+      <div class="title">🃏 UNO · REMOTE</div>
+      <div class="turn-badge" id="turnBadge">—</div>
+    </div>
+    <div class="status-area" id="statusMessage">Waiting for opponent...</div>
+    <div class="game-board">
+      <div class="opponent-area">
+        <div>Opponent's hand</div>
+        <div class="opponent-hand" id="opponentHand"></div>
+      </div>
+      <div class="center-area">
+        <div class="draw-pile">
+          <div>Draw pile</div>
+          <div class="draw-card" id="drawCard">🃟</div>
+        </div>
+        <div class="discard-pile">
+          <div>Discard</div>
+          <div class="discard-card" id="discardCard"></div>
+        </div>
+      </div>
+      <div class="player-area">
+        <div>Your hand</div>
+        <div class="player-hand" id="playerHand"></div>
+        <div class="action-buttons">
+          <button class="btn" id="callUnoBtn">📢 Call UNO!</button>
+          <button class="btn" id="catchUnoBtn">⚠️ Catch UNO</button>
+          <button class="btn" id="resetGameBtn">⟳ New Game</button>
+        </div>
+      </div>
+    </div>
+    <div class="chat-panel">
+      <div class="chat-title">💬 CHAT</div>
+      <div class="chat-messages" id="chatMessages">
+        <div class="chat-message">— No messages yet —</div>
+      </div>
+      <div class="chat-input-area">
+        <input type="text" id="chatInput" placeholder="Type a message..." maxlength="200">
+        <button id="sendChatBtn">Send</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ========== YOUR FIREBASE CONFIGURATION (same as chess) ==========
+  const firebaseConfig = {
+    apiKey: "AIzaSyCQ7QZFblWwB530G2ARVPHvYLAsDf0Mwak",
+    authDomain: "chessgame-e4dbb.firebaseapp.com",
+    projectId: "chessgame-e4dbb",
+    storageBucket: "chessgame-e4dbb.firebasestorage.app",
+    messagingSenderId: "65265732775",
+    appId: "1:65265732775:web:8c9ce7a779e8687bb59f82",
+    measurementId: "G-7KMVP6RBFB",
+    databaseURL: "https://chessgame-e4dbb-default-rtdb.asia-southeast1.firebasedatabase.app/"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
+  // ==============================================
+
+  // ----- UNO game logic -----
+  const COLORS = ['red', 'blue', 'green', 'yellow'];
+  const NUMBERS = [0,1,2,3,4,5,6,7,8,9];
+  const SPECIALS = ['skip', 'reverse', 'draw2'];
+  const WILDS = ['wild', 'wild4'];
+
+  function createDeck() {
+    let deck = [];
+    // Number cards
+    for (let color of COLORS) {
+      for (let num of NUMBERS) {
+        deck.push({ color, type: 'number', value: num });
+        if (num !== 0) deck.push({ color, type: 'number', value: num }); // 0 only once, others twice
+      }
+    }
+    // Specials
+    for (let color of COLORS) {
+      for (let special of SPECIALS) {
+        deck.push({ color, type: special });
+        deck.push({ color, type: special });
+      }
+    }
+    // Wilds
+    for (let i = 0; i < 4; i++) deck.push({ type: 'wild' });
+    for (let i = 0; i < 4; i++) deck.push({ type: 'wild4' });
+    return shuffle(deck);
+  }
+
+  function shuffle(deck) {
+    for (let i = deck.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [deck[i], deck[j]] = [deck[j], deck[i]];
+    }
+    return deck;
+  }
+
+  function cardToString(card) {
+    if (!card) return '?';
+    if (card.type === 'number') return `${card.color[0].toUpperCase()}${card.value}`;
+    if (card.type === 'wild') return 'Wild';
+    if (card.type === 'wild4') return 'Wild+4';
+    return `${card.color[0].toUpperCase()} ${card.type}`;
+  }
+
+  function getCardStyle(card) {
+    if (!card) return '';
+    if (card.type === 'wild' || card.type === 'wild4') return 'color-wild';
+    return `color-${card.color}`;
+  }
+
+  function getCardSymbol(card) {
+    if (!card) return '?';
+    if (card.type === 'number') return card.value;
+    if (card.type === 'skip') return '⊘';
+    if (card.type === 'reverse') return '↺';
+    if (card.type === 'draw2') return '+2';
+    if (card.type === 'wild') return '🎨';
+    if (card.type === 'wild4') return '+4🎨';
+    return '';
+  }
+
+  function canPlay(card, topCard) {
+    if (!topCard) return true;
+    if (card.type === 'wild' || card.type === 'wild4') return true;
+    if (card.type === 'number' && topCard.type === 'number' && card.value === topCard.value) return true;
+    if (card.color === topCard.color) return true;
+    if (card.type === topCard.type && card.type !== 'number' && card.type !== 'wild') return true;
+    return false;
+  }
+
+  // ----- Firebase sync & game state -----
+  let myPlayerIndex = null;   // 0 or 1
+  let roomRef = null;
+  let gameState = null;       // current game state object
+  let selectedCardIndex = -1;
+  let unoCalledThisTurn = false;
+
+  // DOM elements
+  const roomPanel = document.getElementById('roomPanel');
+  const gameArea = document.getElementById('gameArea');
+  const roomPasswordInput = document.getElementById('roomPassword');
+  const joinBtn = document.getElementById('joinBtn');
+  const turnBadge = document.getElementById('turnBadge');
+  const statusDiv = document.getElementById('statusMessage');
+  const opponentHandDiv = document.getElementById('opponentHand');
+  const playerHandDiv = document.getElementById('playerHand');
+  const drawCardDiv = document.getElementById('drawCard');
+  const discardCardDiv = document.getElementById('discardCard');
+  const callUnoBtn = document.getElementById('callUnoBtn');
+  const catchUnoBtn = document.getElementById('catchUnoBtn');
+  const resetGameBtn = document.getElementById('resetGameBtn');
+  const chatMessagesDiv = document.getElementById('chatMessages');
+  const chatInput = document.getElementById('chatInput');
+  const sendChatBtn = document.getElementById('sendChatBtn');
+
+  // Helper: render UI based on gameState
+  function render() {
+    if (!gameState) return;
+    const myHand = gameState.players[myPlayerIndex].cards;
+    const opponentHandCount = gameState.players[1 - myPlayerIndex].cards.length;
+    const topCard = gameState.discardPile[gameState.discardPile.length - 1];
+    const currentPlayer = gameState.currentPlayer;
+    const isMyTurn = (currentPlayer === myPlayerIndex);
+    const gameOver = gameState.winner !== null;
+
+    // Turn badge
+    const playerName = currentPlayer === 0 ? 'Player 1' : 'Player 2';
+    turnBadge.innerText = gameOver ? `Game over: ${gameState.winner === 0 ? 'Player 1' : 'Player 2'} wins` : `${playerName}'s turn`;
+    turnBadge.className = `turn-badge turn-${currentPlayer === myPlayerIndex ? 'white' : 'black'}`;
+
+    // Status
+    if (gameOver) {
+      statusDiv.innerHTML = `🏆 ${gameState.winner === myPlayerIndex ? 'You won!' : 'Opponent won!'} 🏆`;
+    } else {
+      statusDiv.innerHTML = isMyTurn ? "Your turn" : "Waiting for opponent...";
+    }
+
+    // Opponent hand (card backs)
+    opponentHandDiv.innerHTML = '';
+    for (let i = 0; i < opponentHandCount; i++) {
+      const back = document.createElement('div');
+      back.className = 'card-back';
+      back.innerText = '🃟';
+      opponentHandDiv.appendChild(back);
+    }
+
+    // Player hand
+    playerHandDiv.innerHTML = '';
+    myHand.forEach((card, idx) => {
+      const cardDiv = document.createElement('div');
+      cardDiv.className = `card ${getCardStyle(card)}`;
+      if (idx === selectedCardIndex && isMyTurn && !gameOver) cardDiv.classList.add('selected');
+      cardDiv.innerHTML = `<div style="font-size:1.8rem;">${getCardSymbol(card)}</div><div style="font-size:0.7rem;">${cardToString(card)}</div>`;
+      if (isMyTurn && !gameOver) {
+        cardDiv.style.cursor = 'pointer';
+        cardDiv.onclick = () => selectCard(idx);
+      } else {
+        cardDiv.style.opacity = '0.6';
+        cardDiv.style.cursor = 'not-allowed';
+      }
+      playerHandDiv.appendChild(cardDiv);
+    });
+
+    // Draw pile and discard
+    drawCardDiv.innerText = gameState.drawPile.length > 0 ? '🃟' : '🃞';
+    if (topCard) {
+      discardCardDiv.className = `discard-card ${getCardStyle(topCard)}`;
+      discardCardDiv.innerHTML = `<div style="font-size:2rem;">${getCardSymbol(topCard)}</div><div style="font-size:0.7rem;">${cardToString(topCard)}</div>`;
+    } else {
+      discardCardDiv.innerText = '?';
+    }
+
+    // Enable/disable draw click
+    drawCardDiv.onclick = null;
+    if (isMyTurn && !gameOver && !gameState.drawnThisTurn) {
+      drawCardDiv.style.cursor = 'pointer';
+      drawCardDiv.onclick = () => drawCard();
+    } else {
+      drawCardDiv.style.cursor = 'default';
+    }
+  }
+
+  function selectCard(index) {
+    if (selectedCardIndex === index) {
+      selectedCardIndex = -1;
+    } else {
+      selectedCardIndex = index;
+    }
+    render();
+  }
+
+  async function playCard(index) {
+    const card = gameState.players[myPlayerIndex].cards[index];
+    const topCard = gameState.discardPile[gameState.discardPile.length - 1];
+    if (!canPlay(card, topCard)) {
+      statusDiv.innerText = "Can't play that card!";
+      return;
+    }
+    // Check for UNO penalty: if player has 2 cards and didn't call UNO, opponent can catch
+    // We'll handle catch separately. For now, just play.
+    const handSizeBefore = gameState.players[myPlayerIndex].cards.length;
+    // Perform move locally, then sync
+    const newState = JSON.parse(JSON.stringify(gameState));
+    // Remove card from hand
+    newState.players[myPlayerIndex].cards.splice(index, 1);
+    // Add to discard
+    newState.discardPile.push(card);
+    // Apply card effect
+    let skipNext = false;
+    let drawAmount = 0;
+    let changeDirection = false;
+    if (card.type === 'skip') {
+      skipNext = true;
+    } else if (card.type === 'reverse') {
+      // For 2 players, reverse acts like skip (the other player's turn again)
+      skipNext = true;
+      changeDirection = true;
+    } else if (card.type === 'draw2') {
+      drawAmount = 2;
+      skipNext = true;
+    } else if (card.type === 'wild4') {
+      drawAmount = 4;
+      skipNext = true;
+      // Choose color automatically (for simplicity, we pick red)
+      // In a real game, player would choose; we'll auto pick first color
+      card.color = 'red';
+    } else if (card.type === 'wild') {
+      // auto pick red
+      card.color = 'red';
+    }
+    // Determine next player
+    let nextPlayer = (newState.currentPlayer + 1) % 2;
+    if (skipNext) {
+      nextPlayer = (nextPlayer + 1) % 2;
+    }
+    // Apply draw
+    if (drawAmount > 0) {
+      for (let i = 0; i < drawAmount; i++) {
+        if (newState.drawPile.length === 0) reshuffleDrawPile(newState);
+        const drawn = newState.drawPile.pop();
+        newState.players[nextPlayer].cards.push(drawn);
+      }
+    }
+    // Reset drawn flag
+    newState.drawnThisTurn = false;
+    newState.currentPlayer = nextPlayer;
+    // Check win
+    if (newState.players[myPlayerIndex].cards.length === 0) {
+      newState.winner = myPlayerIndex;
+    }
+    // Update gameState and push to Firebase
+    gameState = newState;
+    await roomRef.set(gameState);
+    selectedCardIndex = -1;
+    render();
+  }
+
+  async function drawCard() {
+    if (gameState.drawnThisTurn) {
+      statusDiv.innerText = "You already drew a card this turn.";
+      return;
+    }
+    const newState = JSON.parse(JSON.stringify(gameState));
+    if (newState.drawPile.length === 0) reshuffleDrawPile(newState);
+    const drawnCard = newState.drawPile.pop();
+    newState.players[myPlayerIndex].cards.push(drawnCard);
+    newState.drawnThisTurn = true;
+    // Check if drawn card can be played immediately
+    const topCard = newState.discardPile[newState.discardPile.length - 1];
+    if (canPlay(drawnCard, topCard)) {
+      // Optional: you could allow play automatically, but we'll just let player play it
+      statusDiv.innerText = "You drew a card. You may play it now if you wish.";
+    } else {
+      // If cannot play, turn passes
+      newState.currentPlayer = (newState.currentPlayer + 1) % 2;
+      newState.drawnThisTurn = false;
+      statusDiv.innerText = "You drew a card and cannot play. Turn passed.";
+    }
+    gameState = newState;
+    await roomRef.set(gameState);
+    render();
+  }
+
+  function reshuffleDrawPile(state) {
+    if (state.discardPile.length <= 1) return;
+    const top = state.discardPile.pop();
+    state.drawPile = shuffle(state.discardPile);
+    state.discardPile = [top];
+  }
+
+  async function callUno() {
+    if (gameState.players[myPlayerIndex].cards.length === 1 && !gameState.unoCalled[myPlayerIndex]) {
+      const newState = JSON.parse(JSON.stringify(gameState));
+      newState.unoCalled[myPlayerIndex] = true;
+      gameState = newState;
+      await roomRef.set(gameState);
+      statusDiv.innerText = "UNO called!";
+    } else {
+      statusDiv.innerText = "You cannot call UNO now.";
+    }
+  }
+
+  async function catchUno() {
+    const opponentIdx = 1 - myPlayerIndex;
+    const opponentCards = gameState.players[opponentIdx].cards.length;
+    if (opponentCards === 1 && !gameState.unoCalled[opponentIdx]) {
+      // Penalty: draw 2 cards
+      const newState = JSON.parse(JSON.stringify(gameState));
+      for (let i = 0; i < 2; i++) {
+        if (newState.drawPile.length === 0) reshuffleDrawPile(newState);
+        const drawn = newState.drawPile.pop();
+        newState.players[opponentIdx].cards.push(drawn);
+      }
+      newState.unoCalled[opponentIdx] = true; // prevent multiple catches
+      gameState = newState;
+      await roomRef.set(gameState);
+      statusDiv.innerText = "Caught! Opponent draws 2 cards.";
+    } else {
+      statusDiv.innerText = "No UNO to catch.";
+    }
+  }
+
+  async function resetGame() {
+    const newState = initGameState();
+    await roomRef.set(newState);
+  }
+
+  function initGameState() {
+    const deck = createDeck();
+    const players = [
+      { cards: [], unoCalled: false },
+      { cards: [], unoCalled: false }
+    ];
+    for (let i = 0; i < 7; i++) {
+      players[0].cards.push(deck.pop());
+      players[1].cards.push(deck.pop());
+    }
+    const discardPile = [deck.pop()];
+    // Ensure top card is not a wild (for fairness, we could redo if wild, but okay)
+    return {
+      players,
+      drawPile: deck,
+      discardPile,
+      currentPlayer: 0,
+      direction: 1,
+      drawnThisTurn: false,
+      winner: null,
+      unoCalled: [false, false]
+    };
+  }
+
+  // Chat functions
+  function addMessageToUI(username, text, timestamp) {
+    const msgDiv = document.createElement('div');
+    msgDiv.className = 'chat-message';
+    const timeStr = timestamp ? new Date(timestamp).toLocaleTimeString() : '';
+    msgDiv.innerHTML = `<strong>${username}:</strong> ${text} <span style="font-size:0.7rem;">${timeStr}</span>`;
+    chatMessagesDiv.appendChild(msgDiv);
+    chatMessagesDiv.scrollTop = chatMessagesDiv.scrollHeight;
+    if (chatMessagesDiv.children.length === 1 && chatMessagesDiv.children[0].innerText.includes('No messages')) {
+      chatMessagesDiv.innerHTML = '';
+    }
+  }
+
+  function listenForMessages(roomId) {
+    const messagesRef = db.ref(`games/${roomId}/messages`);
+    messagesRef.limitToLast(50).on('child_added', (snapshot) => {
+      const msg = snapshot.val();
+      if (msg) addMessageToUI(msg.username, msg.text, msg.timestamp);
+    });
+  }
+
+  function sendMessage(roomId, username, text) {
+    if (!text.trim()) return;
+    const messagesRef = db.ref(`games/${roomId}/messages`);
+    messagesRef.push({ username, text: text.substring(0,200), timestamp: Date.now() });
+  }
+
+  // Firebase listener for game state
+  function listenToGame(roomId, assignedIndex) {
+    myPlayerIndex = assignedIndex;
+    roomRef = db.ref(`games/${roomId}`);
+    roomRef.on('value', (snap) => {
+      const data = snap.val();
+      if (!data) {
+        // Initialize new game
+        const newState = initGameState();
+        roomRef.set(newState);
+        gameState = newState;
+      } else {
+        gameState = data;
+      }
+      render();
+    });
+    resetGameBtn.onclick = () => resetGame();
+    callUnoBtn.onclick = () => callUno();
+    catchUnoBtn.onclick = () => catchUno();
+    sendChatBtn.onclick = () => {
+      const msg = chatInput.value.trim();
+      if (msg) {
+        sendMessage(roomId, myPlayerIndex === 0 ? 'Player 1' : 'Player 2', msg);
+        chatInput.value = '';
+      }
+    };
+    chatInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') sendChatBtn.click();
+    });
+    listenForMessages(roomId);
+  }
+
+  // Join logic
+  joinBtn.onclick = async () => {
+    const password = roomPasswordInput.value.trim();
+    if (!password) { alert("Enter a shared password"); return; }
+    const roomId = btoa(password).replace(/=/g,'');
+    const roomRefCheck = db.ref(`games/${roomId}`);
+    const snapshot = await roomRefCheck.once('value');
+    let assignedIndex = null;
+    if (!snapshot.exists()) {
+      assignedIndex = 0; // first player
+    } else {
+      const data = snapshot.val();
+      if (data.players && data.players.length === 2) {
+        alert("Room is full (2 players already). Try different password.");
+        return;
+      }
+      // Determine if we have players defined
+      if (!data.players) {
+        assignedIndex = 0;
+      } else if (data.players[0] && !data.players[1]) {
+        assignedIndex = 1;
+      } else {
+        assignedIndex = null;
+      }
+    }
+    if (assignedIndex === null) {
+      alert("Room full.");
+      return;
+    }
+    // Store player assignment in room metadata
+    await roomRefCheck.child('playerIndex').set(assignedIndex);
+    roomPanel.style.display = 'none';
+    gameArea.style.display = 'block';
+    listenToGame(roomId, assignedIndex);
+  };
+</script>
+</body>
+</html>
