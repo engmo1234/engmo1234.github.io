@@ -3,55 +3,271 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>♜ Remote Chess · Password Room</title>
-  <!-- Firebase SDK (compat version) -->
+  <title>♜ Private Chess · Password Room + Chat</title>
+  <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
   <!-- Chess engine -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
   <style>
-    * { box-sizing: border-box; user-select: none; }
-    body { background: linear-gradient(145deg, #1a2a3a 0%, #0f1a24 100%); min-height: 100vh; display: flex; justify-content: center; align-items: center; font-family: 'Segoe UI', 'Poppins', 'Inter', system-ui, sans-serif; margin: 0; padding: 20px; }
-    .chess-container { max-width: 750px; width: 100%; background: rgba(30,35,45,0.65); backdrop-filter: blur(8px); border-radius: 3rem; padding: 1.5rem 1.8rem 2rem; box-shadow: 0 25px 45px rgba(0,0,0,0.5), inset 0 1px 1px rgba(255,255,255,0.1); border: 1px solid rgba(255,215,150,0.3); }
-    .room-panel { background: #1e1f28cc; border-radius: 2rem; padding: 1rem; margin-bottom: 1.5rem; display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: center; }
-    .room-panel input { background: #2c2e3a; border: none; padding: 10px 20px; border-radius: 40px; color: #ffe3b3; font-size: 1rem; font-family: monospace; text-align: center; outline: none; border: 1px solid #e4b363; }
-    .room-panel button { background: #3e3f4a; border: none; padding: 10px 24px; border-radius: 40px; font-weight: bold; color: #f0e2c5; cursor: pointer; transition: 0.15s; }
-    .room-panel button:hover { background: #5e5f6e; }
-    .game-header { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; margin-bottom: 1.2rem; }
-    .title { font-size: 1.7rem; font-weight: 700; background: linear-gradient(135deg, #F5E7D3, #E0C8A0); background-clip: text; -webkit-background-clip: text; color: transparent; }
-    .turn-badge { background: #2c2e3a; padding: 6px 20px; border-radius: 60px; font-weight: 600; font-size: 1rem; }
+    * {
+      box-sizing: border-box;
+      user-select: none;
+    }
+    body {
+      background: linear-gradient(145deg, #1a2a3a 0%, #0f1a24 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: 'Segoe UI', 'Poppins', 'Inter', system-ui, sans-serif;
+      margin: 0;
+      padding: 20px;
+    }
+    .chess-container {
+      max-width: 800px;
+      width: 100%;
+      background: rgba(30,35,45,0.65);
+      backdrop-filter: blur(8px);
+      border-radius: 3rem;
+      padding: 1.5rem 1.8rem 2rem;
+      box-shadow: 0 25px 45px rgba(0,0,0,0.5), inset 0 1px 1px rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,215,150,0.3);
+    }
+    .room-panel {
+      background: #1e1f28cc;
+      border-radius: 2rem;
+      padding: 1rem;
+      margin-bottom: 1.5rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+      justify-content: center;
+    }
+    .room-panel input {
+      background: #2c2e3a;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 40px;
+      color: #ffe3b3;
+      font-size: 1rem;
+      font-family: monospace;
+      text-align: center;
+      outline: none;
+      border: 1px solid #e4b363;
+    }
+    .room-panel button {
+      background: #3e3f4a;
+      border: none;
+      padding: 10px 24px;
+      border-radius: 40px;
+      font-weight: bold;
+      color: #f0e2c5;
+      cursor: pointer;
+      transition: 0.15s;
+    }
+    .room-panel button:hover {
+      background: #5e5f6e;
+    }
+    .game-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      flex-wrap: wrap;
+      margin-bottom: 1.2rem;
+    }
+    .title {
+      font-size: 1.7rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #F5E7D3, #E0C8A0);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+    .turn-badge {
+      background: #2c2e3a;
+      padding: 6px 20px;
+      border-radius: 60px;
+      font-weight: 600;
+      font-size: 1rem;
+    }
     .turn-white { background: #f5e7c8; color: #3b2c1f; }
     .turn-black { background: #2c2b26; color: #f0e2b6; }
-    .status-area { background: #1e1f28cc; border-radius: 2rem; padding: 0.5rem 1rem; text-align: center; margin: 12px 0 16px; color: #FFE5B4; border-left: 4px solid #e4b363; }
-    .board { display: grid; grid-template-columns: repeat(8, 1fr); background-color: #2b1e0f; border-radius: 18px; overflow: hidden; box-shadow: 0 20px 35px rgba(0,0,0,0.4); aspect-ratio: 1 / 1; margin-bottom: 1rem; }
-    .square { display: flex; align-items: center; justify-content: center; font-size: clamp(2.2rem, 8vw, 4.8rem); cursor: pointer; transition: 0.05s linear; font-family: 'Segoe UI', system-ui; position: relative; }
+    .status-area {
+      background: #1e1f28cc;
+      border-radius: 2rem;
+      padding: 0.5rem 1rem;
+      text-align: center;
+      margin: 12px 0 16px;
+      color: #FFE5B4;
+      border-left: 4px solid #e4b363;
+    }
+    .board {
+      display: grid;
+      grid-template-columns: repeat(8, 1fr);
+      background-color: #2b1e0f;
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 20px 35px rgba(0,0,0,0.4);
+      margin-bottom: 1rem;
+      aspect-ratio: 1 / 1;
+    }
+    .square {
+      aspect-ratio: 1 / 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: clamp(1.8rem, 6vw, 3.8rem);
+      cursor: pointer;
+      transition: 0.05s linear;
+      font-family: 'Segoe UI', system-ui;
+      position: relative;
+    }
     .square.light { background-color: #eed9bb; }
     .square.dark { background-color: #8b5a2b; }
     .square.selected { background: radial-gradient(circle, #ffdd99, #e6b873); box-shadow: inset 0 0 0 3px #ffc107; }
-    .square.legal-move::after { content: ""; position: absolute; width: 28%; height: 28%; background: radial-gradient(circle, #6fcf97, #2e7d4e); border-radius: 50%; opacity: 0.85; pointer-events: none; }
+    .square.legal-move::after {
+      content: "";
+      position: absolute;
+      width: 25%;
+      height: 25%;
+      background: radial-gradient(circle, #6fcf97, #2e7d4e);
+      border-radius: 50%;
+      opacity: 0.85;
+      pointer-events: none;
+    }
     .square.check-highlight { background: radial-gradient(circle, #ff6b6b, #b52e2e); animation: pulseRed 0.9s infinite; }
-    @keyframes pulseRed { 0% { box-shadow: inset 0 0 0 2px #ffaa77; } 100% { box-shadow: inset 0 0 0 4px #ff3a3a; } }
-    .action-buttons { display: flex; gap: 16px; justify-content: center; margin-top: 20px; }
-    .btn { background: #2c2f36; border: none; padding: 8px 24px; border-radius: 40px; font-weight: 600; color: #f0e2c5; cursor: pointer; }
-    .history-panel { margin-top: 20px; background: #1e1c1aa0; border-radius: 28px; padding: 8px 12px; max-height: 110px; overflow-y: auto; font-size: 0.8rem; }
+    @keyframes pulseRed {
+      0% { box-shadow: inset 0 0 0 2px #ffaa77; }
+      100% { box-shadow: inset 0 0 0 4px #ff3a3a; }
+    }
+    .action-buttons {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      margin-top: 20px;
+    }
+    .btn {
+      background: #2c2f36;
+      border: none;
+      padding: 8px 24px;
+      border-radius: 40px;
+      font-weight: 600;
+      color: #f0e2c5;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .history-panel {
+      margin-top: 20px;
+      background: #1e1c1aa0;
+      border-radius: 28px;
+      padding: 8px 12px;
+      max-height: 110px;
+      overflow-y: auto;
+      font-size: 0.8rem;
+    }
     .moves-list { display: flex; flex-wrap: wrap; gap: 8px; }
     .move-item { background: #00000055; padding: 4px 12px; border-radius: 30px; color: #ffe1aa; }
-    .promotion-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(6px); display: flex; align-items: center; justify-content: center; z-index: 1000; visibility: hidden; opacity: 0; transition: 0.2s; }
+    .chat-panel {
+      margin-top: 20px;
+      background: #1e1c1aa0;
+      border-radius: 28px;
+      padding: 12px;
+    }
+    .chat-title {
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: #eccf96;
+      font-size: 0.9rem;
+    }
+    .chat-messages {
+      background: #0f0e0caa;
+      border-radius: 20px;
+      padding: 10px;
+      height: 150px;
+      overflow-y: auto;
+      font-size: 0.85rem;
+      margin-bottom: 8px;
+    }
+    .chat-message {
+      padding: 4px 8px;
+      border-bottom: 1px solid #e4b36333;
+      color: #ffe3c4;
+      word-break: break-word;
+    }
+    .chat-message strong {
+      color: #ffd966;
+    }
+    .chat-input-area {
+      display: flex;
+      gap: 8px;
+    }
+    .chat-input-area input {
+      flex: 1;
+      background: #2c2e3a;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 40px;
+      color: #ffe3b3;
+      outline: none;
+      font-size: 0.9rem;
+    }
+    .chat-input-area button {
+      background: #3e3f4a;
+      border: none;
+      padding: 8px 20px;
+      border-radius: 40px;
+      font-weight: bold;
+      color: #f0e2c5;
+      cursor: pointer;
+    }
+    .promotion-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.8);
+      backdrop-filter: blur(6px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      visibility: hidden;
+      opacity: 0;
+      transition: 0.2s;
+    }
     .promotion-modal.active { visibility: visible; opacity: 1; }
-    .promotion-card { background: #1f2a2f; border-radius: 48px; padding: 20px 30px; text-align: center; }
-    .promo-btn { background: #2c2f36; border: none; font-size: 2.5rem; padding: 6px 20px; margin: 0 8px; border-radius: 60px; cursor: pointer; }
-    @media (max-width: 550px) { .square { font-size: clamp(1.7rem, 7vw, 3rem); } }
+    .promotion-card {
+      background: #1f2a2f;
+      border-radius: 48px;
+      padding: 20px 30px;
+      text-align: center;
+    }
+    .promo-btn {
+      background: #2c2f36;
+      border: none;
+      font-size: 2.5rem;
+      padding: 6px 20px;
+      margin: 0 8px;
+      border-radius: 60px;
+      cursor: pointer;
+    }
+    @media (max-width: 550px) {
+      .square { font-size: clamp(1.5rem, 6vw, 2.8rem); }
+    }
   </style>
 </head>
 <body>
 <div class="chess-container" id="app">
   <div class="room-panel" id="roomPanel">
-    <input type="text" id="roomPassword" placeholder="Enter room password (e.g., chaima-motasim)" autocomplete="off">
+    <input type="text" id="roomPassword" placeholder="Enter shared password (e.g., chaima-motasim)" autocomplete="off">
     <button id="joinBtn">🔐 Join / Create Game</button>
   </div>
   <div id="gameArea" style="display: none;">
     <div class="game-header">
-      <div class="title">♞ REMOTE CHESS</div>
+      <div class="title">♞ PRIVATE CHESS</div>
       <div class="turn-badge" id="turnBadge">—</div>
     </div>
     <div class="status-area" id="statusMessage">Waiting for opponent...</div>
@@ -62,6 +278,16 @@
     <div class="history-panel">
       <div class="history-title">📜 MOVE HISTORY</div>
       <div class="moves-list" id="moveHistoryList">—</div>
+    </div>
+    <div class="chat-panel">
+      <div class="chat-title">💬 CHAT</div>
+      <div class="chat-messages" id="chatMessages">
+        <div class="chat-message">— No messages yet —</div>
+      </div>
+      <div class="chat-input-area">
+        <input type="text" id="chatInput" placeholder="Type a message..." maxlength="200">
+        <button id="sendChatBtn">Send</button>
+      </div>
     </div>
   </div>
 </div>
@@ -78,7 +304,7 @@
 </div>
 
 <script>
-  // ========== YOUR CORRECT FIREBASE CONFIGURATION ==========
+  // ========== YOUR FIREBASE CONFIGURATION ==========
   const firebaseConfig = {
     apiKey: "AIzaSyCQ7QZFblWwB530G2ARVPHvYLAsDf0Mwak",
     authDomain: "chessgame-e4dbb.firebaseapp.com",
@@ -89,19 +315,8 @@
     measurementId: "G-7KMVP6RBFB",
     databaseURL: "https://chessgame-e4dbb-default-rtdb.asia-southeast1.firebasedatabase.app/"
   };
-  // Initialize Firebase
   firebase.initializeApp(firebaseConfig);
   const db = firebase.database();
-  
-  // Quick connection test
-  db.ref('.info/connected').on('value', (snap) => {
-    if (snap.val() === true) {
-      console.log('✅ Firebase connected!');
-      statusDiv.innerText = 'Connected to Firebase. Enter password to start.';
-    } else {
-      console.log('❌ Firebase disconnected');
-    }
-  });
   // ==============================================
 
   let game = null;
@@ -113,7 +328,6 @@
   let waitingForPromotion = false;
   let pendingPromotion = null;
 
-  // DOM elements
   const roomPanel = document.getElementById('roomPanel');
   const gameArea = document.getElementById('gameArea');
   const roomPasswordInput = document.getElementById('roomPassword');
@@ -124,6 +338,9 @@
   const resetBtn = document.getElementById('resetGameBtn');
   const historyListDiv = document.getElementById('moveHistoryList');
   const modal = document.getElementById('promotionModal');
+  const chatMessagesDiv = document.getElementById('chatMessages');
+  const chatInput = document.getElementById('chatInput');
+  const sendChatBtn = document.getElementById('sendChatBtn');
 
   function rcToAlgebraic(row, col) {
     const files = ['a','b','c','d','e','f','g','h'];
@@ -276,6 +493,38 @@
     }
   }
 
+  function addMessageToUI(username, text, timestamp) {
+    const messageDiv = document.createElement('div');
+    messageDiv.className = 'chat-message';
+    const timeStr = timestamp ? new Date(timestamp).toLocaleTimeString() : '';
+    messageDiv.innerHTML = `<strong>${username}:</strong> ${text} <span style="font-size:0.7rem; color:#aabbcc;">${timeStr}</span>`;
+    chatMessagesDiv.appendChild(messageDiv);
+    chatMessagesDiv.scrollTop = chatMessagesDiv.scrollHeight;
+    if (chatMessagesDiv.children.length === 1 && chatMessagesDiv.children[0].innerText.includes('No messages')) {
+      chatMessagesDiv.innerHTML = '';
+    }
+  }
+
+  function listenForMessages(roomId) {
+    const messagesRef = db.ref(`games/${roomId}/messages`);
+    messagesRef.limitToLast(50).on('child_added', (snapshot) => {
+      const msg = snapshot.val();
+      if (msg) {
+        addMessageToUI(msg.username, msg.text, msg.timestamp);
+      }
+    });
+  }
+
+  function sendMessage(roomId, username, text) {
+    if (!text.trim()) return;
+    const messagesRef = db.ref(`games/${roomId}/messages`);
+    messagesRef.push({
+      username: username,
+      text: text.substring(0, 200),
+      timestamp: Date.now()
+    });
+  }
+
   function listenToGame(roomId, assignedColor) {
     myColor = assignedColor;
     roomRef = db.ref(`games/${roomId}`);
@@ -298,19 +547,30 @@
         renderBoard();
       }
     });
+
     resetBtn.onclick = async () => {
-      if(game.turn() !== myColor && !game.game_over()) {
-        statusDiv.innerText = "Wait for your turn to reset, or both can reset.";
-        return;
-      }
       let newFen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
       await roomRef.child('fen').set(newFen);
       await roomRef.child('lastMove').set(null);
       game.load(newFen);
       renderBoard();
     };
+
+    sendChatBtn.onclick = () => {
+      const msg = chatInput.value.trim();
+      if (msg) {
+        sendMessage(roomId, myColor === 'w' ? 'White' : 'Black', msg);
+        chatInput.value = '';
+      }
+    };
+    chatInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') sendChatBtn.click();
+    });
+
+    listenForMessages(roomId);
   }
 
+  // Promotion handlers
   document.querySelectorAll('.promo-btn').forEach(btn => {
     btn.addEventListener('click', async (e) => {
       if(!waitingForPromotion) return;
@@ -339,21 +599,25 @@
 
   joinBtn.onclick = async () => {
     let password = roomPasswordInput.value.trim();
-    if(!password) { alert("Enter a shared password (e.g., chaima-motasim)"); return; }
+    if (!password) {
+      alert("Please enter a shared password.");
+      return;
+    }
+    // Use the password as the room identifier
     let roomId = btoa(password).replace(/=/g,'');
     let roomRefCheck = db.ref(`games/${roomId}`);
     let snapshot = await roomRefCheck.once('value');
     let assignedColor = null;
-    if(!snapshot.exists()) {
-      assignedColor = 'w';
+    if (!snapshot.exists()) {
+      assignedColor = 'w';  // first player = white
     } else {
       let data = snapshot.val();
-      if(data.colorAssigned === 'w') assignedColor = 'b';
-      else if(data.colorAssigned === 'b') assignedColor = null;
+      if (data.colorAssigned === 'w') assignedColor = 'b';
+      else if (data.colorAssigned === 'b') assignedColor = null;
       else assignedColor = 'b';
     }
-    if(!assignedColor) {
-      statusDiv.innerText = "Room is full (2 players already). Try different password.";
+    if (!assignedColor) {
+      alert("Room is full (2 players already). Try a different password if you want a new game.");
       return;
     }
     await roomRefCheck.child('colorAssigned').set(assignedColor);
@@ -361,7 +625,7 @@
     gameArea.style.display = 'block';
     listenToGame(roomId, assignedColor);
     statusDiv.innerText = `Connected as ${assignedColor==='w'?'White (you see bottom)':'Black (you see top)'}. Waiting for moves...`;
-    if(assignedColor === 'b') turnBadge.innerText = "Black's turn";
+    if (assignedColor === 'b') turnBadge.innerText = "Black's turn";
     else turnBadge.innerText = "White's turn";
   };
 </script>
