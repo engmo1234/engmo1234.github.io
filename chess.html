@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>♜ Remote Chess · Password Room</title>
+  <!-- Firebase SDK (compat version – easier integration) -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+  <!-- Chess engine -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
+  <style>
+    * {
+      box-sizing: border-box;
+      user-select: none;
+    }
+    body {
+      background: linear-gradient(145deg, #1a2a3a 0%, #0f1a24 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: 'Segoe UI', 'Poppins', 'Inter', system-ui, sans-serif;
+      margin: 0;
+      padding: 20px;
+    }
+    .chess-container {
+      max-width: 750px;
+      width: 100%;
+      background: rgba(30,35,45,0.65);
+      backdrop-filter: blur(8px);
+      border-radius: 3rem;
+      padding: 1.5rem 1.8rem 2rem;
+      box-shadow: 0 25px 45px rgba(0,0,0,0.5), inset 0 1px 1px rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,215,150,0.3);
+    }
+    .room-panel {
+      background: #1e1f28cc;
+      border-radius: 2rem;
+      padding: 1rem;
+      margin-bottom: 1.5rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+      justify-content: center;
+    }
+    .room-panel input {
+      background: #2c2e3a;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 40px;
+      color: #ffe3b3;
+      font-size: 1rem;
+      font-family: monospace;
+      text-align: center;
+      outline: none;
+      border: 1px solid #e4b363;
+    }
+    .room-panel button {
+      background: #3e3f4a;
+      border: none;
+      padding: 10px 24px;
+      border-radius: 40px;
+      font-weight: bold;
+      color: #f0e2c5;
+      cursor: pointer;
+      transition: 0.15s;
+    }
+    .room-panel button:hover {
+      background: #5e5f6e;
+    }
+    .game-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      flex-wrap: wrap;
+      margin-bottom: 1.2rem;
+    }
+    .title {
+      font-size: 1.7rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #F5E7D3, #E0C8A0);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+    .turn-badge {
+      background: #2c2e3a;
+      padding: 6px 20px;
+      border-radius: 60px;
+      font-weight: 600;
+      font-size: 1rem;
+    }
+    .turn-white { background: #f5e7c8; color: #3b2c1f; }
+    .turn-black { background: #2c2b26; color: #f0e2b6; }
+    .status-area {
+      background: #1e1f28cc;
+      border-radius: 2rem;
+      padding: 0.5rem 1rem;
+      text-align: center;
+      margin: 12px 0 16px;
+      color: #FFE5B4;
+      border-left: 4px solid #e4b363;
+    }
+    .board {
+      display: grid;
+      grid-template-columns: repeat(8, 1fr);
+      background-color: #2b1e0f;
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 20px 35px rgba(0,0,0,0.4);
+      aspect-ratio: 1 / 1;
+      margin-bottom: 1rem;
+    }
+    .square {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: clamp(2.2rem, 8vw, 4.8rem);
+      cursor: pointer;
+      transition: 0.05s linear;
+      font-family: 'Segoe UI', system-ui;
+      position: relative;
+    }
+    .square.light { background-color: #eed9bb; }
+    .square.dark { background-color: #8b5a2b; }
+    .square.selected { background: radial-gradient(circle, #ffdd99, #e6b873); box-shadow: inset 0 0 0 3px #ffc107; }
+    .square.legal-move::after {
+      content: "";
+      position: absolute;
+      width: 28%;
+      height: 28%;
+      background: radial-gradient(circle, #6fcf97, #2e7d4e);
+      border-radius: 50%;
+      opacity: 0.85;
+      pointer-events: none;
+    }
+    .square.check-highlight { background: radial-gradient(circle, #ff6b6b, #b52e2e); animation: pulseRed 0.9s infinite; }
+    @keyframes pulseRed {
+      0% { box-shadow: inset 0 0 0 2px #ffaa77; }
+      100% { box-shadow: inset 0 0 0 4px #ff3a3a; }
+    }
+    .action-buttons {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      margin-top: 20px;
+    }
+    .btn {
+      background: #2c2f36;
+      border: none;
+      padding: 8px 24px;
+      border-radius: 40px;
+      font-weight: 600;
+      color: #f0e2c5;
+      cursor: pointer;
+    }
+    .history-panel {
+      margin-top: 20px;
+      background: #1e1c1aa0;
+      border-radius: 28px;
+      padding: 8px 12px;
+      max-height: 110px;
+      overflow-y: auto;
+      font-size: 0.8rem;
+    }
+    .moves-list { display: flex; flex-wrap: wrap; gap: 8px; }
+    .move-item { background: #00000055; padding: 4px 12px; border-radius: 30px; color: #ffe1aa; }
+    .promotion-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.8);
+      backdrop-filter: blur(6px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      visibility: hidden;
+      opacity: 0;
+      transition: 0.2s;
+    }
+    .promotion-modal.active { visibility: visible; opacity: 1; }
+    .promotion-card {
+      background: #1f2a2f;
+      border-radius: 48px;
+      padding: 20px 30px;
+      text-align: center;
+    }
+    .promo-btn {
+      background: #2c2f36;
+      border: none;
+      font-size: 2.5rem;
+      padding: 6px 20px;
+      margin: 0 8px;
+      border-radius: 60px;
+      cursor: pointer;
+    }
+    @media (max-width: 550px) {
+      .square { font-size: clamp(1.7rem, 7vw, 3rem); }
+    }
+  </style>
+</head>
+<body>
+<div class="chess-container" id="app">
+  <div class="room-panel" id="roomPanel">
+    <input type="text" id="roomPassword" placeholder="Enter room password (e.g., chaima-motasim)" autocomplete="off">
+    <button id="joinBtn">🔐 Join / Create Game</button>
+  </div>
+  <div id="gameArea" style="display: none;">
+    <div class="game-header">
+      <div class="title">♞ REMOTE CHESS</div>
+      <div class="turn-badge" id="turnBadge">—</div>
+    </div>
+    <div class="status-area" id="statusMessage">Waiting for opponent...</div>
+    <div class="board" id="chessboard"></div>
+    <div class="action-buttons">
+      <button class="btn" id="resetGameBtn">⟳ Reset Game</button>
+    </div>
+    <div class="history-panel">
+      <div class="history-title">📜 MOVE HISTORY</div>
+      <div class="moves-list" id="moveHistoryList">—</div>
+    </div>
+  </div>
+</div>
+<div id="promotionModal" class="promotion-modal">
+  <div class="promotion-card">
+    <p>♕ Choose promotion piece</p>
+    <div class="promo-buttons">
+      <button class="promo-btn" data-piece="q">♕ Queen</button>
+      <button class="promo-btn" data-piece="r">♖ Rook</button>
+      <button class="promo-btn" data-piece="n">♘ Knight</button>
+      <button class="promo-btn" data-piece="b">♗ Bishop</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ========== YOUR FIREBASE CONFIG ==========
+  const firebaseConfig = {
+    apiKey: "AIzaSyCQ7QZFblWwB530G2ARVPHvYLAsDf0Mwak",
+    authDomain: "chessgame-e4dbb.firebaseapp.com",
+    databaseURL: "https://chessgame-e4dbb-default-rtdb.firebaseio.com",  // auto‑generated URL
+    projectId: "chessgame-e4dbb",
+    storageBucket: "chessgame-e4dbb.firebasestorage.app",
+    messagingSenderId: "65265732775",
+    appId: "1:65265732775:web:8c9ce7a779e8687bb59f82",
+    measurementId: "G-7KMVP6RBFB"
+  };
+  // Initialize Firebase (compat)
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
+  // =========================================
+
+  let game = null;             // Chess instance
+  let myColor = null;          // 'w' or 'b'
+  let roomRef = null;
+  let selectedSquare = null;
+  let legalMovesSet = new Set();
+  let moveHistory = [];
+  let isGameOver = false;
+  let waitingForPromotion = false;
+  let pendingPromotion = null;
+
+  // DOM elements
+  const roomPanel = document.getElementById('roomPanel');
+  const gameArea = document.getElementById('gameArea');
+  const roomPasswordInput = document.getElementById('roomPassword');
+  const joinBtn = document.getElementById('joinBtn');
+  const turnBadge = document.getElementById('turnBadge');
+  const statusDiv = document.getElementById('statusMessage');
+  const boardContainer = document.getElementById('chessboard');
+  const resetBtn = document.getElementById('resetGameBtn');
+  const historyListDiv = document.getElementById('moveHistoryList');
+  const modal = document.getElementById('promotionModal');
+
+  // Helper functions
+  function rcToAlgebraic(row, col) {
+    const files = ['a','b','c','d','e','f','g','h'];
+    return files[col] + (8 - row);
+  }
+  function algebraicToRC(alg) {
+    const col = alg.charCodeAt(0) - 97;
+    const row = 8 - parseInt(alg[1]);
+    return { row, col };
+  }
+  function getPieceSymbol(piece) {
+    if (!piece) return '';
+    const map = { k:{w:'♔',b:'♚'}, q:{w:'♕',b:'♛'}, r:{w:'♖',b:'♜'}, b:{w:'♗',b:'♝'}, n:{w:'♘',b:'♞'}, p:{w:'♙',b:'♟'} };
+    return map[piece.type][piece.color];
+  }
+
+  function renderBoard() {
+    if (!game) return;
+    const boardState = game.board();
+    const turn = game.turn();
+    const checkSquare = game.in_check() ? (() => {
+      for(let i=0;i<8;i++) for(let j=0;j<8;j++) {
+        let p = boardState[i][j];
+        if(p && p.type==='k' && p.color===turn) return rcToAlgebraic(i,j);
+      } return null;
+    })() : null;
+    
+    let squares = [];
+    // orientation: if myColor === 'w' -> normal (row 0 top = a8), else flipped
+    for(let i=0;i<8;i++) {
+      for(let j=0;j<8;j++) {
+        let row = myColor === 'w' ? i : 7-i;
+        let col = myColor === 'w' ? j : 7-j;
+        let piece = boardState[row][col];
+        let algebraic = rcToAlgebraic(row, col);
+        let isLight = (row+col)%2 === 0;
+        let cls = isLight ? 'light' : 'dark';
+        if(selectedSquare === algebraic) cls += ' selected';
+        if(legalMovesSet.has(algebraic)) cls += ' legal-move';
+        if(checkSquare === algebraic) cls += ' check-highlight';
+        squares.push(`<div class="square ${cls}" data-alg="${algebraic}">${piece ? getPieceSymbol(piece) : ''}</div>`);
+      }
+    }
+    boardContainer.innerHTML = squares.join('');
+    document.querySelectorAll('.square').forEach(sq => {
+      sq.addEventListener('click', () => handleSquareClick(sq.getAttribute('data-alg')));
+    });
+    updateUI();
+  }
+
+  function updateUI() {
+    if (!game) return;
+    const turn = game.turn();
+    const isCheck = game.in_check();
+    const isCheckmate = game.in_checkmate();
+    const isStalemate = game.in_stalemate();
+    if(isCheckmate) {
+      const winner = turn === 'w' ? 'Black' : 'White';
+      statusDiv.innerHTML = `🏆 CHECKMATE! ${winner} wins. 🏆`;
+      turnBadge.innerText = `${winner} wins`;
+      isGameOver = true;
+    } else if(isStalemate) {
+      statusDiv.innerHTML = `♟️ Stalemate! Game drawn.`;
+      turnBadge.innerText = `Draw`;
+      isGameOver = true;
+    } else {
+      isGameOver = false;
+      const turnName = turn === 'w' ? 'White' : 'Black';
+      statusDiv.innerHTML = isCheck ? `⚠️ ${turnName} in CHECK! ⚠️` : `${turnName}'s turn`;
+      turnBadge.innerText = `${turnName}'s turn`;
+      turnBadge.className = `turn-badge turn-${turn === 'w' ? 'white' : 'black'}`;
+    }
+    // update history
+    let moves = game.history();
+    if(moves.length) {
+      let html = '';
+      for(let i=0;i<moves.length;i++) {
+        if(i%2===0) html += `<span class="move-item">${Math.floor(i/2)+1}. ${moves[i]}</span>`;
+        else html += `<span class="move-item">${moves[i]}</span>`;
+      }
+      historyListDiv.innerHTML = html;
+    } else historyListDiv.innerHTML = '<span class="move-item">—</span>';
+  }
+
+  function computeLegalMovesForSquare(alg) {
+    const moves = game.moves({ verbose: true });
+    let set = new Set();
+    for(let m of moves) if(m.from === alg) set.add(m.to);
+    return set;
+  }
+
+  async function tryLocalMove(from, to, promotionPiece='q') {
+    if(isGameOver) { statusDiv.innerText = "Game over. Reset to play again."; return false; }
+    if(game.turn() !== myColor) { statusDiv.innerText = "Not your turn!"; return false; }
+    let move = { from, to, promotion: promotionPiece };
+    let result = game.move(move);
+    if(result) {
+      // send move to firebase
+      await roomRef.child('fen').set(game.fen());
+      await roomRef.child('lastMove').set({ from, to, promotion: promotionPiece });
+      return true;
+    }
+    return false;
+  }
+
+  async function handleSquareClick(alg) {
+    if(!game || myColor !== game.turn() || isGameOver || waitingForPromotion) return;
+    if(selectedSquare === null) {
+      let piece = game.get(alg);
+      if(piece && piece.color === myColor) {
+        selectedSquare = alg;
+        legalMovesSet = computeLegalMovesForSquare(selectedSquare);
+        renderBoard();
+      } else {
+        statusDiv.innerText = `Select your own piece (${myColor==='w'?'White':'Black'})`;
+      }
+      return;
+    }
+    let from = selectedSquare;
+    let to = alg;
+    if(from === to) {
+      selectedSquare = null;
+      legalMovesSet.clear();
+      renderBoard();
+      return;
+    }
+    let legalTargets = computeLegalMovesForSquare(from);
+    if(!legalTargets.has(to)) {
+      statusDiv.innerText = "Illegal move";
+      selectedSquare = null;
+      legalMovesSet.clear();
+      renderBoard();
+      return;
+    }
+    // check promotion
+    let piece = game.get(from);
+    let needsPromotion = (piece && piece.type === 'p' && ( (piece.color==='w' && algebraicToRC(to).row===0) || (piece.color==='b' && algebraicToRC(to).row===7) ));
+    if(needsPromotion) {
+      waitingForPromotion = true;
+      modal.classList.add('active');
+      pendingPromotion = { from, to };
+      return;
+    }
+    let success = await tryLocalMove(from, to);
+    if(success) {
+      selectedSquare = null;
+      legalMovesSet.clear();
+      renderBoard();
+    } else {
+      statusDiv.innerText = "Move failed";
+      selectedSquare = null;
+      legalMovesSet.clear();
+      renderBoard();
+    }
+  }
+
+  // Firebase listener
+  function listenToGame(roomId, assignedColor) {
+    myColor = assignedColor;
+    roomRef = db.ref(`games/${roomId}`);
+    // init game if not exist
+    roomRef.once('value', snap => {
+      if(!snap.exists()) {
+        let initialFen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
+        roomRef.set({ fen: initialFen, lastMove: null, colorAssigned: assignedColor });
+        game = new Chess(initialFen);
+      } else {
+        let data = snap.val();
+        game = new Chess(data.fen);
+      }
+      renderBoard();
+    });
+    roomRef.on('value', snap => {
+      if(!snap.exists()) return;
+      let data = snap.val();
+      if(game && data.fen !== game.fen()) {
+        game.load(data.fen);
+        renderBoard();
+      }
+    });
+    // reset listener
+    resetBtn.onclick = async () => {
+      if(game.turn() !== myColor && !game.game_over()) {
+        statusDiv.innerText = "Wait for your turn to reset, or both can reset.";
+        return;
+      }
+      let newFen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
+      await roomRef.child('fen').set(newFen);
+      await roomRef.child('lastMove').set(null);
+      game.load(newFen);
+      renderBoard();
+    };
+  }
+
+  // promotion modal handler
+  document.querySelectorAll('.promo-btn').forEach(btn => {
+    btn.addEventListener('click', async (e) => {
+      if(!waitingForPromotion) return;
+      let piece = btn.getAttribute('data-piece');
+      modal.classList.remove('active');
+      waitingForPromotion = false;
+      if(pendingPromotion) {
+        await tryLocalMove(pendingPromotion.from, pendingPromotion.to, piece);
+        selectedSquare = null;
+        legalMovesSet.clear();
+        renderBoard();
+        pendingPromotion = null;
+      }
+    });
+  });
+  modal.addEventListener('click', (e) => {
+    if(e.target === modal && waitingForPromotion) {
+      modal.classList.remove('active');
+      waitingForPromotion = false;
+      selectedSquare = null;
+      legalMovesSet.clear();
+      renderBoard();
+      pendingPromotion = null;
+    }
+  });
+
+  joinBtn.onclick = async () => {
+    let password = roomPasswordInput.value.trim();
+    if(!password) { alert("Enter a shared password (e.g., chaima-motasim)"); return; }
+    let roomId = btoa(password).replace(/=/g,'');
+    let roomRefCheck = db.ref(`games/${roomId}`);
+    let snapshot = await roomRefCheck.once('value');
+    let assignedColor = null;
+    if(!snapshot.exists()) {
+      assignedColor = 'w';  // first player = white
+    } else {
+      let data = snapshot.val();
+      if(data.colorAssigned === 'w') assignedColor = 'b';
+      else if(data.colorAssigned === 'b') assignedColor = null; // full
+      else assignedColor = 'b';
+    }
+    if(!assignedColor) {
+      statusDiv.innerText = "Room is full (2 players already). Try different password.";
+      return;
+    }
+    // set room with color
+    await roomRefCheck.child('colorAssigned').set(assignedColor);
+    roomPanel.style.display = 'none';
+    gameArea.style.display = 'block';
+    listenToGame(roomId, assignedColor);
+    statusDiv.innerText = `Connected as ${assignedColor==='w'?'White (you see bottom)':'Black (you see top)'}. Waiting for moves...`;
+    if(assignedColor === 'b') turnBadge.innerText = "Black's turn";
+    else turnBadge.innerText = "White's turn";
+  };
+</script>
+</body>
+</html>
