@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <title>♜ Remote Chess · Password Room</title>
-  <!-- Firebase SDK (compat version – easier integration) -->
+  <!-- Firebase SDK (compat version) -->
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
   <!-- Chess engine -->
@@ -239,28 +239,27 @@
 </div>
 
 <script>
-  // ========== YOUR FIREBASE CONFIG ==========
+  // ========== YOUR FIREBASE CONFIGURATION ==========
   const firebaseConfig = {
     apiKey: "AIzaSyCQ7QZFblWwB530G2ARVPHvYLAsDf0Mwak",
     authDomain: "chessgame-e4dbb.firebaseapp.com",
-    databaseURL: "https://chessgame-e4dbb-default-rtdb.firebaseio.com",  // auto‑generated URL
     projectId: "chessgame-e4dbb",
     storageBucket: "chessgame-e4dbb.firebasestorage.app",
     messagingSenderId: "65265732775",
     appId: "1:65265732775:web:8c9ce7a779e8687bb59f82",
-    measurementId: "G-7KMVP6RBFB"
+    measurementId: "G-7KMVP6RBFB",
+    databaseURL: "https://chessgame-e4dbb-default-rtdb.firebaseio.com"  // auto-generated URL
   };
-  // Initialize Firebase (compat)
+  // Initialize Firebase
   firebase.initializeApp(firebaseConfig);
   const db = firebase.database();
-  // =========================================
+  // ==============================================
 
   let game = null;             // Chess instance
   let myColor = null;          // 'w' or 'b'
   let roomRef = null;
   let selectedSquare = null;
   let legalMovesSet = new Set();
-  let moveHistory = [];
   let isGameOver = false;
   let waitingForPromotion = false;
   let pendingPromotion = null;
