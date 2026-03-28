@@ -10,198 +10,37 @@
   <!-- Chess engine -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
   <style>
-    * {
-      box-sizing: border-box;
-      user-select: none;
-    }
-    body {
-      background: linear-gradient(145deg, #1a2a3a 0%, #0f1a24 100%);
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-family: 'Segoe UI', 'Poppins', 'Inter', system-ui, sans-serif;
-      margin: 0;
-      padding: 20px;
-    }
-    .chess-container {
-      max-width: 750px;
-      width: 100%;
-      background: rgba(30,35,45,0.65);
-      backdrop-filter: blur(8px);
-      border-radius: 3rem;
-      padding: 1.5rem 1.8rem 2rem;
-      box-shadow: 0 25px 45px rgba(0,0,0,0.5), inset 0 1px 1px rgba(255,255,255,0.1);
-      border: 1px solid rgba(255,215,150,0.3);
-    }
-    .room-panel {
-      background: #1e1f28cc;
-      border-radius: 2rem;
-      padding: 1rem;
-      margin-bottom: 1.5rem;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      align-items: center;
-      justify-content: center;
-    }
-    .room-panel input {
-      background: #2c2e3a;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 40px;
-      color: #ffe3b3;
-      font-size: 1rem;
-      font-family: monospace;
-      text-align: center;
-      outline: none;
-      border: 1px solid #e4b363;
-    }
-    .room-panel button {
-      background: #3e3f4a;
-      border: none;
-      padding: 10px 24px;
-      border-radius: 40px;
-      font-weight: bold;
-      color: #f0e2c5;
-      cursor: pointer;
-      transition: 0.15s;
-    }
-    .room-panel button:hover {
-      background: #5e5f6e;
-    }
-    .game-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-      flex-wrap: wrap;
-      margin-bottom: 1.2rem;
-    }
-    .title {
-      font-size: 1.7rem;
-      font-weight: 700;
-      background: linear-gradient(135deg, #F5E7D3, #E0C8A0);
-      background-clip: text;
-      -webkit-background-clip: text;
-      color: transparent;
-    }
-    .turn-badge {
-      background: #2c2e3a;
-      padding: 6px 20px;
-      border-radius: 60px;
-      font-weight: 600;
-      font-size: 1rem;
-    }
+    * { box-sizing: border-box; user-select: none; }
+    body { background: linear-gradient(145deg, #1a2a3a 0%, #0f1a24 100%); min-height: 100vh; display: flex; justify-content: center; align-items: center; font-family: 'Segoe UI', 'Poppins', 'Inter', system-ui, sans-serif; margin: 0; padding: 20px; }
+    .chess-container { max-width: 750px; width: 100%; background: rgba(30,35,45,0.65); backdrop-filter: blur(8px); border-radius: 3rem; padding: 1.5rem 1.8rem 2rem; box-shadow: 0 25px 45px rgba(0,0,0,0.5), inset 0 1px 1px rgba(255,255,255,0.1); border: 1px solid rgba(255,215,150,0.3); }
+    .room-panel { background: #1e1f28cc; border-radius: 2rem; padding: 1rem; margin-bottom: 1.5rem; display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: center; }
+    .room-panel input { background: #2c2e3a; border: none; padding: 10px 20px; border-radius: 40px; color: #ffe3b3; font-size: 1rem; font-family: monospace; text-align: center; outline: none; border: 1px solid #e4b363; }
+    .room-panel button { background: #3e3f4a; border: none; padding: 10px 24px; border-radius: 40px; font-weight: bold; color: #f0e2c5; cursor: pointer; transition: 0.15s; }
+    .room-panel button:hover { background: #5e5f6e; }
+    .game-header { display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; margin-bottom: 1.2rem; }
+    .title { font-size: 1.7rem; font-weight: 700; background: linear-gradient(135deg, #F5E7D3, #E0C8A0); background-clip: text; -webkit-background-clip: text; color: transparent; }
+    .turn-badge { background: #2c2e3a; padding: 6px 20px; border-radius: 60px; font-weight: 600; font-size: 1rem; }
     .turn-white { background: #f5e7c8; color: #3b2c1f; }
     .turn-black { background: #2c2b26; color: #f0e2b6; }
-    .status-area {
-      background: #1e1f28cc;
-      border-radius: 2rem;
-      padding: 0.5rem 1rem;
-      text-align: center;
-      margin: 12px 0 16px;
-      color: #FFE5B4;
-      border-left: 4px solid #e4b363;
-    }
-    .board {
-      display: grid;
-      grid-template-columns: repeat(8, 1fr);
-      background-color: #2b1e0f;
-      border-radius: 18px;
-      overflow: hidden;
-      box-shadow: 0 20px 35px rgba(0,0,0,0.4);
-      aspect-ratio: 1 / 1;
-      margin-bottom: 1rem;
-    }
-    .square {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: clamp(2.2rem, 8vw, 4.8rem);
-      cursor: pointer;
-      transition: 0.05s linear;
-      font-family: 'Segoe UI', system-ui;
-      position: relative;
-    }
+    .status-area { background: #1e1f28cc; border-radius: 2rem; padding: 0.5rem 1rem; text-align: center; margin: 12px 0 16px; color: #FFE5B4; border-left: 4px solid #e4b363; }
+    .board { display: grid; grid-template-columns: repeat(8, 1fr); background-color: #2b1e0f; border-radius: 18px; overflow: hidden; box-shadow: 0 20px 35px rgba(0,0,0,0.4); aspect-ratio: 1 / 1; margin-bottom: 1rem; }
+    .square { display: flex; align-items: center; justify-content: center; font-size: clamp(2.2rem, 8vw, 4.8rem); cursor: pointer; transition: 0.05s linear; font-family: 'Segoe UI', system-ui; position: relative; }
     .square.light { background-color: #eed9bb; }
     .square.dark { background-color: #8b5a2b; }
     .square.selected { background: radial-gradient(circle, #ffdd99, #e6b873); box-shadow: inset 0 0 0 3px #ffc107; }
-    .square.legal-move::after {
-      content: "";
-      position: absolute;
-      width: 28%;
-      height: 28%;
-      background: radial-gradient(circle, #6fcf97, #2e7d4e);
-      border-radius: 50%;
-      opacity: 0.85;
-      pointer-events: none;
-    }
+    .square.legal-move::after { content: ""; position: absolute; width: 28%; height: 28%; background: radial-gradient(circle, #6fcf97, #2e7d4e); border-radius: 50%; opacity: 0.85; pointer-events: none; }
     .square.check-highlight { background: radial-gradient(circle, #ff6b6b, #b52e2e); animation: pulseRed 0.9s infinite; }
-    @keyframes pulseRed {
-      0% { box-shadow: inset 0 0 0 2px #ffaa77; }
-      100% { box-shadow: inset 0 0 0 4px #ff3a3a; }
-    }
-    .action-buttons {
-      display: flex;
-      gap: 16px;
-      justify-content: center;
-      margin-top: 20px;
-    }
-    .btn {
-      background: #2c2f36;
-      border: none;
-      padding: 8px 24px;
-      border-radius: 40px;
-      font-weight: 600;
-      color: #f0e2c5;
-      cursor: pointer;
-    }
-    .history-panel {
-      margin-top: 20px;
-      background: #1e1c1aa0;
-      border-radius: 28px;
-      padding: 8px 12px;
-      max-height: 110px;
-      overflow-y: auto;
-      font-size: 0.8rem;
-    }
+    @keyframes pulseRed { 0% { box-shadow: inset 0 0 0 2px #ffaa77; } 100% { box-shadow: inset 0 0 0 4px #ff3a3a; } }
+    .action-buttons { display: flex; gap: 16px; justify-content: center; margin-top: 20px; }
+    .btn { background: #2c2f36; border: none; padding: 8px 24px; border-radius: 40px; font-weight: 600; color: #f0e2c5; cursor: pointer; }
+    .history-panel { margin-top: 20px; background: #1e1c1aa0; border-radius: 28px; padding: 8px 12px; max-height: 110px; overflow-y: auto; font-size: 0.8rem; }
     .moves-list { display: flex; flex-wrap: wrap; gap: 8px; }
     .move-item { background: #00000055; padding: 4px 12px; border-radius: 30px; color: #ffe1aa; }
-    .promotion-modal {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.8);
-      backdrop-filter: blur(6px);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 1000;
-      visibility: hidden;
-      opacity: 0;
-      transition: 0.2s;
-    }
+    .promotion-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(6px); display: flex; align-items: center; justify-content: center; z-index: 1000; visibility: hidden; opacity: 0; transition: 0.2s; }
     .promotion-modal.active { visibility: visible; opacity: 1; }
-    .promotion-card {
-      background: #1f2a2f;
-      border-radius: 48px;
-      padding: 20px 30px;
-      text-align: center;
-    }
-    .promo-btn {
-      background: #2c2f36;
-      border: none;
-      font-size: 2.5rem;
-      padding: 6px 20px;
-      margin: 0 8px;
-      border-radius: 60px;
-      cursor: pointer;
-    }
-    @media (max-width: 550px) {
-      .square { font-size: clamp(1.7rem, 7vw, 3rem); }
-    }
+    .promotion-card { background: #1f2a2f; border-radius: 48px; padding: 20px 30px; text-align: center; }
+    .promo-btn { background: #2c2f36; border: none; font-size: 2.5rem; padding: 6px 20px; margin: 0 8px; border-radius: 60px; cursor: pointer; }
+    @media (max-width: 550px) { .square { font-size: clamp(1.7rem, 7vw, 3rem); } }
   </style>
 </head>
 <body>
@@ -239,7 +78,7 @@
 </div>
 
 <script>
-  // ========== YOUR FIREBASE CONFIGURATION ==========
+  // ========== YOUR CORRECT FIREBASE CONFIGURATION ==========
   const firebaseConfig = {
     apiKey: "AIzaSyCQ7QZFblWwB530G2ARVPHvYLAsDf0Mwak",
     authDomain: "chessgame-e4dbb.firebaseapp.com",
@@ -248,15 +87,25 @@
     messagingSenderId: "65265732775",
     appId: "1:65265732775:web:8c9ce7a779e8687bb59f82",
     measurementId: "G-7KMVP6RBFB",
-    databaseURL: "https://chessgame-e4dbb-default-rtdb.firebaseio.com"  // auto-generated URL
+    databaseURL: "https://chessgame-e4dbb-default-rtdb.asia-southeast1.firebasedatabase.app/"
   };
   // Initialize Firebase
   firebase.initializeApp(firebaseConfig);
   const db = firebase.database();
+  
+  // Quick connection test
+  db.ref('.info/connected').on('value', (snap) => {
+    if (snap.val() === true) {
+      console.log('✅ Firebase connected!');
+      statusDiv.innerText = 'Connected to Firebase. Enter password to start.';
+    } else {
+      console.log('❌ Firebase disconnected');
+    }
+  });
   // ==============================================
 
-  let game = null;             // Chess instance
-  let myColor = null;          // 'w' or 'b'
+  let game = null;
+  let myColor = null;
   let roomRef = null;
   let selectedSquare = null;
   let legalMovesSet = new Set();
@@ -276,7 +125,6 @@
   const historyListDiv = document.getElementById('moveHistoryList');
   const modal = document.getElementById('promotionModal');
 
-  // Helper functions
   function rcToAlgebraic(row, col) {
     const files = ['a','b','c','d','e','f','g','h'];
     return files[col] + (8 - row);
@@ -304,7 +152,6 @@
     })() : null;
     
     let squares = [];
-    // orientation: if myColor === 'w' -> normal (row 0 top = a8), else flipped
     for(let i=0;i<8;i++) {
       for(let j=0;j<8;j++) {
         let row = myColor === 'w' ? i : 7-i;
@@ -348,7 +195,6 @@
       turnBadge.innerText = `${turnName}'s turn`;
       turnBadge.className = `turn-badge turn-${turn === 'w' ? 'white' : 'black'}`;
     }
-    // update history
     let moves = game.history();
     if(moves.length) {
       let html = '';
@@ -373,7 +219,6 @@
     let move = { from, to, promotion: promotionPiece };
     let result = game.move(move);
     if(result) {
-      // send move to firebase
       await roomRef.child('fen').set(game.fen());
       await roomRef.child('lastMove').set({ from, to, promotion: promotionPiece });
       return true;
@@ -410,7 +255,6 @@
       renderBoard();
       return;
     }
-    // check promotion
     let piece = game.get(from);
     let needsPromotion = (piece && piece.type === 'p' && ( (piece.color==='w' && algebraicToRC(to).row===0) || (piece.color==='b' && algebraicToRC(to).row===7) ));
     if(needsPromotion) {
@@ -432,11 +276,9 @@
     }
   }
 
-  // Firebase listener
   function listenToGame(roomId, assignedColor) {
     myColor = assignedColor;
     roomRef = db.ref(`games/${roomId}`);
-    // init game if not exist
     roomRef.once('value', snap => {
       if(!snap.exists()) {
         let initialFen = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1';
@@ -456,7 +298,6 @@
         renderBoard();
       }
     });
-    // reset listener
     resetBtn.onclick = async () => {
       if(game.turn() !== myColor && !game.game_over()) {
         statusDiv.innerText = "Wait for your turn to reset, or both can reset.";
@@ -470,7 +311,6 @@
     };
   }
 
-  // promotion modal handler
   document.querySelectorAll('.promo-btn').forEach(btn => {
     btn.addEventListener('click', async (e) => {
       if(!waitingForPromotion) return;
@@ -505,18 +345,17 @@
     let snapshot = await roomRefCheck.once('value');
     let assignedColor = null;
     if(!snapshot.exists()) {
-      assignedColor = 'w';  // first player = white
+      assignedColor = 'w';
     } else {
       let data = snapshot.val();
       if(data.colorAssigned === 'w') assignedColor = 'b';
-      else if(data.colorAssigned === 'b') assignedColor = null; // full
+      else if(data.colorAssigned === 'b') assignedColor = null;
       else assignedColor = 'b';
     }
     if(!assignedColor) {
       statusDiv.innerText = "Room is full (2 players already). Try different password.";
       return;
     }
-    // set room with color
     await roomRefCheck.child('colorAssigned').set(assignedColor);
     roomPanel.style.display = 'none';
     gameArea.style.display = 'block';
