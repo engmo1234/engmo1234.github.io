@@ -3,8 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>🃏 UNO · Password Room + Chat</title>
-  <!-- Firebase SDK -->
+  <title>🃏 UNO · Simple & Working</title>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
   <style>
@@ -15,18 +14,17 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      font-family: 'Segoe UI', 'Poppins', 'Inter', system-ui, sans-serif;
+      font-family: 'Segoe UI', system-ui;
       margin: 0;
       padding: 20px;
     }
     .game-container {
       max-width: 1000px;
       width: 100%;
-      background: rgba(30,35,45,0.65);
+      background: rgba(30,35,45,0.75);
       backdrop-filter: blur(8px);
-      border-radius: 3rem;
-      padding: 1.5rem 1.8rem 2rem;
-      box-shadow: 0 25px 45px rgba(0,0,0,0.5), inset 0 1px 1px rgba(255,255,255,0.1);
+      border-radius: 2rem;
+      padding: 1.5rem;
       border: 1px solid rgba(255,215,150,0.3);
     }
     .room-panel {
@@ -35,10 +33,9 @@
       padding: 1rem;
       margin-bottom: 1.5rem;
       display: flex;
-      flex-wrap: wrap;
       gap: 12px;
-      align-items: center;
       justify-content: center;
+      flex-wrap: wrap;
     }
     .room-panel input {
       background: #2c2e3a;
@@ -47,9 +44,7 @@
       border-radius: 40px;
       color: #ffe3b3;
       font-size: 1rem;
-      font-family: monospace;
       text-align: center;
-      outline: none;
       border: 1px solid #e4b363;
     }
     .room-panel button {
@@ -60,15 +55,13 @@
       font-weight: bold;
       color: #f0e2c5;
       cursor: pointer;
-      transition: 0.15s;
     }
     .room-panel button:hover { background: #5e5f6e; }
     .game-area { display: none; }
     .game-header {
       display: flex;
       justify-content: space-between;
-      align-items: baseline;
-      flex-wrap: wrap;
+      align-items: center;
       margin-bottom: 1rem;
     }
     .title {
@@ -84,49 +77,42 @@
       padding: 6px 20px;
       border-radius: 60px;
       font-weight: 600;
-      font-size: 1rem;
     }
     .turn-white { background: #f5e7c8; color: #3b2c1f; }
     .turn-black { background: #2c2b26; color: #f0e2b6; }
     .status-area {
       background: #1e1f28cc;
       border-radius: 2rem;
-      padding: 0.5rem 1rem;
+      padding: 0.5rem;
       text-align: center;
-      margin: 12px 0 16px;
+      margin: 12px 0;
       color: #FFE5B4;
-      border-left: 4px solid #e4b363;
     }
-    .game-board {
+    .board {
       display: flex;
       flex-direction: column;
       gap: 20px;
     }
     .opponent-area, .player-area { text-align: center; }
-    .opponent-hand, .player-hand {
+    .hand {
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
       gap: 8px;
       margin: 10px 0;
+      min-height: 120px;
     }
     .card-back {
       width: 70px;
       height: 100px;
-      background: radial-gradient(circle, #2c3e4e, #1a2a36);
+      background: repeating-linear-gradient(45deg, #2c3e4e, #2c3e4e 10px, #1a2a36 10px, #1a2a36 20px);
       border-radius: 12px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
       border: 1px solid #e4b363;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 2rem;
-      color: #ffd966;
+      box-shadow: 0 4px 8px black;
     }
     .card {
       width: 70px;
       height: 100px;
-      background: white;
       border-radius: 12px;
       display: flex;
       flex-direction: column;
@@ -134,53 +120,57 @@
       justify-content: center;
       font-weight: bold;
       cursor: pointer;
-      transition: 0.05s;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-      border: 1px solid #aaa;
+      transition: 0.1s;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+      border: 1px solid white;
     }
-    .card:hover { transform: scale(1.05); }
-    .card.selected { border: 3px solid gold; transform: scale(1.02); }
-    .color-red { background: #ff6b6b; color: white; }
-    .color-blue { background: #4dabff; color: white; }
-    .color-green { background: #6fcf97; color: white; }
-    .color-yellow { background: #f4d03f; color: #2c3e50; }
-    .color-wild { background: linear-gradient(135deg, #ff6b6b, #4dabff, #6fcf97, #f4d03f); color: white; text-shadow: 1px 1px 0 #000; }
+    .card:hover { transform: translateY(-5px); }
+    .red { background: #e74c3c; color: white; }
+    .blue { background: #3498db; color: white; }
+    .green { background: #2ecc71; color: white; }
+    .yellow { background: #f1c40f; color: #2c3e50; }
+    .wild { background: linear-gradient(135deg, #e74c3c, #3498db, #2ecc71, #f1c40f); color: white; text-shadow: 1px 1px 0 black; }
     .center-area {
       display: flex;
       justify-content: center;
-      gap: 30px;
+      gap: 40px;
       margin: 10px 0;
+    }
+    .draw-pile, .discard-pile {
+      text-align: center;
     }
     .draw-card, .discard-card {
       width: 90px;
       height: 130px;
-      background: radial-gradient(circle, #2c3e4e, #1a2a36);
+      background: repeating-linear-gradient(45deg, #2c3e4e, #2c3e4e 10px, #1a2a36 10px, #1a2a36 20px);
       border-radius: 12px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 2.5rem;
+      font-size: 2rem;
       cursor: pointer;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
       border: 1px solid #e4b363;
     }
-    .draw-card:hover { background: #3e5a6e; }
+    .discard-card {
+      background: #2c3e4e;
+      cursor: default;
+    }
     .action-buttons {
       display: flex;
-      gap: 16px;
+      gap: 12px;
       justify-content: center;
-      margin: 20px 0;
+      margin: 15px 0;
     }
     .btn {
       background: #2c2f36;
       border: none;
-      padding: 8px 24px;
+      padding: 8px 20px;
       border-radius: 40px;
       font-weight: 600;
       color: #f0e2c5;
       cursor: pointer;
     }
-    .uno-button { background: #e67e22; color: white; font-weight: bold; }
+    .uno { background: #e67e22; }
     .chat-panel {
       margin-top: 20px;
       background: #1e1c1aa0;
@@ -213,7 +203,6 @@
       padding: 8px 16px;
       border-radius: 40px;
       color: #ffe3b3;
-      outline: none;
     }
     .modal {
       position: fixed;
@@ -221,8 +210,7 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(0,0,0,0.8);
-      backdrop-filter: blur(6px);
+      background: rgba(0,0,0,0.85);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -235,67 +223,68 @@
     .modal-card {
       background: #1f2a2f;
       border-radius: 48px;
-      padding: 20px 30px;
+      padding: 20px;
       text-align: center;
+      color: #ffe3b3;
     }
     .color-option {
-      display: inline-block;
       width: 60px;
       height: 60px;
       border-radius: 50%;
+      display: inline-block;
       margin: 10px;
       cursor: pointer;
       border: 2px solid white;
     }
+    .help-text { text-align: left; margin: 15px 0; line-height: 1.5; }
     @media (max-width: 650px) {
       .card, .card-back, .draw-card, .discard-card { width: 55px; height: 80px; font-size: 1rem; }
     }
   </style>
 </head>
 <body>
-<div class="game-container" id="app">
+<div class="game-container">
   <div class="room-panel" id="roomPanel">
-    <input type="text" id="roomPassword" placeholder="Enter shared password (e.g., chaima-motasim)" autocomplete="off">
-    <button id="joinBtn">🔐 Join / Create Game</button>
+    <input type="text" id="passwordInput" placeholder="Shared password (e.g., chaima-motasim)">
+    <button id="joinGameBtn">🔐 Join / Create Game</button>
   </div>
   <div class="game-area" id="gameArea">
     <div class="game-header">
-      <div class="title">🃏 UNO · REMOTE</div>
+      <div class="title">🃏 UNO · Remote</div>
       <div class="turn-badge" id="turnBadge">—</div>
     </div>
-    <div class="status-area" id="statusMessage">Waiting for opponent...</div>
-    <div class="game-board">
+    <div class="status-area" id="statusMsg">Waiting for opponent...</div>
+    <div class="board">
       <div class="opponent-area">
-        <div>Opponent's hand</div>
-        <div class="opponent-hand" id="opponentHand"></div>
+        <div>👤 Opponent</div>
+        <div class="hand" id="opponentHand"></div>
       </div>
       <div class="center-area">
         <div class="draw-pile">
-          <div>Draw pile</div>
+          <div>📥 Draw pile</div>
           <div class="draw-card" id="drawCard">🃟</div>
         </div>
         <div class="discard-pile">
-          <div>Discard</div>
+          <div>🗑️ Discard</div>
           <div class="discard-card" id="discardCard"></div>
         </div>
       </div>
       <div class="player-area">
-        <div>Your hand</div>
-        <div class="player-hand" id="playerHand"></div>
+        <div>🃟 Your hand (click a card to play)</div>
+        <div class="hand" id="playerHand"></div>
         <div class="action-buttons">
-          <button class="btn uno-button" id="callUnoBtn">📢 Call UNO!</button>
+          <button class="btn uno" id="callUnoBtn">📢 Call UNO!</button>
           <button class="btn" id="catchUnoBtn">⚠️ Catch UNO</button>
-          <button class="btn" id="resetGameBtn">⟳ New Game</button>
+          <button class="btn" id="helpBtn">❓ Help</button>
+          <button class="btn" id="resetBtn">⟳ New Game</button>
         </div>
       </div>
     </div>
     <div class="chat-panel">
-      <div>💬 CHAT</div>
-      <div class="chat-messages" id="chatMessages">
-        <div class="chat-message">— No messages yet —</div>
-      </div>
+      <div>💬 Chat</div>
+      <div class="chat-messages" id="chatMessages"><div class="chat-message">— No messages —</div></div>
       <div class="chat-input-area">
-        <input type="text" id="chatInput" placeholder="Type a message..." maxlength="200">
+        <input type="text" id="chatInput" placeholder="Type a message...">
         <button id="sendChatBtn">Send</button>
       </div>
     </div>
@@ -303,18 +292,32 @@
 </div>
 <div id="colorModal" class="modal">
   <div class="modal-card">
-    <p>Choose a color for Wild card</p>
-    <div style="display: flex; gap: 10px; justify-content: center;">
-      <div class="color-option" style="background: #ff6b6b;" data-color="red"></div>
-      <div class="color-option" style="background: #4dabff;" data-color="blue"></div>
-      <div class="color-option" style="background: #6fcf97;" data-color="green"></div>
-      <div class="color-option" style="background: #f4d03f;" data-color="yellow"></div>
+    <p>🎨 Choose a color for the Wild card</p>
+    <div>
+      <div class="color-option" style="background:#e74c3c" data-color="red"></div>
+      <div class="color-option" style="background:#3498db" data-color="blue"></div>
+      <div class="color-option" style="background:#2ecc71" data-color="green"></div>
+      <div class="color-option" style="background:#f1c40f" data-color="yellow"></div>
     </div>
+  </div>
+</div>
+<div id="helpModal" class="modal">
+  <div class="modal-card">
+    <h3>🎯 How to play</h3>
+    <div class="help-text">
+      <p><strong>Your turn:</strong> Click a card that matches the top card (same color, number, or symbol).<br>
+      <strong>No match?</strong> Click the Draw pile. If you still can't play, turn ends.<br>
+      <strong>Wild cards:</strong> Click a Wild or Wild+4 → choose a color.<br>
+      <strong>UNO:</strong> When you have ONE card left, press "Call UNO!" before your turn ends.<br>
+      <strong>Catch:</strong> If opponent forgets to call UNO, press "Catch UNO" to make them draw 2.<br>
+      <strong>Win:</strong> Be the first to play all your cards!</p>
+    </div>
+    <button class="btn" id="closeHelpBtn">Got it!</button>
   </div>
 </div>
 
 <script>
-  // ========== FIREBASE CONFIG (same as chess) ==========
+  // ---------- FIREBASE ----------
   const firebaseConfig = {
     apiKey: "AIzaSyCQ7QZFblWwB530G2ARVPHvYLAsDf0Mwak",
     authDomain: "chessgame-e4dbb.firebaseapp.com",
@@ -327,23 +330,22 @@
   };
   firebase.initializeApp(firebaseConfig);
   const db = firebase.database();
-  // ===================================================
 
-  // ----- UNO Helpers -----
-  const COLORS = ['red', 'blue', 'green', 'yellow'];
-  const NUMBERS = [0,1,2,3,4,5,6,7,8,9];
-  const SPECIALS = ['skip', 'reverse', 'draw2'];
+  // ---------- UNO CARD LOGIC ----------
+  const colors = ['red', 'blue', 'green', 'yellow'];
+  const numbers = [0,1,2,3,4,5,6,7,8,9];
+  const specials = ['skip', 'reverse', 'draw2'];
 
-  function createDeck() {
+  function createFullDeck() {
     let deck = [];
-    for (let color of COLORS) {
-      for (let num of NUMBERS) {
-        deck.push({ type: 'number', color, value: num });
-        if (num !== 0) deck.push({ type: 'number', color, value: num }); // duplicate except 0
+    for (let c of colors) {
+      for (let n of numbers) {
+        deck.push({ type: 'number', color: c, value: n });
+        if (n !== 0) deck.push({ type: 'number', color: c, value: n }); // duplicate except 0
       }
-      for (let sp of SPECIALS) {
-        deck.push({ type: sp, color });
-        deck.push({ type: sp, color });
+      for (let s of specials) {
+        deck.push({ type: s, color: c });
+        deck.push({ type: s, color: c });
       }
     }
     for (let i = 0; i < 4; i++) deck.push({ type: 'wild' });
@@ -351,40 +353,44 @@
     return shuffle(deck);
   }
 
-  function shuffle(arr) {
-    for (let i = arr.length - 1; i > 0; i--) {
+  function shuffle(deck) {
+    for (let i = deck.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
-      [arr[i], arr[j]] = [arr[j], arr[i]];
+      [deck[i], deck[j]] = [deck[j], deck[i]];
     }
-    return arr;
+    return deck;
   }
 
-  function cardToString(card) {
-    if (!card) return '?';
-    if (card.type === 'number') return `${card.color[0].toUpperCase()}${card.value}`;
-    if (card.type === 'wild') return 'Wild';
-    if (card.type === 'wild4') return 'Wild+4';
-    return `${card.color[0].toUpperCase()} ${card.type[0].toUpperCase()}`;
+  function getCardDisplay(card) {
+    if (!card) return { symbol: '?', style: '', label: '?' };
+    let symbol = '';
+    let label = '';
+    if (card.type === 'number') {
+      symbol = card.value;
+      label = card.color[0] + card.value;
+    } else if (card.type === 'skip') {
+      symbol = '⊘';
+      label = card.color[0] + 'SK';
+    } else if (card.type === 'reverse') {
+      symbol = '↺';
+      label = card.color[0] + 'RV';
+    } else if (card.type === 'draw2') {
+      symbol = '+2';
+      label = card.color[0] + '+2';
+    } else if (card.type === 'wild') {
+      symbol = '🎨';
+      label = 'Wild';
+    } else if (card.type === 'wild4') {
+      symbol = '+4🎨';
+      label = 'Wild+4';
+    }
+    let style = '';
+    if (card.type === 'wild' || card.type === 'wild4') style = 'wild';
+    else style = card.color;
+    return { symbol, style, label };
   }
 
-  function getCardStyle(card) {
-    if (!card) return '';
-    if (card.type === 'wild' || card.type === 'wild4') return 'color-wild';
-    return `color-${card.color}`;
-  }
-
-  function getCardSymbol(card) {
-    if (!card) return '?';
-    if (card.type === 'number') return card.value;
-    if (card.type === 'skip') return '⊘';
-    if (card.type === 'reverse') return '↺';
-    if (card.type === 'draw2') return '+2';
-    if (card.type === 'wild') return '🎨';
-    if (card.type === 'wild4') return '+4🎨';
-    return '';
-  }
-
-  function canPlay(card, topCard) {
+  function canPlayCard(card, topCard) {
     if (!topCard) return true;
     if (card.type === 'wild' || card.type === 'wild4') return true;
     if (card.type === 'number' && topCard.type === 'number' && card.value === topCard.value) return true;
@@ -393,35 +399,37 @@
     return false;
   }
 
-  // ----- Game State Management -----
-  let myPlayerId = null;          // 0 or 1
+  // ---------- GLOBAL STATE ----------
+  let myPlayerId = null;      // 0 or 1
   let roomRef = null;
   let gameState = null;
-  let selectedCardIndex = -1;
   let waitingForColor = false;
-  let pendingWild = null;         // { index, card }
+  let pendingWildIndex = null;
 
   // DOM elements
   const roomPanel = document.getElementById('roomPanel');
   const gameArea = document.getElementById('gameArea');
-  const roomPasswordInput = document.getElementById('roomPassword');
-  const joinBtn = document.getElementById('joinBtn');
+  const passwordInput = document.getElementById('passwordInput');
+  const joinBtn = document.getElementById('joinGameBtn');
   const turnBadge = document.getElementById('turnBadge');
-  const statusDiv = document.getElementById('statusMessage');
+  const statusMsg = document.getElementById('statusMsg');
   const opponentHandDiv = document.getElementById('opponentHand');
   const playerHandDiv = document.getElementById('playerHand');
   const drawCardDiv = document.getElementById('drawCard');
   const discardCardDiv = document.getElementById('discardCard');
   const callUnoBtn = document.getElementById('callUnoBtn');
   const catchUnoBtn = document.getElementById('catchUnoBtn');
-  const resetGameBtn = document.getElementById('resetGameBtn');
+  const resetBtn = document.getElementById('resetBtn');
+  const helpBtn = document.getElementById('helpBtn');
+  const closeHelpBtn = document.getElementById('closeHelpBtn');
+  const helpModal = document.getElementById('helpModal');
+  const colorModal = document.getElementById('colorModal');
   const chatMessagesDiv = document.getElementById('chatMessages');
   const chatInput = document.getElementById('chatInput');
   const sendChatBtn = document.getElementById('sendChatBtn');
-  const colorModal = document.getElementById('colorModal');
 
-  // Helper: reshuffle discard into draw when draw empty
-  function ensureDrawPile(state) {
+  // Helper: ensure draw pile has cards
+  function refillDrawPile(state) {
     if (state.drawPile.length === 0 && state.discardPile.length > 1) {
       const top = state.discardPile.pop();
       state.drawPile = shuffle(state.discardPile);
@@ -429,27 +437,30 @@
     }
   }
 
-  // Play a card
-  async function playCard(index, chosenColor = null) {
-    if (!gameState || gameState.winner !== null) return false;
+  // Play a card (core action)
+  async function playCardAction(index, chosenColor = null) {
+    if (!gameState || gameState.winner !== null) {
+      statusMsg.innerText = "Game is over. Press New Game.";
+      return false;
+    }
     if (gameState.currentPlayer !== myPlayerId) {
-      statusDiv.innerText = "Not your turn!";
+      statusMsg.innerText = "Not your turn!";
       return false;
     }
     const card = gameState.players[myPlayerId].cards[index];
     const topCard = gameState.discardPile[gameState.discardPile.length - 1];
-    if (!canPlay(card, topCard)) {
-      statusDiv.innerText = "You cannot play that card!";
+    if (!canPlayCard(card, topCard)) {
+      statusMsg.innerText = "❌ Cannot play this card on the top card.";
       return false;
     }
-    // Wild / Wild4 need color
+    // Wild needs color
     if ((card.type === 'wild' || card.type === 'wild4') && chosenColor === null) {
       waitingForColor = true;
-      pendingWild = { index, card };
+      pendingWildIndex = index;
       colorModal.classList.add('active');
       return false;
     }
-    // Apply the move
+    // Apply move
     const newState = JSON.parse(JSON.stringify(gameState));
     // Remove card from hand
     newState.players[myPlayerId].cards.splice(index, 1);
@@ -459,22 +470,22 @@
     newState.drawnThisTurn = false;
     // Determine next player
     let nextPlayer = (newState.currentPlayer + 1) % 2;
-    // Apply card effects
+    // Effects
     if (card.type === 'skip') {
       nextPlayer = (nextPlayer + 1) % 2;
     } else if (card.type === 'reverse') {
-      // For 2 players, reverse = skip
+      // for 2 players, reverse = skip
       nextPlayer = (nextPlayer + 1) % 2;
     } else if (card.type === 'draw2') {
       for (let i = 0; i < 2; i++) {
-        ensureDrawPile(newState);
+        refillDrawPile(newState);
         const drawn = newState.drawPile.pop();
         newState.players[nextPlayer].cards.push(drawn);
       }
       nextPlayer = (nextPlayer + 1) % 2;
     } else if (card.type === 'wild4') {
       for (let i = 0; i < 4; i++) {
-        ensureDrawPile(newState);
+        refillDrawPile(newState);
         const drawn = newState.drawPile.pop();
         newState.players[nextPlayer].cards.push(drawn);
       }
@@ -485,36 +496,36 @@
     // Check win
     if (newState.players[myPlayerId].cards.length === 0) newState.winner = myPlayerId;
     else if (newState.players[1 - myPlayerId].cards.length === 0) newState.winner = 1 - myPlayerId;
-    // Save
     await roomRef.set(newState);
-    selectedCardIndex = -1;
+    statusMsg.innerText = "✅ Card played!";
     return true;
   }
 
-  async function drawCard() {
-    if (!gameState || gameState.winner !== null) return;
+  async function drawCardAction() {
+    if (!gameState || gameState.winner !== null) {
+      statusMsg.innerText = "Game over.";
+      return;
+    }
     if (gameState.currentPlayer !== myPlayerId) {
-      statusDiv.innerText = "Not your turn!";
+      statusMsg.innerText = "Not your turn!";
       return;
     }
     if (gameState.drawnThisTurn) {
-      statusDiv.innerText = "You already drew a card this turn!";
+      statusMsg.innerText = "You already drew a card this turn.";
       return;
     }
     const newState = JSON.parse(JSON.stringify(gameState));
-    ensureDrawPile(newState);
+    refillDrawPile(newState);
     const drawn = newState.drawPile.pop();
     newState.players[myPlayerId].cards.push(drawn);
     newState.drawnThisTurn = true;
-    // Check if drawn card can be played
     const topCard = newState.discardPile[newState.discardPile.length - 1];
-    if (!canPlay(drawn, topCard)) {
-      // Pass turn
+    if (!canPlayCard(drawn, topCard)) {
       newState.currentPlayer = (newState.currentPlayer + 1) % 2;
       newState.drawnThisTurn = false;
-      statusDiv.innerText = "Drew a card that cannot be played. Turn passes.";
+      statusMsg.innerText = "Drew a card that cannot be played. Turn passes.";
     } else {
-      statusDiv.innerText = "Drew a card! You may play it now.";
+      statusMsg.innerText = "Drew a card! You may play it now by clicking it.";
     }
     await roomRef.set(newState);
   }
@@ -525,9 +536,9 @@
       const newState = JSON.parse(JSON.stringify(gameState));
       newState.unoCalled[myPlayerId] = true;
       await roomRef.set(newState);
-      statusDiv.innerText = "UNO called!";
+      statusMsg.innerText = "📢 UNO called!";
     } else {
-      statusDiv.innerText = "You cannot call UNO now.";
+      statusMsg.innerText = "You can't call UNO now.";
     }
   }
 
@@ -537,20 +548,20 @@
     if (gameState.players[opp].cards.length === 1 && !gameState.unoCalled[opp]) {
       const newState = JSON.parse(JSON.stringify(gameState));
       for (let i = 0; i < 2; i++) {
-        ensureDrawPile(newState);
+        refillDrawPile(newState);
         const drawn = newState.drawPile.pop();
         newState.players[opp].cards.push(drawn);
       }
       newState.unoCalled[opp] = true;
       await roomRef.set(newState);
-      statusDiv.innerText = "Caught! Opponent draws 2 cards.";
+      statusMsg.innerText = "⚠️ Caught! Opponent draws 2 cards.";
     } else {
-      statusDiv.innerText = "No UNO to catch.";
+      statusMsg.innerText = "No UNO to catch.";
     }
   }
 
   async function resetGame() {
-    const deck = createDeck();
+    const deck = createFullDeck();
     const players = [
       { cards: [], unoCalled: false },
       { cards: [], unoCalled: false }
@@ -560,7 +571,7 @@
       players[1].cards.push(deck.pop());
     }
     let discard = [deck.pop()];
-    // Avoid starting with a wild
+    // Ensure first discard is not a wild (to avoid immediate confusion)
     while (discard[0].type === 'wild' || discard[0].type === 'wild4') {
       deck.push(discard.pop());
       discard = [deck.pop()];
@@ -577,54 +588,39 @@
     await roomRef.set(newState);
   }
 
-  // Render UI
+  // Render everything
   function render() {
     if (!gameState) return;
     const myCards = gameState.players[myPlayerId].cards;
-    const oppCardsCount = gameState.players[1 - myPlayerId].cards.length;
+    const oppCount = gameState.players[1 - myPlayerId].cards.length;
     const topCard = gameState.discardPile[gameState.discardPile.length - 1];
     const isMyTurn = (gameState.currentPlayer === myPlayerId);
     const gameOver = gameState.winner !== null;
 
     // Turn badge
     const currentPlayerName = gameState.currentPlayer === 0 ? "Player 1" : "Player 2";
-    turnBadge.innerText = gameOver ? `Game Over: ${gameState.winner === 0 ? "Player 1" : "Player 2"} wins` : `${currentPlayerName}'s turn`;
+    turnBadge.innerText = gameOver ? `🏆 ${gameState.winner === 0 ? "Player 1" : "Player 2"} wins!` : `${currentPlayerName}'s turn`;
     turnBadge.className = `turn-badge turn-${isMyTurn ? 'white' : 'black'}`;
-    // Status
-    if (gameOver) {
-      statusDiv.innerHTML = gameState.winner === myPlayerId ? "🎉 YOU WIN! 🎉" : "😞 Opponent wins!";
-    } else {
-      statusDiv.innerHTML = isMyTurn ? "Your turn. Play a card or draw." : "Waiting for opponent...";
-    }
+    statusMsg.innerText = gameOver ? (gameState.winner === myPlayerId ? "🎉 YOU WIN! 🎉" : "😞 Opponent wins!") : (isMyTurn ? "Your turn! Click a card or draw." : "Waiting for opponent...");
 
     // Opponent hand (backs)
     opponentHandDiv.innerHTML = '';
-    for (let i = 0; i < oppCardsCount; i++) {
+    for (let i = 0; i < oppCount; i++) {
       const back = document.createElement('div');
       back.className = 'card-back';
-      back.innerText = '🃟';
       opponentHandDiv.appendChild(back);
     }
 
     // Player hand
     playerHandDiv.innerHTML = '';
     myCards.forEach((card, idx) => {
+      const disp = getCardDisplay(card);
       const cardDiv = document.createElement('div');
-      cardDiv.className = `card ${getCardStyle(card)}`;
-      if (idx === selectedCardIndex && isMyTurn && !gameOver && !waitingForColor) cardDiv.classList.add('selected');
-      cardDiv.innerHTML = `<div style="font-size:1.8rem;">${getCardSymbol(card)}</div><div style="font-size:0.7rem;">${cardToString(card)}</div>`;
+      cardDiv.className = `card ${disp.style}`;
+      cardDiv.innerHTML = `<div style="font-size:1.8rem;">${disp.symbol}</div><div style="font-size:0.7rem;">${disp.label}</div>`;
       if (isMyTurn && !gameOver && !waitingForColor) {
         cardDiv.style.cursor = 'pointer';
-        cardDiv.onclick = () => {
-          if (waitingForColor) return;
-          if (selectedCardIndex === idx) {
-            // Play this card
-            playCard(idx);
-          } else {
-            selectedCardIndex = idx;
-            render();
-          }
-        };
+        cardDiv.onclick = () => playCardAction(idx);
       } else {
         cardDiv.style.opacity = '0.6';
         cardDiv.style.cursor = 'not-allowed';
@@ -633,46 +629,59 @@
     });
 
     // Draw pile
-    drawCardDiv.innerText = gameState.drawPile.length > 0 ? '🃟' : '🃞';
     drawCardDiv.onclick = null;
     if (isMyTurn && !gameOver && !gameState.drawnThisTurn && !waitingForColor) {
       drawCardDiv.style.cursor = 'pointer';
-      drawCardDiv.onclick = () => drawCard();
+      drawCardDiv.onclick = () => drawCardAction();
     } else {
       drawCardDiv.style.cursor = 'default';
     }
 
     // Discard pile
     if (topCard) {
-      discardCardDiv.className = `discard-card ${getCardStyle(topCard)}`;
-      discardCardDiv.innerHTML = `<div style="font-size:2rem;">${getCardSymbol(topCard)}</div><div style="font-size:0.7rem;">${cardToString(topCard)}</div>`;
+      const topDisp = getCardDisplay(topCard);
+      discardCardDiv.className = `discard-card ${topDisp.style}`;
+      discardCardDiv.innerHTML = `<div style="font-size:2rem;">${topDisp.symbol}</div><div style="font-size:0.7rem;">${topDisp.label}</div>`;
     } else {
-      discardCardDiv.innerText = '?';
+      discardCardDiv.className = 'discard-card';
+      discardCardDiv.innerHTML = '?';
     }
   }
 
-  // Color modal handlers
+  // Color modal
   document.querySelectorAll('.color-option').forEach(opt => {
     opt.addEventListener('click', async () => {
-      if (!pendingWild) return;
+      if (pendingWildIndex === null) return;
       const color = opt.getAttribute('data-color');
       colorModal.classList.remove('active');
       waitingForColor = false;
-      await playCard(pendingWild.index, color);
-      pendingWild = null;
-      render();
+      await playCardAction(pendingWildIndex, color);
+      pendingWildIndex = null;
     });
   });
+  colorModal.onclick = (e) => {
+    if (e.target === colorModal && waitingForColor) {
+      colorModal.classList.remove('active');
+      waitingForColor = false;
+      pendingWildIndex = null;
+      statusMsg.innerText = "Wild card cancelled.";
+    }
+  };
+
+  // Help modal
+  helpBtn.onclick = () => helpModal.classList.add('active');
+  closeHelpBtn.onclick = () => helpModal.classList.remove('active');
+  helpModal.onclick = (e) => { if (e.target === helpModal) helpModal.classList.remove('active'); };
 
   // Firebase listener
-  function listenToGame(roomId, assignedId) {
+  function listenToRoom(roomId, assignedId) {
     myPlayerId = assignedId;
     roomRef = db.ref(`games/${roomId}`);
     roomRef.on('value', (snap) => {
       const data = snap.val();
       if (!data) {
-        // First player initializes
-        const deck = createDeck();
+        // First player creates game
+        const deck = createFullDeck();
         const players = [
           { cards: [], unoCalled: false },
           { cards: [], unoCalled: false }
@@ -702,9 +711,7 @@
       }
       render();
     });
-
-    // Buttons
-    resetGameBtn.onclick = () => resetGame();
+    resetBtn.onclick = () => resetGame();
     callUnoBtn.onclick = () => callUno();
     catchUnoBtn.onclick = () => catchUno();
 
@@ -728,7 +735,7 @@
       if (text) {
         messagesRef.push({
           username: myPlayerId === 0 ? 'Player 1' : 'Player 2',
-          text: text.substring(0,200),
+          text: text.substring(0, 200),
           timestamp: Date.now()
         });
         chatInput.value = '';
@@ -741,18 +748,18 @@
 
   // Join room
   joinBtn.onclick = async () => {
-    const password = roomPasswordInput.value.trim();
+    const password = passwordInput.value.trim();
     if (!password) { alert("Enter a shared password"); return; }
-    const roomId = btoa(password).replace(/=/g,'');
-    const roomRefCheck = db.ref(`games/${roomId}`);
-    const snap = await roomRefCheck.once('value');
+    const roomId = btoa(password).replace(/=/g, '');
+    const roomCheck = db.ref(`games/${roomId}`);
+    const snap = await roomCheck.once('value');
     let assigned = null;
     if (!snap.exists()) {
-      assigned = 0; // first player
+      assigned = 0;
     } else {
       const data = snap.val();
-      // Check if both players already assigned
-      if (data.players && data.players.length === 2 && data.players[0] && data.players[1]) {
+      // Check if both players already exist
+      if (data.players && data.players[0] && data.players[1]) {
         alert("Room is full (2 players already). Try a different password.");
         return;
       }
@@ -764,11 +771,10 @@
       alert("Room full.");
       return;
     }
-    // Store assignment in room (optional)
-    await roomRefCheck.child(`player${assigned}`).set(true);
+    await roomCheck.child(`player${assigned}`).set(true);
     roomPanel.style.display = 'none';
     gameArea.style.display = 'block';
-    listenToGame(roomId, assigned);
+    listenToRoom(roomId, assigned);
   };
 </script>
 </body>
