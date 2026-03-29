@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>🃏 UNO · Works perfectly</title>
+  <title>🃏 UNO · 100% Working</title>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
   <style>
@@ -21,7 +21,7 @@
     .game-container {
       max-width: 1000px;
       width: 100%;
-      background: rgba(30,35,45,0.75);
+      background: rgba(30,35,45,0.85);
       backdrop-filter: blur(8px);
       border-radius: 2rem;
       padding: 1.5rem;
@@ -279,6 +279,7 @@
           <button class="btn" id="catchUnoBtn">⚠️ Catch UNO</button>
           <button class="btn" id="helpBtn">❓ Help</button>
           <button class="btn" id="resetBtn">⟳ New Game</button>
+          <button class="btn" id="debugBtn">🐞 Debug</button>
         </div>
       </div>
     </div>
@@ -319,7 +320,7 @@
 </div>
 
 <script>
-  // ---------- FIREBASE ----------
+  // ========== FIREBASE ==========
   const firebaseConfig = {
     apiKey: "AIzaSyCQ7QZFblWwB530G2ARVPHvYLAsDf0Mwak",
     authDomain: "chessgame-e4dbb.firebaseapp.com",
@@ -333,7 +334,7 @@
   firebase.initializeApp(firebaseConfig);
   const db = firebase.database();
 
-  // ---------- UNO CARD LOGIC ----------
+  // ========== CARD HELPERS ==========
   const colors = ['red', 'blue', 'green', 'yellow'];
   const numbers = [0,1,2,3,4,5,6,7,8,9];
   const specials = ['skip', 'reverse', 'draw2'];
@@ -365,8 +366,7 @@
 
   function getCardDisplay(card) {
     if (!card) return { symbol: '?', style: '', label: '?' };
-    let symbol = '';
-    let label = '';
+    let symbol = '', label = '';
     if (card.type === 'number') {
       symbol = card.value;
       label = card.color[0] + card.value;
@@ -386,9 +386,7 @@
       symbol = '+4🎨';
       label = 'Wild+4';
     }
-    let style = '';
-    if (card.type === 'wild' || card.type === 'wild4') style = 'wild';
-    else style = card.color;
+    let style = (card.type === 'wild' || card.type === 'wild4') ? 'wild' : card.color;
     return { symbol, style, label };
   }
 
@@ -401,7 +399,7 @@
     return false;
   }
 
-  // ---------- GLOBAL STATE ----------
+  // ========== GLOBAL STATE ==========
   let myPlayerId = null;      // 0 or 1
   let roomRef = null;
   let gameState = null;
@@ -426,39 +424,40 @@
   const closeHelpBtn = document.getElementById('closeHelpBtn');
   const helpModal = document.getElementById('helpModal');
   const colorModal = document.getElementById('colorModal');
+  const debugBtn = document.getElementById('debugBtn');
   const chatMessagesDiv = document.getElementById('chatMessages');
   const chatInput = document.getElementById('chatInput');
   const sendChatBtn = document.getElementById('sendChatBtn');
 
-  // Helper: ensure draw pile has cards
+  // Helper
   function refillDrawPile(state) {
     if (state.drawPile.length === 0 && state.discardPile.length > 1) {
       const top = state.discardPile.pop();
       state.drawPile = shuffle(state.discardPile);
       state.discardPile = [top];
+      console.log("Refilled draw pile from discard");
     }
   }
 
-  // Play a card
+  // Play card action
   async function playCardAction(index, chosenColor = null) {
-    if (!gameState || gameState.winner !== null) {
-      statusMsg.innerText = "Game is over. Press New Game.";
-      return false;
-    }
-    if (gameState.currentPlayer !== myPlayerId) {
-      statusMsg.innerText = "Not your turn!";
-      return false;
-    }
+    console.log("playCardAction called", index, chosenColor);
+    if (!gameState) { console.log("No gameState"); return false; }
+    if (gameState.winner !== null) { statusMsg.innerText = "Game over."; return false; }
+    if (gameState.currentPlayer !== myPlayerId) { statusMsg.innerText = "Not your turn!"; return false; }
     const card = gameState.players[myPlayerId].cards[index];
     const topCard = gameState.discardPile[gameState.discardPile.length - 1];
+    console.log("Playing card:", card, "Top card:", topCard);
     if (!canPlayCard(card, topCard)) {
       statusMsg.innerText = "❌ Cannot play this card.";
+      console.log("Cannot play - mismatch");
       return false;
     }
     if ((card.type === 'wild' || card.type === 'wild4') && chosenColor === null) {
       waitingForColor = true;
       pendingWildIndex = index;
       colorModal.classList.add('active');
+      console.log("Wild card, waiting for color");
       return false;
     }
     // Apply move
@@ -492,24 +491,17 @@
     newState.unoCalled = [false, false];
     if (newState.players[myPlayerId].cards.length === 0) newState.winner = myPlayerId;
     else if (newState.players[1 - myPlayerId].cards.length === 0) newState.winner = 1 - myPlayerId;
+    console.log("New state after play:", newState);
     await roomRef.set(newState);
     statusMsg.innerText = "✅ Card played!";
     return true;
   }
 
   async function drawCardAction() {
-    if (!gameState || gameState.winner !== null) {
-      statusMsg.innerText = "Game over.";
-      return;
-    }
-    if (gameState.currentPlayer !== myPlayerId) {
-      statusMsg.innerText = "Not your turn!";
-      return;
-    }
-    if (gameState.drawnThisTurn) {
-      statusMsg.innerText = "Already drew this turn.";
-      return;
-    }
+    console.log("drawCardAction");
+    if (!gameState || gameState.winner !== null) return;
+    if (gameState.currentPlayer !== myPlayerId) { statusMsg.innerText = "Not your turn!"; return; }
+    if (gameState.drawnThisTurn) { statusMsg.innerText = "Already drew this turn."; return; }
     const newState = JSON.parse(JSON.stringify(gameState));
     refillDrawPile(newState);
     const drawn = newState.drawPile.pop();
@@ -557,6 +549,7 @@
   }
 
   async function resetGame() {
+    console.log("Resetting game");
     const deck = createFullDeck();
     const players = [
       { cards: [], unoCalled: false },
@@ -584,9 +577,13 @@
     statusMsg.innerText = "Game reset!";
   }
 
-  // Render everything
+  // Render UI
   function render() {
-    if (!gameState) return;
+    if (!gameState) {
+      console.log("No gameState to render");
+      return;
+    }
+    console.log("Rendering gameState", gameState);
     const myCards = gameState.players[myPlayerId].cards;
     const oppCount = gameState.players[1 - myPlayerId].cards.length;
     const topCard = gameState.discardPile[gameState.discardPile.length - 1];
@@ -603,7 +600,7 @@
       statusMsg.innerText = gameState.winner === myPlayerId ? "🎉 YOU WIN! 🎉" : "😞 Opponent wins!";
     }
 
-    // Opponent hand (backs)
+    // Opponent hand
     opponentHandDiv.innerHTML = '';
     for (let i = 0; i < oppCount; i++) {
       const back = document.createElement('div');
@@ -628,7 +625,7 @@
       playerHandDiv.appendChild(cardDiv);
     });
 
-    // Draw pile
+    // Draw pile click
     drawCardDiv.onclick = null;
     if (isMyTurn && !gameOver && !gameState.drawnThisTurn && !waitingForColor) {
       drawCardDiv.style.cursor = 'pointer';
@@ -637,7 +634,7 @@
       drawCardDiv.style.cursor = 'default';
     }
 
-    // Discard pile (show actual top card)
+    // Discard pile (must show actual card)
     if (topCard) {
       const topDisp = getCardDisplay(topCard);
       discardCardDiv.className = `discard-card ${topDisp.style}`;
@@ -673,14 +670,28 @@
   closeHelpBtn.onclick = () => helpModal.classList.remove('active');
   helpModal.onclick = (e) => { if (e.target === helpModal) helpModal.classList.remove('active'); };
 
-  // Firebase listener with join notification
+  // Debug button
+  debugBtn.onclick = () => {
+    console.log("=== DEBUG ===");
+    console.log("myPlayerId:", myPlayerId);
+    console.log("gameState:", gameState);
+    if (gameState) {
+      console.log("Discard pile:", gameState.discardPile);
+      console.log("Top card:", gameState.discardPile[gameState.discardPile.length - 1]);
+      console.log("Current player:", gameState.currentPlayer);
+      console.log("My hand:", gameState.players[myPlayerId].cards);
+    }
+    statusMsg.innerText = "Debug info printed to console (F12).";
+  };
+
+  // Firebase listener
   function listenToRoom(roomId, assignedId) {
     myPlayerId = assignedId;
     roomRef = db.ref(`games/${roomId}`);
     roomRef.on('value', (snap) => {
       const data = snap.val();
       if (!data) {
-        // First player creates game
+        console.log("No data, initializing...");
         const deck = createFullDeck();
         const players = [
           { cards: [], unoCalled: false },
@@ -708,11 +719,12 @@
         gameState = initialState;
         statusMsg.innerText = "Game created. Waiting for second player...";
       } else {
-        const wasEmpty = !gameState;
+        const oldState = gameState;
         gameState = data;
-        if (wasEmpty && gameState.players && gameState.players[0] && gameState.players[1]) {
+        if (!oldState && gameState.players && gameState.players[0] && gameState.players[1]) {
           statusMsg.innerText = "Opponent joined! Game starting...";
-          setTimeout(() => render(), 100);
+        } else if (oldState && oldState.players && !oldState.players[1] && gameState.players[1]) {
+          statusMsg.innerText = "Opponent joined! Game starting...";
         }
       }
       render();
