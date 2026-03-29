@@ -8,10 +8,7 @@
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
   <style>
-    * {
-      box-sizing: border-box;
-      user-select: none;
-    }
+    * { box-sizing: border-box; user-select: none; }
     body {
       background: linear-gradient(145deg, #1a2a3a 0%, #0f1a24 100%);
       min-height: 100vh;
@@ -65,12 +62,8 @@
       cursor: pointer;
       transition: 0.15s;
     }
-    .room-panel button:hover {
-      background: #5e5f6e;
-    }
-    .game-area {
-      display: none;
-    }
+    .room-panel button:hover { background: #5e5f6e; }
+    .game-area { display: none; }
     .game-header {
       display: flex;
       justify-content: space-between;
@@ -109,14 +102,13 @@
       flex-direction: column;
       gap: 20px;
     }
-    .opponent-area {
-      text-align: center;
-    }
-    .opponent-hand {
+    .opponent-area, .player-area { text-align: center; }
+    .opponent-hand, .player-hand {
       display: flex;
-      justify-content: center;
-      gap: 5px;
       flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+      margin: 10px 0;
     }
     .card-back {
       width: 70px;
@@ -130,46 +122,6 @@
       justify-content: center;
       font-size: 2rem;
       color: #ffd966;
-      font-weight: bold;
-    }
-    .center-area {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 20px;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-    .draw-pile, .discard-pile {
-      text-align: center;
-    }
-    .draw-card, .discard-card {
-      width: 90px;
-      height: 130px;
-      background: radial-gradient(circle, #2c3e4e, #1a2a36);
-      border-radius: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 2.5rem;
-      cursor: pointer;
-      transition: 0.1s;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-      border: 1px solid #e4b363;
-    }
-    .draw-card:hover {
-      transform: scale(1.02);
-      background: #3e5a6e;
-    }
-    .player-area {
-      margin-top: 20px;
-    }
-    .player-hand {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 8px;
-      margin: 10px 0;
     }
     .card {
       width: 70px;
@@ -182,26 +134,37 @@
       justify-content: center;
       font-weight: bold;
       cursor: pointer;
-      transition: 0.05s linear;
+      transition: 0.05s;
       box-shadow: 0 4px 8px rgba(0,0,0,0.2);
       border: 1px solid #aaa;
     }
-    .card:hover {
-      transform: scale(1.05);
-    }
-    .card.selected {
-      border: 3px solid gold;
-      transform: scale(1.02);
-    }
-    .card-disabled {
-      opacity: 0.6;
-      cursor: not-allowed;
-    }
+    .card:hover { transform: scale(1.05); }
+    .card.selected { border: 3px solid gold; transform: scale(1.02); }
     .color-red { background: #ff6b6b; color: white; }
     .color-blue { background: #4dabff; color: white; }
     .color-green { background: #6fcf97; color: white; }
     .color-yellow { background: #f4d03f; color: #2c3e50; }
     .color-wild { background: linear-gradient(135deg, #ff6b6b, #4dabff, #6fcf97, #f4d03f); color: white; text-shadow: 1px 1px 0 #000; }
+    .center-area {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      margin: 10px 0;
+    }
+    .draw-card, .discard-card {
+      width: 90px;
+      height: 130px;
+      background: radial-gradient(circle, #2c3e4e, #1a2a36);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.5rem;
+      cursor: pointer;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+      border: 1px solid #e4b363;
+    }
+    .draw-card:hover { background: #3e5a6e; }
     .action-buttons {
       display: flex;
       gap: 16px;
@@ -217,6 +180,7 @@
       color: #f0e2c5;
       cursor: pointer;
     }
+    .uno-button { background: #e67e22; color: white; font-weight: bold; }
     .chat-panel {
       margin-top: 20px;
       background: #1e1c1aa0;
@@ -237,9 +201,7 @@
       border-bottom: 1px solid #e4b36333;
       color: #ffe3c4;
     }
-    .chat-message strong {
-      color: #ffd966;
-    }
+    .chat-message strong { color: #ffd966; }
     .chat-input-area {
       display: flex;
       gap: 8px;
@@ -252,11 +214,6 @@
       border-radius: 40px;
       color: #ffe3b3;
       outline: none;
-    }
-    .uno-button {
-      background: #e67e22;
-      color: white;
-      font-weight: bold;
     }
     .modal {
       position: fixed;
@@ -274,10 +231,7 @@
       opacity: 0;
       transition: 0.2s;
     }
-    .modal.active {
-      visibility: visible;
-      opacity: 1;
-    }
+    .modal.active { visibility: visible; opacity: 1; }
     .modal-card {
       background: #1f2a2f;
       border-radius: 48px;
@@ -295,7 +249,6 @@
     }
     @media (max-width: 650px) {
       .card, .card-back, .draw-card, .discard-card { width: 55px; height: 80px; font-size: 1rem; }
-      .card .symbol { font-size: 1.2rem; }
     }
   </style>
 </head>
@@ -376,7 +329,7 @@
   const db = firebase.database();
   // ===================================================
 
-  // ----- UNO helpers -----
+  // ----- UNO Helpers -----
   const COLORS = ['red', 'blue', 'green', 'yellow'];
   const NUMBERS = [0,1,2,3,4,5,6,7,8,9];
   const SPECIALS = ['skip', 'reverse', 'draw2'];
@@ -386,7 +339,7 @@
     for (let color of COLORS) {
       for (let num of NUMBERS) {
         deck.push({ type: 'number', color, value: num });
-        if (num !== 0) deck.push({ type: 'number', color, value: num });
+        if (num !== 0) deck.push({ type: 'number', color, value: num }); // duplicate except 0
       }
       for (let sp of SPECIALS) {
         deck.push({ type: sp, color });
@@ -398,12 +351,12 @@
     return shuffle(deck);
   }
 
-  function shuffle(deck) {
-    for (let i = deck.length - 1; i > 0; i--) {
+  function shuffle(arr) {
+    for (let i = arr.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
-      [deck[i], deck[j]] = [deck[j], deck[i]];
+      [arr[i], arr[j]] = [arr[j], arr[i]];
     }
-    return deck;
+    return arr;
   }
 
   function cardToString(card) {
@@ -440,13 +393,13 @@
     return false;
   }
 
-  // ----- Game state -----
-  let myPlayerId = null;   // 0 or 1
+  // ----- Game State Management -----
+  let myPlayerId = null;          // 0 or 1
   let roomRef = null;
   let gameState = null;
   let selectedCardIndex = -1;
-  let waitingForColorChoice = false;
-  let pendingWildCard = null;
+  let waitingForColor = false;
+  let pendingWild = null;         // { index, card }
 
   // DOM elements
   const roomPanel = document.getElementById('roomPanel');
@@ -467,7 +420,7 @@
   const sendChatBtn = document.getElementById('sendChatBtn');
   const colorModal = document.getElementById('colorModal');
 
-  // Reshuffle discard into draw pile when draw pile empty
+  // Helper: reshuffle discard into draw when draw empty
   function ensureDrawPile(state) {
     if (state.drawPile.length === 0 && state.discardPile.length > 1) {
       const top = state.discardPile.pop();
@@ -476,72 +429,37 @@
     }
   }
 
-  // Apply effect of a card (returns new state, and modifies it)
-  function applyCardEffect(state, card, nextPlayer, drawAmount, skipNext, changeDirection) {
-    if (card.type === 'skip') {
-      // Skip the next player
-      nextPlayer = (nextPlayer + 1) % 2;
-    } else if (card.type === 'reverse') {
-      // For 2 players, reverse acts like skip
-      nextPlayer = (nextPlayer + 1) % 2;
-    } else if (card.type === 'draw2') {
-      // Draw 2 for the next player, then skip
-      for (let i = 0; i < 2; i++) {
-        ensureDrawPile(state);
-        const drawn = state.drawPile.pop();
-        state.players[nextPlayer].cards.push(drawn);
-      }
-      nextPlayer = (nextPlayer + 1) % 2;
-    } else if (card.type === 'wild4') {
-      // Draw 4 for the next player, then skip
-      for (let i = 0; i < 4; i++) {
-        ensureDrawPile(state);
-        const drawn = state.drawPile.pop();
-        state.players[nextPlayer].cards.push(drawn);
-      }
-      nextPlayer = (nextPlayer + 1) % 2;
-    }
-    return { nextPlayer };
-  }
-
-  // Try to play a card from player's hand at index
+  // Play a card
   async function playCard(index, chosenColor = null) {
     if (!gameState || gameState.winner !== null) return false;
     if (gameState.currentPlayer !== myPlayerId) {
       statusDiv.innerText = "Not your turn!";
       return false;
     }
-
     const card = gameState.players[myPlayerId].cards[index];
     const topCard = gameState.discardPile[gameState.discardPile.length - 1];
-
     if (!canPlay(card, topCard)) {
-      statusDiv.innerText = "Cannot play that card!";
+      statusDiv.innerText = "You cannot play that card!";
       return false;
     }
-
-    // If wild/wild4 and no color chosen, show modal
+    // Wild / Wild4 need color
     if ((card.type === 'wild' || card.type === 'wild4') && chosenColor === null) {
-      pendingWildCard = { index, card };
+      waitingForColor = true;
+      pendingWild = { index, card };
       colorModal.classList.add('active');
       return false;
     }
-
     // Apply the move
     const newState = JSON.parse(JSON.stringify(gameState));
     // Remove card from hand
     newState.players[myPlayerId].cards.splice(index, 1);
-    // If wild/wild4, set its color
-    if (card.type === 'wild' || card.type === 'wild4') {
-      card.color = chosenColor;
-    }
+    // Set color for wild
+    if (card.type === 'wild' || card.type === 'wild4') card.color = chosenColor;
     newState.discardPile.push(card);
     newState.drawnThisTurn = false;
-
     // Determine next player
     let nextPlayer = (newState.currentPlayer + 1) % 2;
-
-    // Apply effect of the card (skip, reverse, draw)
+    // Apply card effects
     if (card.type === 'skip') {
       nextPlayer = (nextPlayer + 1) % 2;
     } else if (card.type === 'reverse') {
@@ -562,19 +480,12 @@
       }
       nextPlayer = (nextPlayer + 1) % 2;
     }
-
     newState.currentPlayer = nextPlayer;
-    // Reset UNO calls
     newState.unoCalled = [false, false];
-
     // Check win
-    if (newState.players[myPlayerId].cards.length === 0) {
-      newState.winner = myPlayerId;
-    } else if (newState.players[1 - myPlayerId].cards.length === 0) {
-      newState.winner = 1 - myPlayerId;
-    }
-
-    // Save state
+    if (newState.players[myPlayerId].cards.length === 0) newState.winner = myPlayerId;
+    else if (newState.players[1 - myPlayerId].cards.length === 0) newState.winner = 1 - myPlayerId;
+    // Save
     await roomRef.set(newState);
     selectedCardIndex = -1;
     return true;
@@ -587,27 +498,24 @@
       return;
     }
     if (gameState.drawnThisTurn) {
-      statusDiv.innerText = "You already drew a card this turn.";
+      statusDiv.innerText = "You already drew a card this turn!";
       return;
     }
-
     const newState = JSON.parse(JSON.stringify(gameState));
     ensureDrawPile(newState);
-    const drawnCard = newState.drawPile.pop();
-    newState.players[myPlayerId].cards.push(drawnCard);
+    const drawn = newState.drawPile.pop();
+    newState.players[myPlayerId].cards.push(drawn);
     newState.drawnThisTurn = true;
-
-    // Check if drawn card can be played immediately (optional, but player can choose to play)
+    // Check if drawn card can be played
     const topCard = newState.discardPile[newState.discardPile.length - 1];
-    if (!canPlay(drawnCard, topCard)) {
-      // If cannot play, turn passes
+    if (!canPlay(drawn, topCard)) {
+      // Pass turn
       newState.currentPlayer = (newState.currentPlayer + 1) % 2;
       newState.drawnThisTurn = false;
-      statusDiv.innerText = "Drew a card, cannot play. Turn passes.";
+      statusDiv.innerText = "Drew a card that cannot be played. Turn passes.";
     } else {
-      statusDiv.innerText = "Drew a card! You can play it now if you wish.";
+      statusDiv.innerText = "Drew a card! You may play it now.";
     }
-
     await roomRef.set(newState);
   }
 
@@ -625,16 +533,15 @@
 
   async function catchUno() {
     if (!gameState || gameState.winner !== null) return;
-    const opponent = 1 - myPlayerId;
-    if (gameState.players[opponent].cards.length === 1 && !gameState.unoCalled[opponent]) {
+    const opp = 1 - myPlayerId;
+    if (gameState.players[opp].cards.length === 1 && !gameState.unoCalled[opp]) {
       const newState = JSON.parse(JSON.stringify(gameState));
-      // Penalty: opponent draws 2 cards
       for (let i = 0; i < 2; i++) {
         ensureDrawPile(newState);
         const drawn = newState.drawPile.pop();
-        newState.players[opponent].cards.push(drawn);
+        newState.players[opp].cards.push(drawn);
       }
-      newState.unoCalled[opponent] = true;
+      newState.unoCalled[opp] = true;
       await roomRef.set(newState);
       statusDiv.innerText = "Caught! Opponent draws 2 cards.";
     } else {
@@ -643,25 +550,25 @@
   }
 
   async function resetGame() {
-    const newDeck = createDeck();
+    const deck = createDeck();
     const players = [
       { cards: [], unoCalled: false },
       { cards: [], unoCalled: false }
     ];
     for (let i = 0; i < 7; i++) {
-      players[0].cards.push(newDeck.pop());
-      players[1].cards.push(newDeck.pop());
+      players[0].cards.push(deck.pop());
+      players[1].cards.push(deck.pop());
     }
-    // Ensure top card is not a wild (start with a number or special)
-    let discardPile = [newDeck.pop()];
-    while (discardPile[0].type === 'wild' || discardPile[0].type === 'wild4') {
-      newDeck.push(discardPile.pop());
-      discardPile = [newDeck.pop()];
+    let discard = [deck.pop()];
+    // Avoid starting with a wild
+    while (discard[0].type === 'wild' || discard[0].type === 'wild4') {
+      deck.push(discard.pop());
+      discard = [deck.pop()];
     }
     const newState = {
       players,
-      drawPile: newDeck,
-      discardPile,
+      drawPile: deck,
+      discardPile: discard,
       currentPlayer: 0,
       drawnThisTurn: false,
       winner: null,
@@ -670,10 +577,12 @@
     await roomRef.set(newState);
   }
 
-  // Render UI from gameState
+  // Render UI
   function render() {
     if (!gameState) return;
-
+    const myCards = gameState.players[myPlayerId].cards;
+    const oppCardsCount = gameState.players[1 - myPlayerId].cards.length;
+    const topCard = gameState.discardPile[gameState.discardPile.length - 1];
     const isMyTurn = (gameState.currentPlayer === myPlayerId);
     const gameOver = gameState.winner !== null;
 
@@ -681,20 +590,16 @@
     const currentPlayerName = gameState.currentPlayer === 0 ? "Player 1" : "Player 2";
     turnBadge.innerText = gameOver ? `Game Over: ${gameState.winner === 0 ? "Player 1" : "Player 2"} wins` : `${currentPlayerName}'s turn`;
     turnBadge.className = `turn-badge turn-${isMyTurn ? 'white' : 'black'}`;
-
     // Status
     if (gameOver) {
-      if (gameState.winner === myPlayerId) statusDiv.innerHTML = "🎉 YOU WIN! 🎉";
-      else statusDiv.innerHTML = "😞 Opponent wins. Better luck next time!";
+      statusDiv.innerHTML = gameState.winner === myPlayerId ? "🎉 YOU WIN! 🎉" : "😞 Opponent wins!";
     } else {
-      if (isMyTurn) statusDiv.innerHTML = "Your turn. Play a card or draw.";
-      else statusDiv.innerHTML = "Waiting for opponent...";
+      statusDiv.innerHTML = isMyTurn ? "Your turn. Play a card or draw." : "Waiting for opponent...";
     }
 
-    // Opponent hand (card backs)
-    const opponentCardsCount = gameState.players[1 - myPlayerId].cards.length;
+    // Opponent hand (backs)
     opponentHandDiv.innerHTML = '';
-    for (let i = 0; i < opponentCardsCount; i++) {
+    for (let i = 0; i < oppCardsCount; i++) {
       const back = document.createElement('div');
       back.className = 'card-back';
       back.innerText = '🃟';
@@ -702,20 +607,23 @@
     }
 
     // Player hand
-    const myCards = gameState.players[myPlayerId].cards;
     playerHandDiv.innerHTML = '';
     myCards.forEach((card, idx) => {
       const cardDiv = document.createElement('div');
       cardDiv.className = `card ${getCardStyle(card)}`;
-      if (idx === selectedCardIndex && isMyTurn && !gameOver) cardDiv.classList.add('selected');
+      if (idx === selectedCardIndex && isMyTurn && !gameOver && !waitingForColor) cardDiv.classList.add('selected');
       cardDiv.innerHTML = `<div style="font-size:1.8rem;">${getCardSymbol(card)}</div><div style="font-size:0.7rem;">${cardToString(card)}</div>`;
-      if (isMyTurn && !gameOver) {
+      if (isMyTurn && !gameOver && !waitingForColor) {
         cardDiv.style.cursor = 'pointer';
         cardDiv.onclick = () => {
-          if (waitingForColorChoice) return;
-          if (selectedCardIndex === idx) selectedCardIndex = -1;
-          else selectedCardIndex = idx;
-          render();
+          if (waitingForColor) return;
+          if (selectedCardIndex === idx) {
+            // Play this card
+            playCard(idx);
+          } else {
+            selectedCardIndex = idx;
+            render();
+          }
         };
       } else {
         cardDiv.style.opacity = '0.6';
@@ -727,7 +635,7 @@
     // Draw pile
     drawCardDiv.innerText = gameState.drawPile.length > 0 ? '🃟' : '🃞';
     drawCardDiv.onclick = null;
-    if (isMyTurn && !gameOver && !gameState.drawnThisTurn && !waitingForColorChoice) {
+    if (isMyTurn && !gameOver && !gameState.drawnThisTurn && !waitingForColor) {
       drawCardDiv.style.cursor = 'pointer';
       drawCardDiv.onclick = () => drawCard();
     } else {
@@ -735,114 +643,85 @@
     }
 
     // Discard pile
-    const topCard = gameState.discardPile[gameState.discardPile.length - 1];
     if (topCard) {
       discardCardDiv.className = `discard-card ${getCardStyle(topCard)}`;
       discardCardDiv.innerHTML = `<div style="font-size:2rem;">${getCardSymbol(topCard)}</div><div style="font-size:0.7rem;">${cardToString(topCard)}</div>`;
     } else {
       discardCardDiv.innerText = '?';
     }
-
-    // If we have a selected card and it's our turn, try to play when clicked
-    if (selectedCardIndex !== -1 && isMyTurn && !gameOver && !waitingForColorChoice) {
-      const playBtn = document.createElement('div');
-      // Instead, we already attached onclick to each card; we need to trigger play on double click? Let's make it play on click of the selected card again
-      // We'll handle playing when a card is clicked and it's already selected.
-      // To improve UX: if a card is selected and you click it again, it plays.
-      // But we already have onclick on each card. We'll modify the card onclick above to also play if selected.
-      // Let's rework: In the card onclick, if selectedCardIndex === idx, then play that card.
-      // We'll update the onclick handler for cards:
-      playerHandDiv.querySelectorAll('.card').forEach((cardEl, idx) => {
-        const existingClick = cardEl.onclick;
-        cardEl.onclick = () => {
-          if (waitingForColorChoice) return;
-          if (selectedCardIndex === idx) {
-            // Play this card
-            playCard(idx);
-          } else {
-            if (selectedCardIndex !== -1) selectedCardIndex = -1;
-            else selectedCardIndex = idx;
-            render();
-          }
-        };
-      });
-    }
   }
 
-  // Color selection modal
+  // Color modal handlers
   document.querySelectorAll('.color-option').forEach(opt => {
     opt.addEventListener('click', async () => {
-      if (!pendingWildCard) return;
+      if (!pendingWild) return;
       const color = opt.getAttribute('data-color');
       colorModal.classList.remove('active');
-      await playCard(pendingWildCard.index, color);
-      pendingWildCard = null;
+      waitingForColor = false;
+      await playCard(pendingWild.index, color);
+      pendingWild = null;
       render();
     });
   });
 
-  // Firebase sync
+  // Firebase listener
   function listenToGame(roomId, assignedId) {
     myPlayerId = assignedId;
     roomRef = db.ref(`games/${roomId}`);
     roomRef.on('value', (snap) => {
       const data = snap.val();
       if (!data) {
-        // First player initializes game
-        const newState = (() => {
-          const deck = createDeck();
-          const players = [
-            { cards: [], unoCalled: false },
-            { cards: [], unoCalled: false }
-          ];
-          for (let i = 0; i < 7; i++) {
-            players[0].cards.push(deck.pop());
-            players[1].cards.push(deck.pop());
-          }
-          let discardPile = [deck.pop()];
-          while (discardPile[0].type === 'wild' || discardPile[0].type === 'wild4') {
-            deck.push(discardPile.pop());
-            discardPile = [deck.pop()];
-          }
-          return {
-            players,
-            drawPile: deck,
-            discardPile,
-            currentPlayer: 0,
-            drawnThisTurn: false,
-            winner: null,
-            unoCalled: [false, false]
-          };
-        })();
-        roomRef.set(newState);
-        gameState = newState;
+        // First player initializes
+        const deck = createDeck();
+        const players = [
+          { cards: [], unoCalled: false },
+          { cards: [], unoCalled: false }
+        ];
+        for (let i = 0; i < 7; i++) {
+          players[0].cards.push(deck.pop());
+          players[1].cards.push(deck.pop());
+        }
+        let discard = [deck.pop()];
+        while (discard[0].type === 'wild' || discard[0].type === 'wild4') {
+          deck.push(discard.pop());
+          discard = [deck.pop()];
+        }
+        const initialState = {
+          players,
+          drawPile: deck,
+          discardPile: discard,
+          currentPlayer: 0,
+          drawnThisTurn: false,
+          winner: null,
+          unoCalled: [false, false]
+        };
+        roomRef.set(initialState);
+        gameState = initialState;
       } else {
         gameState = data;
       }
       render();
     });
 
-    // Reset button
+    // Buttons
     resetGameBtn.onclick = () => resetGame();
     callUnoBtn.onclick = () => callUno();
     catchUnoBtn.onclick = () => catchUno();
 
     // Chat
-    function addChatMessage(username, text, timestamp) {
+    const messagesRef = db.ref(`games/${roomId}/messages`);
+    messagesRef.limitToLast(50).on('child_added', (snap) => {
+      const msg = snap.val();
+      if (!msg) return;
       const msgDiv = document.createElement('div');
       msgDiv.className = 'chat-message';
-      const timeStr = timestamp ? new Date(timestamp).toLocaleTimeString() : '';
-      msgDiv.innerHTML = `<strong>${username}:</strong> ${text} <span style="font-size:0.7rem;">${timeStr}</span>`;
+      const timeStr = msg.timestamp ? new Date(msg.timestamp).toLocaleTimeString() : '';
+      msgDiv.innerHTML = `<strong>${msg.username}:</strong> ${msg.text} <span style="font-size:0.7rem;">${timeStr}</span>`;
       chatMessagesDiv.appendChild(msgDiv);
       chatMessagesDiv.scrollTop = chatMessagesDiv.scrollHeight;
       if (chatMessagesDiv.children.length === 1 && chatMessagesDiv.children[0].innerText.includes('No messages')) {
         chatMessagesDiv.innerHTML = '';
       }
-    }
-    const messagesRef = db.ref(`games/${roomId}/messages`);
-    messagesRef.limitToLast(50).on('child_added', (snap) => {
-      const msg = snap.val();
-      if (msg) addChatMessage(msg.username, msg.text, msg.timestamp);
     });
     sendChatBtn.onclick = () => {
       const text = chatInput.value.trim();
@@ -866,31 +745,30 @@
     if (!password) { alert("Enter a shared password"); return; }
     const roomId = btoa(password).replace(/=/g,'');
     const roomRefCheck = db.ref(`games/${roomId}`);
-    const snapshot = await roomRefCheck.once('value');
-    let assignedId = null;
-    if (!snapshot.exists()) {
-      assignedId = 0; // first player
+    const snap = await roomRefCheck.once('value');
+    let assigned = null;
+    if (!snap.exists()) {
+      assigned = 0; // first player
     } else {
-      const data = snapshot.val();
-      // Check if game already has two players assigned
+      const data = snap.val();
+      // Check if both players already assigned
       if (data.players && data.players.length === 2 && data.players[0] && data.players[1]) {
         alert("Room is full (2 players already). Try a different password.");
         return;
       }
-      // Assign the missing player id
-      if (!data.players || !data.players[0]) assignedId = 0;
-      else if (!data.players[1]) assignedId = 1;
-      else assignedId = null;
+      if (!data.players || !data.players[0]) assigned = 0;
+      else if (!data.players[1]) assigned = 1;
+      else assigned = null;
     }
-    if (assignedId === null) {
+    if (assigned === null) {
       alert("Room full.");
       return;
     }
-    // Store player assignment (optional)
-    await roomRefCheck.child(`player${assignedId}`).set(true);
+    // Store assignment in room (optional)
+    await roomRefCheck.child(`player${assigned}`).set(true);
     roomPanel.style.display = 'none';
     gameArea.style.display = 'block';
-    listenToGame(roomId, assignedId);
+    listenToGame(roomId, assigned);
   };
 </script>
 </body>
