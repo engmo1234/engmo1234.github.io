@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>🃏 UNO · Simple & Working</title>
+  <title>🃏 UNO · Works perfectly</title>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
   <style>
     * { box-sizing: border-box; user-select: none; }
     body {
-      background: linear-gradient(145deg, #1a2a3a 0%, #0f1a24 100%);
+      background: linear-gradient(145deg, #1a2a3a, #0f1a24);
       min-height: 100vh;
       display: flex;
       justify-content: center;
@@ -142,7 +142,6 @@
     .draw-card, .discard-card {
       width: 90px;
       height: 130px;
-      background: repeating-linear-gradient(45deg, #2c3e4e, #2c3e4e 10px, #1a2a36 10px, #1a2a36 20px);
       border-radius: 12px;
       display: flex;
       align-items: center;
@@ -150,6 +149,9 @@
       font-size: 2rem;
       cursor: pointer;
       border: 1px solid #e4b363;
+    }
+    .draw-card {
+      background: repeating-linear-gradient(45deg, #2c3e4e, #2c3e4e 10px, #1a2a36 10px, #1a2a36 20px);
     }
     .discard-card {
       background: #2c3e4e;
@@ -341,7 +343,7 @@
     for (let c of colors) {
       for (let n of numbers) {
         deck.push({ type: 'number', color: c, value: n });
-        if (n !== 0) deck.push({ type: 'number', color: c, value: n }); // duplicate except 0
+        if (n !== 0) deck.push({ type: 'number', color: c, value: n });
       }
       for (let s of specials) {
         deck.push({ type: s, color: c });
@@ -437,7 +439,7 @@
     }
   }
 
-  // Play a card (core action)
+  // Play a card
   async function playCardAction(index, chosenColor = null) {
     if (!gameState || gameState.winner !== null) {
       statusMsg.innerText = "Game is over. Press New Game.";
@@ -450,10 +452,9 @@
     const card = gameState.players[myPlayerId].cards[index];
     const topCard = gameState.discardPile[gameState.discardPile.length - 1];
     if (!canPlayCard(card, topCard)) {
-      statusMsg.innerText = "❌ Cannot play this card on the top card.";
+      statusMsg.innerText = "❌ Cannot play this card.";
       return false;
     }
-    // Wild needs color
     if ((card.type === 'wild' || card.type === 'wild4') && chosenColor === null) {
       waitingForColor = true;
       pendingWildIndex = index;
@@ -462,19 +463,15 @@
     }
     // Apply move
     const newState = JSON.parse(JSON.stringify(gameState));
-    // Remove card from hand
     newState.players[myPlayerId].cards.splice(index, 1);
-    // Set color for wild
     if (card.type === 'wild' || card.type === 'wild4') card.color = chosenColor;
     newState.discardPile.push(card);
     newState.drawnThisTurn = false;
-    // Determine next player
     let nextPlayer = (newState.currentPlayer + 1) % 2;
     // Effects
     if (card.type === 'skip') {
       nextPlayer = (nextPlayer + 1) % 2;
     } else if (card.type === 'reverse') {
-      // for 2 players, reverse = skip
       nextPlayer = (nextPlayer + 1) % 2;
     } else if (card.type === 'draw2') {
       for (let i = 0; i < 2; i++) {
@@ -493,7 +490,6 @@
     }
     newState.currentPlayer = nextPlayer;
     newState.unoCalled = [false, false];
-    // Check win
     if (newState.players[myPlayerId].cards.length === 0) newState.winner = myPlayerId;
     else if (newState.players[1 - myPlayerId].cards.length === 0) newState.winner = 1 - myPlayerId;
     await roomRef.set(newState);
@@ -511,7 +507,7 @@
       return;
     }
     if (gameState.drawnThisTurn) {
-      statusMsg.innerText = "You already drew a card this turn.";
+      statusMsg.innerText = "Already drew this turn.";
       return;
     }
     const newState = JSON.parse(JSON.stringify(gameState));
@@ -525,7 +521,7 @@
       newState.drawnThisTurn = false;
       statusMsg.innerText = "Drew a card that cannot be played. Turn passes.";
     } else {
-      statusMsg.innerText = "Drew a card! You may play it now by clicking it.";
+      statusMsg.innerText = "Drew a card! You may play it now.";
     }
     await roomRef.set(newState);
   }
@@ -538,7 +534,7 @@
       await roomRef.set(newState);
       statusMsg.innerText = "📢 UNO called!";
     } else {
-      statusMsg.innerText = "You can't call UNO now.";
+      statusMsg.innerText = "Can't call UNO now.";
     }
   }
 
@@ -571,7 +567,6 @@
       players[1].cards.push(deck.pop());
     }
     let discard = [deck.pop()];
-    // Ensure first discard is not a wild (to avoid immediate confusion)
     while (discard[0].type === 'wild' || discard[0].type === 'wild4') {
       deck.push(discard.pop());
       discard = [deck.pop()];
@@ -586,6 +581,7 @@
       unoCalled: [false, false]
     };
     await roomRef.set(newState);
+    statusMsg.innerText = "Game reset!";
   }
 
   // Render everything
@@ -601,7 +597,11 @@
     const currentPlayerName = gameState.currentPlayer === 0 ? "Player 1" : "Player 2";
     turnBadge.innerText = gameOver ? `🏆 ${gameState.winner === 0 ? "Player 1" : "Player 2"} wins!` : `${currentPlayerName}'s turn`;
     turnBadge.className = `turn-badge turn-${isMyTurn ? 'white' : 'black'}`;
-    statusMsg.innerText = gameOver ? (gameState.winner === myPlayerId ? "🎉 YOU WIN! 🎉" : "😞 Opponent wins!") : (isMyTurn ? "Your turn! Click a card or draw." : "Waiting for opponent...");
+    if (!gameOver) {
+      statusMsg.innerText = isMyTurn ? "Your turn! Click a card or draw." : "Waiting for opponent...";
+    } else {
+      statusMsg.innerText = gameState.winner === myPlayerId ? "🎉 YOU WIN! 🎉" : "😞 Opponent wins!";
+    }
 
     // Opponent hand (backs)
     opponentHandDiv.innerHTML = '';
@@ -637,7 +637,7 @@
       drawCardDiv.style.cursor = 'default';
     }
 
-    // Discard pile
+    // Discard pile (show actual top card)
     if (topCard) {
       const topDisp = getCardDisplay(topCard);
       discardCardDiv.className = `discard-card ${topDisp.style}`;
@@ -673,7 +673,7 @@
   closeHelpBtn.onclick = () => helpModal.classList.remove('active');
   helpModal.onclick = (e) => { if (e.target === helpModal) helpModal.classList.remove('active'); };
 
-  // Firebase listener
+  // Firebase listener with join notification
   function listenToRoom(roomId, assignedId) {
     myPlayerId = assignedId;
     roomRef = db.ref(`games/${roomId}`);
@@ -706,8 +706,14 @@
         };
         roomRef.set(initialState);
         gameState = initialState;
+        statusMsg.innerText = "Game created. Waiting for second player...";
       } else {
+        const wasEmpty = !gameState;
         gameState = data;
+        if (wasEmpty && gameState.players && gameState.players[0] && gameState.players[1]) {
+          statusMsg.innerText = "Opponent joined! Game starting...";
+          setTimeout(() => render(), 100);
+        }
       }
       render();
     });
@@ -758,7 +764,6 @@
       assigned = 0;
     } else {
       const data = snap.val();
-      // Check if both players already exist
       if (data.players && data.players[0] && data.players[1]) {
         alert("Room is full (2 players already). Try a different password.");
         return;
