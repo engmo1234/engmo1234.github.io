@@ -1,0 +1,1449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
+<title>Pokémon TCG 1999 · Base Set</title>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+<style>
+*{box-sizing:border-box;user-select:none;-webkit-user-select:none;margin:0;padding:0;}
+:root{
+  --gold:#f5d76e;--red:#cc0000;--blue:#3a6bc8;--green:#2e7d32;
+  --card-fire:#b03000;--card-water:#1565c0;--card-grass:#2e7d32;
+  --card-lightning:#e65100;--card-psychic:#6a1b9a;--card-fighting:#4e342e;
+  --card-colorless:#546e7a;
+}
+body{min-height:100vh;background:radial-gradient(ellipse at top,#0a1628,#050c18);
+  font-family:'Segoe UI',system-ui,sans-serif;color:#f0e8d0;padding:8px;display:flex;justify-content:center;}
+.wrap{width:100%;max-width:1080px;}
+
+/* ── LOBBY ── */
+#lobby{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:95vh;gap:16px;}
+.logo-block{text-align:center;}
+.logo-poke{font-size:2.6rem;font-weight:900;color:#f5d76e;letter-spacing:-1px;text-shadow:0 0 20px rgba(245,215,110,.4);}
+.logo-sub{font-size:.95rem;color:#a09060;margin-top:2px;}
+.logo-badge{display:inline-block;background:rgba(245,215,110,.12);border:1px solid rgba(245,215,110,.3);border-radius:20px;padding:3px 12px;font-size:.78rem;color:#f5d76e;margin-top:6px;}
+.lobby-box{background:rgba(255,255,255,.05);border:1px solid rgba(245,215,110,.2);border-radius:20px;padding:24px 30px;display:flex;flex-direction:column;gap:11px;width:min(360px,96vw);}
+.lobby-box h2{text-align:center;font-size:.95rem;color:#f5d76e;font-weight:600;}
+.lb-input{background:rgba(0,0,0,.45);border:1px solid rgba(245,200,80,.3);border-radius:40px;padding:11px 18px;color:#ffe3b3;font-size:.92rem;text-align:center;width:100%;outline:none;}
+.lb-input:focus{border-color:#f5d76e;}
+.lb-input::placeholder{color:#7a6a4a;}
+.btn-join{background:linear-gradient(135deg,#cc0000,#ff4444);border:none;border-radius:40px;padding:12px;color:#fff;font-size:.95rem;font-weight:700;cursor:pointer;width:100%;transition:opacity .15s;}
+.btn-join:hover{opacity:.85;}
+.lobby-note{font-size:.76rem;color:#8a7050;text-align:center;line-height:1.5;}
+.type-legend{display:flex;flex-wrap:wrap;gap:5px;justify-content:center;margin-top:4px;}
+.tpill{font-size:.7rem;padding:2px 8px;border-radius:20px;font-weight:700;}
+
+/* ── GAME ── */
+#game{display:none;flex-direction:column;gap:7px;}
+
+/* topbar */
+.topbar{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;}
+.game-logo{font-size:1.1rem;font-weight:800;color:#f5d76e;}
+.turn-pill{padding:5px 14px;border-radius:30px;font-weight:700;font-size:.8rem;}
+.my-turn-pill{background:#cc0000;color:#fff;}
+.opp-turn-pill{background:#2a2a2a;color:#888;}
+.status-bar{background:rgba(0,0,0,.5);border-radius:10px;padding:6px 14px;text-align:center;font-size:.82rem;font-weight:600;color:#ffe5a0;min-height:30px;}
+
+/* phase banner */
+.phase-banner{background:rgba(245,215,110,.1);border:1px solid rgba(245,215,110,.25);border-radius:10px;padding:7px 14px;text-align:center;font-size:.82rem;color:#f5d76e;}
+
+/* opponent zone */
+.opp-zone{background:rgba(255,0,0,.04);border:1px solid rgba(255,60,60,.15);border-radius:12px;padding:8px;}
+.zone-title{font-size:.72rem;color:#a08060;margin-bottom:5px;display:flex;justify-content:space-between;align-items:center;}
+.prize-row{display:flex;gap:3px;flex-wrap:wrap;}
+.prize-card{width:22px;height:30px;border-radius:4px;background:repeating-linear-gradient(45deg,#1a0000,#1a0000 4px,#2a0808 4px,#2a0808 8px);border:1px solid #cc0000;cursor:default;}
+.prize-card.taken{background:#333;border-color:#555;opacity:.35;}
+.hand-backs{display:flex;flex-wrap:wrap;gap:3px;}
+.card-back-sm{width:28px;height:40px;border-radius:5px;background:repeating-linear-gradient(45deg,#1a0a0a,#1a0a0a 4px,#2a1010 4px,#2a1010 8px);border:1px solid #cc0000;}
+
+/* battlefield */
+.battlefield{display:grid;grid-template-columns:1fr auto 1fr;gap:10px;align-items:center;padding:4px 0;}
+.bench-col{display:flex;flex-direction:column;gap:4px;}
+.bench-label{font-size:.68rem;color:#a08060;text-align:center;}
+.bench-slots{display:flex;gap:4px;flex-wrap:wrap;justify-content:center;}
+.bench-slot{width:58px;height:82px;border-radius:8px;border:1px dashed rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:.65rem;color:#555;cursor:pointer;transition:.15s;}
+.bench-slot:hover{border-color:rgba(245,215,110,.5);}
+.bench-slot.filled{border:none;}
+.active-col{display:flex;flex-direction:column;align-items:center;gap:6px;}
+.active-label{font-size:.7rem;color:#a08060;}
+.active-slot{width:90px;height:126px;border-radius:10px;border:2px dashed rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:.72rem;color:#555;cursor:pointer;transition:.15s;}
+.active-slot.filled{border:none;}
+.vs-divider{display:flex;flex-direction:column;align-items:center;gap:6px;}
+.vs-text{font-size:1.3rem;font-weight:900;color:#f5d76e;opacity:.4;}
+.deck-info{display:flex;flex-direction:column;align-items:center;gap:4px;}
+.deck-pile{width:44px;height:60px;border-radius:7px;background:repeating-linear-gradient(45deg,#1a0a0a,#1a0a0a 6px,#2a1010 6px,#2a1010 12px);border:1px solid #cc0000;display:flex;align-items:center;justify-content:center;font-size:.6rem;color:#cc6666;}
+.deck-count{font-size:.65rem;color:#a08060;}
+.discard-pile{width:44px;height:60px;border-radius:7px;border:1px dashed rgba(255,100,100,.3);display:flex;align-items:center;justify-content:center;font-size:.6rem;color:#555;}
+
+/* pokemon card */
+.pcard{border-radius:8px;display:flex;flex-direction:column;cursor:pointer;overflow:hidden;transition:transform .12s,box-shadow .12s;position:relative;border:2px solid rgba(255,255,255,.7);}
+.pcard:hover{transform:translateY(-4px);box-shadow:0 6px 18px rgba(0,0,0,.5);}
+.pcard.selected{box-shadow:0 0 0 3px #f5d76e;}
+.pcard.active-card{width:86px;height:122px;}
+.pcard.bench-card{width:54px;height:76px;}
+.pcard.hand-card{width:68px;height:96px;}
+.pcard.unplayable{opacity:.45;cursor:not-allowed;}
+.pcard.unplayable:hover{transform:none;}
+.pcard .pc-header{padding:3px 5px;display:flex;justify-content:space-between;align-items:center;}
+.pcard .pc-name{font-size:.55rem;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:60%;}
+.pcard .pc-hp{font-size:.55rem;font-weight:800;}
+.pcard .pc-art{flex:1;display:flex;align-items:center;justify-content:center;font-size:1.8rem;background:rgba(0,0,0,.2);margin:0 3px;border-radius:5px;position:relative;}
+.pcard.bench-card .pc-art{font-size:1.2rem;}
+.pcard.active-card .pc-art{font-size:2.2rem;}
+.pcard .pc-art .pc-img{width:100%;height:100%;object-fit:contain;border-radius:5px;position:absolute;inset:0;}
+.pcard .pc-footer{padding:2px 5px;font-size:.5rem;display:flex;justify-content:space-between;}
+.pcard .pc-stage{font-size:.48rem;opacity:.7;}
+.pcard .pc-dmg{position:absolute;bottom:18px;right:4px;background:rgba(220,0,0,.9);color:#fff;border-radius:50%;width:18px;height:18px;font-size:.52rem;font-weight:700;display:flex;align-items:center;justify-content:center;}
+.pcard .status-badge{position:absolute;top:3px;right:3px;font-size:.55rem;background:rgba(0,0,0,.7);border-radius:4px;padding:1px 3px;}
+.pcard.energy-card{cursor:default;}
+.pcard.energy-card .pc-art{font-size:1rem;}
+
+/* hp bar */
+.hp-bar{width:100%;height:4px;background:rgba(0,0,0,.3);border-radius:2px;margin-top:1px;}
+.hp-fill{height:100%;border-radius:2px;background:#27ae60;transition:width .3s;}
+.hp-fill.low{background:#e74c3c;}
+.hp-fill.mid{background:#f39c12;}
+
+/* energy badges on card */
+.energy-attached{display:flex;flex-wrap:wrap;gap:1px;padding:1px 3px;}
+.ebadge{font-size:.45rem;padding:0 3px;border-radius:3px;font-weight:700;}
+
+/* type colors */
+.type-Fire{background:#b03000;color:#fff;}
+.type-Water{background:#1565c0;color:#fff;}
+.type-Grass{background:#2e7d32;color:#fff;}
+.type-Lightning{background:#e65100;color:#fff;}
+.type-Psychic{background:#6a1b9a;color:#fff;}
+.type-Fighting{background:#4e342e;color:#fff;}
+.type-Colorless{background:#546e7a;color:#fff;}
+
+/* trainer/energy card visuals */
+.trainer-card{background:#1a3a2a;border:1px solid rgba(245,215,110,.4);}
+.energy-card-ui{background:#1a2a3a;border:1px solid rgba(100,150,255,.3);}
+
+/* my hand */
+.my-zone{background:rgba(0,50,200,.04);border:1px solid rgba(60,100,255,.15);border-radius:12px;padding:8px;}
+.hand-scroll{display:flex;gap:6px;overflow-x:auto;padding:4px 2px;min-height:106px;}
+.hand-scroll::-webkit-scrollbar{height:4px;}
+.hand-scroll::-webkit-scrollbar-thumb{background:#333;border-radius:2px;}
+
+/* attack panel */
+.attack-panel{background:rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:8px;}
+.attack-panel h3{font-size:.78rem;color:#f5d76e;margin-bottom:6px;}
+.attack-list{display:flex;flex-direction:column;gap:5px;}
+.attack-row{display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:6px 10px;cursor:pointer;transition:.15s;}
+.attack-row:hover{background:rgba(255,255,255,.1);}
+.attack-row.disabled{opacity:.4;cursor:not-allowed;}
+.attack-row.disabled:hover{background:rgba(255,255,255,.05);}
+.atk-left{display:flex;flex-direction:column;gap:2px;}
+.atk-name{font-size:.82rem;font-weight:700;color:#f0e8d0;}
+.atk-cost{display:flex;gap:3px;}
+.atk-cost-badge{font-size:.6rem;padding:1px 5px;border-radius:10px;font-weight:700;}
+.atk-right{display:flex;flex-direction:column;align-items:flex-end;gap:2px;}
+.atk-dmg{font-size:1.1rem;font-weight:900;color:#f5d76e;}
+.atk-effect{font-size:.62rem;color:#a09060;max-width:140px;text-align:right;}
+
+/* actions */
+.actions{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;}
+.abtn{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);border-radius:30px;padding:6px 14px;color:#f0e2c5;font-size:.8rem;font-weight:600;cursor:pointer;transition:.15s;}
+.abtn:hover{background:rgba(255,255,255,.15);}
+.abtn.red{background:rgba(204,0,0,.3);border-color:#cc0000;}
+.abtn.red:hover{background:rgba(204,0,0,.6);}
+.abtn.gold{background:rgba(245,215,110,.15);border-color:#f5d76e;color:#f5d76e;}
+.abtn:disabled{opacity:.3;cursor:not-allowed;}
+
+/* energy attachment UI */
+.attach-panel{background:rgba(0,0,0,.4);border:1px solid rgba(100,200,100,.2);border-radius:10px;padding:8px;}
+.attach-panel h3{font-size:.75rem;color:#a0e0a0;margin-bottom:5px;}
+.energy-hand{display:flex;gap:5px;flex-wrap:wrap;}
+.energy-btn{padding:5px 10px;border-radius:20px;font-size:.75rem;font-weight:700;cursor:pointer;border:1px solid rgba(255,255,255,.2);transition:.15s;}
+.energy-btn:hover{filter:brightness(1.2);}
+
+/* bench pick modal */
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.92);display:none;align-items:center;justify-content:center;z-index:900;padding:16px;}
+.modal.open{display:flex;}
+.modal-box{background:#0d1f2d;border:1px solid rgba(245,215,110,.3);border-radius:20px;padding:20px 24px;max-width:500px;width:100%;}
+.modal-box h2{font-size:1rem;color:#f5d76e;margin-bottom:12px;text-align:center;}
+.modal-cards{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;}
+.modal-box p{font-size:.8rem;color:#a09060;text-align:center;margin-top:10px;}
+.modal-box button{display:block;margin:10px auto 0;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);border-radius:20px;padding:6px 20px;color:#f0e2c5;cursor:pointer;font-size:.82rem;}
+
+/* chat */
+.chat{background:rgba(0,0,0,.3);border-radius:12px;padding:8px;}
+.chat-log{height:90px;overflow-y:auto;padding:4px;font-size:.76rem;border-radius:7px;background:rgba(0,0,0,.2);}
+.chat-msg{padding:2px 5px;border-bottom:1px solid rgba(255,200,100,.07);color:#ffe3c4;}
+.chat-msg strong{color:#ffd966;}
+.chat-row{display:flex;gap:6px;margin-top:5px;}
+.chat-row input{flex:1;background:rgba(0,0,0,.4);border:1px solid rgba(245,200,80,.25);border-radius:30px;padding:6px 12px;color:#ffe3b3;font-size:.8rem;outline:none;}
+.chat-row button{background:rgba(245,200,80,.18);border:1px solid rgba(245,200,80,.35);border-radius:30px;padding:6px 12px;color:#f5d76e;cursor:pointer;font-size:.8rem;font-weight:600;}
+
+/* win modal */
+#winModal{position:fixed;inset:0;background:rgba(0,0,0,.94);display:none;align-items:center;justify-content:center;z-index:1000;}
+#winModal.open{display:flex;}
+.win-card{background:linear-gradient(135deg,#1a0a00,#0a0a2a);border:2px solid #f5d76e;border-radius:24px;padding:28px 40px;text-align:center;}
+.win-card h1{font-size:2rem;color:#f5d76e;margin-bottom:6px;}
+.win-card p{color:#b0b0c0;margin-bottom:20px;}
+.win-card button{background:#cc0000;border:none;border-radius:30px;padding:11px 28px;color:#fff;font-size:.95rem;font-weight:700;cursor:pointer;}
+
+/* log */
+.game-log{background:rgba(0,0,0,.3);border-radius:10px;padding:6px 10px;max-height:80px;overflow-y:auto;font-size:.72rem;color:#a09060;}
+.log-entry{padding:1px 0;border-bottom:1px solid rgba(255,255,255,.04);}
+.log-entry.important{color:#f5d76e;}
+
+/* card image with fallback */
+.pimg{width:100%;height:100%;object-fit:contain;position:absolute;inset:0;border-radius:4px;}
+
+@media(max-width:600px){
+  .battlefield{grid-template-columns:1fr auto 1fr;gap:5px;}
+  .pcard.active-card{width:72px;height:102px;}
+  .pcard.bench-card{width:46px;height:64px;}
+  .pcard.hand-card{width:58px;height:82px;}
+  .pcard.active-card .pc-art{font-size:1.8rem;}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- LOBBY -->
+<div id="lobby">
+  <div class="logo-block">
+    <div class="logo-poke">⚡ Pokémon TCG</div>
+    <div class="logo-sub">Base Set 1999 — Online Multiplayer</div>
+    <div class="logo-badge">Charizard · Blastoise · Venusaur · and 29 more!</div>
+  </div>
+  <div class="lobby-box">
+    <h2>🃏 2-Player Battle</h2>
+    <input class="lb-input" id="passIn" placeholder="Room password (share with opponent)" maxlength="40">
+    <input class="lb-input" id="nameIn" placeholder="Your trainer name" maxlength="20">
+    <button class="btn-join" id="joinBtn">⚔️ Enter Battle!</button>
+    <p class="lobby-note">Both trainers enter the same password.<br>Each gets a pre-built 60-card Base Set deck.<br>First to take all 6 Prize cards wins!</p>
+  </div>
+  <div class="type-legend">
+    <span class="tpill type-Fire">🔥 Fire</span>
+    <span class="tpill type-Water">💧 Water</span>
+    <span class="tpill type-Grass">🌿 Grass</span>
+    <span class="tpill type-Lightning">⚡ Lightning</span>
+    <span class="tpill type-Psychic">🔮 Psychic</span>
+    <span class="tpill type-Fighting">👊 Fighting</span>
+    <span class="tpill type-Colorless">⭐ Colorless</span>
+  </div>
+</div>
+
+<!-- GAME -->
+<div id="game">
+  <div class="topbar">
+    <div class="game-logo">⚡ Pokémon TCG 1999</div>
+    <div class="turn-pill opp-turn-pill" id="turnPill">—</div>
+  </div>
+  <div class="status-bar" id="statusBar">Connecting…</div>
+  <div class="phase-banner" id="phaseBanner" style="display:none"></div>
+
+  <!-- OPPONENT ZONE -->
+  <div class="opp-zone">
+    <div class="zone-title">
+      <span id="oppNameLbl">Opponent</span>
+      <span>🏆 Prizes: <span id="oppPrizes">6</span></span>
+    </div>
+    <div style="display:flex;gap:10px;align-items:flex-start;flex-wrap:wrap;">
+      <div>
+        <div style="font-size:.65rem;color:#a08060;margin-bottom:3px;">Prize Cards</div>
+        <div class="prize-row" id="oppPrizeCards"></div>
+      </div>
+      <div style="flex:1;">
+        <div style="font-size:.65rem;color:#a08060;margin-bottom:3px;">Hand (<span id="oppHandCount">0</span> cards)</div>
+        <div class="hand-backs" id="oppHandBacks"></div>
+      </div>
+      <div>
+        <div style="font-size:.65rem;color:#a08060;margin-bottom:3px;">Deck</div>
+        <div class="deck-pile" id="oppDeck">—</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BATTLEFIELD -->
+  <div class="battlefield">
+    <!-- Opp Bench -->
+    <div class="bench-col">
+      <div class="bench-label">Opp Bench</div>
+      <div class="bench-slots" id="oppBench"></div>
+    </div>
+
+    <!-- VS CENTER -->
+    <div class="vs-divider">
+      <div class="active-label" id="oppActiveLbl">Opponent Active</div>
+      <div class="active-slot" id="oppActive"><span style="font-size:.7rem;color:#444">No Active</span></div>
+      <div class="vs-text">⚔️</div>
+      <div class="active-slot" id="myActive"><span style="font-size:.7rem;color:#444">No Active</span></div>
+      <div class="active-label">Your Active</div>
+      <!-- deck/discard -->
+      <div class="deck-info">
+        <div class="deck-pile" id="myDeckPile">—</div>
+        <div class="deck-count" id="myDeckCount">— cards</div>
+        <div class="discard-pile" id="myDiscardPile">🗑️</div>
+        <div class="deck-count" id="myDiscardCount">0 disc</div>
+      </div>
+    </div>
+
+    <!-- My Bench -->
+    <div class="bench-col">
+      <div class="bench-label">Your Bench</div>
+      <div class="bench-slots" id="myBench"></div>
+    </div>
+  </div>
+
+  <!-- MY PRIZE CARDS -->
+  <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+    <div>
+      <div style="font-size:.65rem;color:#a08060;margin-bottom:3px;">🏆 Your Prize Cards (<span id="myPrizes">6</span> left)</div>
+      <div class="prize-row" id="myPrizeCards"></div>
+    </div>
+  </div>
+
+  <!-- MY HAND -->
+  <div class="my-zone">
+    <div style="font-size:.72rem;color:#7ab8e8;margin-bottom:5px;font-weight:600;">Your Hand — click to select, then place/play</div>
+    <div class="hand-scroll" id="myHand"></div>
+  </div>
+
+  <!-- ENERGY ATTACH PANEL -->
+  <div class="attach-panel" id="attachPanel" style="display:none">
+    <h3>⚡ Attach Energy — select energy card then pick a Pokémon (once per turn)</h3>
+    <div class="energy-hand" id="energyHandBtns"></div>
+  </div>
+
+  <!-- ATTACK PANEL -->
+  <div class="attack-panel" id="attackPanel" style="display:none">
+    <h3>⚔️ Choose an attack for <span id="attackerName">—</span></h3>
+    <div class="attack-list" id="attackList"></div>
+  </div>
+
+  <!-- ACTIONS -->
+  <div class="actions">
+    <button class="abtn red" id="endTurnBtn" disabled>⏭️ End Turn</button>
+    <button class="abtn gold" id="retreatBtn" disabled>🔄 Retreat</button>
+    <button class="abtn" id="drawBtn" disabled>📥 Draw Card</button>
+    <button class="abtn" id="resetBtn">🔄 New Game</button>
+    <button class="abtn" id="fixBtn">🔧 Fix</button>
+  </div>
+
+  <!-- GAME LOG -->
+  <div class="game-log" id="gameLog"></div>
+
+  <!-- CHAT -->
+  <div class="chat">
+    <div class="chat-log" id="chatLog"><div class="chat-msg" id="chatPH" style="color:#555">— no messages —</div></div>
+    <div class="chat-row">
+      <input id="chatIn" placeholder="Message opponent…" maxlength="200">
+      <button id="chatSend">Send</button>
+    </div>
+  </div>
+</div>
+
+</div><!-- /wrap -->
+
+<!-- BENCH PICK MODAL -->
+<div class="modal" id="benchModal">
+  <div class="modal-box">
+    <h2 id="benchModalTitle">Choose a Pokémon</h2>
+    <div class="modal-cards" id="benchModalCards"></div>
+    <p id="benchModalNote"></p>
+    <button id="benchModalClose">Cancel</button>
+  </div>
+</div>
+
+<!-- WIN MODAL -->
+<div id="winModal">
+  <div class="win-card">
+    <h1 id="winTitle">🏆 Victory!</h1>
+    <p id="winSub">The battle is over!</p>
+    <button id="winReset">Play Again</button>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   FIREBASE
+   ============================================================ */
+const FB={apiKey:"AIzaSyCQ7QZFblWwB530G2ARVPHvYLAsDf0Mwak",authDomain:"chessgame-e4dbb.firebaseapp.com",
+  projectId:"chessgame-e4dbb",storageBucket:"chessgame-e4dbb.firebasestorage.app",
+  messagingSenderId:"65265732775",appId:"1:65265732775:web:8c9ce7a779e8687bb59f82",
+  databaseURL:"https://chessgame-e4dbb-default-rtdb.asia-southeast1.firebasedatabase.app/"};
+firebase.initializeApp(FB);
+const db=firebase.database();
+
+/* ============================================================
+   TYPE EMOJI HELPERS
+   ============================================================ */
+const TYPE_EMOJI={Fire:'🔥',Water:'💧',Grass:'🌿',Lightning:'⚡',Psychic:'🔮',Fighting:'👊',Colorless:'⭐'};
+const TYPE_COLOR={Fire:'type-Fire',Water:'type-Water',Grass:'type-Grass',Lightning:'type-Lightning',
+  Psychic:'type-Psychic',Fighting:'type-Fighting',Colorless:'type-Colorless'};
+const WEAKNESS={Fire:'Water',Water:'Lightning',Grass:'Fire',Lightning:'Fighting',Psychic:'Fighting',Fighting:'Psychic',Colorless:'Fighting'};
+
+/* ============================================================
+   POKEMON DATABASE — Base Set 1999 (accurate stats)
+   ============================================================ */
+const POKEMON_DB=[
+  {id:'charizard',name:'Charizard',hp:120,type:'Fire',stage:2,evolvesFrom:'charmeleon',rarity:'holo',emoji:'🦎',
+   attacks:[{name:'Energy Burn',cost:{},damage:0,effect:'power',desc:'Pokémon Power'},{name:'Fire Spin',cost:{Fire:4},damage:100,effect:'discard2',desc:'Discard 2 Energy attached'}],
+   weakness:'Water',retreat:3},
+  {id:'blastoise',name:'Blastoise',hp:100,type:'Water',stage:2,evolvesFrom:'wartortle',rarity:'holo',emoji:'🐢',
+   attacks:[{name:'Rain Dance',cost:{},damage:0,effect:'power',desc:'Pokémon Power — attach extra Water Energy'},{name:'Hydro Pump',cost:{Water:3},damage:40,effect:'plus10perextra',desc:'+10 per extra Water Energy'}],
+   weakness:'Lightning',retreat:3},
+  {id:'venusaur',name:'Venusaur',hp:100,type:'Grass',stage:2,evolvesFrom:'ivysaur',rarity:'holo',emoji:'🦕',
+   attacks:[{name:'Energy Trans',cost:{},damage:0,effect:'power',desc:'Pokémon Power'},{name:'Solarbeam',cost:{Grass:4},damage:60,effect:'none',desc:''}],
+   weakness:'Fire',retreat:2},
+  {id:'mewtwo',name:'Mewtwo',hp:60,type:'Psychic',stage:0,evolvesFrom:null,rarity:'holo',emoji:'😈',
+   attacks:[{name:'Psychic',cost:{Psychic:1,Colorless:1},damage:10,effect:'plus10perdiscard',desc:'+10 per Energy in opponent\'s discard'},{name:'Barrier',cost:{Psychic:2},damage:0,effect:'barrier',desc:'Prevent all damage next turn'}],
+   weakness:'Psychic',retreat:3},
+  {id:'chansey',name:'Chansey',hp:120,type:'Colorless',stage:0,evolvesFrom:null,rarity:'holo',emoji:'🥚',
+   attacks:[{name:'Scrunch',cost:{Colorless:2},damage:0,effect:'scrunch',desc:'Flip coin — heads: prevent all damage next turn'},{name:'Double-Edge',cost:{Colorless:4},damage:80,effect:'self80',desc:'Also does 80 damage to Chansey'}],
+   weakness:'Fighting',retreat:1},
+  {id:'hitmonchan',name:'Hitmonchan',hp:70,type:'Fighting',stage:0,evolvesFrom:null,rarity:'holo',emoji:'🥊',
+   attacks:[{name:'Jab',cost:{Fighting:1},damage:20,effect:'none',desc:''},{name:'Special Punch',cost:{Fighting:2,Colorless:1},damage:40,effect:'none',desc:''}],
+   weakness:'Psychic',retreat:2},
+  {id:'gyarados',name:'Gyarados',hp:100,type:'Water',stage:1,evolvesFrom:'magikarp',rarity:'holo',emoji:'🐉',
+   attacks:[{name:'Dragon Rage',cost:{Water:3},damage:50,effect:'none',desc:''},{name:'Bubblebeam',cost:{Water:4},damage:40,effect:'paralyze_flip',desc:'Flip coin — heads: Paralyze opponent'}],
+   weakness:'Lightning',retreat:3},
+  {id:'zapdos',name:'Zapdos',hp:90,type:'Lightning',stage:0,evolvesFrom:null,rarity:'holo',emoji:'⚡',
+   attacks:[{name:'Thunder',cost:{Lightning:3},damage:60,effect:'self30_flip',desc:'Flip coin — tails: 30 to self'},{name:'Thunderbolt',cost:{Lightning:4},damage:100,effect:'discard_all',desc:'Discard all Energy attached'}],
+   weakness:'Fighting',retreat:3},
+  {id:'raichu',name:'Raichu',hp:80,type:'Lightning',stage:1,evolvesFrom:'pikachu',rarity:'holo',emoji:'⚡',
+   attacks:[{name:'Agility',cost:{Lightning:2},damage:20,effect:'agility_flip',desc:'Flip coin — heads: prevent all effects of attacks next turn'},{name:'Thunder',cost:{Lightning:3,Colorless:1},damage:60,effect:'self30_flip',desc:'Flip coin — tails: 30 to self'}],
+   weakness:'Fighting',retreat:1},
+  {id:'ninetales',name:'Ninetales',hp:80,type:'Fire',stage:1,evolvesFrom:'vulpix',rarity:'holo',emoji:'🦊',
+   attacks:[{name:'Lure',cost:{Colorless:1},damage:0,effect:'lure',desc:'Opponent switches their Active Pokémon'},{name:'Fire Blast',cost:{Fire:4},damage:80,effect:'discard1',desc:'Discard 1 Fire Energy'}],
+   weakness:'Water',retreat:1},
+  {id:'alakazam',name:'Alakazam',hp:80,type:'Psychic',stage:2,evolvesFrom:'kadabra',rarity:'holo',emoji:'🥄',
+   attacks:[{name:'Damage Swap',cost:{},damage:0,effect:'power',desc:'Pokémon Power — move damage counters'},{name:'Confuse Ray',cost:{Psychic:3},damage:30,effect:'confuse_flip',desc:'Flip coin — heads: Confuse opponent'}],
+   weakness:'Psychic',retreat:3},
+  {id:'nidoking',name:'Nidoking',hp:90,type:'Fighting',stage:2,evolvesFrom:'nidorino',rarity:'holo',emoji:'👑',
+   attacks:[{name:'Thrash',cost:{Fighting:2,Colorless:1},damage:30,effect:'thrash_flip',desc:'Flip coin — heads: +20 damage'},{name:'Toxic',cost:{Fighting:3,Colorless:1},damage:40,effect:'poison',desc:'Poison opponent'}],
+   weakness:'Psychic',retreat:3},
+  {id:'machamp',name:'Machamp',hp:100,type:'Fighting',stage:2,evolvesFrom:'machoke',rarity:'holo',emoji:'💪',
+   attacks:[{name:'Seismic Toss',cost:{Fighting:3},damage:60,effect:'none',desc:''},{name:'Submission',cost:{Fighting:3,Colorless:1},damage:60,effect:'self20',desc:'20 damage to Machamp'}],
+   weakness:'Psychic',retreat:3},
+  {id:'electabuzz',name:'Electabuzz',hp:70,type:'Lightning',stage:0,evolvesFrom:null,rarity:'rare',emoji:'⚡',
+   attacks:[{name:'Thundershock',cost:{Lightning:1},damage:10,effect:'paralyze_flip',desc:'Flip coin — heads: Paralyze opponent'},{name:'Thunderpunch',cost:{Lightning:2},damage:30,effect:'plus10_flip',desc:'Flip coin — heads: +10 damage; tails: 10 to self'}],
+   weakness:'Fighting',retreat:2},
+  {id:'scyther',name:'Scyther',hp:70,type:'Grass',stage:0,evolvesFrom:null,rarity:'rare',emoji:'🌿',
+   attacks:[{name:'Slash',cost:{Colorless:2},damage:30,effect:'none',desc:''},{name:'Swords Dance',cost:{Grass:1,Colorless:1},damage:0,effect:'swords_dance',desc:'Next Slash does +30 damage'}],
+   weakness:'Fire',retreat:0},
+  {id:'snorlax',name:'Snorlax',hp:90,type:'Colorless',stage:0,evolvesFrom:null,rarity:'rare',emoji:'😴',
+   attacks:[{name:'Amnesia',cost:{Colorless:3},damage:0,effect:'amnesia',desc:'Choose 1 of opponent\'s attacks — opponent can\'t use it next turn'},{name:'Body Slam',cost:{Colorless:4},damage:30,effect:'paralyze_flip',desc:'Flip coin — heads: Paralyze opponent'}],
+   weakness:'Fighting',retreat:4},
+  {id:'dragonair',name:'Dragonair',hp:80,type:'Colorless',stage:1,evolvesFrom:'dratini',rarity:'rare',emoji:'🐲',
+   attacks:[{name:'Slam',cost:{Colorless:2},damage:20,effect:'double_flip',desc:'Flip 2 coins — 20 damage for each heads'},{name:'Hyper Beam',cost:{Colorless:4},damage:40,effect:'discard_energy',desc:'Discard 1 Energy attached to opponent'}],
+   weakness:null,retreat:2},
+  {id:'charmeleon',name:'Charmeleon',hp:80,type:'Fire',stage:1,evolvesFrom:'charmander',rarity:'uncommon',emoji:'🦎',
+   attacks:[{name:'Slash',cost:{Colorless:2},damage:30,effect:'none',desc:''},{name:'Flamethrower',cost:{Fire:1,Colorless:2},damage:50,effect:'discard1',desc:'Discard 1 Fire Energy'}],
+   weakness:'Water',retreat:1},
+  {id:'wartortle',name:'Wartortle',hp:70,type:'Water',stage:1,evolvesFrom:'squirtle',rarity:'uncommon',emoji:'🐢',
+   attacks:[{name:'Withdraw',cost:{Colorless:1},damage:0,effect:'withdraw_flip',desc:'Flip coin — heads: prevent all damage next turn'},{name:'Water Gun',cost:{Water:2},damage:30,effect:'none',desc:''}],
+   weakness:'Lightning',retreat:1},
+  {id:'ivysaur',name:'Ivysaur',hp:60,type:'Grass',stage:1,evolvesFrom:'bulbasaur',rarity:'uncommon',emoji:'🌿',
+   attacks:[{name:'Vine Whip',cost:{Grass:1,Colorless:1},damage:30,effect:'none',desc:''},{name:'Poisonpowder',cost:{Grass:2,Colorless:1},damage:20,effect:'poison',desc:'Poison opponent'}],
+   weakness:'Fire',retreat:1},
+  {id:'pikachu',name:'Pikachu',hp:40,type:'Lightning',stage:0,evolvesFrom:null,rarity:'common',emoji:'⚡',
+   attacks:[{name:'Thunder Shock',cost:{Lightning:1},damage:10,effect:'paralyze_flip',desc:'Flip coin — heads: Paralyze opponent'},{name:'Thunder Jolt',cost:{Lightning:1,Colorless:1},damage:30,effect:'self10_flip',desc:'Flip coin — tails: 10 to Pikachu'}],
+   weakness:'Fighting',retreat:1},
+  {id:'charmander',name:'Charmander',hp:50,type:'Fire',stage:0,evolvesFrom:null,rarity:'common',emoji:'🦎',
+   attacks:[{name:'Scratch',cost:{Colorless:1},damage:10,effect:'none',desc:''},{name:'Ember',cost:{Fire:1,Colorless:1},damage:30,effect:'discard1_flip',desc:'Discard 1 Fire Energy attached'}],
+   weakness:'Water',retreat:1},
+  {id:'squirtle',name:'Squirtle',hp:40,type:'Water',stage:0,evolvesFrom:null,rarity:'common',emoji:'🐢',
+   attacks:[{name:'Bubble',cost:{Water:1},damage:10,effect:'paralyze_flip',desc:'Flip coin — heads: Paralyze opponent'},{name:'Water Gun',cost:{Water:1,Colorless:1},damage:20,effect:'none',desc:''}],
+   weakness:'Lightning',retreat:1},
+  {id:'bulbasaur',name:'Bulbasaur',hp:40,type:'Grass',stage:0,evolvesFrom:null,rarity:'common',emoji:'🌿',
+   attacks:[{name:'Leech Seed',cost:{Grass:1},damage:20,effect:'heal10',desc:'Heal 10 damage from Bulbasaur'},{name:'Vine Whip',cost:{Grass:1,Colorless:1},damage:30,effect:'none',desc:''}],
+   weakness:'Fire',retreat:1},
+  {id:'magikarp',name:'Magikarp',hp:30,type:'Water',stage:0,evolvesFrom:null,rarity:'common',emoji:'🐟',
+   attacks:[{name:'Splash',cost:{Colorless:1},damage:0,effect:'none',desc:'Does nothing...'},{name:'Tackle',cost:{Water:1},damage:10,effect:'none',desc:''}],
+   weakness:'Lightning',retreat:1},
+  {id:'dratini',name:'Dratini',hp:40,type:'Colorless',stage:0,evolvesFrom:null,rarity:'common',emoji:'🐲',
+   attacks:[{name:'Slam',cost:{Colorless:2},damage:20,effect:'double_flip',desc:'Flip 2 coins — 20 per heads'}],
+   weakness:null,retreat:1},
+  {id:'gastly',name:'Gastly',hp:30,type:'Psychic',stage:0,evolvesFrom:null,rarity:'common',emoji:'👻',
+   attacks:[{name:'Sleeping Gas',cost:{Psychic:1},damage:0,effect:'sleep_flip',desc:'Flip coin — heads: opponent Asleep'},{name:'Lick',cost:{Psychic:2},damage:20,effect:'paralyze_flip',desc:'Flip coin — heads: Paralyze opponent'}],
+   weakness:null,retreat:1},
+  {id:'machop',name:'Machop',hp:50,type:'Fighting',stage:0,evolvesFrom:null,rarity:'common',emoji:'💪',
+   attacks:[{name:'Low Kick',cost:{Fighting:1},damage:20,effect:'none',desc:''}],
+   weakness:'Psychic',retreat:1},
+  {id:'ponyta',name:'Ponyta',hp:40,type:'Fire',stage:0,evolvesFrom:null,rarity:'common',emoji:'🐎',
+   attacks:[{name:'Ember',cost:{Fire:1,Colorless:1},damage:30,effect:'discard1_flip',desc:'Discard 1 Fire Energy'},{name:'Stampede',cost:{Colorless:3},damage:30,effect:'none',desc:''}],
+   weakness:'Water',retreat:1},
+  {id:'vulpix',name:'Vulpix',hp:50,type:'Fire',stage:0,evolvesFrom:null,rarity:'common',emoji:'🦊',
+   attacks:[{name:'Confuse Ray',cost:{Fire:1},damage:10,effect:'confuse_flip',desc:'Flip coin — heads: Confuse opponent'}],
+   weakness:'Water',retreat:1},
+];
+
+const TRAINER_DB=[
+  {id:'bill',name:'Bill',effect:'draw2',emoji:'👨',desc:'Draw 2 cards.'},
+  {id:'prof_oak',name:'Professor Oak',effect:'draw7discard',emoji:'👴',desc:'Discard your hand, draw 7 cards.'},
+  {id:'potion',name:'Potion',effect:'heal20',emoji:'🧪',desc:'Heal 20 damage from 1 of your Pokémon.'},
+  {id:'super_potion',name:'Super Potion',effect:'heal60',emoji:'💊',desc:'Heal 60 damage. Discard 1 Energy attached.'},
+  {id:'gust_of_wind',name:'Gust of Wind',effect:'gust',emoji:'💨',desc:'Opponent switches their Active Pokémon with a Benched one.'},
+  {id:'switch_card',name:'Switch',effect:'switch_own',emoji:'🔄',desc:'Switch your Active Pokémon with a Benched one.'},
+  {id:'energy_removal',name:'Energy Removal',effect:'remove1energy',emoji:'❌',desc:'Discard 1 Energy attached to opponent\'s Active.'},
+  {id:'pluspower',name:'PlusPower',effect:'plus10next',emoji:'➕',desc:'+10 damage to your next attack this turn.'},
+];
+
+const ENERGY_DB=[
+  {id:'fire_energy',name:'Fire Energy',etype:'Fire',emoji:'🔥'},
+  {id:'water_energy',name:'Water Energy',etype:'Water',emoji:'💧'},
+  {id:'grass_energy',name:'Grass Energy',etype:'Grass',emoji:'🌿'},
+  {id:'lightning_energy',name:'Lightning Energy',etype:'Lightning',emoji:'⚡'},
+  {id:'psychic_energy',name:'Psychic Energy',etype:'Psychic',emoji:'🔮'},
+  {id:'fighting_energy',name:'Fighting Energy',etype:'Fighting',emoji:'👊'},
+  {id:'dce',name:'Double Colorless',etype:'Colorless',emoji:'✨',provides:2},
+];
+
+/* ============================================================
+   DECK BUILDER — balanced 60-card Base Set deck
+   ============================================================ */
+function buildDeck(){
+  const deck=[];
+  const pokeSlots=[
+    {id:'charizard',n:1},{id:'charmeleon',n:1},{id:'charmander',n:3},
+    {id:'blastoise',n:1},{id:'wartortle',n:1},{id:'squirtle',n:3},
+    {id:'pikachu',n:2},{id:'raichu',n:1},
+    {id:'mewtwo',n:2},{id:'hitmonchan',n:2},{id:'electabuzz',n:2},
+    {id:'scyther',n:1},{id:'chansey',n:1},
+  ];
+  for(const s of pokeSlots){
+    const p=POKEMON_DB.find(x=>x.id===s.id);
+    if(p) for(let i=0;i<s.n;i++) deck.push({...p,cardType:'pokemon',uid:uid()});
+  }
+  const trSlots=[
+    {id:'bill',n:4},{id:'prof_oak',n:3},{id:'potion',n:3},
+    {id:'gust_of_wind',n:2},{id:'switch_card',n:2},{id:'pluspower',n:2},{id:'energy_removal',n:2},
+  ];
+  for(const s of trSlots){
+    const t=TRAINER_DB.find(x=>x.id===s.id);
+    if(t) for(let i=0;i<s.n;i++) deck.push({...t,cardType:'trainer',uid:uid()});
+  }
+  const etypes=['fire_energy','water_energy','lightning_energy','psychic_energy','fighting_energy'];
+  let ei=0;
+  while(deck.length<60){
+    const e=ENERGY_DB.find(x=>x.id===etypes[ei%etypes.length]);
+    deck.push({...e,cardType:'energy',uid:uid()});
+    ei++;
+  }
+  return shuffle([...deck]);
+}
+
+function uid(){return Math.random().toString(36).substr(2,9);}
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+
+/* ============================================================
+   GAME STATE FACTORY
+   ============================================================ */
+function freshGame(){
+  const d0=buildDeck(),d1=buildDeck();
+  const h0=[],h1=[];
+  for(let i=0;i<7;i++){h0.push(d0.pop());h1.push(d1.pop());}
+  const p0=[],p1=[];
+  for(let i=0;i<6;i++){p0.push(d0.pop());p1.push(d1.pop());}
+  return{
+    hands:[h0,h1],decks:[d0,d1],discards:[[],[]],
+    prizes:[p0,p1],prizesLeft:[6,6],
+    active:[null,null],bench:[[],[]],
+    energyOnActive:[{},{}],energyOnBench:[[],[]],
+    status:[null,null],// null/asleep/confused/paralyzed/poisoned
+    turn:0,phase:'setup',// setup/main/attack/end
+    drawnThisTurn:[false,false],
+    attachedThisTurn:[false,false],
+    plusPowerActive:[false,false],
+    swordsActive:[false,false],
+    barrierActive:[false,false],
+    winner:null,
+    names:['Player 1','Player 2'],
+    connected:[false,false],
+    log:[],
+    version:Date.now()
+  };
+}
+
+/* ============================================================
+   ENERGY HELPERS
+   ============================================================ */
+function canAttack(atk,energyMap){
+  const cost=atk.cost||{};
+  const avail={...energyMap};
+  let total=Object.values(avail).reduce((a,b)=>a+b,0);
+  for(const[type,needed] of Object.entries(cost)){
+    if(type==='Colorless'){if(total<needed)return false;total-=needed;}
+    else{if((avail[type]||0)<needed)return false;avail[type]=(avail[type]||0)-needed;total-=needed;}
+  }
+  return true;
+}
+
+function energyBadges(map){
+  if(!map) return '';
+  return Object.entries(map).filter(([,v])=>v>0)
+    .map(([t,v])=>`<span class="ebadge ${TYPE_COLOR[t]||''}">${TYPE_EMOJI[t]||t}×${v}</span>`).join('');
+}
+
+/* ============================================================
+   CARD RENDERER
+   ============================================================ */
+function cardEl(card,size,clickable,selected,energyMap,damageVal,statusVal){
+  // size: 'hand-card' | 'active-card' | 'bench-card'
+  const el=document.createElement('div');
+  if(card.cardType==='pokemon'){
+    const pct=damageVal&&card.hp?(Math.max(0,1-(damageVal/card.hp))):1;
+    const barClass=pct<0.3?'low':pct<0.6?'mid':'';
+    const hpLeft=card.hp-(damageVal||0);
+    el.className=`pcard ${size} ${TYPE_COLOR[card.type]||'type-Colorless'} ${clickable?'':'unplayable'} ${selected?'selected':''}`;
+    const stBadge=statusVal?`<div class="status-badge">${statusVal==='asleep'?'💤':statusVal==='confused'?'😵':statusVal==='paralyzed'?'⚡':statusVal==='poisoned'?'☠️':''}</div>`:'';
+    const dmgBadge=damageVal>0?`<div class="pc-dmg">${damageVal}</div>`:'';
+    const enBadge=energyMap?`<div class="energy-attached">${energyBadges(energyMap)}</div>`:'';
+    const imgSrc=`pokemon-cards/${card.id}.jpg`;
+    el.innerHTML=`
+      <div class="pc-header"><span class="pc-name">${card.name}</span><span class="pc-hp">${hpLeft}HP</span></div>
+      <div class="pc-art">
+        <img class="pimg" src="${imgSrc}" alt="${card.name}" onerror="this.style.display='none';this.nextSibling.style.display='flex'">
+        <span class="pimg-fallback" style="display:none;align-items:center;justify-content:center;width:100%;height:100%;font-size:1.8rem">${card.emoji||'?'}</span>
+      </div>
+      ${enBadge}
+      <div class="hp-bar"><div class="hp-fill ${barClass}" style="width:${Math.round(pct*100)}%"></div></div>
+      ${dmgBadge}${stBadge}
+      <div class="pc-footer"><span class="pc-stage">${card.stage===0?'Basic':card.stage===1?'Stage 1':'Stage 2'}</span><span>${TYPE_EMOJI[card.type]||''}</span></div>`;
+  } else if(card.cardType==='trainer'){
+    const trainerImgMap={'bill':'bill','prof_oak':'professor-oak','potion':'potion','super_potion':'super-potion','gust_of_wind':'gust-of-wind','switch_card':'switch','energy_removal':'energy-removal','pluspower':'pluspower'};
+    const tImg=`pokemon-cards/${trainerImgMap[card.id]||card.id}.jpg`;
+    el.className=`pcard ${size} trainer-card ${clickable?'':'unplayable'} ${selected?'selected':''}`;
+    el.innerHTML=`
+      <div class="pc-header"><span class="pc-name" style="font-size:.48rem">${card.name}</span></div>
+      <div class="pc-art">
+        <img class="pimg" src="${tImg}" alt="${card.name}" onerror="this.style.display='none';this.nextSibling.style.display='flex'">
+        <span class="pimg-fallback" style="display:none;align-items:center;justify-content:center;width:100%;height:100%;font-size:1.4rem">${card.emoji||'🃏'}</span>
+      </div>
+      <div style="padding:2px 4px;font-size:.44rem;color:#a0c0a0;text-align:center">${card.desc||''}</div>`;
+  } else if(card.cardType==='energy'){
+    const energyImgMap={'fire_energy':'fire-energy','water_energy':'water-energy','grass_energy':'grass-energy','lightning_energy':'lightning-energy','psychic_energy':'psychic-energy','fighting_energy':'fighting-energy','dce':'double-colorless-energy'};
+    const eImg=`pokemon-cards/${energyImgMap[card.id]||card.id}.jpg`;
+    el.className=`pcard ${size} energy-card-ui ${TYPE_COLOR[card.etype]||''} energy-card ${clickable?'':'unplayable'} ${selected?'selected':''}`;
+    el.innerHTML=`
+      <div class="pc-header"><span class="pc-name" style="font-size:.44rem">${card.name}</span></div>
+      <div class="pc-art">
+        <img class="pimg" src="${eImg}" alt="${card.name}" onerror="this.style.display='none';this.nextSibling.style.display='flex'">
+        <span class="pimg-fallback" style="display:none;align-items:center;justify-content:center;width:100%;height:100%;font-size:1rem">${card.emoji||'⚡'}</span>
+      </div>`;
+  }
+  return el;
+}
+
+/* ============================================================
+   SESSION
+   ============================================================ */
+let myId=null,myName='Trainer',roomRef=null,chatRef=null,state=null;
+let selectedHandIdx=null;  // index in my hand currently selected
+let pendingBenchCb=null;   // callback for bench modal pick
+
+/* ============================================================
+   JOIN
+   ============================================================ */
+document.getElementById('joinBtn').onclick=async()=>{
+  const pass=document.getElementById('passIn').value.trim();
+  const name=document.getElementById('nameIn').value.trim()||'Trainer';
+  if(!pass){alert('Enter a room password');return;}
+  myName=name;
+  const roomId='ptcg99_'+btoa(unescape(encodeURIComponent(pass))).replace(/[^a-zA-Z0-9]/g,'').substring(0,28);
+  const ref=db.ref('ptcgRooms/'+roomId);
+  const snap=await ref.once('value');
+  const existing=snap.val();
+  if(!existing||!existing.hands){
+    myId=0;const g=freshGame();g.names[0]=name;g.connected[0]=true;await ref.set(g);
+  } else {
+    const conn=existing.connected||[false,false];
+    if(!conn[1]){myId=1;await ref.child('names/1').set(name);await ref.child('connected/1').set(true);}
+    else{myId=0;await ref.child('names/0').set(name);await ref.child('connected/0').set(true);}
+  }
+  document.getElementById('lobby').style.display='none';
+  const gEl=document.getElementById('game');gEl.style.display='flex';gEl.style.flexDirection='column';
+  roomRef=ref;
+  chatRef=db.ref('ptcgRooms/'+roomId+'_chat');
+  startListening();startChat();
+};
+
+/* ============================================================
+   FIREBASE LISTENER
+   ============================================================ */
+function startListening(){
+  roomRef.on('value',snap=>{
+    const d=snap.val();
+    if(!d||!d.hands){document.getElementById('statusBar').textContent='Game data missing — press Fix';return;}
+    state=d;render();
+  });
+}
+
+/* ============================================================
+   RENDER
+   ============================================================ */
+function render(){
+  if(!state)return;
+  const opp=1-myId;
+  const isMyTurn=state.turn===myId;
+  const over=state.winner!==null&&state.winner!==undefined;
+  const phase=state.phase||'setup';
+  const names=state.names||['Player 1','Player 2'];
+  const myCards=Array.isArray(state.hands[myId])?state.hands[myId]:[];
+  const oppCards=Array.isArray(state.hands[opp])?state.hands[opp]:[];
+
+  // Turn pill
+  document.getElementById('turnPill').textContent=over?'Game Over':(isMyTurn?'Your Turn':names[opp]+"'s Turn");
+  document.getElementById('turnPill').className='turn-pill '+(isMyTurn?'my-turn-pill':'opp-turn-pill');
+
+  // Status bar
+  const conn=state.connected||[false,false];
+  if(!over){
+    if(!conn[opp]){document.getElementById('statusBar').textContent='Waiting for '+names[opp]+' to join…';}
+    else if(phase==='setup'){
+      document.getElementById('statusBar').textContent=isMyTurn?'SETUP: Play a Basic Pokémon as your Active (from your hand)':'Waiting for '+names[opp]+' to set up…';
+    } else if(isMyTurn){
+      document.getElementById('statusBar').textContent='Your turn! Draw → Attach Energy → Play cards → Attack → End Turn';
+    } else {
+      document.getElementById('statusBar').textContent=names[opp]+"'s turn…";
+    }
+  }
+
+  // Phase banner
+  const pb=document.getElementById('phaseBanner');
+  if(phase==='setup'){pb.style.display='';pb.textContent='⚙️ Setup Phase — both trainers must place a Basic Pokémon as their Active before battle begins!';}
+  else{pb.style.display='none';}
+
+  // Opponent info
+  document.getElementById('oppNameLbl').textContent=names[opp];
+  document.getElementById('oppPrizes').textContent=state.prizesLeft[opp];
+  document.getElementById('oppHandCount').textContent=oppCards.length;
+  document.getElementById('oppDeck').textContent=(state.decks[opp]||[]).length;
+
+  // Opp prize cards visual
+  renderPrizeCards('oppPrizeCards',state.prizesLeft[opp],6,false);
+  renderPrizeCards('myPrizeCards',state.prizesLeft[myId],6,true);
+  document.getElementById('myPrizes').textContent=state.prizesLeft[myId];
+
+  // Opp hand (backs)
+  const ohEl=document.getElementById('oppHandBacks');
+  ohEl.innerHTML='';
+  oppCards.forEach(()=>{
+    const b=document.createElement('div');
+    b.className='card-back-sm';
+    b.style.cssText='position:relative;overflow:hidden;';
+    b.innerHTML='<img src="pokemon-cards/card-back.jpg" alt="card" style="width:100%;height:100%;object-fit:cover;border-radius:5px;" onerror="this.style.display=\'none\'">';
+    ohEl.appendChild(b);
+  });
+
+  // Active slots
+  renderActive('oppActive',state.active[opp],state.energyOnActive[opp],state.status[opp],false,null,opp);
+  renderActive('myActive',state.active[myId],state.energyOnActive[myId],state.status[myId],isMyTurn&&!over&&phase!=='setup',()=>showAttackPanel(),myId);
+
+  // Bench slots
+  renderBench('oppBench',state.bench[opp],state.energyOnBench[opp],false);
+  renderBench('myBench',state.bench[myId],state.energyOnBench[myId],isMyTurn&&!over);
+
+  // Deck/discard
+  document.getElementById('myDeckPile').textContent=(state.decks[myId]||[]).length;
+  document.getElementById('myDeckCount').textContent=(state.decks[myId]||[]).length+' cards';
+  document.getElementById('myDiscardCount').textContent=(state.discards[myId]||[]).length+' disc';
+
+  // My hand
+  renderHand(myCards,isMyTurn&&!over,phase);
+
+  // Attack panel (only show if active is set and it's my turn main phase)
+  const ap=document.getElementById('attackPanel');
+  if(isMyTurn&&!over&&phase==='main'&&state.active[myId]){
+    ap.style.display='';
+    renderAttackPanel();
+  } else {ap.style.display='none';}
+
+  // Attach energy panel
+  const aep=document.getElementById('attachPanel');
+  if(isMyTurn&&!over&&phase==='main'&&!state.attachedThisTurn[myId]){
+    const energyInHand=myCards.filter(c=>c.cardType==='energy');
+    if(energyInHand.length>0){aep.style.display='';renderEnergyPanel(energyInHand,myCards);}
+    else aep.style.display='none';
+  } else {aep.style.display='none';}
+
+  // Buttons
+  document.getElementById('endTurnBtn').disabled=!isMyTurn||over||phase==='setup';
+  document.getElementById('retreatBtn').disabled=!isMyTurn||over||phase!=='main'||!state.active[myId]||!state.bench[myId].length;
+  document.getElementById('drawBtn').disabled=!isMyTurn||over||phase!=='main'||state.drawnThisTurn[myId];
+
+  // Win modal
+  if(over){
+    document.getElementById('winModal').classList.add('open');
+    document.getElementById('winTitle').textContent=state.winner===myId?'🏆 You Win!':'😢 You Lost!';
+    document.getElementById('winSub').textContent=state.winner===myId?'You collected all 6 Prize cards! Champion!':(names[state.winner]+' wins this battle!');
+  } else {
+    document.getElementById('winModal').classList.remove('open');
+  }
+
+  // Game log
+  renderLog();
+}
+
+function renderPrizeCards(elId,remaining,total,isMine){
+  const el=document.getElementById(elId);el.innerHTML='';
+  for(let i=0;i<total;i++){
+    const d=document.createElement('div');
+    d.className='prize-card'+(i>=remaining?' taken':'');
+    if(isMine&&i===remaining-1&&remaining>0)d.title='Click to take prize card';
+    el.appendChild(d);
+  }
+}
+
+function renderActive(elId,poke,energy,status,clickable,cb,pid){
+  const el=document.getElementById(elId);
+  el.innerHTML='';
+  if(!poke){el.innerHTML='<span style="font-size:.7rem;color:#444">No Active</span>';el.className='active-slot';return;}
+  el.className='active-slot filled';
+  const card=cardEl(poke,'active-card',clickable,false,energy,poke.damage||0,status);
+  if(clickable&&cb) card.onclick=cb;
+  el.appendChild(card);
+}
+
+function renderBench(elId,bench,energyArr,clickable){
+  const el=document.getElementById(elId);el.innerHTML='';
+  const maxSlots=5;
+  for(let i=0;i<maxSlots;i++){
+    const slot=document.createElement('div');
+    if(bench[i]){
+      slot.className='bench-slot filled';
+      const energy=(energyArr&&energyArr[i])||{};
+      const c=cardEl(bench[i],'bench-card',clickable,false,energy,bench[i].damage||0,null);
+      if(clickable){
+        const idx=i;
+        c.onclick=()=>handleBenchClick(idx);
+      }
+      slot.appendChild(c);
+    } else {
+      slot.className='bench-slot';
+      slot.innerHTML='<span style="font-size:.6rem">Empty</span>';
+      if(clickable) slot.onclick=()=>handleBenchSlotClick(i);
+    }
+    el.appendChild(slot);
+  }
+}
+
+function renderHand(cards,interactive,phase){
+  const el=document.getElementById('myHand');el.innerHTML='';
+  cards.forEach((card,idx)=>{
+    let playable=false;
+    if(interactive){
+      if(card.cardType==='pokemon'&&card.stage===0&&phase==='setup'&&!state.active[myId]) playable=true;
+      else if(card.cardType==='pokemon'&&card.stage===0&&phase==='main') playable=true;
+      else if(card.cardType==='pokemon'&&card.stage>0&&phase==='main') playable=true; // evolve
+      else if(card.cardType==='trainer'&&phase==='main') playable=true;
+      else if(card.cardType==='energy'&&phase==='main') playable=true;
+    }
+    const c=cardEl(card,'hand-card',playable,selectedHandIdx===idx,null,0,null);
+    if(playable) c.onclick=()=>handleHandClick(idx);
+    el.appendChild(c);
+  });
+}
+
+function renderAttackPanel(){
+  const active=state.active[myId];
+  if(!active)return;
+  document.getElementById('attackerName').textContent=active.name;
+  const el=document.getElementById('attackList');el.innerHTML='';
+  const energy=state.energyOnActive[myId]||{};
+  const status=state.status[myId];
+  const canAct=status!=='asleep'&&status!=='paralyzed';
+  (active.attacks||[]).forEach((atk,idx)=>{
+    if(atk.effect==='power') return; // powers shown separately
+    const canUse=canAct&&canAttack(atk,energy)&&state.phase==='main'&&state.turn===myId&&!state.winner;
+    const row=document.createElement('div');
+    row.className='attack-row'+(canUse?'':' disabled');
+    const costHtml=Object.entries(atk.cost||{}).map(([t,n])=>`<span class="atk-cost-badge ${TYPE_COLOR[t]||''}">${TYPE_EMOJI[t]||t}×${n}</span>`).join('');
+    row.innerHTML=`<div class="atk-left"><div class="atk-name">${atk.name}</div><div class="atk-cost">${costHtml||'<span style="font-size:.6rem;color:#777">No Cost</span>'}</div></div>
+      <div class="atk-right"><div class="atk-dmg">${atk.damage||0}</div><div class="atk-effect">${atk.desc||''}</div></div>`;
+    if(canUse) row.onclick=()=>doAttack(idx);
+    el.appendChild(row);
+  });
+  if(!canAct){
+    const note=document.createElement('div');
+    note.style.cssText='font-size:.75rem;color:#e74c3c;text-align:center;padding:4px;';
+    note.textContent=state.status[myId]==='asleep'?'😴 Asleep — cannot attack!':'⚡ Paralyzed — cannot attack or retreat!';
+    el.appendChild(note);
+  }
+}
+
+function renderEnergyPanel(energyCards,allCards){
+  const el=document.getElementById('energyHandBtns');el.innerHTML='';
+  const uniqueTypes=[...new Set(energyCards.map(c=>c.etype))];
+  uniqueTypes.forEach(etype=>{
+    const btn=document.createElement('button');
+    btn.className=`energy-btn ${TYPE_COLOR[etype]||''}`;
+    btn.textContent=`${TYPE_EMOJI[etype]||etype} ${etype}`;
+    btn.onclick=()=>promptEnergyAttach(etype,allCards);
+    el.appendChild(btn);
+  });
+}
+
+function renderLog(){
+  const el=document.getElementById('gameLog');
+  const logs=state.log||[];
+  el.innerHTML='';
+  const recent=logs.slice(-8);
+  recent.forEach(entry=>{
+    const d=document.createElement('div');
+    d.className='log-entry'+(entry.important?' important':'');
+    d.textContent=entry.text;
+    el.appendChild(d);
+  });
+  el.scrollTop=9999;
+}
+
+/* ============================================================
+   INTERACTION HANDLERS
+   ============================================================ */
+function handleHandClick(idx){
+  const card=state.hands[myId][idx];
+  if(!card)return;
+  const phase=state.phase||'setup';
+
+  if(phase==='setup'){
+    // Must place a basic as active
+    if(card.cardType==='pokemon'&&card.stage===0) placePokemonAsActive(idx);
+    return;
+  }
+  if(phase!=='main')return;
+
+  if(card.cardType==='energy'){
+    // Energy attachment handled via panel buttons
+    selectedHandIdx=selectedHandIdx===idx?null:idx;
+    render();return;
+  }
+  if(card.cardType==='trainer'){
+    playTrainer(idx);return;
+  }
+  if(card.cardType==='pokemon'){
+    selectedHandIdx=selectedHandIdx===idx?null:idx;
+    render();
+    if(selectedHandIdx!==null) showPlacePokemonOptions(idx);
+  }
+}
+
+function handleBenchClick(benchIdx){
+  // If I have a selected pokemon for evolving
+  if(selectedHandIdx!==null){
+    const handCard=state.hands[myId][selectedHandIdx];
+    if(handCard&&handCard.cardType==='pokemon'&&handCard.stage>0){
+      const target=state.bench[myId][benchIdx];
+      if(target&&handCard.evolvesFrom===target.id){
+        evolvePokemon(selectedHandIdx,'bench',benchIdx);
+        selectedHandIdx=null;return;
+      }
+    }
+    selectedHandIdx=null;render();return;
+  }
+}
+
+function handleBenchSlotClick(slotIdx){
+  if(selectedHandIdx===null) return;
+  const card=state.hands[myId][selectedHandIdx];
+  if(card&&card.cardType==='pokemon'&&card.stage===0){
+    placePokemonOnBench(selectedHandIdx,slotIdx);
+    selectedHandIdx=null;
+  }
+}
+
+/* ============================================================
+   GAME ACTIONS
+   ============================================================ */
+async function placePokemonAsActive(handIdx){
+  if(!roomRef||!state)return;
+  const s=JSON.parse(JSON.stringify(state));
+  const card=s.hands[myId][handIdx];
+  if(!card||card.cardType!=='pokemon'||card.stage!==0) return;
+  s.active[myId]={...card,damage:0};
+  s.energyOnActive[myId]={};
+  s.hands[myId].splice(handIdx,1);
+  // Check if both players have set up
+  if(s.active[0]&&s.active[1]) s.phase='main';
+  addLog(s,myName+' placed '+card.name+' as Active!',true);
+  await roomRef.set(s);
+}
+
+async function placePokemonOnBench(handIdx,slotIdx){
+  if(!roomRef||!state)return;
+  if((state.bench[myId]||[]).length>=5){flash('Bench is full (max 5)!');return;}
+  const s=JSON.parse(JSON.stringify(state));
+  const card=s.hands[myId][handIdx];
+  if(!card||card.cardType!=='pokemon'||card.stage!==0) return;
+  if(!s.bench[myId]) s.bench[myId]=[];
+  if(!s.energyOnBench[myId]) s.energyOnBench[myId]=[];
+  s.bench[myId].push({...card,damage:0});
+  s.energyOnBench[myId].push({});
+  s.hands[myId].splice(handIdx,1);
+  addLog(s,myName+' played '+card.name+' to Bench.');
+  await roomRef.set(s);
+}
+
+function showPlacePokemonOptions(handIdx){
+  const card=state.hands[myId][handIdx];
+  if(!card||card.cardType!=='pokemon') return;
+  if(card.stage===0){
+    showBenchModal('Place '+card.name,'Put on Bench or as Active?',[
+      {label:'Set as Active',disabled:!!state.active[myId],action:()=>{placePokemonAsActive(handIdx);selectedHandIdx=null;}},
+      {label:'Put on Bench',disabled:(state.bench[myId]||[]).length>=5,action:()=>{
+        // find empty bench slot
+        const empIdx=(state.bench[myId]||[]).length;
+        placePokemonOnBench(handIdx,empIdx);selectedHandIdx=null;
+      }}
+    ]);
+  } else {
+    // Evolution
+    flash('Select a '+card.evolvesFrom+' on your Active or Bench to evolve it!');
+  }
+}
+
+function showBenchModal(title,note,options){
+  const modal=document.getElementById('benchModal');
+  document.getElementById('benchModalTitle').textContent=title;
+  document.getElementById('benchModalNote').textContent=note||'';
+  const cardsEl=document.getElementById('benchModalCards');cardsEl.innerHTML='';
+  options.forEach(opt=>{
+    const btn=document.createElement('button');
+    btn.style.cssText='padding:10px 18px;border-radius:10px;border:1px solid rgba(245,215,110,.3);background:rgba(245,215,110,.1);color:#f5d76e;cursor:pointer;font-size:.85rem;font-weight:600;';
+    if(opt.disabled){btn.style.opacity='.35';btn.style.cursor='not-allowed';}
+    btn.textContent=opt.label;
+    if(!opt.disabled) btn.onclick=()=>{modal.classList.remove('open');opt.action();};
+    cardsEl.appendChild(btn);
+  });
+  modal.classList.add('open');
+}
+document.getElementById('benchModalClose').onclick=()=>{
+  document.getElementById('benchModal').classList.remove('open');
+  selectedHandIdx=null;render();
+};
+
+async function evolvePokemon(handIdx,location,locationIdx){
+  if(!roomRef||!state)return;
+  const s=JSON.parse(JSON.stringify(state));
+  const evoCard=s.hands[myId][handIdx];
+  let target;
+  if(location==='active'){target=s.active[myId];}
+  else{target=s.bench[myId][locationIdx];}
+  if(!target||evoCard.evolvesFrom!==target.id){flash('Cannot evolve here!');return;}
+  const evolved={...evoCard,damage:target.damage||0};
+  if(location==='active'){s.active[myId]=evolved;s.status[myId]=null;}// evolving clears status
+  else{s.bench[myId][locationIdx]=evolved;}
+  s.hands[myId].splice(handIdx,1);
+  s.discards[myId].push(target);// old card goes to discard
+  addLog(s,myName+' evolved '+target.name+' → '+evolved.name+'!',true);
+  await roomRef.set(s);
+}
+
+function promptEnergyAttach(etype,allCards){
+  if(state.attachedThisTurn[myId]){flash('Already attached energy this turn!');return;}
+  if(!state.active[myId]&&(state.bench[myId]||[]).length===0){flash('No Pokémon to attach energy to!');return;}
+  // Find energy card index
+  const eIdx=allCards.findIndex(c=>c.cardType==='energy'&&c.etype===etype);
+  if(eIdx<0) return;
+  // Prompt: attach to active or bench?
+  const opts=[{label:'Active: '+(state.active[myId]?.name||'none'),disabled:!state.active[myId],action:()=>doAttachEnergy(eIdx,'active',-1)}];
+  (state.bench[myId]||[]).forEach((p,i)=>{
+    opts.push({label:'Bench: '+p.name,disabled:false,action:()=>doAttachEnergy(eIdx,'bench',i)});
+  });
+  showBenchModal('Attach '+etype+' Energy','Select target Pokémon',opts);
+}
+
+async function doAttachEnergy(handIdx,location,benchIdx){
+  if(!roomRef||!state)return;
+  if(state.attachedThisTurn[myId]){flash('Already attached this turn!');return;}
+  const s=JSON.parse(JSON.stringify(state));
+  const card=s.hands[myId][handIdx];
+  if(!card||card.cardType!=='energy') return;
+  const amount=card.provides||1;
+  const etype=card.etype;
+  if(location==='active'){
+    if(!s.energyOnActive[myId]) s.energyOnActive[myId]={};
+    s.energyOnActive[myId][etype]=(s.energyOnActive[myId][etype]||0)+amount;
+  } else {
+    if(!s.energyOnBench[myId]) s.energyOnBench[myId]=[];
+    if(!s.energyOnBench[myId][benchIdx]) s.energyOnBench[myId][benchIdx]={};
+    s.energyOnBench[myId][benchIdx][etype]=(s.energyOnBench[myId][benchIdx][etype]||0)+amount;
+  }
+  const target=location==='active'?s.active[myId]:s.bench[myId][benchIdx];
+  s.hands[myId].splice(handIdx,1);
+  if(!s.attachedThisTurn) s.attachedThisTurn=[false,false];
+  s.attachedThisTurn[myId]=true;
+  addLog(s,myName+' attached '+card.name+' to '+(target?.name||'?')+'.');
+  await roomRef.set(s);
+}
+
+function showAttackPanel(){
+  // already handled by render
+}
+
+async function doAttack(atkIdx){
+  if(!roomRef||!state)return;
+  const opp=1-myId;
+  const active=state.active[myId];
+  if(!active){flash('No active Pokémon!');return;}
+  if(!state.active[opp]){flash('Opponent has no active Pokémon!');return;}
+  const atk=active.attacks[atkIdx];
+  if(!atk){return;}
+  const energy=state.energyOnActive[myId]||{};
+  if(!canAttack(atk,energy)){flash('Not enough energy for '+atk.name+'!');return;}
+  const status=state.status[myId];
+  if(status==='asleep'||status==='paralyzed'){flash('Cannot attack — '+status+'!');return;}
+
+  // Confusion check
+  if(status==='confused'){
+    if(Math.random()<0.5){
+      // Flip tails — deal 20 to self, end turn without attacking
+      const s=JSON.parse(JSON.stringify(state));
+      if(!s.active[myId].damage) s.active[myId].damage=0;
+      s.active[myId].damage+=20;
+      addLog(s,active.name+' is confused and hurt itself for 20 damage!',true);
+      // Check KO
+      if(s.active[myId].damage>=s.active[myId].hp){
+        await handleKO(s,myId);return;
+      }
+      s.turn=opp;s.phase='main';
+      s.drawnThisTurn=s.drawnThisTurn||[false,false];s.drawnThisTurn[myId]=false;
+      s.attachedThisTurn=s.attachedThisTurn||[false,false];s.attachedThisTurn[myId]=false;
+      s.plusPowerActive=s.plusPowerActive||[false,false];s.plusPowerActive[myId]=false;
+      applyBetweenTurnEffects(s,myId);
+      await roomRef.set(s);return;
+    }
+  }
+
+  const s=JSON.parse(JSON.stringify(state));
+
+  // Base damage
+  let dmg=atk.damage||0;
+  // PlusPower
+  if(s.plusPowerActive&&s.plusPowerActive[myId]) dmg+=10;
+  // Swords Dance
+  if(s.swordsActive&&s.swordsActive[myId]&&atk.name==='Slash') dmg+=30;
+  // Weakness (attacker type vs defender weakness)
+  const defType=s.active[opp].type;
+  if(defType&&WEAKNESS[defType]===active.type) dmg*=2;
+
+  // Apply special effects
+  let specialMsg='';
+  if(atk.effect==='discard2'){
+    // Discard 2 energy
+    let count=0;
+    for(const t of Object.keys(s.energyOnActive[myId]||{})){
+      while(s.energyOnActive[myId][t]>0&&count<2){s.energyOnActive[myId][t]--;count++;}
+    }
+    specialMsg=' (discarded 2 energy)';
+  } else if(atk.effect==='discard1'||atk.effect==='discard1_flip'){
+    let count=0;
+    for(const t of Object.keys(s.energyOnActive[myId]||{})){
+      if(s.energyOnActive[myId][t]>0&&count<1){s.energyOnActive[myId][t]--;count++;}
+    }
+  } else if(atk.effect==='discard_all'){
+    s.energyOnActive[myId]={};specialMsg=' (discarded all energy)';
+  } else if(atk.effect==='paralyze_flip'){
+    if(Math.random()<0.5){s.status[opp]='paralyzed';specialMsg=' ('+s.names[opp]+' is Paralyzed!)';}
+  } else if(atk.effect==='sleep_flip'){
+    if(Math.random()<0.5){s.status[opp]='asleep';specialMsg=' ('+s.names[opp]+"'s Pokémon fell Asleep!)";}
+  } else if(atk.effect==='confuse_flip'){
+    if(Math.random()<0.5){s.status[opp]='confused';specialMsg=' ('+s.names[opp]+"'s Pokémon is Confused!)";}
+  } else if(atk.effect==='poison'){
+    s.status[opp]='poisoned';specialMsg=' ('+s.names[opp]+"'s Pokémon is Poisoned!)";
+  } else if(atk.effect==='self80'){
+    s.active[myId].damage=(s.active[myId].damage||0)+80;specialMsg=' (80 damage to self!)';
+  } else if(atk.effect==='self20'){
+    s.active[myId].damage=(s.active[myId].damage||0)+20;
+  } else if(atk.effect==='self30_flip'){
+    if(Math.random()<0.5){s.active[myId].damage=(s.active[myId].damage||0)+30;specialMsg=' (30 to self!)';}
+  } else if(atk.effect==='self10_flip'){
+    if(Math.random()<0.5){s.active[myId].damage=(s.active[myId].damage||0)+10;}
+  } else if(atk.effect==='plus10_flip'){
+    if(Math.random()<0.5) dmg+=10;
+    else{s.active[myId].damage=(s.active[myId].damage||0)+10;}
+  } else if(atk.effect==='heal10'){
+    s.active[myId].damage=Math.max(0,(s.active[myId].damage||0)-10);
+  } else if(atk.effect==='double_flip'){
+    const flips=[Math.random()<0.5,Math.random()<0.5];
+    dmg=flips.filter(Boolean).length*20;
+    specialMsg=' ('+flips.map(f=>f?'H':'T').join(',')+')';
+  } else if(atk.effect==='thrash_flip'){
+    if(Math.random()<0.5){dmg+=20;specialMsg=' (heads! +20 damage)';}
+  } else if(atk.effect==='discard_energy'){
+    // Remove 1 energy from opponent active
+    const oppEnergy=s.energyOnActive[opp]||{};
+    const keys=Object.keys(oppEnergy).filter(k=>oppEnergy[k]>0);
+    if(keys.length>0){oppEnergy[keys[0]]--;specialMsg=' (discarded opponent\'s energy)';}
+  }
+
+  // Deal damage
+  if(!s.active[opp].damage) s.active[opp].damage=0;
+  if(dmg>0) s.active[opp].damage+=dmg;
+
+  addLog(s,`${active.name} used ${atk.name}!${dmg>0?' Dealt '+dmg+' damage.':''}${specialMsg}`,true);
+
+  // Self KO check
+  if(s.active[myId].damage>=(s.active[myId].hp||999)){
+    await handleKO(s,myId);return;
+  }
+
+  // Opponent KO check
+  if(s.active[opp].damage>=(s.active[opp].hp||999)){
+    await handleKO(s,opp);return;
+  }
+
+  // Reset flags, switch turn
+  s.turn=opp;s.phase='main';
+  if(!s.drawnThisTurn) s.drawnThisTurn=[false,false];s.drawnThisTurn[myId]=false;
+  if(!s.attachedThisTurn) s.attachedThisTurn=[false,false];s.attachedThisTurn[myId]=false;
+  if(!s.plusPowerActive) s.plusPowerActive=[false,false];s.plusPowerActive[myId]=false;
+  if(!s.swordsActive) s.swordsActive=[false,false];s.swordsActive[myId]=false;
+  // Paralysis wears off after 1 turn for the paralyzed player
+  if(s.status[opp]==='paralyzed') s.status[opp]=null;
+  applyBetweenTurnEffects(s,opp);
+  await roomRef.set(s);
+}
+
+async function handleKO(s,koPlayerId){
+  const scorer=1-koPlayerId;
+  const koName=s.active[koPlayerId]?.name||'?';
+  addLog(s,koName+' was Knocked Out!',true);
+  s.discards[koPlayerId].push(s.active[koPlayerId]);
+  // Remove energy from ko'd pokemon
+  const discardedEnergy=Object.entries(s.energyOnActive[koPlayerId]||{});
+  for(const[t,v] of discardedEnergy){
+    for(let i=0;i<v;i++) s.discards[koPlayerId].push({cardType:'energy',etype:t,name:t+' Energy',uid:uid()});
+  }
+  s.energyOnActive[koPlayerId]={};
+  s.active[koPlayerId]=null;
+  s.status[koPlayerId]=null;
+  // Scorer takes a prize
+  if(s.prizesLeft[scorer]>0){
+    s.prizesLeft[scorer]--;
+    if(s.prizes[scorer]&&s.prizes[scorer].length>0){
+      const prize=s.prizes[scorer].pop();
+      s.hands[scorer].push(prize);
+      addLog(s,s.names[scorer]+' takes a Prize card! ('+s.prizesLeft[scorer]+' left)',true);
+    }
+  }
+  // Win check
+  if(s.prizesLeft[scorer]<=0){s.winner=scorer;await roomRef.set(s);return;}
+  // Check if ko'd player has no more pokemon
+  if(!s.bench[koPlayerId]||s.bench[koPlayerId].length===0){
+    const hasBasics=(s.hands[koPlayerId]||[]).some(c=>c.cardType==='pokemon'&&c.stage===0);
+    if(!hasBasics){s.winner=scorer;addLog(s,s.names[koPlayerId]+' has no Pokémon left! '+s.names[scorer]+' wins!',true);await roomRef.set(s);return;}
+  }
+  // KO'd player must replace active from bench
+  if(s.bench[koPlayerId]&&s.bench[koPlayerId].length>0){
+    const newActive=s.bench[koPlayerId].shift();
+    const newEnergy=(s.energyOnBench[koPlayerId]||[]).shift()||{};
+    s.active[koPlayerId]={...newActive};
+    s.energyOnActive[koPlayerId]=newEnergy;
+    if(!s.energyOnBench[koPlayerId]) s.energyOnBench[koPlayerId]=[];
+    addLog(s,s.names[koPlayerId]+' sends out '+newActive.name+'!',true);
+  }
+  // Switch turn to ko'd player to choose new pokemon (or just continue)
+  s.turn=1-myId; // pass to opponent
+  s.phase='main';
+  if(!s.drawnThisTurn) s.drawnThisTurn=[false,false];
+  s.drawnThisTurn[myId]=false;
+  if(!s.attachedThisTurn) s.attachedThisTurn=[false,false];
+  s.attachedThisTurn[myId]=false;
+  s.plusPowerActive=[false,false];
+  await roomRef.set(s);
+}
+
+function applyBetweenTurnEffects(s,nextPlayer){
+  // Poison: 10 damage
+  if(s.status[nextPlayer]==='poisoned'&&s.active[nextPlayer]){
+    s.active[nextPlayer].damage=(s.active[nextPlayer].damage||0)+10;
+    addLog(s,s.active[nextPlayer].name+' takes 10 poison damage!');
+  }
+  // Sleep: flip to wake up
+  if(s.status[nextPlayer]==='asleep'){
+    if(Math.random()<0.5){s.status[nextPlayer]=null;addLog(s,s.active[nextPlayer]?.name+' woke up!');}
+  }
+}
+
+async function drawCard(){
+  if(!roomRef||!state)return;
+  if(state.drawnThisTurn&&state.drawnThisTurn[myId]){flash('Already drew this turn!');return;}
+  const s=JSON.parse(JSON.stringify(state));
+  if(!s.decks[myId]||s.decks[myId].length===0){
+    // No cards to draw = loss
+    s.winner=1-myId;addLog(s,s.names[myId]+' cannot draw — deck empty! '+s.names[1-myId]+' wins!',true);
+    await roomRef.set(s);return;
+  }
+  s.hands[myId].push(s.decks[myId].pop());
+  if(!s.drawnThisTurn) s.drawnThisTurn=[false,false];
+  s.drawnThisTurn[myId]=true;
+  addLog(s,myName+' drew a card.');
+  await roomRef.set(s);
+}
+
+async function retreatActive(){
+  if(!roomRef||!state)return;
+  const opp=1-myId;
+  if(!state.active[myId]||!state.bench[myId]||state.bench[myId].length===0){flash('Nothing to retreat to!');return;}
+  if(state.status[myId]==='paralyzed'){flash('Cannot retreat while Paralyzed!');return;}
+  const retreatCost=state.active[myId].retreat||0;
+  const energy=state.energyOnActive[myId]||{};
+  const totalEnergy=Object.values(energy).reduce((a,b)=>a+b,0);
+  if(totalEnergy<retreatCost){flash('Not enough energy to retreat (cost: '+retreatCost+')!');return;}
+  // Show bench to pick
+  const benchOptions=(state.bench[myId]||[]).map((p,i)=>({label:p.name,disabled:false,action:()=>doRetreat(i,retreatCost)}));
+  showBenchModal('Retreat to which Pokémon?','Retreat cost: '+retreatCost+' Energy',benchOptions);
+}
+
+async function doRetreat(benchIdx,cost){
+  if(!roomRef||!state)return;
+  const s=JSON.parse(JSON.stringify(state));
+  const oldActive=s.active[myId];
+  const oldEnergy=s.energyOnActive[myId]||{};
+  const newActive=s.bench[myId][benchIdx];
+  const newEnergy=(s.energyOnBench[myId]||[])[benchIdx]||{};
+  // Pay retreat cost (discard energy)
+  let toPay=cost;
+  for(const t of Object.keys(oldEnergy)){
+    while(oldEnergy[t]>0&&toPay>0){oldEnergy[t]--;toPay--;}
+  }
+  // Swap
+  s.active[myId]={...newActive};
+  s.energyOnActive[myId]={...newEnergy};
+  s.bench[myId][benchIdx]={...oldActive};
+  if(!s.energyOnBench[myId]) s.energyOnBench[myId]=[];
+  s.energyOnBench[myId][benchIdx]=oldEnergy;
+  s.status[myId]=null; // retreating clears status
+  addLog(s,myName+' retreated '+oldActive.name+' and sent out '+newActive.name+'!',true);
+  await roomRef.set(s);
+}
+
+async function playTrainer(handIdx){
+  if(!roomRef||!state)return;
+  const card=state.hands[myId][handIdx];
+  if(!card||card.cardType!=='trainer')return;
+  const opp=1-myId;
+  const s=JSON.parse(JSON.stringify(state));
+  s.hands[myId].splice(handIdx,1);
+  s.discards[myId].push(card);
+  selectedHandIdx=null;
+
+  if(card.effect==='draw2'){
+    for(let i=0;i<2;i++) if(s.decks[myId].length>0) s.hands[myId].push(s.decks[myId].pop());
+    addLog(s,myName+' played Bill — drew 2 cards.');
+  } else if(card.effect==='draw7discard'){
+    s.discards[myId].push(...s.hands[myId]);
+    s.hands[myId]=[];
+    for(let i=0;i<7&&s.decks[myId].length>0;i++) s.hands[myId].push(s.decks[myId].pop());
+    addLog(s,myName+' played Professor Oak — drew 7 cards.',true);
+  } else if(card.effect==='heal20'){
+    if(s.active[myId]) s.active[myId].damage=Math.max(0,(s.active[myId].damage||0)-20);
+    addLog(s,myName+' used Potion — healed 20 damage.');
+  } else if(card.effect==='heal60'){
+    if(s.active[myId]){s.active[myId].damage=Math.max(0,(s.active[myId].damage||0)-60);
+    const eKeys=Object.keys(s.energyOnActive[myId]||{});if(eKeys.length>0)s.energyOnActive[myId][eKeys[0]]=Math.max(0,(s.energyOnActive[myId][eKeys[0]]||0)-1);}
+    addLog(s,myName+' used Super Potion — healed 60 damage.');
+  } else if(card.effect==='plus10next'){
+    if(!s.plusPowerActive) s.plusPowerActive=[false,false];
+    s.plusPowerActive[myId]=true;
+    addLog(s,myName+' played PlusPower — next attack +10!');
+  } else if(card.effect==='gust'){
+    if(s.bench[opp]&&s.bench[opp].length>0){
+      const swapIdx=Math.floor(Math.random()*s.bench[opp].length);
+      const old=s.active[opp];
+      const oldE=s.energyOnActive[opp]||{};
+      s.active[opp]={...s.bench[opp][swapIdx]};
+      s.energyOnActive[opp]={...(s.energyOnBench[opp]||[])[swapIdx]||{}};
+      s.bench[opp][swapIdx]=old;
+      if(!s.energyOnBench[opp]) s.energyOnBench[opp]=[];
+      s.energyOnBench[opp][swapIdx]=oldE;
+      s.status[opp]=null;
+      addLog(s,myName+' played Gust of Wind — '+s.names[opp]+"'s "+s.active[opp].name+' forced out!',true);
+    } else {flash('Opponent bench is empty!');}
+  } else if(card.effect==='switch_own'){
+    if(s.bench[myId]&&s.bench[myId].length>0){
+      const swapIdx=0;
+      const old=s.active[myId];const oldE=s.energyOnActive[myId]||{};
+      s.active[myId]={...s.bench[myId][swapIdx]};
+      s.energyOnActive[myId]={...(s.energyOnBench[myId]||[])[swapIdx]||{}};
+      s.bench[myId][swapIdx]=old;
+      if(!s.energyOnBench[myId]) s.energyOnBench[myId]=[];
+      s.energyOnBench[myId][swapIdx]=oldE;
+      s.status[myId]=null;
+      addLog(s,myName+' used Switch!',true);
+    } else {flash('No Pokémon on Bench!');}
+  } else if(card.effect==='remove1energy'){
+    if(s.active[opp]){
+      const oe=s.energyOnActive[opp]||{};
+      const keys=Object.keys(oe).filter(k=>oe[k]>0);
+      if(keys.length>0){oe[keys[0]]--;addLog(s,myName+' used Energy Removal on '+s.active[opp].name+'!',true);}
+    }
+  }
+  await roomRef.set(s);
+}
+
+async function endTurn(){
+  if(!roomRef||!state)return;
+  if(state.turn!==myId){flash('Not your turn!');return;}
+  const s=JSON.parse(JSON.stringify(state));
+  const opp=1-myId;
+  s.turn=opp;
+  s.phase='main';
+  if(!s.drawnThisTurn) s.drawnThisTurn=[false,false];
+  s.drawnThisTurn[myId]=false;
+  if(!s.attachedThisTurn) s.attachedThisTurn=[false,false];
+  s.attachedThisTurn[myId]=false;
+  s.plusPowerActive=[false,false];
+  applyBetweenTurnEffects(s,opp);
+  addLog(s,myName+' ended their turn.');
+  await roomRef.set(s);
+}
+
+function addLog(s,text,important=false){
+  if(!s.log) s.log=[];
+  s.log.push({text,important,ts:Date.now()});
+  if(s.log.length>30) s.log=s.log.slice(-30);
+}
+
+/* ============================================================
+   RESET / FIX
+   ============================================================ */
+async function resetGame(){
+  if(!roomRef) return;
+  const g=freshGame();
+  if(state&&state.names) g.names=[...state.names];
+  if(state&&state.connected) g.connected=[...state.connected];
+  await roomRef.set(g);
+}
+document.getElementById('resetBtn').onclick=resetGame;
+document.getElementById('fixBtn').onclick=resetGame;
+document.getElementById('winReset').onclick=resetGame;
+document.getElementById('endTurnBtn').onclick=endTurn;
+document.getElementById('retreatBtn').onclick=retreatActive;
+document.getElementById('drawBtn').onclick=drawCard;
+
+/* ============================================================
+   CHAT
+   ============================================================ */
+function startChat(){
+  chatRef.limitToLast(50).on('child_added',snap=>{
+    const m=snap.val();if(!m)return;
+    const ph=document.getElementById('chatPH');if(ph)ph.remove();
+    const el=document.createElement('div');el.className='chat-msg';
+    el.innerHTML='<strong>'+esc(m.name)+':</strong> '+esc(m.text);
+    document.getElementById('chatLog').appendChild(el);
+    document.getElementById('chatLog').scrollTop=9999;
+  });
+  function send(){
+    const t=document.getElementById('chatIn').value.trim();
+    if(t&&chatRef){chatRef.push({name:myName,text:t.substring(0,200),ts:Date.now()});document.getElementById('chatIn').value='';}
+  }
+  document.getElementById('chatSend').onclick=send;
+  document.getElementById('chatIn').onkeypress=e=>{if(e.key==='Enter')send();};
+}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function flash(msg){document.getElementById('statusBar').textContent=msg;}
+</script>
+</body>
+</html>
