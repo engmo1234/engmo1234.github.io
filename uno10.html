@@ -23,6 +23,20 @@ body{min-height:100vh;background:radial-gradient(ellipse at top,#0d1f2d,#050e14)
 .btn-join{background:linear-gradient(135deg,#e67e22,#f39c12);border:none;border-radius:40px;padding:13px;color:#fff;font-size:1rem;font-weight:700;cursor:pointer;transition:opacity .15s;width:100%;}
 .btn-join:hover{opacity:.85;}
 .lobby-note{font-size:.78rem;color:#8a7050;text-align:center;line-height:1.5;}
+/* ── KEY SCREEN ── */
+#keyScreen{position:fixed;inset:0;background:radial-gradient(ellipse at top,#1a2e1a,#0a1a0a);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;z-index:9999;}
+.key-logo{font-size:4rem;font-weight:900;letter-spacing:-3px;background:linear-gradient(135deg,#e74c3c,#f1c40f,#2ecc71,#3498db);-webkit-background-clip:text;background-clip:text;color:transparent;}
+.key-box{background:rgba(255,255,255,.05);border:1px solid rgba(255,215,100,.25);border-radius:22px;padding:28px 36px;display:flex;flex-direction:column;gap:14px;width:min(340px,92vw);text-align:center;}
+.key-box h2{color:#ffd966;font-size:1rem;font-weight:600;margin:0;}
+.key-box p{color:#8a7050;font-size:.78rem;margin:0;line-height:1.5;}
+.key-input{background:rgba(0,0,0,.45);border:1px solid rgba(255,200,100,.35);border-radius:40px;padding:12px 20px;color:#ffe3b3;font-size:1rem;text-align:center;width:100%;outline:none;letter-spacing:3px;}
+.key-input:focus{border-color:#f1c40f;}
+.key-input::placeholder{color:#7a6a4a;letter-spacing:0;}
+.key-btn{background:linear-gradient(135deg,#e67e22,#f39c12);border:none;border-radius:40px;padding:13px;color:#fff;font-size:1rem;font-weight:700;cursor:pointer;transition:opacity .15s;width:100%;}
+.key-btn:hover{opacity:.85;}
+.key-error{color:#e74c3c;font-size:.82rem;font-weight:600;min-height:20px;transition:.2s;}
+.key-shake{animation:shake .35s ease;}
+@keyframes shake{0%,100%{transform:translateX(0);}20%{transform:translateX(-8px);}40%{transform:translateX(8px);}60%{transform:translateX(-5px);}80%{transform:translateX(5px);}}
 
 /* ── GAME ── */
 #game{display:none;flex-direction:column;gap:8px;}
@@ -147,6 +161,18 @@ body{min-height:100vh;background:radial-gradient(ellipse at top,#0d1f2d,#050e14)
 <div class="wrap">
 
 <!-- LOBBY -->
+<!-- KEY SCREEN -->
+<div id="keyScreen">
+  <div class="key-logo">UNO</div>
+  <div class="key-box">
+    <h2>🔐 Enter Access Key</h2>
+    <p>This game is private.<br>Enter the secret key to continue.</p>
+    <input class="key-input" id="keyInput" type="password" placeholder="Enter key…" maxlength="20" autocomplete="off">
+    <button class="key-btn" id="keyBtn">Unlock 🔓</button>
+    <div class="key-error" id="keyError"></div>
+  </div>
+</div>
+
 <div id="lobby">
   <div class="logo">UNO</div>
   <div class="sub-logo">10-Player Multiplayer</div>
@@ -378,6 +404,39 @@ let pendingWild=null;
 /* ============================================================
    JOIN
    ============================================================ */
+/* ============================================================
+   KEY SCREEN — access code: uno10
+   ============================================================ */
+const SECRET_KEY = 'uno10';
+const keyScreen = document.getElementById('keyScreen');
+const keyInput  = document.getElementById('keyInput');
+const keyBtn    = document.getElementById('keyBtn');
+const keyError  = document.getElementById('keyError');
+
+function unlockApp(){
+  keyScreen.style.display='none';
+  lobbyEl.style.display='flex';
+  lobbyEl.style.flexDirection='column';
+}
+
+keyBtn.onclick=()=>{
+  if(keyInput.value.trim()===SECRET_KEY){
+    unlockApp();
+  } else {
+    keyError.textContent='❌ Wrong key — try again!';
+    keyInput.value='';
+    keyInput.classList.remove('key-shake');
+    void keyInput.offsetWidth; // reflow to restart animation
+    keyInput.classList.add('key-shake');
+    keyInput.focus();
+    setTimeout(()=>keyError.textContent='',2500);
+  }
+};
+keyInput.addEventListener('keypress',e=>{if(e.key==='Enter')keyBtn.click();});
+
+// Hide lobby until key entered
+lobbyEl.style.display='none';
+
 joinBtn.onclick=async()=>{
   const pass=passIn.value.trim();
   const name=nameIn.value.trim()||'Player';
