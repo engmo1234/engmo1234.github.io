@@ -22,6 +22,20 @@ input.room-input:focus{border-color:#f1c40f;}
 .btn-join{background:linear-gradient(135deg,#e67e22,#f39c12);border:none;border-radius:40px;padding:13px 28px;color:#fff;font-size:1rem;font-weight:700;cursor:pointer;transition:opacity .15s;}
 .btn-join:hover{opacity:.85;}
 .hint{font-size:.8rem;color:#a08060;text-align:center;}
+/* ── KEY SCREEN ── */
+#keyScreen{position:fixed;inset:0;background:radial-gradient(ellipse at top,#1a2a3a,#0f1a24);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:20px;z-index:9999;}
+.key-logo{font-size:3.5rem;font-weight:900;letter-spacing:-2px;background:linear-gradient(135deg,#e74c3c,#f1c40f,#2ecc71,#3498db);-webkit-background-clip:text;background-clip:text;color:transparent;}
+.key-box{background:rgba(255,255,255,.06);border:1px solid rgba(255,215,100,.25);border-radius:20px;padding:28px 36px;display:flex;flex-direction:column;gap:14px;width:min(340px,92vw);text-align:center;}
+.key-box h2{color:#ffd966;font-size:1rem;font-weight:600;margin:0;}
+.key-box p{color:#8a7050;font-size:.78rem;margin:0;line-height:1.5;}
+.key-input{background:rgba(0,0,0,.4);border:1px solid rgba(255,200,100,.4);border-radius:40px;padding:12px 20px;color:#ffe3b3;font-size:1rem;text-align:center;width:100%;outline:none;letter-spacing:2px;}
+.key-input:focus{border-color:#f1c40f;}
+.key-input::placeholder{color:#7a6a4a;letter-spacing:0;}
+.key-btn{background:linear-gradient(135deg,#e67e22,#f39c12);border:none;border-radius:40px;padding:13px;color:#fff;font-size:1rem;font-weight:700;cursor:pointer;transition:opacity .15s;width:100%;}
+.key-btn:hover{opacity:.85;}
+.key-error{color:#e74c3c;font-size:.82rem;font-weight:600;min-height:20px;}
+.key-shake{animation:keyshake .35s ease;}
+@keyframes keyshake{0%,100%{transform:translateX(0);}20%{transform:translateX(-8px);}40%{transform:translateX(8px);}60%{transform:translateX(-5px);}80%{transform:translateX(5px);}}
 
 /* GAME */
 #game{display:none;flex-direction:column;gap:10px;}
@@ -122,14 +136,25 @@ input.room-input:focus{border-color:#f1c40f;}
 <div class="wrap">
 
 <!-- LOBBY -->
+<!-- KEY SCREEN -->
+<div id="keyScreen">
+  <div class="key-logo">UNO</div>
+  <div class="key-box">
+    <h2>🔐 Enter Access Key</h2>
+    <p>This game is private.<br>Enter the secret key to continue.</p>
+    <input class="key-input" id="keyInput" type="password" placeholder="Enter key…" maxlength="30" autocomplete="off">
+    <button class="key-btn" id="keyBtn">Unlock 🔓</button>
+    <div class="key-error" id="keyError"></div>
+  </div>
+</div>
+
 <div id="lobby">
   <div class="logo">UNO</div>
   <div class="lobby-card">
     <h2>🃏 Multiplayer — Share a Password</h2>
-    <input class="room-input" id="passInput" placeholder="e.g. meriem" maxlength="40">
-    <input class="room-input" id="nameInput" placeholder="Your name (e.g. meriem)" maxlength="20">
+    <input class="room-input" id="passInput" placeholder="Shared password — e.g. meriem" maxlength="40">
     <button class="btn-join" id="joinBtn">Join / Create Room</button>
-    <p class="hint">Both players enter the same password to join the same room. First player creates the game.</p>
+    <p class="hint">Both players type the same password to enter the same room.</p>
   </div>
 </div>
 
@@ -368,11 +393,43 @@ let pendingWild = null;  // card index awaiting color choice
 /* ============================================================
    JOIN FLOW
    ============================================================ */
+/* ============================================================
+   KEY SCREEN — access code: bismAllah
+   ============================================================ */
+const SECRET_KEY = 'bismAllah';
+const keyScreen  = document.getElementById('keyScreen');
+const keyInput   = document.getElementById('keyInput');
+const keyBtn     = document.getElementById('keyBtn');
+const keyError   = document.getElementById('keyError');
+const lobbyDiv   = document.getElementById('lobby');
+
+// Hide lobby until unlocked
+lobbyDiv.style.display = 'none';
+
+function unlockApp(){
+  keyScreen.style.display = 'none';
+  lobbyDiv.style.display  = 'flex';
+  lobbyDiv.style.flexDirection = 'column';
+}
+
+keyBtn.onclick = () => {
+  if(keyInput.value.trim() === SECRET_KEY){
+    unlockApp();
+  } else {
+    keyError.textContent = '❌ Wrong key — try again!';
+    keyInput.value = '';
+    keyInput.classList.remove('key-shake');
+    void keyInput.offsetWidth;
+    keyInput.classList.add('key-shake');
+    keyInput.focus();
+    setTimeout(() => keyError.textContent = '', 2500);
+  }
+};
+keyInput.addEventListener('keypress', e => { if(e.key === 'Enter') keyBtn.click(); });
+
 joinBtn.onclick = async () => {
   const pass = passInput.value.trim();
-  const name = nameInput.value.trim() || 'Player';
   if (!pass) { alert('Enter a room password'); return; }
-  myName = name;
 
   const roomId = 'uno_' + btoa(unescape(encodeURIComponent(pass))).replace(/[^a-zA-Z0-9]/g,'').substring(0,32);
   const ref = db.ref('unoRooms/' + roomId);
