@@ -467,7 +467,7 @@ function render(){
   var chatBox=document.getElementById('chatBox');
   if(phase==='waiting'){
     wp.style.display='';pp.style.display='none';
-    if(chatBox)chatBox.style.display='none';
+    if(chatBox)chatBox.style.display='';
     var ws=document.getElementById('wslots');ws.innerHTML='';
     for(var i=0;i<state.playerCount;i++){var d=document.createElement('div');d.className='wslot';d.innerHTML='<div style="width:10px;height:10px;border-radius:50%;background:'+(conn[i]?CHex[COLS[i]]:'#555')+'"></div><span style="color:'+(conn[i]?'#f0e8d0':'#666')+'">'+(conn[i]?esc(names[i]||'?'):'Waiting for player '+(i+1))+(i===myId?' (You)':'')+'</span>';ws.appendChild(d);}
   }else{
@@ -512,6 +512,7 @@ document.getElementById('joinBtn').addEventListener('click',function(){
   }).then(function(){
     document.getElementById('lobby').style.display='none';
     document.getElementById('game').style.display='flex';
+    document.getElementById('chatBox').style.display='';
     roomRef=ref;
     initChat(roomId);
     roomRef.on('value',function(snap){
