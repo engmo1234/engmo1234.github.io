@@ -105,9 +105,9 @@ body{min-height:100vh;background:radial-gradient(ellipse at top,#0a1628,#050c18)
   box-shadow:0 4px 12px rgba(0,0,0,.5);
 }
 /* hand cards — large enough to read */
-.pcard.hand-card{width:90px;height:126px;border-radius:10px;}
-.pcard.active-card{width:100px;height:140px;border-radius:10px;}
-.pcard.bench-card{width:66px;height:92px;border-radius:8px;}
+.pcard.hand-card{width:96px;height:136px;border-radius:10px;}
+.pcard.active-card{width:110px;height:154px;border-radius:10px;}
+.pcard.bench-card{width:70px;height:98px;border-radius:8px;}
 
 /* card inner border glow by type */
 .pcard.type-Fire   {border:2px solid #ff6b35; box-shadow:0 4px 16px rgba(255,80,0,.4);}
@@ -147,6 +147,7 @@ body{min-height:100vh;background:radial-gradient(ellipse at top,#0a1628,#050c18)
   margin:2px 3px;
   border-radius:6px;
   min-height:60px;
+  background:#1a1a2e;
 }
 .pcard.bench-card .pc-art{min-height:40px;}
 .pcard.active-card .pc-art{min-height:72px;}
@@ -1005,47 +1006,62 @@ function getCardGradient(type){return CARD_GRADIENTS[type]||CARD_GRADIENTS.Color
 
 // Unique visual symbol per pokemon — shown until real images load
 const POKEMON_SYMBOL={
-  charizard:  {icon:'🦎', bg:'linear-gradient(135deg,#7f0000,#c0390b,#ff8c00)', label:'Charizard'},
-  blastoise:  {icon:'🐢', bg:'linear-gradient(135deg,#003060,#1565c0,#42a5f5)', label:'Blastoise'},
-  venusaur:   {icon:'🦕', bg:'linear-gradient(135deg,#1a3a00,#2e7d32,#8bc34a)', label:'Venusaur'},
-  mewtwo:     {icon:'😈', bg:'linear-gradient(135deg,#1a0030,#6a1b9a,#ce93d8)', label:'Mewtwo'},
-  chansey:    {icon:'🥚', bg:'linear-gradient(135deg,#3a2a2a,#7b5ea7,#f8bbd0)', label:'Chansey'},
-  hitmonchan: {icon:'🥊', bg:'linear-gradient(135deg,#2a1000,#5d4037,#a1887f)', label:'Hitmonchan'},
-  gyarados:   {icon:'🐉', bg:'linear-gradient(135deg,#001a40,#0d47a1,#29b6f6)', label:'Gyarados'},
-  zapdos:     {icon:'⚡', bg:'linear-gradient(135deg,#2a1800,#e65100,#ffca28)', label:'Zapdos'},
-  raichu:     {icon:'🐭', bg:'linear-gradient(135deg,#2a1800,#ef6c00,#ffb300)', label:'Raichu'},
-  ninetales:  {icon:'🦊', bg:'linear-gradient(135deg,#5a1000,#bf360c,#ff8f00)', label:'Ninetales'},
-  alakazam:   {icon:'🥄', bg:'linear-gradient(135deg,#1a0030,#4a148c,#9c27b0)', label:'Alakazam'},
-  nidoking:   {icon:'👑', bg:'linear-gradient(135deg,#1a0020,#4a148c,#7b1fa2)', label:'Nidoking'},
-  machamp:    {icon:'💪', bg:'linear-gradient(135deg,#1a0a00,#4e342e,#795548)', label:'Machamp'},
-  electabuzz: {icon:'⚡', bg:'linear-gradient(135deg,#1a1000,#e65100,#ff9800)', label:'Electabuzz'},
-  scyther:    {icon:'🌿', bg:'linear-gradient(135deg,#0a1a00,#1b5e20,#4caf50)', label:'Scyther'},
-  snorlax:    {icon:'😴', bg:'linear-gradient(135deg,#1a2030,#37474f,#607d8b)', label:'Snorlax'},
-  dragonair:  {icon:'🐲', bg:'linear-gradient(135deg,#0a1a40,#1565c0,#7986cb)', label:'Dragonair'},
-  charmeleon: {icon:'🦎', bg:'linear-gradient(135deg,#5a0a00,#bf360c,#ff5722)', label:'Charmeleon'},
-  wartortle:  {icon:'🐢', bg:'linear-gradient(135deg,#001a3a,#0d47a1,#64b5f6)', label:'Wartortle'},
-  ivysaur:    {icon:'🌿', bg:'linear-gradient(135deg,#0a2a00,#1b5e20,#66bb6a)', label:'Ivysaur'},
-  pikachu:    {icon:'⚡', bg:'linear-gradient(135deg,#2a1800,#f57f17,#ffee58)', label:'Pikachu'},
-  charmander: {icon:'🔥', bg:'linear-gradient(135deg,#3a0800,#bf360c,#ff7043)', label:'Charmander'},
-  squirtle:   {icon:'💧', bg:'linear-gradient(135deg,#001530,#0277bd,#4fc3f7)', label:'Squirtle'},
-  bulbasaur:  {icon:'🌱', bg:'linear-gradient(135deg,#0a1a00,#2e7d32,#a5d6a7)', label:'Bulbasaur'},
-  magikarp:   {icon:'🐟', bg:'linear-gradient(135deg,#001a3a,#c62828,#ef9a9a)', label:'Magikarp'},
-  dratini:    {icon:'🐲', bg:'linear-gradient(135deg,#0a1a30,#1a237e,#9fa8da)', label:'Dratini'},
-  gastly:     {icon:'👻', bg:'linear-gradient(135deg,#0a0a1a,#311b92,#7e57c2)', label:'Gastly'},
-  machop:     {icon:'💪', bg:'linear-gradient(135deg,#1a0a00,#3e2723,#6d4c41)', label:'Machop'},
-  ponyta:     {icon:'🐎', bg:'linear-gradient(135deg,#3a0a00,#bf360c,#ffab40)', label:'Ponyta'},
-  vulpix:     {icon:'🦊', bg:'linear-gradient(135deg,#3a0a00,#bf360c,#ff8a65)', label:'Vulpix'},
+  // Starters & evolutions
+  charmander: {icon:'🦎',bg:'linear-gradient(160deg,#3a0800,#bf360c,#ff7043)',label:'Charmander',color:'#ff7043'},
+  charmeleon: {icon:'🦎',bg:'linear-gradient(160deg,#5a0a00,#d84315,#ff5722)',label:'Charmeleon',color:'#ff5722'},
+  charizard:  {icon:'🐉',bg:'linear-gradient(160deg,#7f0000,#c62828,#ff6d00)',label:'Charizard',color:'#ff6d00'},
+  squirtle:   {icon:'🐢',bg:'linear-gradient(160deg,#001530,#0277bd,#29b6f6)',label:'Squirtle',color:'#29b6f6'},
+  wartortle:  {icon:'🐢',bg:'linear-gradient(160deg,#002040,#01579b,#039be5)',label:'Wartortle',color:'#039be5'},
+  blastoise:  {icon:'🌊',bg:'linear-gradient(160deg,#003060,#1565c0,#42a5f5)',label:'Blastoise',color:'#42a5f5'},
+  bulbasaur:  {icon:'🌱',bg:'linear-gradient(160deg,#0a1a00,#2e7d32,#66bb6a)',label:'Bulbasaur',color:'#66bb6a'},
+  ivysaur:    {icon:'🌿',bg:'linear-gradient(160deg,#1a2a00,#388e3c,#81c784)',label:'Ivysaur',color:'#81c784'},
+  venusaur:   {icon:'🌸',bg:'linear-gradient(160deg,#1a3a00,#2e7d32,#a5d6a7)',label:'Venusaur',color:'#a5d6a7'},
+  // Psychic legendaries
+  mewtwo:     {icon:'🔮',bg:'linear-gradient(160deg,#1a0030,#6a1b9a,#ce93d8)',label:'Mewtwo',color:'#ce93d8'},
+  // Electric
+  pikachu:    {icon:'⚡',bg:'linear-gradient(160deg,#2a1800,#f57f17,#ffee58)',label:'Pikachu',color:'#ffee58'},
+  raichu:     {icon:'⚡',bg:'linear-gradient(160deg,#2a1500,#ef6c00,#ffa726)',label:'Raichu',color:'#ffa726'},
+  zapdos:     {icon:'🦅',bg:'linear-gradient(160deg,#1a1400,#f9a825,#fff176)',label:'Zapdos',color:'#fff176'},
+  electabuzz: {icon:'⚡',bg:'linear-gradient(160deg,#1a1000,#e65100,#ff9800)',label:'Electabuzz',color:'#ff9800'},
+  // Water
+  gyarados:   {icon:'🐲',bg:'linear-gradient(160deg,#001a40,#0d47a1,#64b5f6)',label:'Gyarados',color:'#64b5f6'},
+  magikarp:   {icon:'🐟',bg:'linear-gradient(160deg,#001a3a,#c62828,#ef9a9a)',label:'Magikarp',color:'#ef9a9a'},
+  // Fire
+  ninetales:  {icon:'🦊',bg:'linear-gradient(160deg,#5a1000,#bf360c,#ffb300)',label:'Ninetales',color:'#ffb300'},
+  ponyta:     {icon:'🐎',bg:'linear-gradient(160deg,#3a0800,#bf360c,#ffcc02)',label:'Ponyta',color:'#ffcc02'},
+  vulpix:     {icon:'🦊',bg:'linear-gradient(160deg,#3a0800,#bf360c,#ff8a65)',label:'Vulpix',color:'#ff8a65'},
+  // Grass
+  scyther:    {icon:'🌿',bg:'linear-gradient(160deg,#0a1800,#1b5e20,#69f0ae)',label:'Scyther',color:'#69f0ae'},
+  // Psychic
+  alakazam:   {icon:'🥄',bg:'linear-gradient(160deg,#1a0030,#4a148c,#ab47bc)',label:'Alakazam',color:'#ab47bc'},
+  gastly:     {icon:'👻',bg:'linear-gradient(160deg,#0a0a1a,#311b92,#9575cd)',label:'Gastly',color:'#9575cd'},
+  // Fighting
+  hitmonchan: {icon:'🥊',bg:'linear-gradient(160deg,#2a0a00,#4e342e,#bcaaa4)',label:'Hitmonchan',color:'#bcaaa4'},
+  machamp:    {icon:'💪',bg:'linear-gradient(160deg,#1a0800,#4e342e,#8d6e63)',label:'Machamp',color:'#8d6e63'},
+  machop:     {icon:'💪',bg:'linear-gradient(160deg,#150600,#3e2723,#795548)',label:'Machop',color:'#795548'},
+  nidoking:   {icon:'👑',bg:'linear-gradient(160deg,#1a0020,#4a148c,#9c27b0)',label:'Nidoking',color:'#9c27b0'},
+  // Colorless
+  chansey:    {icon:'🥚',bg:'linear-gradient(160deg,#3a1a2a,#880e4f,#f8bbd0)',label:'Chansey',color:'#f8bbd0'},
+  snorlax:    {icon:'😴',bg:'linear-gradient(160deg,#1a2030,#37474f,#90a4ae)',label:'Snorlax',color:'#90a4ae'},
+  dragonair:  {icon:'🐲',bg:'linear-gradient(160deg,#0a1a40,#1565c0,#b39ddb)',label:'Dragonair',color:'#b39ddb'},
+  dratini:    {icon:'🐲',bg:'linear-gradient(160deg,#0a1430,#1a237e,#c5cae9)',label:'Dratini',color:'#c5cae9'},
 };
 
 function getPokemonArtHTML(card, size){
-  var sym = POKEMON_SYMBOL[card.id] || {icon: card.emoji||'?', bg: getCardGradient(card.type), label: card.name};
-  var iconSize = size==='active-card'?'2.4rem': size==='bench-card'?'1.2rem':'1.8rem';
-  var labelSize = size==='active-card'?'.42rem': size==='bench-card'?'.3rem':'.36rem';
+  var sym = POKEMON_SYMBOL[card.id] || {icon:card.emoji||'?', bg:getCardGradient(card.type), label:card.name, color:'#fff'};
+  var isActive = size==='active-card';
+  var isBench = size==='bench-card';
+  var iconSz = isActive?'3rem': isBench?'1.4rem':'2.2rem';
+  var nameSz = isActive?'.45rem': isBench?'.3rem':'.38rem';
+  var numSz = isActive?'1.8rem': isBench?'.9rem':'1.3rem';
+  // Show pokedex number for extra authenticity
+  var pokedexNums = {charizard:'#006',blastoise:'#009',venusaur:'#003',mewtwo:'#150',pikachu:'#025',raichu:'#026',zapdos:'#145',gyarados:'#130',magikarp:'#129',snorlax:'#143',chansey:'#113',hitmonchan:'#107',electabuzz:'#125',scyther:'#123',alakazam:'#065',nidoking:'#034',machamp:'#068',gastly:'#092',dragonair:'#148',dratini:'#147',ninetales:'#038',ponyta:'#077',vulpix:'#037',charmeleon:'#005',charmander:'#004',squirtle:'#007',bulbasaur:'#001',wartortle:'#008',ivysaur:'#002',machop:'#066'};
+  var num = pokedexNums[card.id] || '';
   return '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;'
-    + 'width:100%;height:100%;background:' + sym.bg + ';border-radius:4px;gap:2px;">'
-    + '<div style="font-size:' + iconSize + ';filter:drop-shadow(0 2px 6px rgba(0,0,0,.7));line-height:1">' + sym.icon + '</div>'
-    + '<div style="font-size:' + labelSize + ';color:rgba(255,255,255,.75);font-weight:700;'
-    + 'text-transform:uppercase;letter-spacing:.5px;text-align:center;padding:0 2px;">' + sym.label + '</div>'
+    + 'width:100%;height:100%;background:' + sym.bg + ';border-radius:5px;gap:2px;padding:2px;position:relative;">'
+    + (num?'<div style="position:absolute;top:3px;left:4px;font-size:.28rem;color:rgba(255,255,255,.5);font-weight:700;">'+num+'</div>':'')
+    + '<div style="font-size:'+iconSz+';line-height:1;filter:drop-shadow(0 3px 10px rgba(0,0,0,.9));margin-top:4px;">'+sym.icon+'</div>'
+    + '<div style="font-size:'+nameSz+';color:#fff;font-weight:900;text-transform:uppercase;letter-spacing:.4px;text-align:center;text-shadow:0 1px 4px rgba(0,0,0,1);padding:0 2px;line-height:1.1;">'+sym.label+'</div>'
     + '</div>';
 }
 
@@ -1079,18 +1095,13 @@ function cardEl(card,size,clickable,selected,energyMap,damageVal,statusVal){
     var stIcon=statusVal==='asleep'?'💤':statusVal==='confused'?'😵':statusVal==='paralyzed'?'⚡':statusVal==='poisoned'?'☠️':'';
 
     el.innerHTML=
-      // Header: name + HP
       '<div class="pc-header">'
       +'<span class="pc-name">'+card.name+'</span>'
       +'<span class="pc-hp" style="color:'+hpColor+'">'+hpLeft+'HP</span>'
       +'</div>'
-      // Art: full colourful background, big emoji, name label — ALWAYS visible
-      +'<div class="pc-art" style="background:'+sym.bg+';border-radius:6px;">'
+      +'<div class="pc-art">'
       +(stIcon?'<div class="status-badge">'+stIcon+'</div>':'')
-      +'<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;height:100%;gap:3px;">'
-      +'<div style="font-size:'+iconSz+';line-height:1;filter:drop-shadow(0 3px 8px rgba(0,0,0,.8));">'+sym.icon+'</div>'
-      +'<div style="font-size:'+labelSz+';color:rgba(255,255,255,.9);font-weight:900;text-transform:uppercase;letter-spacing:.5px;text-align:center;text-shadow:0 1px 4px rgba(0,0,0,.9);padding:0 3px;">'+sym.label+'</div>'
-      +'</div>'
+      +getPokemonArtHTML(card,size)
       +(damageVal>0?'<div class="pc-dmg">'+damageVal+'</div>':'')
       +'</div>'
       // Energy attached
