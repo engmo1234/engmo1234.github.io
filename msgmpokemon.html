@@ -965,15 +965,15 @@ const POKEMON_SYMBOL={
 };
 
 function getPokemonArtHTML(card, size){
-  const sym = POKEMON_SYMBOL[card.id] || {icon: card.emoji||'?', bg: getCardGradient(card.type), label: card.name};
-  const iconSize = size==='active-card'?'2.4rem': size==='bench-card'?'1.2rem':'1.8rem';
-  const labelSize = size==='active-card'?'.42rem': size==='bench-card'?'.3rem':'.36rem';
-  return \`<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;
-    width:100%;height:100%;background:\${sym.bg};border-radius:4px;gap:2px;">
-    <div style="font-size:\${iconSize};filter:drop-shadow(0 2px 6px rgba(0,0,0,.7));line-height:1">\${sym.icon}</div>
-    <div style="font-size:\${labelSize};color:rgba(255,255,255,.75);font-weight:700;
-      text-transform:uppercase;letter-spacing:.5px;text-align:center;padding:0 2px;">\${sym.label}</div>
-  </div>\`;
+  var sym = POKEMON_SYMBOL[card.id] || {icon: card.emoji||'?', bg: getCardGradient(card.type), label: card.name};
+  var iconSize = size==='active-card'?'2.4rem': size==='bench-card'?'1.2rem':'1.8rem';
+  var labelSize = size==='active-card'?'.42rem': size==='bench-card'?'.3rem':'.36rem';
+  return '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;'
+    + 'width:100%;height:100%;background:' + sym.bg + ';border-radius:4px;gap:2px;">'
+    + '<div style="font-size:' + iconSize + ';filter:drop-shadow(0 2px 6px rgba(0,0,0,.7));line-height:1">' + sym.icon + '</div>'
+    + '<div style="font-size:' + labelSize + ';color:rgba(255,255,255,.75);font-weight:700;'
+    + 'text-transform:uppercase;letter-spacing:.5px;text-align:center;padding:0 2px;">' + sym.label + '</div>'
+    + '</div>';
 }
 
 function cardEl(card,size,clickable,selected,energyMap,damageVal,statusVal){
@@ -1824,7 +1824,7 @@ function applyBetweenTurnEffects(s,nextPlayer){
     addLog(s,(s.active[nextPlayer].name||'Pokémon')+' takes 10 poison damage!');
     // Check if poison KO'd them
     if(s.active[nextPlayer].damage>=(s.active[nextPlayer].hp||999)){
-      addLog(s,(s.active[nextPlayer].name||'Pokémon')+' was KO'd by poison!',true);
+      addLog(s,(s.active[nextPlayer].name||'Pokemon')+' was knocked out by poison!',true);
       // Don't score a prize for poison KO mid-turn — just clear active
       s.discards[nextPlayer].push(s.active[nextPlayer]);
       s.energyOnActive[nextPlayer]={};
@@ -2290,14 +2290,18 @@ cardEl = function(card, size, clickable, selected, energyMap, damageVal, statusV
 };
 
 // ── Game enters animation on lobby → game ──
-const _originalJoinBtn = document.getElementById('joinBtn').onclick;
-document.getElementById('joinBtn').onclick = async function(){
-  await _originalJoinBtn.call(this);
-  setTimeout(()=>{
-    document.getElementById('game').classList.add('game-entered');
-    animateHandCards();
-  }, 500);
-};
+// Safe patch: wrap joinBtn to add entrance animation after join
+(function(){
+  var _orig = document.getElementById('joinBtn').onclick;
+  document.getElementById('joinBtn').onclick = async function(e){
+    if(_orig) await _orig.call(this, e);
+    setTimeout(function(){
+      var g = document.getElementById('game');
+      if(g) g.classList.add('game-entered');
+      animateHandCards();
+    }, 500);
+  };
+})();
 </script>
 </body>
 </html>
