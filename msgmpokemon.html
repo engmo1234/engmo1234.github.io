@@ -1237,11 +1237,32 @@ document.getElementById('joinBtn').onclick=async()=>{
 /* ============================================================
    FIREBASE LISTENER
    ============================================================ */
+function fbArr(v){if(!v)return[];if(Array.isArray(v))return v;return Object.keys(v).sort((a,b)=>+a-+b).map(k=>v[k]);}
+
 function startListening(){
   roomRef.on('value',snap=>{
     const d=snap.val();
     if(!d||!d.hands){document.getElementById('statusBar').textContent='Game data missing — press Fix';return;}
-    state=d;render();
+    // Normalise ALL Firebase pseudo-arrays before storing state
+    if(d.hands){d.hands=fbArr(d.hands).map(h=>fbArr(h));}
+    if(d.decks){d.decks=fbArr(d.decks).map(h=>fbArr(h));}
+    if(d.discards){d.discards=fbArr(d.discards).map(h=>fbArr(h));}
+    if(d.bench){d.bench=fbArr(d.bench).map(h=>fbArr(h));}
+    if(d.prizes){d.prizes=fbArr(d.prizes).map(h=>fbArr(h));}
+    if(d.active){d.active=fbArr(d.active);}
+    if(d.status){d.status=fbArr(d.status);}
+    if(d.names){d.names=fbArr(d.names);}
+    if(d.connected){d.connected=fbArr(d.connected);}
+    if(d.prizesLeft){d.prizesLeft=fbArr(d.prizesLeft);}
+    if(d.drawnThisTurn){d.drawnThisTurn=fbArr(d.drawnThisTurn);}
+    if(d.attachedThisTurn){d.attachedThisTurn=fbArr(d.attachedThisTurn);}
+    if(d.energyOnActive){d.energyOnActive=fbArr(d.energyOnActive);}
+    if(d.energyOnBench){d.energyOnBench=fbArr(d.energyOnBench).map(b=>fbArr(b));}
+    if(d.plusPowerActive){d.plusPowerActive=fbArr(d.plusPowerActive);}
+    if(d.swordsActive){d.swordsActive=fbArr(d.swordsActive);}
+    if(d.log){d.log=fbArr(d.log);}
+    state=d;
+    render();
   });
 }
 
@@ -1333,8 +1354,9 @@ function render(){
   const over=state.winner!==null&&state.winner!==undefined;
   const phase=state.phase||'setup';
   const names=state.names||['Player 1','Player 2'];
-  const myCards=Array.isArray(state.hands[myId])?state.hands[myId]:[];
-  const oppCards=Array.isArray(state.hands[opp])?state.hands[opp]:[];
+  // Arrays already normalised by startListening() fbArr pass
+  const myCards=state.hands[myId]||[];
+  const oppCards=state.hands[opp]||[];
 
   // Turn pill
   document.getElementById('turnPill').textContent=over?'Game Over':(isMyTurn?'Your Turn':names[opp]+"'s Turn");
