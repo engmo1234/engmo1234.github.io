@@ -71,7 +71,29 @@ html,body{min-height:100vh;background:linear-gradient(135deg,#1a0a2e,#16213e,#0f
 .wcard p{color:#b0b0c0;margin-bottom:24px;}
 .wcard button{background:linear-gradient(135deg,#e53935,#ff6b35);border:none;border-radius:30px;padding:13px 32px;color:#fff;font-size:1rem;font-weight:800;cursor:pointer;}
 @media(max-width:400px){.bwrap{width:99vw;}#diceBtn{width:60px;height:60px;font-size:2rem;}}
-@media(orientation:landscape) and (max-height:600px){#game{flex-direction:row;flex-wrap:wrap;align-items:flex-start;justify-content:center;padding:6px;}.bwrap{width:min(52vh,52vw);}.ghdr,.sbar,.ctrl,.ppanel,.glog{max-width:45vw;}}
+@media(orientation:landscape) and (max-height:600px){#game{flex-direction:row;flex-wrap:wrap;align-items:flex-start;justify-content:center;padding:6px;}.bwrap{width:min(52vh,52vw);}.ghdr,.sbar,.ctrl,.ppanel,.glog,.chat-box{max-width:45vw;}}
+/* ── CHAT ── */
+.chat-box{width:100%;max-width:560px;background:rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.12);border-radius:18px;overflow:hidden;}
+.chat-hdr{padding:10px 16px;background:rgba(255,255,255,.05);border-bottom:1px solid rgba(255,255,255,.08);font-size:.82rem;font-weight:800;color:var(--gold);display:flex;align-items:center;gap:8px;}
+.chat-online{width:8px;height:8px;border-radius:50%;background:#43a047;box-shadow:0 0 6px #43a047;flex-shrink:0;}
+.chat-log{height:120px;overflow-y:auto;padding:10px 14px;display:flex;flex-direction:column;gap:5px;}
+.chat-log::-webkit-scrollbar{width:3px;}.chat-log::-webkit-scrollbar-thumb{background:#444;border-radius:2px;}
+.chat-msg{display:flex;flex-direction:column;max-width:78%;}
+.chat-msg.mine{align-self:flex-end;align-items:flex-end;}
+.chat-msg.theirs{align-self:flex-start;align-items:flex-start;}
+.chat-bubble{padding:7px 12px;border-radius:16px;font-size:.8rem;line-height:1.4;word-break:break-word;}
+.chat-msg.mine .chat-bubble{background:linear-gradient(135deg,#6c3bff,#a855f7);color:#fff;border-radius:16px 4px 16px 16px;}
+.chat-msg.theirs .chat-bubble{background:rgba(255,255,255,.1);color:#f0e8ff;border-radius:4px 16px 16px 16px;}
+.chat-who{font-size:.65rem;color:#7070a0;padding:2px 4px;}
+.chat-empty{color:#7070a0;font-size:.78rem;text-align:center;padding:20px 0;}
+.chat-input-row{display:flex;gap:8px;padding:10px 12px;border-top:1px solid rgba(255,255,255,.07);}
+.chat-input{flex:1;background:rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.12);border-radius:50px;padding:9px 16px;color:#f0e8ff;font-family:inherit;font-size:.85rem;outline:none;transition:border-color .2s;}
+.chat-input:focus{border-color:rgba(108,59,255,.7);}
+.chat-input::placeholder{color:#505070;}
+.chat-send{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#6c3bff,#a855f7);border:none;color:#fff;font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:.15s;}
+.chat-send:hover{transform:scale(1.1);}
+@keyframes msgIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+.msg-in{animation:msgIn .2s ease both;}
 </style>
 </head>
 <body>
@@ -116,6 +138,22 @@ html,body{min-height:100vh;background:linear-gradient(135deg,#1a0a2e,#16213e,#0f
   <div class="ppanel" id="ppanel" style="display:none;"></div>
   <div class="wpanel" id="wpanel" style="display:none;"><h3>&#9203; Waiting for players&hellip;</h3><div id="wslots"></div></div>
   <div class="glog" id="glog"></div>
+
+  <!-- CHAT -->
+  <div class="chat-box" id="chatBox" style="display:none;">
+    <div class="chat-hdr">
+      <div class="chat-online"></div>
+      Live Chat
+    </div>
+    <div class="chat-log" id="chatLog">
+      <div class="chat-empty" id="chatEmpty">Say hi to your opponent! &#128075;</div>
+    </div>
+    <div class="chat-input-row">
+      <input id="chatInput" class="chat-input" placeholder="Type a message&hellip;" maxlength="120">
+      <button id="chatSend" class="chat-send">&#10148;</button>
+    </div>
+  </div>
+
 </div>
 <div id="winModal"><div class="wcard"><h1 id="wtitle">&#127942; Winner!</h1><p id="wsub">Congratulations!</p><button id="winResetBtn">Play Again</button></div></div>
 <script>
@@ -185,7 +223,7 @@ var HCOL={red:[[7,13],[7,12],[7,11],[7,10],[7,9],[7,8]],blue:[[1,7],[2,7],[3,7],
 var YARD={red:[[1.5,1.5],[3.5,1.5],[1.5,3.5],[3.5,3.5]],blue:[[10.5,1.5],[12.5,1.5],[10.5,3.5],[12.5,3.5]],green:[[10.5,10.5],[12.5,10.5],[10.5,12.5],[12.5,12.5]],yellow:[[1.5,10.5],[3.5,10.5],[1.5,12.5],[3.5,12.5]]};
 var SAFE=[0,8,13,21,26,34,39,47];
 var DFACE=['','&#9856;','&#9857;','&#9858;','&#9859;','&#9860;','&#9861;'];
-var myId=null,myName='Player',roomRef=null,state=null,selCount=2,rolling=false;
+var myId=null,myName='Player',roomRef=null,chatRef=null,state=null,selCount=2,rolling=false;
 function fa(v){if(!v)return[];if(Array.isArray(v))return v;return Object.keys(v).sort(function(a,b){return+a-+b;}).map(function(k){return v[k];});}
 function norm(d){if(!d)return d;d.tokens=fa(d.tokens).map(fa);d.finished=fa(d.finished).map(fa);d.names=fa(d.names);d.connected=fa(d.connected);d.log=fa(d.log);return d;}
 function esc(s){return String(s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
@@ -271,6 +309,29 @@ function renderTokens(){
     }
   }
 }
+function initChat(roomId){
+  chatRef=db.ref('ludoRooms/'+roomId+'_chat');
+  chatRef.limitToLast(60).on('child_added',function(snap){
+    var m=snap.val();if(!m)return;
+    var log=document.getElementById('chatLog');
+    var empty=document.getElementById('chatEmpty');if(empty)empty.remove();
+    var wrap=document.createElement('div');
+    wrap.className='chat-msg msg-in '+(m.uid===myId?'mine':'theirs');
+    wrap.innerHTML='<div class="chat-bubble">'+esc(m.text)+'</div>'
+      +'<div class="chat-who">'+esc(m.name)+'</div>';
+    log.appendChild(wrap);
+    log.scrollTop=9999;
+  });
+  function send(){
+    var inp=document.getElementById('chatInput');
+    var txt=inp.value.trim();if(!txt)return;
+    chatRef.push({name:myName,text:txt.substring(0,120),uid:myId,ts:Date.now()});
+    inp.value='';
+  }
+  document.getElementById('chatSend').addEventListener('click',send);
+  document.getElementById('chatInput').addEventListener('keypress',function(e){if(e.key==='Enter')send();});
+}
+
 function doRoll(){
   if(!roomRef||!state||state.turn!==myId||state.diceRolled||state.phase!=='playing'||rolling)return;
   rolling=true;
@@ -403,12 +464,15 @@ function render(){
   if(!rolling)db2.innerHTML=state.dice?DFACE[state.dice]:'&#127922;';
   dl.textContent=ismine&&!state.diceRolled?'Tap to roll!':(state.dice?'Rolled '+state.dice:'');
   var pp=document.getElementById('ppanel'),wp=document.getElementById('wpanel');
+  var chatBox=document.getElementById('chatBox');
   if(phase==='waiting'){
     wp.style.display='';pp.style.display='none';
+    if(chatBox)chatBox.style.display='none';
     var ws=document.getElementById('wslots');ws.innerHTML='';
     for(var i=0;i<state.playerCount;i++){var d=document.createElement('div');d.className='wslot';d.innerHTML='<div style="width:10px;height:10px;border-radius:50%;background:'+(conn[i]?CHex[COLS[i]]:'#555')+'"></div><span style="color:'+(conn[i]?'#f0e8d0':'#666')+'">'+(conn[i]?esc(names[i]||'?'):'Waiting for player '+(i+1))+(i===myId?' (You)':'')+'</span>';ws.appendChild(d);}
   }else{
     wp.style.display='none';pp.style.display='grid';pp.innerHTML='';
+    if(chatBox)chatBox.style.display='';
     for(var j=0;j<state.playerCount;j++){
       var color=COLS[j],isact=state.turn===j&&!over;
       var card=document.createElement('div');card.className='pcard'+(isact?' myturn':'');
@@ -449,6 +513,7 @@ document.getElementById('joinBtn').addEventListener('click',function(){
     document.getElementById('lobby').style.display='none';
     document.getElementById('game').style.display='flex';
     roomRef=ref;
+    initChat(roomId);
     roomRef.on('value',function(snap){
       var d=snap.val();if(!d||!d.tokens){document.getElementById('sbar').textContent='Data missing - press New Game';return;}
       state=norm(d);
@@ -460,7 +525,7 @@ document.getElementById('joinBtn').addEventListener('click',function(){
 document.getElementById('diceBtn').addEventListener('click',doRoll);
 document.getElementById('resetBtn').addEventListener('click',doReset);
 document.getElementById('winResetBtn').addEventListener('click',doReset);
-document.getElementById('leaveBtn').addEventListener('click',function(){if(roomRef&&state)roomRef.child('connected/'+myId).set(false);document.getElementById('game').style.display='none';document.getElementById('lobby').style.display='flex';roomRef=null;state=null;myId=null;});
+document.getElementById('leaveBtn').addEventListener('click',function(){if(roomRef&&state)roomRef.child('connected/'+myId).set(false);document.getElementById('game').style.display='none';document.getElementById('lobby').style.display='flex';roomRef=null;chatRef=null;state=null;myId=null;});
 drawBoard();
 } // end startGame
 </script>
