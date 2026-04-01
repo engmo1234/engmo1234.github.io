@@ -227,6 +227,7 @@ function renderTokens(){
   var layer=document.getElementById('tlayer');
   if(!layer)return;
   layer.innerHTML='';
+  function mk(tag,a){var e=document.createElementNS(ns,tag);Object.keys(a).forEach(function(k){e.setAttribute(k,a[k]);});return e;}
   var pc={};
   for(var ci=0;ci<state.playerCount;ci++){
     var color=COLS[ci];
@@ -236,17 +237,37 @@ function renderTokens(){
       var p=gpos(ci,ti,pos,done);
       var key=Math.round(p.x)+','+Math.round(p.y);
       var cnt=pc[key]||0;pc[key]=cnt+1;
-      var ox=(cnt%2)*11-5,oy=Math.floor(cnt/2)*11-5;
-      var cx2=p.x+ox,cy2=p.y+oy,r=CELL*.27;
+      var ox=(cnt%2)*12-6,oy=Math.floor(cnt/2)*12-6;
+      var cx2=p.x+ox,cy2=p.y+oy,r=CELL*.3;
       var myturn=state.turn===myId&&state.phase==='playing';
-      var movable=myturn&&state.diceRolled&&canMove(ci,ti,state.dice)&&ci===myId;
-      function mkEl(tag,a){var e=document.createElementNS(ns,tag);Object.keys(a).forEach(function(k){e.setAttribute(k,a[k]);});return e;}
-      var sh=mkEl('circle',{cx:cx2+2,cy:cy2+3,r:r,fill:'rgba(0,0,0,.22)'});layer.appendChild(sh);
-      var body=mkEl('circle',{cx:cx2,cy:cy2,r:r,fill:CHex[color],stroke:movable?'#f5d76e':CDark[color],'stroke-width':movable?3:2});
-      if(movable){body.style.cursor='pointer';body.style.filter='drop-shadow(0 0 6px '+CHex[color]+')';(function(c,t){body.addEventListener('click',function(){doMove(c,t);});})(ci,ti);}
+      var movable=myturn&&state.diceRolled&&state.dice&&canMove(ci,ti,state.dice)&&ci===myId;
+      // Shadow
+      layer.appendChild(mk('circle',{cx:cx2+2,cy:cy2+3,r:r,fill:'rgba(0,0,0,.25)'}));
+      // Glow ring for movable tokens
+      if(movable){
+        var ring=mk('circle',{cx:cx2,cy:cy2,r:r+5,fill:'none',stroke:'#f5d76e','stroke-width':3,opacity:.8});
+        var anim=document.createElementNS(ns,'animate');
+        anim.setAttribute('attributeName','r');anim.setAttribute('values',(r+3)+';'+(r+8)+';'+(r+3));
+        anim.setAttribute('dur','1s');anim.setAttribute('repeatCount','indefinite');
+        ring.appendChild(anim);
+        layer.appendChild(ring);
+      }
+      // Body
+      var body=mk('circle',{cx:cx2,cy:cy2,r:r,fill:CHex[color],stroke:movable?'#fff':CDark[color],'stroke-width':movable?3:2});
+      if(movable){
+        body.style.cursor='pointer';
+        // Large invisible tap target
+        var tap=mk('circle',{cx:cx2,cy:cy2,r:r+10,fill:'transparent',cursor:'pointer'});
+        (function(c,t){
+          body.addEventListener('click',function(e){e.stopPropagation();doMove(c,t);});
+          tap.addEventListener('click',function(e){e.stopPropagation();doMove(c,t);});
+        })(ci,ti);
+        layer.appendChild(tap);
+      }
       layer.appendChild(body);
-      var inner=mkEl('circle',{cx:cx2,cy:cy2,r:r*.42,fill:'#fff',opacity:.65});layer.appendChild(inner);
-      var lbl=mkEl('text',{x:cx2,y:cy2,'font-size':r*.85,fill:CDark[color],'text-anchor':'middle','dominant-baseline':'central','font-weight':'900','pointer-events':'none'});lbl.textContent=ti+1;layer.appendChild(lbl);
+      layer.appendChild(mk('circle',{cx:cx2,cy:cy2,r:r*.4,fill:'#fff',opacity:.7}));
+      var lbl=mk('text',{x:cx2,y:cy2,'font-size':r*.9,fill:CDark[color],'text-anchor':'middle','dominant-baseline':'central','font-weight':'900','pointer-events':'none','font-family':'sans-serif'});
+      lbl.textContent=ti+1;layer.appendChild(lbl);
     }
   }
 }
@@ -262,33 +283,92 @@ function doRoll(){
     var s=JSON.parse(JSON.stringify(state));
     s.dice=dice;s.diceRolled=true;
     addLog(s,s.names[myId]+' rolled a '+dice+'!',dice===6);
-    if(!anyMove(myId,dice)){addLog(s,'No moves - passing turn.');doPass(s);}
-    else roomRef.set(s);
+    if(!anyMove(myId,dice)){
+      // No moves available - show briefly then pass
+      addLog(s,'No moves available - turn passes!');
+      roomRef.set(s);
+      setTimeout(function(){
+        // re-read current state and pass
+        if(state&&state.turn===myId&&state.diceRolled){
+          var s2=JSON.parse(JSON.stringify(state));
+          doPass(s2);
+        }
+      },1200);
+      return;
+    }
+    // Check if exactly one movable token - auto move it
+    var movable=[];
+    for(var t=0;t<4;t++){if(canMove(myId,t,dice))movable.push(t);}
+    if(movable.length===1){
+      // Only one choice - auto move after brief delay so player sees the roll
+      var onlyT=movable[0];
+      roomRef.set(s);
+      setTimeout(function(){
+        if(state&&state.turn===myId&&state.diceRolled){
+          doMove(myId,onlyT);
+        }
+      },800);
+      return;
+    }
+    // Multiple choices - let player click
+    roomRef.set(s);
   },600);
 }
 function doMove(ci,ti){
-  if(!roomRef||!state||state.turn!==myId||ci!==myId||!state.diceRolled)return;
-  var dice=state.dice;if(!canMove(ci,ti,dice))return;
+  if(!roomRef||!state)return;
+  if(state.turn!==myId||ci!==myId)return;
+  if(!state.diceRolled||state.dice===null)return;
+  var dice=state.dice;
+  if(!canMove(ci,ti,dice))return;
   var s=JSON.parse(JSON.stringify(state));
   var pos=s.tokens[ci][ti],np;
-  if(pos===-1){np=0;addLog(s,s.names[ci]+' brings out token '+(ti+1)+'!',true);}
-  else if(pos>=52){np=pos+dice;if(np>57)np=57;}
-  else{np=pos+dice;if(np>=52)np=52+(np-52);}
+  if(pos===-1){
+    np=0;
+    addLog(s,s.names[ci]+' brings out token '+(ti+1)+'!',true);
+  } else if(pos>=52){
+    np=pos+dice;
+    if(np>57)np=57;
+    addLog(s,s.names[ci]+' moves token '+(ti+1)+' in home stretch!');
+  } else {
+    np=pos+dice;
+    if(np>=52){np=52+(np-52);}
+    addLog(s,s.names[ci]+' moves token '+(ti+1)+' '+dice+' spaces.');
+  }
   s.tokens[ci][ti]=np;
-  if(np>=57){s.finished[ci][ti]=true;s.tokens[ci][ti]=58;addLog(s,s.names[ci]+' token '+(ti+1)+' home!',true);}
+  // Finished?
+  if(np>=57){
+    s.finished[ci][ti]=true;
+    s.tokens[ci][ti]=58;
+    addLog(s,s.names[ci]+' token '+(ti+1)+' reached home!',true);
+  }
+  // Capture check on main board
   if(np>=0&&np<52){
     var myP=gpath(ci),mySq=myP[np];
     for(var p=0;p<s.playerCount;p++){
       if(p===ci)continue;
       for(var t=0;t<4;t++){
-        var op=s.tokens[p][t];if(op<0||op>=52)continue;
+        var op=s.tokens[p][t];
+        if(op<0||op>=52)continue;
         var oppSq=gpath(p)[op];
-        if(mySq&&oppSq&&mySq[0]===oppSq[0]&&mySq[1]===oppSq[1]&&SAFE.indexOf(np)<0){s.tokens[p][t]=-1;addLog(s,s.names[ci]+' captured '+s.names[p]+' token '+(t+1)+'!',true);}
+        if(mySq&&oppSq&&mySq[0]===oppSq[0]&&mySq[1]===oppSq[1]&&SAFE.indexOf(np)<0){
+          s.tokens[p][t]=-1;
+          addLog(s,s.names[ci]+' captured '+s.names[p]+' token '+(t+1)+'! Sent home!',true);
+        }
       }
     }
   }
-  if(s.finished[ci].every(Boolean)){s.winner=ci;s.phase='done';addLog(s,''+s.names[ci]+' wins!',true);roomRef.set(s);return;}
-  if(dice===6){s.diceRolled=false;s.dice=null;addLog(s,s.names[ci]+' gets extra turn!');roomRef.set(s);return;}
+  // Win?
+  if(s.finished[ci].every(Boolean)){
+    s.winner=ci;s.phase='done';
+    addLog(s,s.names[ci]+' wins the game!',true);
+    roomRef.set(s);return;
+  }
+  // Extra turn for 6?
+  if(dice===6){
+    s.diceRolled=false;s.dice=null;
+    addLog(s,s.names[ci]+' rolled 6 - gets another turn!',true);
+    roomRef.set(s);return;
+  }
   doPass(s);
 }
 function doPass(s){s.diceRolled=false;s.dice=null;var n=(s.turn+1)%s.playerCount;for(var i=0;i<s.playerCount;i++){if(!s.finished[n]||!s.finished[n].every(Boolean))break;n=(n+1)%s.playerCount;}s.turn=n;roomRef.set(s);}
@@ -305,8 +385,19 @@ function render(){
   var cn=conn.filter(Boolean).length;
   if(phase==='waiting')sb.textContent='Waiting for players... ('+cn+'/'+state.playerCount+' connected)';
   else if(over)sb.textContent=''+esc(names[state.winner]||'?')+' wins! Press New Game.';
-  else if(ismine)sb.textContent=!state.diceRolled?'Your turn - roll the dice!':(anyMove(myId,state.dice)?'Click a glowing token to move (rolled '+state.dice+')':'No valid moves...');
-  else sb.textContent=esc(names[state.turn]||'?')+"'s turn...";
+  else if(ismine){
+    if(!state.diceRolled){
+      // Show hint if all tokens in yard
+      var allInYard=state.tokens[myId].every(function(p){return p===-1;});
+      sb.textContent=allInYard?'Roll the dice! You need a 6 to bring tokens out.':'Your turn - roll the dice!';
+    } else if(state.dice&&anyMove(myId,state.dice)){
+      var movCount=0;for(var mt=0;mt<4;mt++)if(canMove(myId,mt,state.dice))movCount++;
+      sb.textContent=movCount===1?'Moving automatically...':'Rolled '+state.dice+' - tap a glowing token to move it!';
+    } else {
+      sb.textContent='Rolled '+state.dice+' - no moves available, passing turn...';
+    }
+  }
+  else sb.textContent=esc(names[state.turn]||'?')+"'s turn - waiting...";
   var db2=document.getElementById('diceBtn'),dl=document.getElementById('dlbl');
   db2.disabled=!(ismine&&!state.diceRolled&&!over);
   if(!rolling)db2.innerHTML=state.dice?DFACE[state.dice]:'&#127922;';
