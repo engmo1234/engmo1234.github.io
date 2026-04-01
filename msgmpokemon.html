@@ -15,8 +15,9 @@
   --card-colorless:#546e7a;
 }
 body{min-height:100vh;background:radial-gradient(ellipse at top,#0a1628,#050c18);
-  font-family:'Segoe UI',system-ui,sans-serif;color:#f0e8d0;padding:8px;display:flex;justify-content:center;}
-.wrap{width:100%;max-width:1080px;}
+  font-family:'Segoe UI',system-ui,sans-serif;color:#f0e8d0;padding:8px;display:flex;justify-content:center;
+  overflow-x:hidden;}
+.wrap{width:100%;max-width:1080px;overflow:visible;}
 
 /* ── LOBBY ── */
 #lobby{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:95vh;gap:16px;}
@@ -92,28 +93,100 @@ body{min-height:100vh;background:radial-gradient(ellipse at top,#0a1628,#050c18)
 .deck-count{font-size:.65rem;color:#a08060;}
 .discard-pile{width:44px;height:60px;border-radius:7px;border:1px dashed rgba(255,100,100,.3);display:flex;align-items:center;justify-content:center;font-size:.6rem;color:#555;}
 
-/* pokemon card */
-.pcard{border-radius:8px;display:flex;flex-direction:column;cursor:pointer;overflow:hidden;transition:transform .12s,box-shadow .12s;position:relative;border:2px solid rgba(255,255,255,.7);}
-.pcard:hover{transform:translateY(-4px);box-shadow:0 6px 18px rgba(0,0,0,.5);}
-.pcard.selected{box-shadow:0 0 0 3px #f5d76e;}
-.pcard.active-card{width:86px;height:122px;}
-.pcard.bench-card{width:54px;height:76px;}
-.pcard.hand-card{width:68px;height:96px;}
-.pcard.unplayable{opacity:.45;cursor:not-allowed;}
-.pcard.unplayable:hover{transform:none;}
-.pcard .pc-header{padding:3px 5px;display:flex;justify-content:space-between;align-items:center;}
-.pcard .pc-name{font-size:.55rem;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:60%;}
-.pcard .pc-hp{font-size:.55rem;font-weight:800;}
-.pcard .pc-art{flex:1;display:flex;align-items:center;justify-content:center;font-size:1.8rem;background:rgba(0,0,0,.2);margin:0 3px;border-radius:5px;position:relative;}
-.pcard.bench-card .pc-art{font-size:1.2rem;}
-.pcard.active-card .pc-art{font-size:2.2rem;}
-.pcard .pc-art .pc-img{width:100%;height:100%;object-fit:contain;border-radius:5px;position:absolute;inset:0;}
-.pcard .pc-footer{padding:2px 5px;font-size:.5rem;display:flex;justify-content:space-between;}
-.pcard .pc-stage{font-size:.48rem;opacity:.7;}
-.pcard .pc-dmg{position:absolute;bottom:18px;right:4px;background:rgba(220,0,0,.9);color:#fff;border-radius:50%;width:18px;height:18px;font-size:.52rem;font-weight:700;display:flex;align-items:center;justify-content:center;}
-.pcard .status-badge{position:absolute;top:3px;right:3px;font-size:.55rem;background:rgba(0,0,0,.7);border-radius:4px;padding:1px 3px;}
-.pcard.energy-card{cursor:default;}
-.pcard.energy-card .pc-art{font-size:1rem;}
+/* ═══════════════ POKEMON CARDS ═══════════════ */
+.pcard{
+  border-radius:10px;
+  display:flex;flex-direction:column;
+  cursor:pointer;
+  overflow:visible;
+  transition:transform .18s cubic-bezier(.34,1.56,.64,1), box-shadow .18s ease;
+  position:relative;
+  flex-shrink:0;
+  box-shadow:0 4px 12px rgba(0,0,0,.5);
+}
+/* hand cards — large enough to read */
+.pcard.hand-card{width:90px;height:126px;border-radius:10px;}
+.pcard.active-card{width:100px;height:140px;border-radius:10px;}
+.pcard.bench-card{width:66px;height:92px;border-radius:8px;}
+
+/* card inner border glow by type */
+.pcard.type-Fire   {border:2px solid #ff6b35; box-shadow:0 4px 16px rgba(255,80,0,.4);}
+.pcard.type-Water  {border:2px solid #42a5f5; box-shadow:0 4px 16px rgba(30,120,255,.4);}
+.pcard.type-Grass  {border:2px solid #66bb6a; box-shadow:0 4px 16px rgba(60,180,60,.4);}
+.pcard.type-Lightning{border:2px solid #ffca28; box-shadow:0 4px 16px rgba(255,200,0,.4);}
+.pcard.type-Psychic{border:2px solid #ce93d8; box-shadow:0 4px 16px rgba(180,60,255,.4);}
+.pcard.type-Fighting{border:2px solid #a1887f;box-shadow:0 4px 16px rgba(120,80,60,.4);}
+.pcard.type-Colorless{border:2px solid #90a4ae;box-shadow:0 4px 16px rgba(100,130,150,.3);}
+.pcard.trainer-card{border:2px solid #a5d6a7; box-shadow:0 4px 16px rgba(50,180,80,.35);}
+.pcard.energy-card-ui{border:2px solid #80cbc4;box-shadow:0 4px 16px rgba(0,180,160,.3);}
+
+.pcard.unplayable{opacity:.35;cursor:not-allowed;filter:grayscale(.6);}
+.pcard.unplayable:hover{transform:none !important;}
+.pcard.selected{
+  transform:translateY(-18px) scale(1.08) !important;
+  box-shadow:0 0 0 3px #f5d76e,0 20px 40px rgba(0,0,0,.7),0 0 30px rgba(245,215,110,.5) !important;
+}
+
+/* card header */
+.pc-header{
+  padding:4px 6px 3px;
+  display:flex;justify-content:space-between;align-items:center;
+  background:rgba(0,0,0,.45);
+  border-radius:8px 8px 0 0;
+  min-height:20px;
+}
+.pc-name{font-size:.62rem;font-weight:900;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:65%;text-shadow:0 1px 3px rgba(0,0,0,.8);}
+.pc-hp{font-size:.62rem;font-weight:900;text-shadow:0 1px 3px rgba(0,0,0,.8);}
+
+/* card art area — the main visible body */
+.pc-art{
+  flex:1;
+  display:flex;align-items:center;justify-content:center;
+  position:relative;
+  overflow:hidden;
+  margin:2px 3px;
+  border-radius:6px;
+  min-height:60px;
+}
+.pcard.bench-card .pc-art{min-height:40px;}
+.pcard.active-card .pc-art{min-height:72px;}
+
+/* footer */
+.pc-footer{
+  padding:3px 6px;
+  font-size:.56rem;
+  display:flex;justify-content:space-between;align-items:center;
+  background:rgba(0,0,0,.4);
+  border-radius:0 0 8px 8px;
+  color:rgba(255,255,255,.8);
+}
+.pc-stage{font-size:.5rem;opacity:.8;font-weight:600;}
+
+/* damage badge */
+.pc-dmg{
+  position:absolute;top:22px;right:-6px;
+  background:linear-gradient(135deg,#cc0000,#ff4444);
+  color:#fff;border-radius:50%;
+  width:22px;height:22px;
+  font-size:.6rem;font-weight:900;
+  display:flex;align-items:center;justify-content:center;
+  border:2px solid #fff;
+  box-shadow:0 2px 6px rgba(0,0,0,.5);
+  z-index:10;
+}
+.status-badge{
+  position:absolute;top:2px;left:3px;
+  font-size:.7rem;
+  background:rgba(0,0,0,.75);
+  border-radius:4px;padding:1px 3px;
+  z-index:10;
+}
+
+/* hand scroll — key fix: no overflow:hidden anywhere on parents */
+.my-zone{background:rgba(0,30,100,.12);border:2px solid rgba(60,100,255,.3);border-radius:14px;padding:10px 10px 20px;overflow:visible;}
+.hand-scroll{display:flex;gap:10px;overflow-x:auto;overflow-y:visible;padding:10px 4px 24px;min-height:155px;align-items:flex-end;-webkit-overflow-scrolling:touch;}
+.hand-scroll::-webkit-scrollbar{height:5px;}
+.hand-scroll::-webkit-scrollbar-thumb{background:#444;border-radius:3px;}
 
 /* hp bar */
 .hp-bar{width:100%;height:6px;background:rgba(0,0,0,.45);border-radius:3px;margin-top:2px;box-shadow:inset 0 1px 3px rgba(0,0,0,.5);}
@@ -232,8 +305,8 @@ body{min-height:100vh;background:radial-gradient(ellipse at top,#0a1628,#050c18)
 .log-entry{padding:1px 0;border-bottom:1px solid rgba(255,255,255,.04);}
 .log-entry.important{color:#f5d76e;}
 
-/* card image with fallback */
-.pimg{width:100%;height:100%;object-fit:contain;position:absolute;inset:0;border-radius:4px;}
+/* card image — loaded as bonus overlay */
+.pimg{display:none;}
 
 @media(max-width:600px){
   .battlefield{grid-template-columns:1fr auto 1fr;gap:5px;}
@@ -621,7 +694,7 @@ body::before{
 
   <!-- MY HAND -->
   <div class="my-zone">
-    <div style="font-size:.72rem;color:#7ab8e8;margin-bottom:5px;font-weight:600;">Your Hand — click to select, then place/play</div>
+    <div style="font-size:.72rem;color:#7ab8e8;margin-bottom:5px;font-weight:600;" id="handLabel">Your Hand — click a Basic Pokémon to place it as your Active!</div>
     <div class="hand-scroll" id="myHand"></div>
   </div>
 
@@ -977,57 +1050,120 @@ function getPokemonArtHTML(card, size){
 }
 
 function cardEl(card,size,clickable,selected,energyMap,damageVal,statusVal){
-  // size: 'hand-card' | 'active-card' | 'bench-card'
   const el=document.createElement('div');
+  if(!card){return el;}
+
+  // ── POKEMON CARD ──
   if(card.cardType==='pokemon'){
-    const pct=damageVal&&card.hp?(Math.max(0,1-(damageVal/card.hp))):1;
+    const pct=(damageVal&&card.hp)?Math.max(0,1-(damageVal/card.hp)):1;
     const barClass=pct<0.3?'low':pct<0.6?'mid':'full';
-    const hpLeft=card.hp-(damageVal||0);
-    el.className=`pcard ${size} ${TYPE_COLOR[card.type]||'type-Colorless'} ${clickable?'':'unplayable'} ${selected?'selected':''}`;
-    const stBadge=statusVal?`<div class="status-badge">${statusVal==='asleep'?'💤':statusVal==='confused'?'😵':statusVal==='paralyzed'?'⚡':statusVal==='poisoned'?'☠️':''}</div>`:'';
-    const dmgBadge=damageVal>0?`<div class="pc-dmg">${damageVal}</div>`:'';
-    const enBadge=energyMap?`<div class="energy-attached">${energyBadges(energyMap)}</div>`:'';
-    const imgSrc=`pokemon-cards/${card.id}.jpg`;
-    el.innerHTML=`
-      <div class="pc-header"><span class="pc-name">${card.name}</span><span class="pc-hp" style="color:${hpLeft/card.hp<0.3?'#ff6b6b':hpLeft/card.hp<0.6?'#fbbf24':'#4ade80'}">${hpLeft}HP</span></div>
-      <div class="pc-art" style="position:relative;overflow:hidden;">
-        <img class="pimg" src="${imgSrc}" alt="${card.name}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-        <div class="pimg-fallback" style="display:none;width:100%;height:100%;" data-card-id="${card.id}" data-card-size="${size}">
-          ${getPokemonArtHTML(card,size)}
-        </div>
-      </div>
-      ${enBadge}
-      <div class="hp-bar"><div class="hp-fill ${barClass}" style="width:${Math.round(pct*100)}%"></div></div>
-      ${dmgBadge}${stBadge}
-      <div class="pc-footer"><span class="pc-stage">${card.stage===0?'Basic':card.stage===1?'Stage 1':'Stage 2'}</span><span>${TYPE_EMOJI[card.type]||''}</span></div>`;
-  } else if(card.cardType==='trainer'){
-    const trainerImgMap={'bill':'bill','prof_oak':'professor-oak','potion':'potion','super_potion':'super-potion','gust_of_wind':'gust-of-wind','switch_card':'switch','energy_removal':'energy-removal','pluspower':'pluspower'};
-    const tImg=`pokemon-cards/${trainerImgMap[card.id]||card.id}.jpg`;
-    el.className=`pcard ${size} trainer-card ${clickable?'':'unplayable'} ${selected?'selected':''}`;
-    el.innerHTML=`
-      <div class="pc-header"><span class="pc-name" style="font-size:.48rem">${card.name}</span></div>
-      <div class="pc-art" style="position:relative;overflow:hidden;">
-        <img class="pimg" src="${tImg}" alt="${card.name}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-        <div class="pimg-fallback" style="display:none;flex-direction:column;align-items:center;justify-content:center;width:100%;height:100%;background:linear-gradient(160deg,#0a2a1a,#1a4a2a,#2a6a3a);border-radius:4px;">
-          <div style="font-size:1.3rem;filter:drop-shadow(0 2px 4px rgba(0,0,0,.6))">${card.emoji||'🃏'}</div>
-          <div style="font-size:.35rem;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:1px;margin-top:1px">Trainer</div>
-        </div>
-      </div>
-      <div style="padding:2px 4px;font-size:.44rem;color:#a0c0a0;text-align:center">${card.desc||''}</div>`;
-  } else if(card.cardType==='energy'){
-    const energyImgMap={'fire_energy':'fire-energy','water_energy':'water-energy','grass_energy':'grass-energy','lightning_energy':'lightning-energy','psychic_energy':'psychic-energy','fighting_energy':'fighting-energy','dce':'double-colorless-energy'};
-    const eImg=`pokemon-cards/${energyImgMap[card.id]||card.id}.jpg`;
-    el.className=`pcard ${size} energy-card-ui ${TYPE_COLOR[card.etype]||''} energy-card ${clickable?'':'unplayable'} ${selected?'selected':''}`;
-    el.innerHTML=`
-      <div class="pc-header"><span class="pc-name" style="font-size:.44rem">${card.name}</span></div>
-      <div class="pc-art" style="position:relative;overflow:hidden;">
-        <img class="pimg" src="${eImg}" alt="${card.name}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-        <div class="pimg-fallback" style="display:none;flex-direction:column;align-items:center;justify-content:center;width:100%;height:100%;background:${getCardGradient(card.etype)};border-radius:4px;">
-          <div style="font-size:1.1rem;filter:drop-shadow(0 2px 6px rgba(0,0,0,.7))">${card.emoji||'⚡'}</div>
-          <div style="font-size:.32rem;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:1px;margin-top:1px">${card.etype}</div>
-        </div>
-      </div>`;
+    const hpLeft=Math.max(0,(card.hp||50)-(damageVal||0));
+    const hpColor=pct<0.3?'#ff6b6b':pct<0.6?'#fbbf24':'#4ade80';
+    const sym=POKEMON_SYMBOL[card.id]||{icon:card.emoji||'?',bg:getCardGradient(card.type),label:card.name};
+    const isBench=size==='bench-card';
+    const isActive=size==='active-card';
+    const iconSz=isActive?'2.6rem':isBench?'1.5rem':'2rem';
+    const labelSz=isActive?'.48rem':isBench?'.34rem':'.4rem';
+    el.className='pcard '+size+' '+(TYPE_COLOR[card.type]||'type-Colorless')+' '+(clickable?'':'unplayable')+' '+(selected?'selected':'');
+    el.dataset.cardId=card.id;
+
+    // Build energy badge html
+    var enHtml='';
+    if(energyMap){
+      enHtml='<div style="display:flex;flex-wrap:wrap;gap:2px;padding:2px 4px;">';
+      Object.entries(energyMap).forEach(function(e){
+        if(e[1]>0) enHtml+='<span style="font-size:.5rem;padding:1px 3px;border-radius:3px;font-weight:700;" class="ebadge '+(TYPE_COLOR[e[0]]||'')+'">'+( TYPE_EMOJI[e[0]]||e[0])+'x'+e[1]+'</span>';
+      });
+      enHtml+='</div>';
+    }
+    var stIcon=statusVal==='asleep'?'💤':statusVal==='confused'?'😵':statusVal==='paralyzed'?'⚡':statusVal==='poisoned'?'☠️':'';
+
+    el.innerHTML=
+      // Header: name + HP
+      '<div class="pc-header">'
+      +'<span class="pc-name">'+card.name+'</span>'
+      +'<span class="pc-hp" style="color:'+hpColor+'">'+hpLeft+'HP</span>'
+      +'</div>'
+      // Art: full colourful background, big emoji, name label — ALWAYS visible
+      +'<div class="pc-art" style="background:'+sym.bg+';border-radius:6px;">'
+      +(stIcon?'<div class="status-badge">'+stIcon+'</div>':'')
+      +'<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;height:100%;gap:3px;">'
+      +'<div style="font-size:'+iconSz+';line-height:1;filter:drop-shadow(0 3px 8px rgba(0,0,0,.8));">'+sym.icon+'</div>'
+      +'<div style="font-size:'+labelSz+';color:rgba(255,255,255,.9);font-weight:900;text-transform:uppercase;letter-spacing:.5px;text-align:center;text-shadow:0 1px 4px rgba(0,0,0,.9);padding:0 3px;">'+sym.label+'</div>'
+      +'</div>'
+      +(damageVal>0?'<div class="pc-dmg">'+damageVal+'</div>':'')
+      +'</div>'
+      // Energy attached
+      +enHtml
+      // HP bar
+      +'<div class="hp-bar"><div class="hp-fill '+barClass+'" style="width:'+Math.round(pct*100)+'%"></div></div>'
+      // Footer: stage + type
+      +'<div class="pc-footer">'
+      +'<span class="pc-stage">'+(card.stage===0?'Basic':card.stage===1?'Stage 1':'Stage 2')+'</span>'
+      +'<span>'+(TYPE_EMOJI[card.type]||'')+'</span>'
+      +'</div>';
+
+    // Overlay real image on top if it loads
+    var img=document.createElement('img');
+    img.src='pokemon-cards/'+card.id+'.jpg';
+    img.style.cssText='position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:6px;z-index:2;';
+    img.onerror=function(){this.remove();};
+    el.querySelector('.pc-art').appendChild(img);
   }
+
+  // ── TRAINER CARD ──
+  else if(card.cardType==='trainer'){
+    el.className='pcard '+size+' trainer-card '+(clickable?'':'unplayable')+' '+(selected?'selected':'');
+    el.dataset.cardId=card.id;
+    var isBenchT=size==='bench-card';
+    var emojiSzT=isBenchT?'1.4rem':'1.8rem';
+    var nameSzT=isBenchT?'.38rem':'.5rem';
+    var descSzT=isBenchT?'.3rem':'.42rem';
+    el.innerHTML=
+      '<div class="pc-header" style="background:rgba(0,80,40,.7);">'
+      +'<span class="pc-name" style="font-size:'+nameSzT+';color:#a5d6a7;">'+card.name+'</span>'
+      +'<span style="font-size:'+nameSzT+';color:#66bb6a;">TRAINER</span>'
+      +'</div>'
+      +'<div class="pc-art" style="background:linear-gradient(160deg,#0d2b1a,#1a4a2a,#0a3a20);border-radius:6px;flex-direction:column;gap:4px;">'
+      +'<div style="font-size:'+emojiSzT+';filter:drop-shadow(0 3px 8px rgba(0,0,0,.8));line-height:1;">'+( card.emoji||'🃏')+'</div>'
+      +'<div style="font-size:'+nameSzT+';color:#a5d6a7;font-weight:900;text-align:center;text-shadow:0 1px 4px rgba(0,0,0,.9);padding:0 4px;">'+card.name+'</div>'
+      +'</div>'
+      +'<div style="padding:3px 5px;font-size:'+descSzT+';color:#c8e6c9;text-align:center;background:rgba(0,0,0,.4);border-radius:0 0 8px 8px;line-height:1.3;">'+( card.desc||'')+'</div>';
+
+    var imgT=document.createElement('img');
+    imgT.src='pokemon-cards/'+(({'bill':'bill','prof_oak':'professor-oak','potion':'potion','super_potion':'super-potion','gust_of_wind':'gust-of-wind','switch_card':'switch','energy_removal':'energy-removal','pluspower':'pluspower'})[card.id]||card.id)+'.jpg';
+    imgT.style.cssText='position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:8px;z-index:2;';
+    imgT.onerror=function(){this.remove();};
+    el.appendChild(imgT);
+  }
+
+  // ── ENERGY CARD ──
+  else if(card.cardType==='energy'){
+    var etype=card.etype||'Colorless';
+    el.className='pcard '+size+' energy-card-ui '+(TYPE_COLOR[etype]||'')+' energy-card '+(clickable?'':'unplayable')+' '+(selected?'selected':'');
+    el.dataset.cardId=card.id;
+    var isBenchE=size==='bench-card';
+    var emojiSzE=isBenchE?'1.6rem':'2.2rem';
+    var etypeSzE=isBenchE?'.34rem':'.46rem';
+    var nameSzE=isBenchE?'.32rem':'.42rem';
+    el.innerHTML=
+      '<div class="pc-header" style="background:rgba(0,0,0,.5);">'
+      +'<span class="pc-name" style="font-size:'+nameSzE+';">'+card.name+'</span>'
+      +'<span style="font-size:'+nameSzE+';opacity:.8;">ENERGY</span>'
+      +'</div>'
+      +'<div class="pc-art" style="background:'+getCardGradient(etype)+';border-radius:6px;flex-direction:column;gap:3px;">'
+      +'<div style="font-size:'+emojiSzE+';filter:drop-shadow(0 3px 10px rgba(0,0,0,.9));line-height:1;">'+(TYPE_EMOJI[etype]||'⚡')+'</div>'
+      +'<div style="font-size:'+etypeSzE+';color:rgba(255,255,255,.95);font-weight:900;text-transform:uppercase;letter-spacing:1px;text-shadow:0 1px 5px rgba(0,0,0,.9);">'+etype+'</div>'
+      +'</div>';
+
+    var imgE=document.createElement('img');
+    var eImgMap={'fire_energy':'fire-energy','water_energy':'water-energy','grass_energy':'grass-energy','lightning_energy':'lightning-energy','psychic_energy':'psychic-energy','fighting_energy':'fighting-energy','dce':'double-colorless-energy'};
+    imgE.src='pokemon-cards/'+(eImgMap[card.id]||card.id)+'.jpg';
+    imgE.style.cssText='position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:8px;z-index:2;';
+    imgE.onerror=function(){this.remove();};
+    el.appendChild(imgE);
+  }
+
   return el;
 }
 
@@ -1209,7 +1345,11 @@ function render(){
   if(!over){
     if(!conn[opp]){document.getElementById('statusBar').textContent='Waiting for '+names[opp]+' to join…';}
     else if(phase==='setup'){
-      document.getElementById('statusBar').textContent=isMyTurn?'SETUP: Play a Basic Pokémon as your Active (from your hand)':'Waiting for '+names[opp]+' to set up…';
+      if(!state.active[myId]){
+        document.getElementById('statusBar').textContent='⚙️ SETUP: Click a Basic Pokémon from your hand to place it as your Active!';
+      } else {
+        document.getElementById('statusBar').textContent='✅ Active placed! Waiting for '+names[opp]+' to place theirs…';
+      }
     } else if(isMyTurn){
       document.getElementById('statusBar').textContent='Your turn! Draw → Attach Energy → Play cards → Attack → End Turn';
     } else {
@@ -1219,14 +1359,28 @@ function render(){
 
   // Phase banner
   const pb=document.getElementById('phaseBanner');
-  if(phase==='setup'){pb.style.display='';pb.textContent='⚙️ Setup Phase — both trainers must place a Basic Pokémon as their Active before battle begins!';}
+  if(phase==='setup'){
+    pb.style.display='';
+    if(!state.active[myId]){
+      pb.textContent='⚙️ YOUR TURN TO SETUP: Click any Basic Pokémon card in your hand below to place it as your Active Pokémon!';
+      pb.style.background='rgba(204,0,0,.15)';
+      pb.style.borderColor='rgba(204,0,0,.5)';
+      pb.style.color='#ff9999';
+    } else {
+      pb.textContent='✅ Your Active is set! Waiting for opponent to finish setup…';
+      pb.style.background='rgba(39,174,96,.1)';
+      pb.style.borderColor='rgba(39,174,96,.3)';
+      pb.style.color='#4ade80';
+    }
+  }
   else{pb.style.display='none';}
 
   // Opponent info
   document.getElementById('oppNameLbl').textContent=names[opp];
   document.getElementById('oppPrizes').textContent=state.prizesLeft[opp];
   document.getElementById('oppHandCount').textContent=oppCards.length;
-  document.getElementById('oppDeck').textContent=(state.decks[opp]||[]).length;
+  const oppDeckSz=(state.decks[opp]||[]).length;
+  document.getElementById('oppDeck').innerHTML='<div style="font-size:.5rem;color:#cc8888;font-weight:700;">DECK</div><div style="font-size:.85rem;color:#ffaaaa;font-weight:900;">'+oppDeckSz+'</div>';
 
   // Opp prize cards visual
   renderPrizeCards('oppPrizeCards',state.prizesLeft[opp],6,false);
@@ -1253,15 +1407,19 @@ function render(){
 
   // Bench slots
   renderBench('oppBench',state.bench[opp],state.energyOnBench[opp],false);
-  renderBench('myBench',state.bench[myId],state.energyOnBench[myId],isMyTurn&&!over);
+  // Bench interactive during setup AND on your turn
+  renderBench('myBench',state.bench[myId],state.energyOnBench[myId],!over&&(isMyTurn||phase==='setup'));
 
   // Deck/discard
-  document.getElementById('myDeckPile').textContent=(state.decks[myId]||[]).length;
-  document.getElementById('myDeckCount').textContent=(state.decks[myId]||[]).length+' cards';
+  const deckSz=(state.decks[myId]||[]).length;
+  document.getElementById('myDeckPile').innerHTML='<div style="font-size:.55rem;color:#cc8888;font-weight:700;">DECK</div><div style="font-size:.9rem;color:#ffaaaa;font-weight:900;">'+deckSz+'</div>';
+  document.getElementById('myDeckCount').textContent=deckSz+' cards left';
   document.getElementById('myDiscardCount').textContent=(state.discards[myId]||[]).length+' disc';
 
   // My hand
-  renderHand(myCards,isMyTurn&&!over,phase);
+  // During setup BOTH players can place their Active (simultaneous setup)
+  const handInteractive = !over && (isMyTurn || phase==='setup');
+  renderHand(myCards,handInteractive,phase);
 
   // Attack panel (only show if active is set and it's my turn main phase)
   const ap=document.getElementById('attackPanel');
@@ -1295,6 +1453,28 @@ function render(){
     document.getElementById('statusBar').textContent=wonMsg+' — press New Game to play again!';
   } else {
     document.getElementById('winModal').classList.remove('open');
+  }
+
+  // Update hand label contextually
+  const handLbl = document.getElementById('handLabel');
+  if(handLbl){
+    if(phase==='setup'&&!state.active[myId]){
+      handLbl.textContent='👇 Click a Basic Pokémon below to place it as your Active Pokémon!';
+      handLbl.style.color='#ff9999';
+      handLbl.style.fontWeight='800';
+    } else if(phase==='setup'&&state.active[myId]){
+      handLbl.textContent='✅ Active placed! Waiting for opponent…';
+      handLbl.style.color='#4ade80';
+      handLbl.style.fontWeight='600';
+    } else if(isMyTurn){
+      handLbl.textContent='Your Hand — click a card to play it';
+      handLbl.style.color='#7ab8e8';
+      handLbl.style.fontWeight='600';
+    } else {
+      handLbl.textContent="Your Hand — waiting for opponent's turn";
+      handLbl.style.color='#6a7a8a';
+      handLbl.style.fontWeight='400';
+    }
   }
 
   // Game log
@@ -1788,7 +1968,7 @@ async function handleKO(s,koPlayerId){
       addLog(s,s.names[koPlayerId]+' plays '+newActive.name+' from hand!',true);
     }
   }
-  // KO'd player must replace active from bench — pick healthiest pokemon
+  // KO player must replace active from bench — pick healthiest pokemon
   if(s.bench[koPlayerId]&&s.bench[koPlayerId].length>0){
     // Find the bench pokemon with most remaining HP
     let bestIdx=0;
@@ -1805,7 +1985,7 @@ async function handleKO(s,koPlayerId){
     addLog(s,s.names[koPlayerId]+' sends out '+newActive.name+'! ('+bestHP+'HP remaining)',true);
   }
   // After KO, turn passes to the player who SCORED (they already attacked)
-  // so next turn goes to the KO'd player to regroup
+  // so next turn goes to the KO player to regroup
   s.turn=koPlayerId;
   s.phase='main';
   if(!s.drawnThisTurn) s.drawnThisTurn=[false,false];
@@ -1822,7 +2002,7 @@ function applyBetweenTurnEffects(s,nextPlayer){
   if(s.status[nextPlayer]==='poisoned'&&s.active[nextPlayer]){
     s.active[nextPlayer].damage=(s.active[nextPlayer].damage||0)+10;
     addLog(s,(s.active[nextPlayer].name||'Pokémon')+' takes 10 poison damage!');
-    // Check if poison KO'd them
+    // Check if poison KO them
     if(s.active[nextPlayer].damage>=(s.active[nextPlayer].hp||999)){
       addLog(s,(s.active[nextPlayer].name||'Pokemon')+' was knocked out by poison!',true);
       // Don't score a prize for poison KO mid-turn — just clear active
@@ -2269,16 +2449,22 @@ render = function(){
   runMotionEffects();
 };
 
-// ── Animate cards on hand render ──
+// ── Animate cards on hand render — only when count changes ──
 const _originalRenderHand = renderHand;
+let _lastHandCount = -1;
 renderHand = function(cards, interactive, phase){
   _originalRenderHand(cards, interactive, phase);
-  // Stagger-animate all hand cards
-  const handCards = document.querySelectorAll('#myHand .pcard');
-  handCards.forEach((c, i)=>{
-    c.style.animationDelay = (i * 0.035)+'s';
-    c.classList.add('card-dealt');
-  });
+  // Only animate when hand size changes (new cards dealt), not every render
+  if(cards.length !== _lastHandCount){
+    _lastHandCount = cards.length;
+    const handCards = document.querySelectorAll('#myHand .pcard');
+    handCards.forEach((c, i)=>{
+      c.style.animationDelay = (i * 0.035)+'s';
+      c.classList.remove('card-dealt');
+      void c.offsetWidth;
+      c.classList.add('card-dealt');
+    });
+  }
 };
 
 // ── Card data-id attribute for holo detection ──
