@@ -4,8 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
 <title>Pokémon TCG 1999 · Base Set</title>
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+
 <style>
 *{box-sizing:border-box;user-select:none;-webkit-user-select:none;margin:0;padding:0;}
 :root{
@@ -184,8 +183,8 @@ body{min-height:100vh;background:radial-gradient(ellipse at top,#0a1628,#050c18)
 }
 
 /* hand scroll — key fix: no overflow:hidden anywhere on parents */
-.my-zone{background:rgba(0,30,100,.12);border:2px solid rgba(60,100,255,.3);border-radius:14px;padding:10px 10px 20px;overflow:visible;}
-.hand-scroll{display:flex;gap:10px;overflow-x:auto;overflow-y:visible;padding:10px 4px 24px;min-height:155px;align-items:flex-end;-webkit-overflow-scrolling:touch;}
+.my-zone{background:rgba(0,20,80,.25);border:2px solid rgba(100,140,255,.4);border-radius:14px;padding:12px 10px 16px;overflow:visible;}
+.hand-scroll{display:flex;gap:10px;overflow-x:auto;overflow-y:visible;padding:8px 4px 16px;min-height:160px;align-items:center;-webkit-overflow-scrolling:touch;justify-content:flex-start;}
 .hand-scroll::-webkit-scrollbar{height:5px;}
 .hand-scroll::-webkit-scrollbar-thumb{background:#444;border-radius:3px;}
 
@@ -368,13 +367,8 @@ body::before{
   to{box-shadow:0 0 0 4px #f5d76e, 0 20px 40px rgba(0,0,0,.6), 0 0 40px rgba(245,215,110,.6);}
 }
 
-/* ── Card deal animation (new cards entering hand) ── */
-@keyframes cardDeal{
-  0%{opacity:0;transform:translateY(40px) scale(.8) rotateZ(-8deg);}
-  60%{transform:translateY(-6px) scale(1.04) rotateZ(1deg);}
-  100%{opacity:1;transform:translateY(0) scale(1) rotateZ(0deg);}
-}
-.card-dealt{animation:cardDeal .38s cubic-bezier(.34,1.56,.64,1) both;}
+/* card-dealt animation removed — was causing cards to be invisible */
+.card-dealt{}
 
 /* ── Card play animation (card flying to battlefield) ── */
 @keyframes cardPlay{
@@ -755,6 +749,21 @@ body::before{
 </div>
 
 <script>
+(function(){
+var CDNS=[
+  {a:'https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js',d:'https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js'},
+  {a:'https://cdn.jsdelivr.net/npm/firebase@9.22.2/firebase-app-compat.js',d:'https://cdn.jsdelivr.net/npm/firebase@9.22.2/firebase-database-compat.js'},
+  {a:'https://unpkg.com/firebase@9.22.2/firebase-app-compat.js',d:'https://unpkg.com/firebase@9.22.2/firebase-database-compat.js'}
+];
+var ti=0;
+function showErr(){document.body.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100vh;flex-direction:column;gap:12px;background:#050c18;font-family:sans-serif;padding:20px;text-align:center;"><div style="font-size:3rem">⚡</div><p style="color:#e53935;font-weight:700;font-size:1.1rem;">Could not load Firebase</p><p style="color:#888;font-size:.9rem;max-width:300px;">Check your internet connection and reload.</p><button onclick="location.reload()" style="background:#cc0000;border:none;border-radius:30px;padding:12px 28px;color:#fff;font-weight:700;cursor:pointer;font-size:.95rem;margin-top:8px;">Reload</button></div>';}
+function ldDB(cdn){var s=document.createElement('script');s.src=cdn.d;s.onload=startGame;s.onerror=function(){ti++;ti<CDNS.length?ldApp(CDNS[ti]):showErr();};document.head.appendChild(s);}
+function ldApp(cdn){var s=document.createElement('script');s.src=cdn.a;s.onload=function(){ldDB(cdn);};s.onerror=function(){ti++;ti<CDNS.length?ldApp(CDNS[ti]):showErr();};document.head.appendChild(s);}
+ldApp(CDNS[0]);
+})();
+</script>
+<script>
+function startGame(){
 /* ============================================================
    FIREBASE
    ============================================================ */
@@ -2435,7 +2444,6 @@ function runMotionEffects(){
   // Detect phase change to main (game started)
   if(state.phase === 'main' && _prevPhase !== 'main'){
     document.getElementById('game').classList.add('game-entered');
-    animateHandCards();
   }
   _prevPhase = state.phase;
 
@@ -2482,23 +2490,7 @@ render = function(){
   runMotionEffects();
 };
 
-// ── Animate cards on hand render — only when count changes ──
-const _originalRenderHand = renderHand;
-let _lastHandCount = -1;
-renderHand = function(cards, interactive, phase){
-  _originalRenderHand(cards, interactive, phase);
-  // Only animate when hand size changes (new cards dealt), not every render
-  if(cards.length !== _lastHandCount){
-    _lastHandCount = cards.length;
-    const handCards = document.querySelectorAll('#myHand .pcard');
-    handCards.forEach((c, i)=>{
-      c.style.animationDelay = (i * 0.035)+'s';
-      c.classList.remove('card-dealt');
-      void c.offsetWidth;
-      c.classList.add('card-dealt');
-    });
-  }
-};
+// ── renderHand — no animation wrapper (cards always visible) ──
 
 // ── Card data-id attribute for holo detection ──
 const _originalCardEl = cardEl;
@@ -2508,19 +2500,9 @@ cardEl = function(card, size, clickable, selected, energyMap, damageVal, statusV
   return el;
 };
 
-// ── Game enters animation on lobby → game ──
-// Safe patch: wrap joinBtn to add entrance animation after join
-(function(){
-  var _orig = document.getElementById('joinBtn').onclick;
-  document.getElementById('joinBtn').onclick = async function(e){
-    if(_orig) await _orig.call(this, e);
-    setTimeout(function(){
-      var g = document.getElementById('game');
-      if(g) g.classList.add('game-entered');
-      animateHandCards();
-    }, 500);
-  };
-})();
+// ── Game entered class added after join via Firebase listener ──
+// (joinBtn IIFE removed — it was breaking the join button)
+} // end startGame
 </script>
 </body>
 </html>
