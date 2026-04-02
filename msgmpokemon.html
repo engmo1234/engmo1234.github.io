@@ -533,8 +533,9 @@ var TRAINER_PKG=[
   {id:'gust_of_wind',name:'Gust of Wind',cardType:'trainer',icon:'\uD83C\uDF2C',desc:"Switch opp's Active.",n:3},
   {id:'energy_removal',name:'Energy Removal',cardType:'trainer',icon:'\u274C',desc:"Remove 1 Energy from opp's Active.",n:3},
   {id:'pluspower',name:'PlusPower',cardType:'trainer',icon:'\uD83D\uDD0B',desc:'+10 damage this turn.',n:2},
-  {id:'potion',name:'Potion',cardType:'trainer',icon:'\uD83D\uDCA6',desc:'Heal 20 damage.',n:2},
-  {id:'switch_card',name:'Switch',cardType:'trainer',icon:'\uD83D\uDD04',desc:'Switch your Active with Bench.',n:1}
+  {id:'potion',name:'Potion',cardType:'trainer',icon:'\uD83D\uDCA6',desc:'Heal 20 damage.',n:1},
+  {id:'super_potion',name:'Super Potion',cardType:'trainer',icon:'\uD83D\uDC8A',desc:'Heal 40 damage.',n:1},
+  {id:'switch_card',name:'Switch',cardType:'trainer',icon:'\uD83D\uDD04',desc:'Swap Active with Bench.',n:1}
 ];
 var POKEMON_SLOTS=20;
 var ENERGY_SLOTS=20;
@@ -955,12 +956,29 @@ function render(){
 function onHandClick(idx){
   if(!state)return;var cards=fa(fa(state.hands)[myId]);var card=cards[idx];if(!card)return;
   var phase=state.phase||'setup';
-  if(phase==='setup'){if(card.cardType==='pokemon'&&card.stage===0)placeActive(idx);return;}
-  if(phase==='main'&&state.turn===myId){
-    if(card.cardType==='energy'){selIdx=(selIdx===idx)?null:idx;render();return;}
-    if(card.cardType==='trainer'){playTrainer(idx);return;}
-    if(card.cardType==='pokemon'&&card.stage===0){placeBench(idx);return;}
+  if(phase==='setup'){
+    if(card.cardType==='pokemon'&&card.stage===0)placeActive(idx);
+    else showMsg('Place a Basic Pokemon as your Active!');
+    return;
   }
+  if(phase==='main'){
+    if(state.turn!==myId){showMsg("It’s not your turn!");return;}
+    if(card.cardType==='energy'){selIdx=(selIdx===idx)?null:idx;render();return;}
+    if(card.cardType==='trainer'){
+      if(!fa(state.drawn)[myId]){showMsg('Draw your card first, then play trainers!');return;}
+      playTrainer(idx);return;
+    }
+    if(card.cardType==='pokemon'&&card.stage===0){placeBench(idx);return;}
+    if(card.cardType==='pokemon'&&card.stage>0){showMsg('Evolve by placing on a matching Active or Bench Pokemon (coming soon)');return;}
+  }
+}
+function showMsg(txt){
+  var sb=document.getElementById('gstatus');
+  if(!sb)return;
+  var old=sb.textContent;
+  sb.style.background='rgba(180,0,0,0.7)';
+  sb.textContent='⚠️ '+txt;
+  setTimeout(function(){sb.style.background='';sb.textContent=old;},2200);
 }
 function onActiveClick(){
   if(!state||selIdx===null)return;
@@ -1047,18 +1065,61 @@ function playTrainer(handIdx){
   if(!roomRef||!state)return;
   var s=JSON.parse(JSON.stringify(state));
   var card=s.hands[myId][handIdx];if(!card||card.cardType!=='trainer')return;
-  s.hands[myId].splice(handIdx,1);(s.discards[myId]=s.discards[myId]||[]).push(card);
+  s.hands[myId].splice(handIdx,1);
+  s.discards[myId]=s.discards[myId]||[];s.discards[myId].push(card);
   var id=card.id,nm=s.names[myId]||'P',opp=1-myId;
-  if(id==='bill'){for(var i=0;i<2;i++){if(s.decks[myId].length>0)s.hands[myId].push(s.decks[myId].splice(0,1)[0]);}addLog(s,nm+' played Bill! Drew 2 cards.');}
-  else if(id==='prof_oak'){s.discards[myId]=s.discards[myId].concat(s.hands[myId]);s.hands[myId]=[];for(var i=0;i<7;i++){if(s.decks[myId].length>0)s.hands[myId].push(s.decks[myId].splice(0,1)[0]);}addLog(s,nm+' played Prof. Oak! Drew 7!',true);}
-  else if(id==='computer_search'){if(s.decks[myId].length>0){var found=s.decks[myId].splice(Math.floor(Math.random()*s.decks[myId].length),1)[0];s.hands[myId].push(found);addLog(s,nm+' used Computer Search! Found '+found.name+'!',true);}else addLog(s,nm+' used Computer Search \u2014 deck empty!');}
-  else if(id==='gust_of_wind'){var ob=fa(fa(s.bench)[opp]);if(ob.length>0){var tmp=fa(s.active)[opp];s.active[opp]=ob.splice(0,1)[0];ob.push(tmp);s.bench[opp]=ob;s.dmgOnActive[opp]=0;addLog(s,nm+' used Gust of Wind!',true);}else addLog(s,nm+' used Gust of Wind \u2014 no bench target!');}
-  else if(id==='energy_removal'){var oE=fa(s.energyOnActive)[opp]||{};var ok2=Object.keys(oE).filter(function(k){return oE[k]>0;});if(ok2.length>0){var rem=ok2[0];s.energyOnActive[opp][rem]=Math.max(0,(s.energyOnActive[opp][rem]||0)-1);addLog(s,nm+' used Energy Removal! Removed '+rem+'.',true);}else addLog(s,nm+' used Energy Removal \u2014 no energy!');}
-  else if(id==='pluspower'){s.plusPower[myId]=true;addLog(s,nm+' played PlusPower! +10 damage.');}
-  else if(id==='potion'){if(fa(s.active)[myId]){if(!s.dmgOnActive)s.dmgOnActive=[0,0];s.dmgOnActive[myId]=Math.max(0,(s.dmgOnActive[myId]||0)-20);addLog(s,nm+' used Potion! Healed 20.');}}
-  else if(id==='switch_card'){var bn=fa(fa(s.bench)[myId]);if(bn.length>0){var tmp2=fa(s.active)[myId];s.active[myId]=bn.splice(0,1)[0];bn.push(tmp2);s.bench[myId]=bn;s.dmgOnActive[myId]=0;addLog(s,nm+' used Switch!');}else addLog(s,nm+' used Switch \u2014 no bench!');}
+  if(id==='bill'){
+    var drew=0;for(var i=0;i<2;i++){if(s.decks[myId].length>0){s.hands[myId].push(s.decks[myId].splice(0,1)[0]);drew++;}}
+    addLog(s,nm+' played Bill! Drew '+drew+' card'+(drew!==1?'s':'')+'.');
+  }
+  else if(id==='prof_oak'){
+    s.discards[myId]=s.discards[myId].concat(s.hands[myId]);s.hands[myId]=[];
+    var drew=0;for(var i=0;i<7;i++){if(s.decks[myId].length>0){s.hands[myId].push(s.decks[myId].splice(0,1)[0]);drew++;}}
+    addLog(s,nm+' played Prof. Oak! Discarded hand, drew '+drew+' fresh cards!',true);
+  }
+  else if(id==='computer_search'){
+    if(s.decks[myId].length>0){var found=s.decks[myId].splice(Math.floor(Math.random()*s.decks[myId].length),1)[0];s.hands[myId].push(found);addLog(s,nm+' used Computer Search! Found '+found.name+'!',true);}
+    else addLog(s,nm+' used Computer Search — deck empty!');
+  }
+  else if(id==='gust_of_wind'){
+    var ob=fa(fa(s.bench)[opp]);
+    if(ob.length>0){var tmp=fa(s.active)[opp];s.active[opp]=ob.splice(0,1)[0];ob.push(tmp);s.bench[opp]=ob;s.dmgOnActive[opp]=0;addLog(s,nm+' used Gust of Wind! Forced out '+s.active[opp].name+'!',true);}
+    else addLog(s,nm+' used Gust of Wind — no bench Pokemon to force out!');
+  }
+  else if(id==='energy_removal'){
+    var oE=fa(s.energyOnActive)[opp]||{};var ok2=Object.keys(oE).filter(function(k){return oE[k]>0;});
+    if(ok2.length>0){var rem=ok2[0];s.energyOnActive[opp][rem]=Math.max(0,(s.energyOnActive[opp][rem]||0)-1);addLog(s,nm+' used Energy Removal! Removed 1 '+rem+' Energy from opponent.',true);}
+    else addLog(s,nm+' used Energy Removal — opponent has no energy!');
+  }
+  else if(id==='pluspower'){s.plusPower[myId]=true;addLog(s,nm+' played PlusPower! Next attack +10 damage!');}
+  else if(id==='potion'){
+    var dmgNow=fa(s.dmgOnActive)[myId]||0;
+    if(dmgNow>0){s.dmgOnActive[myId]=Math.max(0,dmgNow-20);addLog(s,nm+' used Potion! Healed 20 damage.');}
+    else addLog(s,nm+' used Potion — your Active has no damage to heal!');
+  }
+  else if(id==='super_potion'){
+    var dmgNow=fa(s.dmgOnActive)[myId]||0;
+    if(dmgNow>0){s.dmgOnActive[myId]=Math.max(0,dmgNow-40);addLog(s,nm+' used Super Potion! Healed 40 damage.');}
+    else addLog(s,nm+' used Super Potion — your Active has no damage!');
+  }
+  else if(id==='switch_card'){
+    var bn=fa(fa(s.bench)[myId]);
+    if(bn.length>0){var tmp2=fa(s.active)[myId];s.active[myId]=bn.splice(0,1)[0];bn.push(tmp2);s.bench[myId]=bn;s.dmgOnActive[myId]=0;addLog(s,nm+' used Switch! '+s.active[myId].name+' is now Active!');}
+    else addLog(s,nm+' used Switch — no bench Pokemon!');
+  }
   else addLog(s,nm+' played '+card.name+'.');
-  roomRef.set(s);
+  // Use update() not set() to avoid wiping opponent data
+  var upd={};
+  upd['hands/'+myId]=s.hands[myId];
+  upd['decks/'+myId]=s.decks[myId];
+  upd['discards/'+myId]=s.discards[myId];
+  upd['active/0']=s.active[0];upd['active/1']=s.active[1];
+  upd['bench/0']=s.bench[0];upd['bench/1']=s.bench[1];
+  upd['energyOnActive/0']=s.energyOnActive[0]||{};upd['energyOnActive/1']=s.energyOnActive[1]||{};
+  upd['dmgOnActive/0']=s.dmgOnActive[0]||0;upd['dmgOnActive/1']=s.dmgOnActive[1]||0;
+  upd['plusPower']=(s.plusPower||[false,false]);
+  upd['log']=(fa(s.log)||[]).slice(-40);
+  roomRef.update(upd);
 }
 function doDraw(){
   if(!roomRef||!state||fa(state.drawn)[myId])return;
@@ -1105,12 +1166,12 @@ document.getElementById('joinBtn').addEventListener('click',function(){
   var ref=db.ref('ptcgRooms/'+roomId);
   ref.once('value').then(function(snap){
     var ex=snap.val();
-    if(!ex||!ex.names){myId=0;var g=freshRoom();g.names[0]=name;g.connected[0]=true;return ref.set(g);}
+    if(!ex||!ex.names){myId=0;window.myId_exposed=0;var g=freshRoom();g.names[0]=name;g.connected[0]=true;return ref.set(g);}
     var conn=fa(ex.connected);
     if(!conn[1]){myId=1;return Promise.all([ref.child('names/1').set(name),ref.child('connected/1').set(true)]);}
     myId=0;return Promise.all([ref.child('names/0').set(name),ref.child('connected/0').set(true)]);
   }).then(function(){
-    roomRef=ref;picks={};
+    roomRef=ref;window.roomRef=ref;window.myId_exposed=myId;picks={};
     renderPickGrid();
     show('pickScreen');
     // Wire Lock In button here so confirmPicks is in scope
