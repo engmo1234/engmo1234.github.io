@@ -1138,6 +1138,15 @@ document.getElementById('joinBtn').addEventListener('click',function(){
         if(dot1)dot1.className='wc-dot'+(dr[1]?' done':'');
         if(wc0)wc0.textContent=(ns[0]||'Player 1')+(dr[0]?' \u2713 Ready':'');
         if(wc1)wc1.textContent=(ns[1]||'Player 2')+(dr[1]?' \u2713 Ready':'');
+        // KEY FIX: if both players ready, trigger game start from listener too
+        if(dr[0]&&dr[1]){
+          ref.once('value').then(function(s2){
+            var d2=s2.val();
+            if(d2&&d2.phase==='picking'){
+              ref.update({phase:'setup',log:[{t:'Both trainers ready! Battle begins! \u26A1',imp:true}]});
+            }
+          });
+        }
         render();
       }
     });
