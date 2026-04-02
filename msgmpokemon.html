@@ -26,6 +26,8 @@ body{min-height:100vh;background:radial-gradient(ellipse at top,#0a1628,#050c18)
 #game{display:none;flex-direction:column;gap:8px;padding:8px;max-width:640px;margin:0 auto;}
 .g-status{background:rgba(0,0,0,.5);border:1px solid rgba(245,215,110,.2);border-radius:12px;padding:10px 16px;font-size:.85rem;font-weight:700;color:#ffe5a0;text-align:center;}
 .g-phase{background:rgba(204,0,0,.15);border:1px solid rgba(204,0,0,.4);border-radius:10px;padding:8px 14px;font-size:.82rem;font-weight:700;color:#ff9999;text-align:center;display:none;}
+@keyframes setupPulse{0%,100%{box-shadow:0 0 0 2px rgba(245,215,110,.5);}50%{box-shadow:0 0 0 5px rgba(245,215,110,.9),0 0 20px rgba(245,215,110,.4);}}
+.setup-glow{animation:setupPulse 1.2s ease-in-out infinite;}
 .scores{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
 .score-card{background:rgba(0,0,0,.45);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:10px 14px;}
 .score-card.mine{border-color:rgba(60,107,200,.5);}.score-card.opp{border-color:rgba(200,0,0,.3);}
@@ -46,9 +48,12 @@ body{min-height:100vh;background:radial-gradient(ellipse at top,#0a1628,#050c18)
 .bench-slot{width:70px;height:98px;border-radius:8px;border:1px dashed rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:.6rem;color:#555;cursor:pointer;}
 .bench-slot.filled{border:none;}
 .pcard{border-radius:10px;display:flex;flex-direction:column;cursor:pointer;position:relative;flex-shrink:0;transition:transform .15s,box-shadow .15s;}
+.pcard *{pointer-events:none;}
 .pcard:hover{transform:translateY(-4px);box-shadow:0 8px 24px rgba(0,0,0,.5);}
 .pcard.selected{transform:translateY(-18px) scale(1.05);box-shadow:0 0 0 3px #f5d76e,0 16px 32px rgba(0,0,0,.6)!important;}
 .pcard.unplayable{opacity:.45;cursor:not-allowed;}.pcard.unplayable:hover{transform:none;}
+.pcard:not(.unplayable){box-shadow:0 0 0 2px rgba(245,215,110,.5),0 4px 16px rgba(0,0,0,.4);}
+.pcard:not(.unplayable):hover{box-shadow:0 0 0 3px #f5d76e,0 8px 24px rgba(0,0,0,.6);transform:translateY(-6px) scale(1.03);}
 .hand-card{width:88px;height:124px;}.active-card{width:110px;height:154px;}.bench-card{width:70px;height:98px;border-radius:8px;}
 .pc-hdr{padding:3px 6px;display:flex;justify-content:space-between;align-items:center;border-radius:8px 8px 0 0;background:rgba(0,0,0,.55);min-height:18px;}
 .pc-name{font-size:.58rem;font-weight:900;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:66%;}
@@ -362,9 +367,11 @@ function renderHand(){
   }
   cards.forEach(function(card,idx){
     var clickable=false;
-    if(phase==='setup'&&card.cardType==='pokemon'&&card.stage===0)clickable=true;
+    var isSetupBasic=false;
+    if(phase==='setup'&&card.cardType==='pokemon'&&card.stage===0){clickable=true;isSetupBasic=true;}
     if(phase==='main'&&isMyTurn)clickable=true;
     var c=cardEl(card,'hand-card',clickable,selIdx===idx,0);
+    if(isSetupBasic&&!fa(state.active)[myId])c.classList.add('setup-glow');
     if(clickable)(function(i){c.addEventListener('click',function(){onHandClick(i);});})(idx);
     el.appendChild(c);
   });
@@ -525,9 +532,22 @@ function render(){
 function norm(d){
   if(!d)return d;
   ['hands','decks','discards','bench','prizes'].forEach(function(k){if(d[k])d[k]=fa(d[k]).map(fa);});
-  ['active','status','names','connected','prizesLeft','drawn','attached','plusPower','dmgOnActive'].forEach(function(k){if(d[k])d[k]=fa(d[k]);});
-  if(d.energyOnActive)d.energyOnActive=fa(d.energyOnActive);
-  if(d.energyOnBench)d.energyOnBench=fa(d.energyOnBench).map(fa);
+  ['active','status','names','connected','prizesLeft','drawn','attached','plusPower','dmgOnActive'].forEach(function(k){if(d[k]!=null)d[k]=fa(d[k]);});
+  // Pad all 2-player arrays to length 2 (Firebase drops trailing nulls/falses)
+  function pad2(arr,def){while(arr.length<2)arr.push(typeof def==='function'?def():def);return arr;}
+  d.active=pad2(d.active||[],null);
+  d.names=pad2(d.names||[],null);
+  d.connected=pad2(d.connected||[],false);
+  d.prizesLeft=pad2(d.prizesLeft||[],6);
+  d.drawn=pad2(d.drawn||[],false);
+  d.attached=pad2(d.attached||[],false);
+  d.dmgOnActive=pad2(d.dmgOnActive||[],0);
+  d.plusPower=pad2(d.plusPower||[],false);
+  if(!d.hands||d.hands.length<2)d.hands=pad2(d.hands||[],function(){return[];});
+  if(!d.bench||d.bench.length<2)d.bench=pad2(d.bench||[],function(){return[];});
+  if(!d.energyOnActive||d.energyOnActive.length<2)d.energyOnActive=pad2(d.energyOnActive||[],function(){return{};});
+  if(!d.energyOnBench||d.energyOnBench.length<2)d.energyOnBench=pad2((d.energyOnBench||[]).map(fa),function(){return[];});
+  else d.energyOnBench=d.energyOnBench.map(fa);
   if(d.log)d.log=fa(d.log);
   return d;
 }
@@ -568,28 +588,49 @@ function onBenchClick(slotIdx){
 
 function placeActive(handIdx){
   if(!roomRef||!state)return;
-  var s=JSON.parse(JSON.stringify(state));
-  var card=s.hands[myId][handIdx];
-  if(!card||card.cardType!=='pokemon'||card.stage!==0)return;
-  if(!s.dmgOnActive)s.dmgOnActive=[0,0];
-  s.active[myId]=card;s.dmgOnActive[myId]=0;
-  s.hands[myId].splice(handIdx,1);
-  addLog(s,s.names[myId]+' placed '+card.name+' as Active!',true);
-  if(s.active[0]&&s.active[1]){s.phase='main';addLog(s,'Both players ready! Game starts!',true);}
-  roomRef.set(s);
+  var hands=fa(fa(state.hands)[myId]);
+  var card=hands[handIdx];
+  if(!card||card.cardType!=='pokemon'||card.stage!==0){
+    console.log('placeActive: invalid card',card);return;
+  }
+  // Use update() so we only write our fields - prevents race condition
+  var newHand=hands.slice();
+  newHand.splice(handIdx,1);
+  var update={};
+  update['active/'+myId]=card;
+  update['dmgOnActive/'+myId]=0;
+  update['hands/'+myId]=newHand;
+  update['log']=(fa(state.log)||[]).concat([{t:(fa(state.names)[myId]||'Player')+' placed '+card.name+' as Active!',imp:true}]).slice(-30);
+  roomRef.update(update).then(function(){
+    // After placing, re-read state and check if BOTH players have placed active
+    roomRef.once('value').then(function(snap){
+      var d=snap.val();if(!d)return;
+      // Firebase drops null values, so check raw active object directly
+      var rawActive=d.active||{};
+      var a0=rawActive[0]||rawActive['0'];
+      var a1=rawActive[1]||rawActive['1'];
+      if(a0&&a1&&d.phase==='setup'){
+        var log=(d.log?Object.values(d.log):[]).concat([{t:'Both trainers ready! Battle starts! ⚡',imp:true}]).slice(-30);
+        roomRef.update({phase:'main',log:log});
+      }
+    });
+  });
 }
 
 function placeBench(handIdx){
   if(!roomRef||!state)return;
-  var s=JSON.parse(JSON.stringify(state));
-  if((s.bench[myId]||[]).length>=5){alert('Bench full!');return;}
-  var card=s.hands[myId][handIdx];
+  var hands=fa(fa(state.hands)[myId]);
+  var bench=fa(fa(state.bench)[myId]);
+  if(bench.length>=5){alert('Bench full!');return;}
+  var card=hands[handIdx];
   if(!card||card.cardType!=='pokemon'||card.stage!==0)return;
-  if(!s.bench[myId])s.bench[myId]=[];
-  s.bench[myId].push(card);
-  s.hands[myId].splice(handIdx,1);
-  addLog(s,s.names[myId]+' benched '+card.name+'.');
-  roomRef.set(s);
+  var newHand=hands.slice();newHand.splice(handIdx,1);
+  var newBench=bench.slice();newBench.push(card);
+  var upd={};
+  upd['hands/'+myId]=newHand;
+  upd['bench/'+myId]=newBench;
+  upd['log']=(fa(state.log)||[]).concat([{t:(fa(state.names)[myId]||'Player')+' benched '+card.name+'.',imp:false}]).slice(-30);
+  roomRef.update(upd);
 }
 
 function attachEnergy(handIdx,target,targetIdx){
