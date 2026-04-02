@@ -4,100 +4,123 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>Pokemon TCG 1999</title>
+<title>Pokemon TCG — 1999 Base Set</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 body{min-height:100vh;background:radial-gradient(ellipse at top,#0a1628,#050c18);font-family:"Segoe UI",system-ui,sans-serif;color:#f0e8d0;overflow-x:hidden;}
 #keyScreen{position:fixed;inset:0;z-index:9999;background:radial-gradient(ellipse at top,#0a1628,#050c18);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:20px;}
-.k-title{font-size:2.8rem;font-weight:900;color:#f5d76e;text-align:center;}
-.k-sub{color:#a09060;font-size:.9rem;}
+.k-title{font-size:2.8rem;font-weight:900;color:#f5d76e;text-align:center;letter-spacing:-1px;}
+.k-sub{color:#a09060;font-size:.9rem;text-align:center;}
 .k-box{background:rgba(255,255,255,.05);border:1px solid rgba(245,215,110,.25);border-radius:20px;padding:28px 30px;display:flex;flex-direction:column;gap:13px;width:min(340px,94vw);}
 .k-inp{background:rgba(0,0,0,.5);border:1.5px solid rgba(245,200,80,.3);border-radius:40px;padding:13px 20px;color:#ffe3b3;font-size:1rem;text-align:center;width:100%;outline:none;font-family:inherit;letter-spacing:3px;}
 .k-inp:focus{border-color:#f5d76e;}
-.k-btn{background:linear-gradient(135deg,#cc0000,#ff4444);border:none;border-radius:40px;padding:13px;color:#fff;font-size:.95rem;font-weight:700;cursor:pointer;width:100%;font-family:inherit;}
+.k-btn{background:linear-gradient(135deg,#cc0000,#ff4444);border:none;border-radius:40px;padding:13px;color:#fff;font-size:.95rem;font-weight:700;cursor:pointer;width:100%;font-family:inherit;transition:.15s;}
+.k-btn:hover{opacity:.88;}
 .k-err{color:#ff6b6b;font-size:.83rem;font-weight:700;min-height:18px;text-align:center;}
 #lobby{display:none;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;gap:16px;padding:20px;}
-.l-title{font-size:2.6rem;font-weight:900;color:#f5d76e;}
+.l-title{font-size:2.6rem;font-weight:900;color:#f5d76e;letter-spacing:-1px;}
+.l-sub{font-size:.85rem;color:#a09060;}
 .l-box{background:rgba(255,255,255,.05);border:1px solid rgba(245,215,110,.2);border-radius:20px;padding:26px 28px;display:flex;flex-direction:column;gap:12px;width:min(360px,96vw);}
 .l-inp{background:rgba(0,0,0,.45);border:1.5px solid rgba(245,200,80,.25);border-radius:40px;padding:12px 18px;color:#ffe3b3;font-size:.92rem;text-align:center;width:100%;outline:none;font-family:inherit;}
 .l-inp::placeholder{color:#6a6050;}.l-inp:focus{border-color:#f5d76e;}
 .l-btn{background:linear-gradient(135deg,#cc0000,#ff4444);border:none;border-radius:40px;padding:13px;color:#fff;font-size:.95rem;font-weight:700;cursor:pointer;width:100%;font-family:inherit;}
-.l-note{font-size:.76rem;color:#8a7050;text-align:center;line-height:1.6;}
-#game{display:none;flex-direction:column;gap:8px;padding:8px;max-width:640px;margin:0 auto;}
-.g-status{background:rgba(0,0,0,.5);border:1px solid rgba(245,215,110,.2);border-radius:12px;padding:10px 16px;font-size:.85rem;font-weight:700;color:#ffe5a0;text-align:center;}
-.g-phase{background:rgba(204,0,0,.15);border:1px solid rgba(204,0,0,.4);border-radius:10px;padding:8px 14px;font-size:.82rem;font-weight:700;color:#ff9999;text-align:center;display:none;}
-@keyframes setupPulse{0%,100%{box-shadow:0 0 0 2px rgba(245,215,110,.5);}50%{box-shadow:0 0 0 5px rgba(245,215,110,.9),0 0 20px rgba(245,215,110,.4);}}
-.setup-glow{animation:setupPulse 1.2s ease-in-out infinite;}
+.l-note{font-size:.75rem;color:#8a7050;text-align:center;line-height:1.7;}
+#game{display:none;flex-direction:column;gap:8px;padding:8px;max-width:640px;margin:0 auto;padding-bottom:24px;}
+.g-top{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;}
+.g-title{font-size:1.1rem;font-weight:900;color:#f5d76e;}
+.t-pill{padding:5px 14px;border-radius:30px;font-weight:700;font-size:.8rem;background:#222;color:#888;}
+.g-status{background:rgba(0,0,0,.5);border:1px solid rgba(245,215,110,.2);border-radius:12px;padding:9px 16px;font-size:.83rem;font-weight:700;color:#ffe5a0;text-align:center;}
+.g-phase{background:rgba(204,0,0,.2);border:1px solid rgba(255,100,100,.4);border-radius:10px;padding:9px 14px;font-size:.82rem;font-weight:700;color:#ff9999;text-align:center;display:none;}
+@keyframes pulseglow{0%,100%{box-shadow:0 0 0 2px rgba(245,215,110,.5);}50%{box-shadow:0 0 0 6px rgba(245,215,110,.9),0 0 22px rgba(245,215,110,.35);}}
+.setup-glow{animation:pulseglow 1.1s ease-in-out infinite;}
 .scores{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
-.score-card{background:rgba(0,0,0,.45);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:10px 14px;}
-.score-card.mine{border-color:rgba(60,107,200,.5);}.score-card.opp{border-color:rgba(200,0,0,.3);}
-.sc-name{font-size:.75rem;font-weight:800;color:#f5d76e;margin-bottom:5px;}
-.sc-active{display:flex;align-items:center;gap:8px;}
-.sc-icon{font-size:1.5rem;}
-.sc-hp{font-size:.7rem;font-weight:700;color:#4ade80;}
+.sc{background:rgba(0,0,0,.45);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:10px 12px;}
+.sc.mine{border-color:rgba(60,107,200,.5);}.sc.opp{border-color:rgba(200,0,0,.3);}
+.sc-name{font-size:.73rem;font-weight:800;color:#f5d76e;margin-bottom:4px;}
+.sc-row{display:flex;align-items:center;gap:8px;}
+.sc-icon{font-size:1.4rem;}
+.sc-hp{font-size:.68rem;font-weight:700;color:#4ade80;}
 .sc-hp.mid{color:#fbbf24;}.sc-hp.low{color:#ef4444;}
-.sc-hpbar{height:6px;background:rgba(255,255,255,.1);border-radius:3px;margin-top:4px;overflow:hidden;}
-.sc-hpfill{height:100%;border-radius:3px;background:#4ade80;transition:width .4s;}
-.sc-hpfill.mid{background:#fbbf24;}.sc-hpfill.low{background:#ef4444;}
-.sc-empty{font-size:.72rem;color:#555;font-style:italic;}
-.board-row{display:flex;gap:10px;align-items:flex-start;justify-content:center;flex-wrap:wrap;}
-.slot-label{font-size:.65rem;color:#a08060;text-align:center;margin-bottom:3px;}
-.active-slot{width:110px;height:154px;border-radius:12px;border:2px dashed rgba(245,215,110,.3);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:6px;}
-.active-slot.filled{border:none;}
-.bench-row{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;}
-.bench-slot{width:70px;height:98px;border-radius:8px;border:1px dashed rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:.6rem;color:#555;cursor:pointer;}
-.bench-slot.filled{border:none;}
+.sc-bar{height:5px;background:rgba(255,255,255,.1);border-radius:3px;margin-top:3px;overflow:hidden;flex:1;}
+.sc-fill{height:100%;border-radius:3px;background:#4ade80;transition:width .4s;}
+.sc-fill.mid{background:#fbbf24;}.sc-fill.low{background:#ef4444;}
+.sc-empty{font-size:.7rem;color:#444;font-style:italic;}
+.board{display:flex;gap:8px;justify-content:center;align-items:flex-start;flex-wrap:wrap;}
+.b-col{display:flex;flex-direction:column;align-items:center;gap:4px;}
+.b-lbl{font-size:.62rem;color:#a08060;text-align:center;}
+.a-slot{width:110px;height:154px;border-radius:12px;border:2px dashed rgba(245,215,110,.3);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:5px;cursor:pointer;transition:.15s;}
+.a-slot:hover{border-color:rgba(245,215,110,.7);}
+.a-slot.filled{border:none;cursor:default;}
+.bench-row{display:flex;gap:5px;justify-content:center;flex-wrap:wrap;}
+.b-slot{width:68px;height:96px;border-radius:8px;border:1px dashed rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;font-size:.58rem;color:#444;cursor:pointer;transition:.15s;}
+.b-slot:hover{border-color:rgba(255,255,255,.5);}
+.b-slot.filled{border:none;}
+.prize-lbl{font-size:.6rem;color:#a08060;text-align:center;}
+.prize-num{font-size:1.3rem;font-weight:900;color:#f5d76e;text-align:center;}
 .pcard{border-radius:10px;display:flex;flex-direction:column;cursor:pointer;position:relative;flex-shrink:0;transition:transform .15s,box-shadow .15s;}
 .pcard *{pointer-events:none;}
-.pcard:hover{transform:translateY(-4px);box-shadow:0 8px 24px rgba(0,0,0,.5);}
-.pcard.selected{transform:translateY(-18px) scale(1.05);box-shadow:0 0 0 3px #f5d76e,0 16px 32px rgba(0,0,0,.6)!important;}
-.pcard.unplayable{opacity:.45;cursor:not-allowed;}.pcard.unplayable:hover{transform:none;}
-.pcard:not(.unplayable){box-shadow:0 0 0 2px rgba(245,215,110,.5),0 4px 16px rgba(0,0,0,.4);}
-.pcard:not(.unplayable):hover{box-shadow:0 0 0 3px #f5d76e,0 8px 24px rgba(0,0,0,.6);transform:translateY(-6px) scale(1.03);}
-.hand-card{width:88px;height:124px;}.active-card{width:110px;height:154px;}.bench-card{width:70px;height:98px;border-radius:8px;}
-.pc-hdr{padding:3px 6px;display:flex;justify-content:space-between;align-items:center;border-radius:8px 8px 0 0;background:rgba(0,0,0,.55);min-height:18px;}
-.pc-name{font-size:.58rem;font-weight:900;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:66%;}
-.pc-art{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;margin:2px 3px;border-radius:5px;position:relative;overflow:hidden;min-height:55px;}
-.pc-ftr{padding:2px 5px;font-size:.5rem;display:flex;justify-content:space-between;border-radius:0 0 8px 8px;background:rgba(0,0,0,.45);color:rgba(255,255,255,.7);}
+.pcard.hand-card{width:86px;height:122px;}
+.pcard.active-card{width:110px;height:154px;}
+.pcard.bench-card{width:68px;height:96px;border-radius:8px;}
+.pcard:not(.unplayable){box-shadow:0 0 0 2px rgba(245,215,110,.4),0 4px 14px rgba(0,0,0,.4);}
+.pcard:not(.unplayable):hover{box-shadow:0 0 0 3px #f5d76e,0 8px 24px rgba(0,0,0,.6);transform:translateY(-5px) scale(1.02);}
+.pcard.selected{transform:translateY(-18px) scale(1.06)!important;box-shadow:0 0 0 3px #f5d76e,0 16px 32px rgba(0,0,0,.7)!important;}
+.pcard.unplayable{opacity:.42;cursor:not-allowed;}
+.pcard.unplayable:hover{transform:none!important;}
+.pc-hdr{padding:3px 6px;display:flex;justify-content:space-between;align-items:center;border-radius:8px 8px 0 0;background:rgba(0,0,0,.55);min-height:17px;}
+.pc-name{font-size:.56rem;font-weight:900;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:66%;}
+.pc-art{flex:1;display:flex;align-items:center;justify-content:center;margin:2px 3px;border-radius:5px;position:relative;overflow:hidden;min-height:52px;}
+.pc-ftr{padding:2px 5px;font-size:.48rem;display:flex;justify-content:space-between;border-radius:0 0 8px 8px;background:rgba(0,0,0,.45);color:rgba(255,255,255,.7);}
 .hp-bar{width:100%;height:4px;background:rgba(0,0,0,.4);border-radius:2px;}
 .hp-fill{height:100%;border-radius:2px;background:#4ade80;}
 .hp-fill.mid{background:#fbbf24;}.hp-fill.low{background:#ef4444;}
-.tFire{border:2px solid #ff6b35;background:#3a0a00;}.tWater{border:2px solid #42a5f5;background:#001530;}
-.tGrass{border:2px solid #66bb6a;background:#0a1a00;}.tLightning{border:2px solid #ffca28;background:#1a1000;}
-.tPsychic{border:2px solid #ce93d8;background:#1a0030;}.tFighting{border:2px solid #a1887f;background:#1a0800;}
-.tColorless{border:2px solid #90a4ae;background:#1a1a1a;}.tTrainer{border:2px solid #a5d6a7;background:#0d2b1a;}
-.tEnergy{border:2px solid #80cbc4;background:#001a1a;}
-.my-zone{background:rgba(0,20,80,.2);border:2px solid rgba(100,140,255,.35);border-radius:14px;padding:12px 10px 10px;}
-.zone-label{font-size:.7rem;color:#7ab8e8;font-weight:700;margin-bottom:8px;}
-.hand-scroll{display:flex;gap:8px;overflow-x:auto;padding:4px 2px 8px;min-height:140px;align-items:center;-webkit-overflow-scrolling:touch;}
-.hand-scroll::-webkit-scrollbar{height:4px;}.hand-scroll::-webkit-scrollbar-thumb{background:#334;border-radius:2px;}
-.actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;}
-.abtn{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);border-radius:24px;padding:8px 16px;color:#f0e2c5;font-size:.82rem;font-weight:700;cursor:pointer;font-family:inherit;}
-.abtn:hover{background:rgba(255,255,255,.18);}.abtn:disabled{opacity:.3;cursor:not-allowed;}
-.abtn.red{background:rgba(220,50,50,.3);border-color:#e53935;}.abtn.grn{background:rgba(50,180,80,.25);border-color:#4ade80;}
-.atk-panel{background:rgba(0,0,0,.4);border:1px solid rgba(255,100,50,.3);border-radius:12px;padding:10px 14px;}
-.atk-row{display:flex;justify-content:space-between;align-items:center;padding:7px 10px;border-radius:8px;background:rgba(255,255,255,.06);margin-bottom:5px;cursor:pointer;border:1px solid rgba(255,255,255,.08);}
-.atk-row:hover{background:rgba(255,255,255,.14);}.atk-row.disabled{opacity:.35;cursor:not-allowed;}
-.atk-name{font-size:.8rem;font-weight:700;}.atk-dmg{font-size:1.1rem;font-weight:900;color:#f5d76e;}
-.atk-cost{font-size:.62rem;color:#a09060;}.atk-desc{font-size:.6rem;color:#a09060;}
-.g-log{background:rgba(0,0,0,.35);border-radius:10px;padding:8px 12px;max-height:80px;overflow-y:auto;font-size:.72rem;color:#a09060;}
+.tFire{border:2px solid #ff6b35;background:#3a0a00;}
+.tWater{border:2px solid #42a5f5;background:#001530;}
+.tGrass{border:2px solid #66bb6a;background:#0a1a00;}
+.tLightning{border:2px solid #ffca28;background:#1a1000;}
+.tPsychic{border:2px solid #ce93d8;background:#1a0030;}
+.tFighting{border:2px solid #a1887f;background:#1a0800;}
+.tColorless{border:2px solid #90a4ae;background:#1a1a1a;}
+.tTrainer{border:2px solid #a5d6a7;background:#0d2b1a;}
+.my-zone{background:rgba(0,20,80,.18);border:2px solid rgba(100,140,255,.3);border-radius:14px;padding:10px 8px 8px;}
+.z-lbl{font-size:.68rem;color:#7ab8e8;font-weight:700;margin-bottom:6px;}
+.hand-scroll{display:flex;gap:7px;overflow-x:auto;padding:3px 2px 8px;min-height:138px;align-items:center;-webkit-overflow-scrolling:touch;}
+.hand-scroll::-webkit-scrollbar{height:3px;}.hand-scroll::-webkit-scrollbar-thumb{background:#334;border-radius:2px;}
+.actions{display:flex;gap:7px;flex-wrap:wrap;justify-content:center;}
+.abtn{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);border-radius:22px;padding:7px 15px;color:#f0e2c5;font-size:.8rem;font-weight:700;cursor:pointer;font-family:inherit;transition:.15s;}
+.abtn:hover{background:rgba(255,255,255,.18);}
+.abtn:disabled{opacity:.28;cursor:not-allowed;}
+.abtn.red{background:rgba(220,50,50,.25);border-color:#e53935;}
+.abtn.grn{background:rgba(50,180,80,.2);border-color:#4ade80;}
+.atk-panel{background:rgba(0,0,0,.38);border:1px solid rgba(255,100,50,.25);border-radius:12px;padding:9px 12px;}
+.atk-title{font-size:.76rem;font-weight:700;color:#f5d76e;margin-bottom:5px;}
+.atk-row{display:flex;justify-content:space-between;align-items:center;padding:6px 9px;border-radius:7px;background:rgba(255,255,255,.05);margin-bottom:4px;cursor:pointer;border:1px solid rgba(255,255,255,.07);transition:.15s;}
+.atk-row:hover{background:rgba(255,255,255,.13);}
+.atk-row.no-energy{opacity:.32;cursor:not-allowed;}
+.atk-name{font-size:.78rem;font-weight:700;}
+.atk-dmg{font-size:1rem;font-weight:900;color:#f5d76e;}
+.atk-cost{font-size:.6rem;color:#a09060;}
+.atk-desc{font-size:.58rem;color:#a09060;margin-top:1px;}
+.g-log{background:rgba(0,0,0,.32);border-radius:10px;padding:7px 11px;max-height:76px;overflow-y:auto;font-size:.7rem;color:#a09060;}
+.g-log::-webkit-scrollbar{width:3px;}.g-log::-webkit-scrollbar-thumb{background:#334;border-radius:2px;}
 .log-imp{color:#f5d76e;font-weight:700;}
-#winModal{position:fixed;inset:0;background:rgba(0,0,0,.9);display:none;align-items:center;justify-content:center;z-index:2000;padding:20px;}
+#winModal{position:fixed;inset:0;background:rgba(0,0,0,.92);display:none;align-items:center;justify-content:center;z-index:2000;padding:20px;}
 #winModal.open{display:flex;}
-.win-box{background:linear-gradient(135deg,#1a0a3a,#0a1a3a);border:2px solid #f5d76e;border-radius:24px;padding:32px 40px;text-align:center;max-width:340px;width:100%;}
+@keyframes winpop{0%{transform:scale(.5);opacity:0}70%{transform:scale(1.06)}100%{transform:scale(1);opacity:1}}
+.win-box{background:linear-gradient(135deg,#1a0a3a,#0a1a3a);border:2px solid #f5d76e;border-radius:24px;padding:32px 40px;text-align:center;max-width:340px;width:100%;animation:winpop .5s cubic-bezier(.34,1.56,.64,1) both;}
 .win-icon{font-size:3.5rem;margin-bottom:8px;display:block;}
 .win-title{font-size:2rem;font-weight:900;color:#f5d76e;margin-bottom:6px;}
 .win-sub{color:#a0a0c0;margin-bottom:20px;font-size:.9rem;}
 .win-btn{background:linear-gradient(135deg,#cc0000,#ff4444);border:none;border-radius:30px;padding:12px 28px;color:#fff;font-size:.95rem;font-weight:700;cursor:pointer;font-family:inherit;}
-@media(max-width:380px){.hand-card{width:76px;height:108px;}.active-card{width:96px;height:136px;}.bench-card{width:60px;height:84px;}}
+@media(max-width:380px){.pcard.hand-card{width:74px;height:106px;}.pcard.active-card{width:96px;height:136px;}.pcard.bench-card{width:58px;height:82px;}}
 </style>
 </head>
 <body>
 <div id="keyScreen">
   <div class="k-title">&#9889; Pokemon TCG</div>
-  <div class="k-sub">1999 Base Set &middot; 2 Players</div>
+  <div class="k-sub">1999 Base Set &mdash; All 102 Cards</div>
   <div class="k-box">
-    <div style="text-align:center;font-size:.9rem;color:#f5d76e;font-weight:700;">&#128272; Private Game</div>
+    <div style="text-align:center;font-size:.88rem;color:#f5d76e;font-weight:700;">&#128272; Private Family Game</div>
     <input id="keyInp" class="k-inp" type="password" placeholder="Enter access key&hellip;" maxlength="20">
     <button id="keyBtn" class="k-btn">&#128275; Unlock</button>
     <div id="keyErr" class="k-err"></div>
@@ -105,47 +128,66 @@ body{min-height:100vh;background:radial-gradient(ellipse at top,#0a1628,#050c18)
 </div>
 <div id="lobby">
   <div class="l-title">&#9889; Pokemon TCG</div>
+  <div class="l-sub">1999 Base Set &mdash; 102 Cards</div>
   <div class="l-box">
-    <div style="text-align:center;font-size:.9rem;color:#f5d76e;font-weight:700;">&#127919; Join a Room</div>
-    <input id="passInp" class="l-inp" placeholder="Room password" maxlength="40">
+    <div style="text-align:center;font-size:.88rem;color:#f5d76e;font-weight:700;">&#127919; Join a Room</div>
+    <input id="passInp" class="l-inp" placeholder="Room password (share with friend)" maxlength="40">
     <input id="nameInp" class="l-inp" placeholder="Your trainer name" maxlength="20">
     <button id="joinBtn" class="l-btn">&#9889; Enter Battle!</button>
-    <p class="l-note">Both players use the same password.<br>60-card Base Set decks are auto-dealt!</p>
+    <p class="l-note">Both players use the same password.<br>60-card decks are auto-dealt from the full Base Set!<br>Roll to see who goes first.</p>
   </div>
 </div>
 <div id="game">
-  <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px;">
-    <div style="font-size:1.1rem;font-weight:900;color:#f5d76e;">&#9889; Pokemon TCG</div>
-    <div id="turnPill" style="padding:5px 14px;border-radius:30px;font-weight:700;font-size:.8rem;background:#333;color:#888;">&mdash;</div>
+  <div class="g-top">
+    <div class="g-title">&#9889; Pokemon TCG</div>
+    <div class="t-pill" id="tpill">&mdash;</div>
   </div>
-  <div class="g-status" id="statusBar">Connecting&hellip;</div>
-  <div class="g-phase" id="phaseBanner"></div>
+  <div class="g-status" id="gstatus">Connecting&hellip;</div>
+  <div class="g-phase" id="gphase"></div>
   <div class="scores">
-    <div class="score-card opp"><div class="sc-name" id="scoreOppName">Opponent</div><div id="scoreOppContent"><div class="sc-empty">No active Pokemon</div></div></div>
-    <div class="score-card mine"><div class="sc-name" id="scoreMyName">You</div><div id="scoreMyContent"><div class="sc-empty">No active Pokemon</div></div></div>
+    <div class="sc opp"><div class="sc-name" id="scOppName">Opponent</div><div id="scOppBody"><div class="sc-empty">No active</div></div></div>
+    <div class="sc mine"><div class="sc-name" id="scMyName">You</div><div id="scMyBody"><div class="sc-empty">No active</div></div></div>
   </div>
-  <div class="board-row">
-    <div><div class="slot-label">Opponent Active</div><div class="active-slot" id="oppActive"><span style="font-size:1.5rem;opacity:.2">&#128123;</span><span style="font-size:.6rem;color:#444">Empty</span></div></div>
-    <div><div class="slot-label">Opp Bench</div><div class="bench-row" id="oppBench"></div></div>
-    <div style="text-align:center;"><div style="font-size:.6rem;color:#a08060;">Prizes</div><div id="oppPrizes" style="font-size:1.2rem;font-weight:900;color:#f5d76e;">6</div></div>
+  <div class="board">
+    <div class="b-col">
+      <div class="b-lbl">Opp Active</div>
+      <div class="a-slot" id="oppActive"><span style="font-size:1.6rem;opacity:.2">&#128123;</span><span style="font-size:.58rem;color:#333">Empty</span></div>
+    </div>
+    <div class="b-col">
+      <div class="b-lbl">Opp Bench</div>
+      <div class="bench-row" id="oppBench"></div>
+    </div>
+    <div class="b-col" style="text-align:center;">
+      <div class="prize-lbl">Opp Prizes</div>
+      <div class="prize-num" id="oppPrizes">6</div>
+    </div>
   </div>
-  <div class="board-row">
-    <div><div class="slot-label">Your Active</div><div class="active-slot" id="myActive"><span style="font-size:1.5rem;opacity:.2">&#128170;</span><span style="font-size:.6rem;color:#444">Empty</span></div></div>
-    <div><div class="slot-label">Your Bench</div><div class="bench-row" id="myBench"></div></div>
-    <div style="text-align:center;"><div style="font-size:.6rem;color:#a08060;">Prizes</div><div id="myPrizes" style="font-size:1.2rem;font-weight:900;color:#f5d76e;">6</div></div>
+  <div class="board">
+    <div class="b-col">
+      <div class="b-lbl">Your Active</div>
+      <div class="a-slot" id="myActive"><span style="font-size:1.6rem;opacity:.2">&#128170;</span><span style="font-size:.58rem;color:#333">Empty</span></div>
+    </div>
+    <div class="b-col">
+      <div class="b-lbl">Your Bench</div>
+      <div class="bench-row" id="myBench"></div>
+    </div>
+    <div class="b-col" style="text-align:center;">
+      <div class="prize-lbl">Your Prizes</div>
+      <div class="prize-num" id="myPrizes">6</div>
+    </div>
   </div>
   <div class="actions">
     <button class="abtn grn" id="drawBtn" disabled>&#127183; Draw</button>
     <button class="abtn" id="retreatBtn" disabled>&#8617; Retreat</button>
-    <button class="abtn red" id="endTurnBtn" disabled>&#9197; End Turn</button>
+    <button class="abtn red" id="endBtn" disabled>&#9197; End Turn</button>
     <button class="abtn" id="leaveBtn">&#128682; Leave</button>
   </div>
   <div class="atk-panel" id="atkPanel" style="display:none;">
-    <div style="font-size:.78rem;font-weight:700;color:#f5d76e;margin-bottom:6px;">&#9876; Attacks &mdash; <span id="atkName"></span></div>
+    <div class="atk-title">&#9876; Attacks &mdash; <span id="atkName"></span></div>
     <div id="atkList"></div>
   </div>
   <div class="my-zone">
-    <div class="zone-label" id="handLabel">&#129354; Your Hand &mdash; tap a Basic Pokemon to place it!</div>
+    <div class="z-lbl" id="zLbl">&#129354; Your Hand &mdash; tap a Basic Pokemon to place it!</div>
     <div class="hand-scroll" id="myHand"></div>
   </div>
   <div class="g-log" id="glog"></div>
@@ -167,7 +209,7 @@ var CDNS=[
   {a:'https://unpkg.com/firebase@9.22.2/firebase-app-compat.js',d:'https://unpkg.com/firebase@9.22.2/firebase-database-compat.js'}
 ];
 var ti=0;
-function showFbErr(){document.body.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100vh;flex-direction:column;gap:12px;background:#050c18;font-family:sans-serif;padding:20px;text-align:center;"><div style="font-size:3rem">&#9889;</div><p style="color:#e53935;font-weight:700">Could not load Firebase</p><p style="color:#888;font-size:.9rem;max-width:300px">Check internet and reload.</p><button onclick="location.reload()" style="background:#cc0000;border:none;border-radius:30px;padding:12px 28px;color:#fff;font-weight:700;cursor:pointer;margin-top:8px">Reload</button></div>';}
+function showFbErr(){document.body.innerHTML='<div style="display:flex;align-items:center;justify-content:center;height:100vh;flex-direction:column;gap:12px;background:#050c18;font-family:sans-serif;padding:20px;text-align:center;color:#f0e8d0;"><div style="font-size:3rem">&#9889;</div><p style="color:#e53935;font-weight:700;font-size:1.1rem;">Firebase failed to load</p><p style="color:#888;font-size:.9rem;max-width:300px">Check your internet connection and reload.</p><button onclick="location.reload()" style="background:#cc0000;border:none;border-radius:30px;padding:12px 28px;color:#fff;font-weight:700;cursor:pointer;margin-top:8px;font-size:.95rem">Reload</button></div>';}
 function ldDB(cdn){var s=document.createElement('script');s.src=cdn.d;s.onload=startGame;s.onerror=function(){ti++;ti<CDNS.length?ldApp(CDNS[ti]):showFbErr();};document.head.appendChild(s);}
 function ldApp(cdn){var s=document.createElement('script');s.src=cdn.a;s.onload=function(){ldDB(cdn);};s.onerror=function(){ti++;ti<CDNS.length?ldApp(CDNS[ti]):showFbErr();};document.head.appendChild(s);}
 ldApp(CDNS[0]);
@@ -175,123 +217,506 @@ ldApp(CDNS[0]);
 </script>
 <script>
 function startGame(){
+'use strict';
 try{firebase.initializeApp({apiKey:"AIzaSyCQ7QZFblWwB530G2ARVPHvYLAsDf0Mwak",authDomain:"chessgame-e4dbb.firebaseapp.com",projectId:"chessgame-e4dbb",storageBucket:"chessgame-e4dbb.firebasestorage.app",messagingSenderId:"65265732775",appId:"1:65265732775:web:8c9ce7a779e8687bb59f82",databaseURL:"https://chessgame-e4dbb-default-rtdb.asia-southeast1.firebasedatabase.app/"});}catch(e){if(e.code!=='app/duplicate-app')throw e;}
 var db=firebase.database();
+/* ═══ CONSTANTS ═══ */
 var KEY='bismAllah';
 var myId=null,myName='Trainer',roomRef=null,state=null,selIdx=null;
-
-var ART={
-  charizard:{icon:'\uD83D\uDC09',bg:'linear-gradient(160deg,#7f0000,#c62828,#ff6d00)'},
-  blastoise:{icon:'\uD83C\uDF0A',bg:'linear-gradient(160deg,#003060,#1565c0,#42a5f5)'},
-  venusaur:{icon:'\uD83C\uDF38',bg:'linear-gradient(160deg,#1a3a00,#2e7d32,#a5d6a7)'},
-  mewtwo:{icon:'\uD83D\uDD2E',bg:'linear-gradient(160deg,#1a0030,#6a1b9a,#ce93d8)'},
-  pikachu:{icon:'\u26A1',bg:'linear-gradient(160deg,#2a1800,#f57f17,#ffee58)'},
-  raichu:{icon:'\u26A1',bg:'linear-gradient(160deg,#2a1500,#ef6c00,#ffa726)'},
-  charmander:{icon:'\uD83E\uDD8E',bg:'linear-gradient(160deg,#3a0800,#bf360c,#ff7043)'},
-  charmeleon:{icon:'\uD83E\uDD8E',bg:'linear-gradient(160deg,#5a0a00,#d84315,#ff5722)'},
-  squirtle:{icon:'\uD83D\uDC22',bg:'linear-gradient(160deg,#001530,#0277bd,#29b6f6)'},
-  wartortle:{icon:'\uD83D\uDC22',bg:'linear-gradient(160deg,#002040,#01579b,#039be5)'},
-  bulbasaur:{icon:'\uD83C\uDF31',bg:'linear-gradient(160deg,#0a1a00,#2e7d32,#66bb6a)'},
-  ivysaur:{icon:'\uD83C\uDF3F',bg:'linear-gradient(160deg,#1a2a00,#388e3c,#81c784)'},
-  electabuzz:{icon:'\u26A1',bg:'linear-gradient(160deg,#1a1000,#e65100,#ff9800)'},
-  hitmonchan:{icon:'\uD83E\uDD4A',bg:'linear-gradient(160deg,#2a0a00,#4e342e,#bcaaa4)'},
-  scyther:{icon:'\uD83C\uDF3F',bg:'linear-gradient(160deg,#0a1800,#1b5e20,#69f0ae)'},
-  chansey:{icon:'\uD83E\uDD5A',bg:'linear-gradient(160deg,#3a1a2a,#880e4f,#f8bbd0)'},
-  machamp:{icon:'\uD83D\uDCAA',bg:'linear-gradient(160deg,#1a0800,#4e342e,#8d6e63)'},
-  machop:{icon:'\uD83D\uDCAA',bg:'linear-gradient(160deg,#150600,#3e2723,#795548)'},
-  gastly:{icon:'\uD83D\uDC7B',bg:'linear-gradient(160deg,#0a0a1a,#311b92,#9575cd)'},
-  snorlax:{icon:'\uD83D\uDE34',bg:'linear-gradient(160deg,#1a2030,#37474f,#90a4ae)'}
-};
+/* ═══ TYPE HELPERS ═══ */
 var TICO={Fire:'\uD83D\uDD25',Water:'\uD83D\uDCA7',Grass:'\uD83C\uDF3F',Lightning:'\u26A1',Psychic:'\uD83D\uDD2E',Fighting:'\uD83D\uDC4A',Colorless:'\u2B50'};
 var TCLS={Fire:'tFire',Water:'tWater',Grass:'tGrass',Lightning:'tLightning',Psychic:'tPsychic',Fighting:'tFighting',Colorless:'tColorless'};
-var TGRAD={
-  Fire:'linear-gradient(160deg,#3a0800,#bf360c,#ff7043)',
-  Water:'linear-gradient(160deg,#001530,#0277bd,#29b6f6)',
-  Grass:'linear-gradient(160deg,#0a1800,#2e7d32,#66bb6a)',
-  Lightning:'linear-gradient(160deg,#1a1400,#f57f17,#ffee58)',
-  Psychic:'linear-gradient(160deg,#1a0030,#4a148c,#ce93d8)',
-  Fighting:'linear-gradient(160deg,#1a0800,#4e342e,#8d6e63)',
-  Colorless:'linear-gradient(160deg,#1a1a2a,#37474f,#90a4ae)'
+var TGRAD={Fire:'linear-gradient(160deg,#3a0800,#bf360c,#ff7043)',Water:'linear-gradient(160deg,#001530,#0277bd,#29b6f6)',Grass:'linear-gradient(160deg,#0a1800,#2e7d32,#66bb6a)',Lightning:'linear-gradient(160deg,#1a1400,#f57f17,#ffee58)',Psychic:'linear-gradient(160deg,#1a0030,#4a148c,#ce93d8)',Fighting:'linear-gradient(160deg,#1a0800,#4e342e,#8d6e63)',Colorless:'linear-gradient(160deg,#1a1a2a,#37474f,#90a4ae)'};
+/* ═══ ART MAP — all 102 Base Set cards ═══ */
+var ART={
+  charizard:{e:'\uD83D\uDC09',b:'linear-gradient(160deg,#7f0000,#c62828,#ff6d00)'},
+  charmeleon:{e:'\uD83E\uDD8E',b:'linear-gradient(160deg,#5a0a00,#d84315,#ff5722)'},
+  charmander:{e:'\uD83E\uDD8E',b:'linear-gradient(160deg,#3a0800,#bf360c,#ff7043)'},
+  ninetales:{e:'\uD83E\uDD8A',b:'linear-gradient(160deg,#5a1000,#bf360c,#ffb300)'},
+  vulpix:{e:'\uD83E\uDD8A',b:'linear-gradient(160deg,#3a0800,#bf360c,#ff8a65)'},
+  arcanine:{e:'\uD83D\uDC36',b:'linear-gradient(160deg,#4a0a00,#c62828,#ff7043)'},
+  growlithe:{e:'\uD83D\uDC36',b:'linear-gradient(160deg,#2a0800,#bf360c,#ffa726)'},
+  magmar:{e:'\uD83D\uDD25',b:'linear-gradient(160deg,#5a0000,#c62828,#ff5722)'},
+  ponyta:{e:'\uD83D\uDC0E',b:'linear-gradient(160deg,#3a0800,#bf360c,#ffcc02)'},
+  rapidash:{e:'\uD83D\uDC0E',b:'linear-gradient(160deg,#5a0800,#d84315,#fff176)'},
+  moltres:{e:'\uD83D\uDD25',b:'linear-gradient(160deg,#7f0000,#e65100,#ffee58)'},
+  blastoise:{e:'\uD83C\uDF0A',b:'linear-gradient(160deg,#003060,#1565c0,#42a5f5)'},
+  wartortle:{e:'\uD83D\uDC22',b:'linear-gradient(160deg,#002040,#01579b,#039be5)'},
+  squirtle:{e:'\uD83D\uDC22',b:'linear-gradient(160deg,#001530,#0277bd,#29b6f6)'},
+  gyarados:{e:'\uD83D\uDC32',b:'linear-gradient(160deg,#001a40,#0d47a1,#64b5f6)'},
+  magikarp:{e:'\uD83D\uDC1F',b:'linear-gradient(160deg,#200010,#c62828,#ef9a9a)'},
+  lapras:{e:'\uD83D\uDC33',b:'linear-gradient(160deg,#002040,#1565c0,#80cbc4)'},
+  poliwrath:{e:'\uD83D\uDC38',b:'linear-gradient(160deg,#001a30,#1565c0,#64b5f6)'},
+  poliwhirl:{e:'\uD83D\uDC38',b:'linear-gradient(160deg,#001020,#0277bd,#4fc3f7)'},
+  poliwag:{e:'\uD83D\uDC38',b:'linear-gradient(160deg,#000a18,#01579b,#29b6f6)'},
+  cloyster:{e:'\uD83D\uDC1A',b:'linear-gradient(160deg,#001a30,#1565c0,#78909c)'},
+  shellder:{e:'\uD83D\uDC1A',b:'linear-gradient(160deg,#001020,#0277bd,#90a4ae)'},
+  dewgong:{e:'\uD83E\uDDAD',b:'linear-gradient(160deg,#001a30,#1565c0,#e3f2fd)'},
+  seel:{e:'\uD83E\uDDAD',b:'linear-gradient(160deg,#001020,#0288d1,#b3e5fc)'},
+  starmie:{e:'\u2B50',b:'linear-gradient(160deg,#001540,#1565c0,#ce93d8)'},
+  staryu:{e:'\u2B50',b:'linear-gradient(160deg,#001020,#0277bd,#ab47bc)'},
+  horsea:{e:'\uD83D\uDC0C',b:'linear-gradient(160deg,#001030,#0277bd,#29b6f6)'},
+  seadra:{e:'\uD83D\uDC0C',b:'linear-gradient(160deg,#001540,#01579b,#039be5)'},
+  goldeen:{e:'\uD83D\uDC1F',b:'linear-gradient(160deg,#001030,#c62828,#ef9a9a)'},
+  seaking:{e:'\uD83D\uDC1F',b:'linear-gradient(160deg,#001540,#b71c1c,#ff7043)'},
+  tentacruel:{e:'\uD83E\uDD91',b:'linear-gradient(160deg,#001a30,#1565c0,#ef9a9a)'},
+  tentacool:{e:'\uD83E\uDD91',b:'linear-gradient(160deg,#001020,#0277bd,#ef9a9a)'},
+  articuno:{e:'\uD83E\uDD85',b:'linear-gradient(160deg,#001a40,#0277bd,#e3f2fd)'},
+  venusaur:{e:'\uD83C\uDF38',b:'linear-gradient(160deg,#1a3a00,#2e7d32,#a5d6a7)'},
+  ivysaur:{e:'\uD83C\uDF3F',b:'linear-gradient(160deg,#1a2a00,#388e3c,#81c784)'},
+  bulbasaur:{e:'\uD83C\uDF31',b:'linear-gradient(160deg,#0a1a00,#2e7d32,#66bb6a)'},
+  scyther:{e:'\uD83D\uDC9A',b:'linear-gradient(160deg,#0a1800,#1b5e20,#69f0ae)'},
+  parasect:{e:'\uD83C\uDF44',b:'linear-gradient(160deg,#1a1000,#33691e,#ff8a65)'},
+  paras:{e:'\uD83C\uDF44',b:'linear-gradient(160deg,#0a0800,#827717,#ffb300)'},
+  venomoth:{e:'\uD83E\uDD8B',b:'linear-gradient(160deg,#1a0a30,#6a1b9a,#a5d6a7)'},
+  venonat:{e:'\uD83D\uDC1B',b:'linear-gradient(160deg,#1a0030,#4a148c,#ce93d8)'},
+  victreebel:{e:'\uD83C\uDF3B',b:'linear-gradient(160deg,#1a1a00,#558b2f,#ffee58)'},
+  weepinbell:{e:'\uD83C\uDF3B',b:'linear-gradient(160deg,#0a1000,#33691e,#ffee58)'},
+  bellsprout:{e:'\uD83C\uDF3B',b:'linear-gradient(160deg,#0a0800,#1b5e20,#fff176)'},
+  tangela:{e:'\uD83C\uDF3A',b:'linear-gradient(160deg,#0a1a30,#1565c0,#a5d6a7)'},
+  pinsir:{e:'\uD83E\uDD9F',b:'linear-gradient(160deg,#1a1000,#4e342e,#a5d6a7)'},
+  raichu:{e:'\u26A1',b:'linear-gradient(160deg,#2a1500,#ef6c00,#ffa726)'},
+  pikachu:{e:'\u26A1',b:'linear-gradient(160deg,#2a1800,#f57f17,#ffee58)'},
+  electabuzz:{e:'\u26A1',b:'linear-gradient(160deg,#1a1000,#e65100,#ff9800)'},
+  zapdos:{e:'\uD83E\uDD85',b:'linear-gradient(160deg,#1a1400,#f9a825,#fff176)'},
+  magneton:{e:'\uD83E\uDDE7',b:'linear-gradient(160deg,#1a1a2a,#546e7a,#ffee58)'},
+  magnemite:{e:'\uD83E\uDDE7',b:'linear-gradient(160deg,#0a0a1a,#37474f,#ffca28)'},
+  jolteon:{e:'\u26A1',b:'linear-gradient(160deg,#1a1a00,#f57f17,#fff9c4)'},
+  voltorb:{e:'\uD83D\uDD34',b:'linear-gradient(160deg,#1a0a00,#c62828,#ffee58)'},
+  electrode:{e:'\uD83D\uDD34',b:'linear-gradient(160deg,#2a0a00,#b71c1c,#fff176)'},
+  mewtwo:{e:'\uD83D\uDD2E',b:'linear-gradient(160deg,#1a0030,#6a1b9a,#ce93d8)'},
+  alakazam:{e:'\uD83E\uDD84',b:'linear-gradient(160deg,#1a0030,#4a148c,#ab47bc)'},
+  kadabra:{e:'\uD83E\uDD84',b:'linear-gradient(160deg,#0a0020,#311b92,#7e57c2)'},
+  abra:{e:'\uD83E\uDD84',b:'linear-gradient(160deg,#0a0010,#1a237e,#9575cd)'},
+  gengar:{e:'\uD83D\uDC7B',b:'linear-gradient(160deg,#0a001a,#4a148c,#7b1fa2)'},
+  haunter:{e:'\uD83D\uDC7B',b:'linear-gradient(160deg,#0a001a,#311b92,#9c27b0)'},
+  gastly:{e:'\uD83D\uDC7B',b:'linear-gradient(160deg,#0a0a1a,#311b92,#9575cd)'},
+  jynx:{e:'\uD83D\uDC83',b:'linear-gradient(160deg,#1a0020,#880e4f,#ce93d8)'},
+  slowbro:{e:'\uD83C\uDF80',b:'linear-gradient(160deg,#1a0020,#880e4f,#ef9a9a)'},
+  slowpoke:{e:'\uD83C\uDF80',b:'linear-gradient(160deg,#0a0010,#6a1b9a,#f48fb1)'},
+  mrmime:{e:'\uD83E\uDD21',b:'linear-gradient(160deg,#1a0020,#4a148c,#f8bbd0)'},
+  hypno:{e:'\uD83D\uDE34',b:'linear-gradient(160deg,#1a1000,#f57f17,#ce93d8)'},
+  drowzee:{e:'\uD83D\uDE34',b:'linear-gradient(160deg,#0a0a00,#f57f17,#ab47bc)'},
+  machamp:{e:'\uD83D\uDCAA',b:'linear-gradient(160deg,#1a0800,#4e342e,#8d6e63)'},
+  machoke:{e:'\uD83D\uDCAA',b:'linear-gradient(160deg,#100600,#4e342e,#a1887f)'},
+  machop:{e:'\uD83D\uDCAA',b:'linear-gradient(160deg,#150600,#3e2723,#795548)'},
+  hitmonchan:{e:'\uD83E\uDD4A',b:'linear-gradient(160deg,#2a0a00,#4e342e,#bcaaa4)'},
+  hitmonlee:{e:'\uD83E\uDD4B',b:'linear-gradient(160deg,#2a0800,#5d4037,#d7ccc8)'},
+  onix:{e:'\uD83D\uDC0D',b:'linear-gradient(160deg,#1a1a1a,#546e7a,#90a4ae)'},
+  geodude:{e:'\uD83E\uDEA8',b:'linear-gradient(160deg,#1a1000,#795548,#a1887f)'},
+  graveler:{e:'\uD83E\uDEA8',b:'linear-gradient(160deg,#2a1a00,#5d4037,#8d6e63)'},
+  golem:{e:'\uD83E\uDEA8',b:'linear-gradient(160deg,#3a1a00,#4e342e,#795548)'},
+  cubone:{e:'\uD83E\uDDB4',b:'linear-gradient(160deg,#1a0800,#4e342e,#d7ccc8)'},
+  marowak:{e:'\uD83E\uDDB4',b:'linear-gradient(160deg,#2a0800,#5d4037,#bcaaa4)'},
+  nidoking:{e:'\uD83D\uDC51',b:'linear-gradient(160deg,#1a0020,#4a148c,#9c27b0)'},
+  nidorino:{e:'\uD83D\uDCCC',b:'linear-gradient(160deg,#0a0015,#311b92,#ab47bc)'},
+  nidoran_m:{e:'\uD83D\uDCCC',b:'linear-gradient(160deg,#0a0010,#1a237e,#9575cd)'},
+  chansey:{e:'\uD83E\uDD5A',b:'linear-gradient(160deg,#3a1a2a,#880e4f,#f8bbd0)'},
+  clefable:{e:'\uD83C\uDF1F',b:'linear-gradient(160deg,#2a1030,#880e4f,#f8bbd0)'},
+  clefairy:{e:'\uD83C\uDF1F',b:'linear-gradient(160deg,#1a0820,#6a1b9a,#f48fb1)'},
+  jigglypuff:{e:'\uD83C\uDFB5',b:'linear-gradient(160deg,#2a0820,#c2185b,#f8bbd0)'},
+  wigglytuff:{e:'\uD83C\uDFB5',b:'linear-gradient(160deg,#3a0a28,#e91e63,#f8bbd0)'},
+  kangaskhan:{e:'\uD83E\uDD98',b:'linear-gradient(160deg,#1a1000,#5d4037,#d7ccc8)'},
+  tauros:{e:'\uD83D\uDC02',b:'linear-gradient(160deg,#1a0a00,#4e342e,#d7ccc8)'},
+  lickitung:{e:'\uD83D\uDC45',b:'linear-gradient(160deg,#2a1020,#880e4f,#ef9a9a)'},
+  porygon:{e:'\uD83D\uDCBB',b:'linear-gradient(160deg,#1a0a30,#1565c0,#ef9a9a)'},
+  snorlax:{e:'\uD83D\uDE34',b:'linear-gradient(160deg,#1a2030,#37474f,#90a4ae)'},
+  mewtwo:{e:'\uD83D\uDD2E',b:'linear-gradient(160deg,#1a0030,#6a1b9a,#ce93d8)'},
+  beedrill:{e:'\uD83D\uDC1D',b:'linear-gradient(160deg,#1a1400,#f9a825,#388e3c)'},
+  kakuna:{e:'\uD83D\uDCE6',b:'linear-gradient(160deg,#1a1400,#f9a825,#fff176)'},
+  weedle:{e:'\uD83D\uDC1B',b:'linear-gradient(160deg,#1a0a00,#bf360c,#fff176)'},
+  pidgeot:{e:'\uD83D\uDC26',b:'linear-gradient(160deg,#1a0800,#bf360c,#fff176)'},
+  pidgeotto:{e:'\uD83D\uDC26',b:'linear-gradient(160deg,#0a0800,#c62828,#fff9c4)'},
+  pidgey:{e:'\uD83D\uDC26',b:'linear-gradient(160deg,#0a0500,#795548,#fff9c4)'},
+  rattata:{e:'\uD83D\uDC00',b:'linear-gradient(160deg,#1a0020,#880e4f,#d7ccc8)'},
+  raticate:{e:'\uD83D\uDC00',b:'linear-gradient(160deg,#1a0820,#5d4037,#d7ccc8)'},
+  meowth:{e:'\uD83D\uDC31',b:'linear-gradient(160deg,#1a1400,#f9a825,#fff9c4)'},
+  persian:{e:'\uD83D\uDC31',b:'linear-gradient(160deg,#1a1400,#f57f17,#ffe0b2)'},
+  exeggcute:{e:'\uD83E\uDD5A',b:'linear-gradient(160deg,#0a1000,#2e7d32,#fff9c4)'},
+  exeggutor:{e:'\uD83C\uDF34',b:'linear-gradient(160deg,#1a2000,#388e3c,#ffee58)'},
+  koffing:{e:'\u2620',b:'linear-gradient(160deg,#1a0a30,#4a148c,#b0bec5)'},
+  weezing:{e:'\u2620',b:'linear-gradient(160deg,#1a1030,#311b92,#90a4ae)'},
+  kabuto:{e:'\uD83D\uDC1E',b:'linear-gradient(160deg,#1a1000,#4e342e,#80cbc4)'},
+  kabutops:{e:'\uD83D\uDC1E',b:'linear-gradient(160deg,#2a1500,#37474f,#80cbc4)'},
+  omanyte:{e:'\uD83D\uDC19',b:'linear-gradient(160deg,#001a30,#1565c0,#ce93d8)'},
+  omastar:{e:'\uD83D\uDC19',b:'linear-gradient(160deg,#001a40,#0d47a1,#ce93d8)'},
+  aerodactyl:{e:'\uD83E\uDD96',b:'linear-gradient(160deg,#1a0830,#4a148c,#90a4ae)'},
+  dratini:{e:'\uD83D\uDC32',b:'linear-gradient(160deg,#0a1430,#1a237e,#c5cae9)'},
+  dragonair:{e:'\uD83D\uDC32',b:'linear-gradient(160deg,#0a1a40,#1565c0,#b39ddb)'},
+  dragonite:{e:'\uD83D\uDC32',b:'linear-gradient(160deg,#1a1800,#f57f17,#80cbc4)'}
 };
-
+/* ═══ COMPLETE BASE SET DATABASE — 100 Pokemon ═══ */
 var DB=[
-  {id:'charizard',name:'Charizard',hp:120,type:'Fire',stage:2,from:'charmeleon',attacks:[{name:'Fire Spin',cost:{Fire:4},dmg:100,desc:'Discard 2 Fire Energy'}],weak:'Water',retreat:3},
-  {id:'charmeleon',name:'Charmeleon',hp:80,type:'Fire',stage:1,from:'charmander',attacks:[{name:'Slash',cost:{Colorless:2},dmg:30,desc:''},{name:'Flamethrower',cost:{Fire:1,Colorless:2},dmg:50,desc:'Discard 1 Fire'}],weak:'Water',retreat:1},
-  {id:'charmander',name:'Charmander',hp:50,type:'Fire',stage:0,from:null,attacks:[{name:'Scratch',cost:{Colorless:1},dmg:10,desc:''},{name:'Ember',cost:{Fire:1,Colorless:1},dmg:30,desc:''}],weak:'Water',retreat:1},
-  {id:'blastoise',name:'Blastoise',hp:100,type:'Water',stage:2,from:'wartortle',attacks:[{name:'Hydro Pump',cost:{Water:3},dmg:40,desc:'+10 per extra Water'}],weak:'Lightning',retreat:3},
-  {id:'wartortle',name:'Wartortle',hp:70,type:'Water',stage:1,from:'squirtle',attacks:[{name:'Water Gun',cost:{Water:2},dmg:30,desc:''}],weak:'Lightning',retreat:1},
-  {id:'squirtle',name:'Squirtle',hp:40,type:'Water',stage:0,from:null,attacks:[{name:'Bubble',cost:{Water:1},dmg:10,desc:'May Paralyze'}],weak:'Lightning',retreat:1},
-  {id:'venusaur',name:'Venusaur',hp:100,type:'Grass',stage:2,from:'ivysaur',attacks:[{name:'Solarbeam',cost:{Grass:4},dmg:60,desc:''}],weak:'Fire',retreat:2},
-  {id:'ivysaur',name:'Ivysaur',hp:60,type:'Grass',stage:1,from:'bulbasaur',attacks:[{name:'Vine Whip',cost:{Grass:2},dmg:30,desc:''}],weak:'Fire',retreat:1},
-  {id:'bulbasaur',name:'Bulbasaur',hp:40,type:'Grass',stage:0,from:null,attacks:[{name:'Vine Whip',cost:{Grass:2},dmg:30,desc:''}],weak:'Fire',retreat:1},
-  {id:'pikachu',name:'Pikachu',hp:40,type:'Lightning',stage:0,from:null,attacks:[{name:'Gnaw',cost:{Colorless:1},dmg:10,desc:''},{name:'Thunder Jolt',cost:{Lightning:2},dmg:30,desc:''}],weak:'Fighting',retreat:1},
-  {id:'raichu',name:'Raichu',hp:80,type:'Lightning',stage:1,from:'pikachu',attacks:[{name:'Thunder',cost:{Lightning:3},dmg:60,desc:''}],weak:'Fighting',retreat:1},
-  {id:'mewtwo',name:'Mewtwo',hp:60,type:'Psychic',stage:0,from:null,attacks:[{name:'Psychic',cost:{Psychic:2},dmg:10,desc:'+10 per Energy on opponent'},{name:'Barrier',cost:{Psychic:2},dmg:0,desc:'Prevent damage next turn'}],weak:'Psychic',retreat:3},
-  {id:'electabuzz',name:'Electabuzz',hp:70,type:'Lightning',stage:0,from:null,attacks:[{name:'Thundershock',cost:{Lightning:1},dmg:10,desc:'May Paralyze'},{name:'Thunder Punch',cost:{Lightning:2},dmg:40,desc:''}],weak:'Fighting',retreat:2},
-  {id:'hitmonchan',name:'Hitmonchan',hp:70,type:'Fighting',stage:0,from:null,attacks:[{name:'Jab',cost:{Fighting:1},dmg:20,desc:''},{name:'Special Punch',cost:{Fighting:3},dmg:40,desc:''}],weak:'Psychic',retreat:2},
-  {id:'scyther',name:'Scyther',hp:70,type:'Grass',stage:0,from:null,attacks:[{name:'Slash',cost:{Colorless:2},dmg:30,desc:''}],weak:'Fire',retreat:1},
-  {id:'chansey',name:'Chansey',hp:120,type:'Colorless',stage:0,from:null,attacks:[{name:'Double-Edge',cost:{Colorless:4},dmg:80,desc:'80 to yourself too'}],weak:'Fighting',retreat:1},
-  {id:'machamp',name:'Machamp',hp:100,type:'Fighting',stage:2,from:'machop',attacks:[{name:'Seismic Toss',cost:{Colorless:3},dmg:60,desc:''}],weak:'Psychic',retreat:3},
-  {id:'machop',name:'Machop',hp:50,type:'Fighting',stage:0,from:null,attacks:[{name:'Low Kick',cost:{Fighting:1},dmg:20,desc:''}],weak:'Psychic',retreat:1},
-  {id:'gastly',name:'Gastly',hp:30,type:'Psychic',stage:0,from:null,attacks:[{name:'Sleeping Gas',cost:{Psychic:1},dmg:0,desc:'May cause Sleep'}],weak:'Psychic',retreat:1},
-  {id:'snorlax',name:'Snorlax',hp:90,type:'Colorless',stage:0,from:null,attacks:[{name:'Body Slam',cost:{Colorless:4},dmg:30,desc:'May Paralyze'}],weak:'Fighting',retreat:4}
+  /* ── FIRE ── */
+  {id:'charizard',name:'Charizard',hp:120,type:'Fire',stage:2,from:'charmeleon',attacks:[{name:'Energy Burn',cost:{},dmg:0,desc:'All Energy attached to Charizard is now Fire.'},{name:'Fire Spin',cost:{Fire:4},dmg:100,desc:'Discard 2 Fire Energy.'}],weak:'Water',resist:'',retreat:3},
+  {id:'charmeleon',name:'Charmeleon',hp:80,type:'Fire',stage:1,from:'charmander',attacks:[{name:'Slash',cost:{Colorless:2},dmg:30,desc:''},{name:'Flamethrower',cost:{Fire:1,Colorless:2},dmg:50,desc:'Discard 1 Fire Energy.'}],weak:'Water',resist:'',retreat:1},
+  {id:'charmander',name:'Charmander',hp:50,type:'Fire',stage:0,from:null,attacks:[{name:'Scratch',cost:{Colorless:1},dmg:10,desc:''},{name:'Ember',cost:{Fire:1,Colorless:1},dmg:30,desc:'Discard 1 Fire Energy.'}],weak:'Water',resist:'',retreat:1},
+  {id:'ninetales',name:'Ninetales',hp:80,type:'Fire',stage:1,from:'vulpix',attacks:[{name:'Lure',cost:{Colorless:1},dmg:0,desc:"Switch opponent's bench Pokemon with their Active."},{name:'Fire Blast',cost:{Fire:4},dmg:80,desc:'Discard 1 Fire Energy.'}],weak:'Water',resist:'',retreat:1},
+  {id:'vulpix',name:'Vulpix',hp:50,type:'Fire',stage:0,from:null,attacks:[{name:'Confuse Ray',cost:{Fire:1},dmg:10,desc:'Flip: opponent is now Confused.'},{name:'Smog',cost:{Fire:1},dmg:10,desc:'Flip: opponent is now Poisoned.'}],weak:'Water',resist:'',retreat:1},
+  {id:'arcanine',name:'Arcanine',hp:100,type:'Fire',stage:1,from:'growlithe',attacks:[{name:'Flamethrower',cost:{Fire:1,Colorless:3},dmg:50,desc:'Discard 1 Fire Energy.'},{name:'Take Down',cost:{Colorless:3},dmg:30,desc:'10 recoil to Arcanine.'}],weak:'Water',resist:'',retreat:3},
+  {id:'growlithe',name:'Growlithe',hp:60,type:'Fire',stage:0,from:null,attacks:[{name:'Ember',cost:{Fire:1},dmg:20,desc:'Flip: discard 1 Fire Energy.'}],weak:'Water',resist:'',retreat:1},
+  {id:'magmar',name:'Magmar',hp:50,type:'Fire',stage:0,from:null,attacks:[{name:'Smog',cost:{Fire:1},dmg:20,desc:'Flip: opponent is now Poisoned.'},{name:'Fire Punch',cost:{Fire:2},dmg:40,desc:''}],weak:'Water',resist:'',retreat:2},
+  {id:'ponyta',name:'Ponyta',hp:60,type:'Fire',stage:0,from:null,attacks:[{name:'Ember',cost:{Fire:1,Colorless:1},dmg:30,desc:'Discard 1 Fire Energy.'},{name:'Flame Tail',cost:{Fire:2,Colorless:1},dmg:40,desc:''}],weak:'Water',resist:'',retreat:1},
+  {id:'rapidash',name:'Rapidash',hp:70,type:'Fire',stage:1,from:'ponyta',attacks:[{name:'Agility',cost:{Fire:1,Colorless:2},dmg:30,desc:'Flip: prevent all damage next turn.'},{name:'Fire Blast',cost:{Fire:4},dmg:80,desc:'Discard 1 Fire Energy.'}],weak:'Water',resist:'',retreat:0},
+  {id:'moltres',name:'Moltres',hp:70,type:'Fire',stage:0,from:null,attacks:[{name:'Dive Bomb',cost:{Fire:4},dmg:80,desc:'Flip: if tails miss.'},{name:'Wildfire',cost:{Fire:1},dmg:0,desc:'Discard any number of Fire Energy; opponent discards 2 cards per Energy discarded.'}],weak:'Water',resist:'Fighting',retreat:2},
+  /* ── WATER ── */
+  {id:'blastoise',name:'Blastoise',hp:100,type:'Water',stage:2,from:'wartortle',attacks:[{name:'Rain Dance',cost:{},dmg:0,desc:'Power: attach extra Water Energy each turn.'},{name:'Hydro Pump',cost:{Water:3},dmg:40,desc:'+10 for each extra Water Energy.'}],weak:'Lightning',resist:'',retreat:3},
+  {id:'wartortle',name:'Wartortle',hp:70,type:'Water',stage:1,from:'squirtle',attacks:[{name:'Withdraw',cost:{Water:1},dmg:0,desc:'Flip: prevent all damage next turn.'},{name:'Water Gun',cost:{Water:1,Colorless:1},dmg:20,desc:'+10 per extra Water Energy.'}],weak:'Lightning',resist:'',retreat:1},
+  {id:'squirtle',name:'Squirtle',hp:40,type:'Water',stage:0,from:null,attacks:[{name:'Bubble',cost:{Water:1},dmg:10,desc:'Flip: opponent is now Paralyzed.'},{name:'Withdraw',cost:{Water:1},dmg:0,desc:'Flip: prevent all damage next turn.'}],weak:'Lightning',resist:'',retreat:1},
+  {id:'gyarados',name:'Gyarados',hp:100,type:'Water',stage:1,from:'magikarp',attacks:[{name:'Dragon Rage',cost:{Water:3},dmg:50,desc:''},{name:'Bubblebeam',cost:{Water:2,Colorless:1},dmg:40,desc:'Flip: opponent is now Paralyzed.'}],weak:'Lightning',resist:'Fighting',retreat:3},
+  {id:'magikarp',name:'Magikarp',hp:30,type:'Water',stage:0,from:null,attacks:[{name:'Tackle',cost:{Colorless:1},dmg:10,desc:''},{name:'Flail',cost:{Colorless:1},dmg:0,desc:'Flip: 10 per damage counter on Magikarp.'}],weak:'Lightning',resist:'',retreat:3},
+  {id:'lapras',name:'Lapras',hp:80,type:'Water',stage:0,from:null,attacks:[{name:'Water Gun',cost:{Water:2},dmg:20,desc:'+10 per extra Water Energy.'},{name:'Blizzard',cost:{Water:3},dmg:40,desc:'Flip: 10 to each bench.'}],weak:'Lightning',resist:'',retreat:2},
+  {id:'poliwrath',name:'Poliwrath',hp:90,type:'Water',stage:2,from:'poliwhirl',attacks:[{name:'Water Gun',cost:{Water:2},dmg:30,desc:'+10 per extra Water Energy.'},{name:'Whirlpool',cost:{Water:2,Colorless:2},dmg:40,desc:'Flip: discard 1 Energy from defender.'}],weak:'Lightning',resist:'Fighting',retreat:3},
+  {id:'poliwhirl',name:'Poliwhirl',hp:60,type:'Water',stage:1,from:'poliwag',attacks:[{name:'Amnesia',cost:{Water:2},dmg:0,desc:"Choose 1 of opponent's attacks. They can't use it next turn."},{name:'Water Gun',cost:{Water:2},dmg:30,desc:''}],weak:'Lightning',resist:'',retreat:1},
+  {id:'poliwag',name:'Poliwag',hp:40,type:'Water',stage:0,from:null,attacks:[{name:'Water Gun',cost:{Water:1},dmg:10,desc:'+10 per extra Water Energy.'}],weak:'Lightning',resist:'',retreat:1},
+  {id:'cloyster',name:'Cloyster',hp:50,type:'Water',stage:1,from:'shellder',attacks:[{name:'Clamp',cost:{Water:2},dmg:30,desc:'Flip: opponent is now Paralyzed.'},{name:'Ice Beam',cost:{Water:1,Colorless:1},dmg:30,desc:'Flip: opponent is now Paralyzed.'}],weak:'Lightning',resist:'',retreat:1},
+  {id:'shellder',name:'Shellder',hp:30,type:'Water',stage:0,from:null,attacks:[{name:'Supersonic',cost:{Water:1},dmg:10,desc:'Flip: opponent is now Confused.'}],weak:'Lightning',resist:'',retreat:1},
+  {id:'dewgong',name:'Dewgong',hp:80,type:'Water',stage:1,from:'seel',attacks:[{name:'Ice Beam',cost:{Water:2},dmg:30,desc:'Flip: opponent is now Paralyzed.'},{name:'Aurora Beam',cost:{Water:3,Colorless:1},dmg:50,desc:''}],weak:'Lightning',resist:'',retreat:2},
+  {id:'seel',name:'Seel',hp:60,type:'Water',stage:0,from:null,attacks:[{name:'Headbutt',cost:{Water:1},dmg:10,desc:''}],weak:'Lightning',resist:'',retreat:1},
+  {id:'starmie',name:'Starmie',hp:60,type:'Water',stage:1,from:'staryu',attacks:[{name:'Recover',cost:{Water:2},dmg:0,desc:'Discard 1 Water Energy; remove all damage from Starmie.'},{name:'Star Freeze',cost:{Water:1,Colorless:1},dmg:30,desc:'Flip: opponent is now Paralyzed.'}],weak:'Lightning',resist:'',retreat:0},
+  {id:'staryu',name:'Staryu',hp:40,type:'Water',stage:0,from:null,attacks:[{name:'Slap',cost:{Water:1},dmg:20,desc:''}],weak:'Lightning',resist:'',retreat:1},
+  {id:'horsea',name:'Horsea',hp:40,type:'Water',stage:0,from:null,attacks:[{name:'Smokescreen',cost:{Water:1},dmg:10,desc:"Opponent flips coin next attack; tails = miss."},{name:'Water Gun',cost:{Water:1},dmg:10,desc:'+10 per extra Water Energy.'}],weak:'Lightning',resist:'',retreat:1},
+  {id:'seadra',name:'Seadra',hp:60,type:'Water',stage:1,from:'horsea',attacks:[{name:'Agility',cost:{Water:1,Colorless:2},dmg:20,desc:'Flip: prevent all damage next turn.'},{name:'Water Gun',cost:{Water:2},dmg:30,desc:'+10 per extra Water Energy.'}],weak:'Lightning',resist:'',retreat:1},
+  {id:'goldeen',name:'Goldeen',hp:45,type:'Water',stage:0,from:null,attacks:[{name:'Horn Attack',cost:{Water:1},dmg:10,desc:''}],weak:'Lightning',resist:'',retreat:1},
+  {id:'seaking',name:'Seaking',hp:70,type:'Water',stage:1,from:'goldeen',attacks:[{name:'Horn Attack',cost:{Water:1,Colorless:2},dmg:30,desc:''},{name:'Waterfall',cost:{Water:1,Colorless:3},dmg:50,desc:''}],weak:'Lightning',resist:'',retreat:1},
+  {id:'tentacruel',name:'Tentacruel',hp:60,type:'Water',stage:1,from:'tentacool',attacks:[{name:'Jellyfish Sting',cost:{Water:1},dmg:10,desc:'Opponent is now Poisoned.'},{name:'Bubblebeam',cost:{Water:2,Colorless:1},dmg:40,desc:'Flip: opponent is now Paralyzed.'}],weak:'Lightning',resist:'Fighting',retreat:1},
+  {id:'tentacool',name:'Tentacool',hp:30,type:'Water',stage:0,from:null,attacks:[{name:'Tentacle Whip',cost:{Water:1},dmg:10,desc:''}],weak:'Lightning',resist:'',retreat:1},
+  {id:'articuno',name:'Articuno',hp:70,type:'Water',stage:0,from:null,attacks:[{name:'Freeze Dry',cost:{Water:3},dmg:30,desc:'Flip: opponent is now Paralyzed.'},{name:'Blizzard',cost:{Water:4},dmg:50,desc:'Flip: 10 to each bench.'}],weak:'Lightning',resist:'Fighting',retreat:2},
+  /* ── GRASS ── */
+  {id:'venusaur',name:'Venusaur',hp:100,type:'Grass',stage:2,from:'ivysaur',attacks:[{name:'Energy Trans',cost:{},dmg:0,desc:'Power: move Grass Energy between your Pokemon.'},{name:'Solarbeam',cost:{Grass:4},dmg:60,desc:''}],weak:'Fire',resist:'',retreat:2},
+  {id:'ivysaur',name:'Ivysaur',hp:60,type:'Grass',stage:1,from:'bulbasaur',attacks:[{name:'Vine Whip',cost:{Grass:1,Colorless:1},dmg:20,desc:''},{name:'Poisonpowder',cost:{Grass:2},dmg:20,desc:'Flip: opponent is now Poisoned.'}],weak:'Fire',resist:'',retreat:1},
+  {id:'bulbasaur',name:'Bulbasaur',hp:40,type:'Grass',stage:0,from:null,attacks:[{name:'Leech Seed',cost:{Grass:1},dmg:20,desc:'Heal 10 from Bulbasaur during each opponents turn.'},{name:'Vine Whip',cost:{Grass:1,Colorless:1},dmg:30,desc:''}],weak:'Fire',resist:'',retreat:1},
+  {id:'scyther',name:'Scyther',hp:70,type:'Grass',stage:0,from:null,attacks:[{name:'Slash',cost:{Colorless:2},dmg:30,desc:''},{name:'Swords Dance',cost:{Colorless:2},dmg:0,desc:'Next attack does double damage.'}],weak:'Fire',resist:'Fighting',retreat:0},
+  {id:'parasect',name:'Parasect',hp:60,type:'Grass',stage:1,from:'paras',attacks:[{name:'Spore',cost:{Grass:2},dmg:20,desc:'Opponent is now Asleep.'},{name:'Slash',cost:{Colorless:2},dmg:30,desc:''}],weak:'Fire',resist:'',retreat:2},
+  {id:'paras',name:'Paras',hp:35,type:'Grass',stage:0,from:null,attacks:[{name:'Scratch',cost:{Colorless:1},dmg:10,desc:''},{name:'Spore',cost:{Grass:1,Colorless:1},dmg:20,desc:'Flip: opponent is now Asleep.'}],weak:'Fire',resist:'',retreat:1},
+  {id:'venomoth',name:'Venomoth',hp:70,type:'Grass',stage:1,from:'venonat',attacks:[{name:'Shift',cost:{Grass:1},dmg:0,desc:"Change Venomoth's type to any of the opponent's weaknesses."},{name:'Venom Powder',cost:{Grass:2},dmg:10,desc:'Flip: opponent is now Confused and Poisoned.'}],weak:'Fire',resist:'',retreat:0},
+  {id:'venonat',name:'Venonat',hp:40,type:'Grass',stage:0,from:null,attacks:[{name:'Stun Spore',cost:{Grass:1},dmg:10,desc:'Flip: opponent is now Paralyzed.'},{name:'Leech Life',cost:{Grass:2},dmg:20,desc:'Heal equal to damage dealt.'}],weak:'Fire',resist:'',retreat:1},
+  {id:'victreebel',name:'Victreebel',hp:80,type:'Grass',stage:2,from:'weepinbell',attacks:[{name:'Lure',cost:{Grass:1},dmg:0,desc:"Switch 1 of opponent's benched Pokemon with their Active."},{name:'Acid',cost:{Grass:2,Colorless:2},dmg:30,desc:"Flip: reduce opponent's damage by 20 next turn."}],weak:'Fire',resist:'',retreat:3},
+  {id:'weepinbell',name:'Weepinbell',hp:70,type:'Grass',stage:1,from:'bellsprout',attacks:[{name:'Poisonpowder',cost:{Grass:1,Colorless:1},dmg:20,desc:'Flip: opponent is now Poisoned.'},{name:'Razor Leaf',cost:{Grass:2},dmg:40,desc:''}],weak:'Fire',resist:'',retreat:2},
+  {id:'bellsprout',name:'Bellsprout',hp:40,type:'Grass',stage:0,from:null,attacks:[{name:'Vine Whip',cost:{Grass:1},dmg:10,desc:''},{name:'Razor Leaf',cost:{Grass:1,Colorless:1},dmg:20,desc:''}],weak:'Fire',resist:'',retreat:1},
+  {id:'tangela',name:'Tangela',hp:50,type:'Grass',stage:0,from:null,attacks:[{name:'Bind',cost:{Grass:1,Colorless:1},dmg:20,desc:'Flip: opponent is now Paralyzed.'},{name:'Absorb',cost:{Grass:2},dmg:20,desc:'Heal 10 from Tangela.'}],weak:'Fire',resist:'',retreat:2},
+  {id:'pinsir',name:'Pinsir',hp:60,type:'Grass',stage:0,from:null,attacks:[{name:'Irongrip',cost:{Grass:2},dmg:20,desc:'Flip: opponent is now Paralyzed.'},{name:'Guillotine',cost:{Grass:2,Colorless:2},dmg:50,desc:''}],weak:'Fire',resist:'',retreat:1},
+  {id:'beedrill',name:'Beedrill',hp:80,type:'Grass',stage:2,from:'kakuna',attacks:[{name:'Poison Sting',cost:{Grass:2},dmg:20,desc:'Flip: opponent is now Poisoned.'},{name:'Twineedle',cost:{Colorless:3},dmg:30,desc:'Flip 2 coins; 30 per heads.'}],weak:'Fire',resist:'Fighting',retreat:0},
+  {id:'kakuna',name:'Kakuna',hp:80,type:'Grass',stage:1,from:'weedle',attacks:[{name:'Stiffen',cost:{Colorless:1},dmg:0,desc:'Flip: prevent all damage next turn.'},{name:'Poison Sting',cost:{Colorless:1},dmg:10,desc:'Flip: opponent is now Poisoned.'}],weak:'Fire',resist:'',retreat:2},
+  {id:'weedle',name:'Weedle',hp:40,type:'Grass',stage:0,from:null,attacks:[{name:'Poison Sting',cost:{Colorless:1},dmg:10,desc:'Flip: opponent is now Poisoned.'}],weak:'Fire',resist:'',retreat:1},
+  {id:'exeggcute',name:'Exeggcute',hp:40,type:'Grass',stage:0,from:null,attacks:[{name:'Hypnosis',cost:{Psychic:1},dmg:0,desc:'Opponent is now Asleep.'},{name:'Barrage',cost:{Colorless:2},dmg:20,desc:''}],weak:'Fire',resist:'',retreat:1},
+  {id:'exeggutor',name:'Exeggutor',hp:80,type:'Grass',stage:1,from:'exeggcute',attacks:[{name:'Teleport',cost:{Colorless:1},dmg:0,desc:'Switch Exeggutor for 1 benched Pokemon.'},{name:'Big Eggsplosion',cost:{Grass:4},dmg:0,desc:'Flip 4 coins; 20 per heads.'}],weak:'Fire',resist:'',retreat:2},
+  /* ── LIGHTNING ── */
+  {id:'raichu',name:'Raichu',hp:80,type:'Lightning',stage:1,from:'pikachu',attacks:[{name:'Agility',cost:{Lightning:1,Colorless:2},dmg:20,desc:'Flip: prevent all damage next turn.'},{name:'Thunder',cost:{Lightning:3},dmg:60,desc:'Flip: 30 to Raichu if tails.'}],weak:'Fighting',resist:'',retreat:1},
+  {id:'pikachu',name:'Pikachu',hp:40,type:'Lightning',stage:0,from:null,attacks:[{name:'Gnaw',cost:{Colorless:1},dmg:10,desc:''},{name:'Thunder Jolt',cost:{Lightning:1,Colorless:1},dmg:30,desc:'Flip: 10 to Pikachu if tails.'}],weak:'Fighting',resist:'',retreat:1},
+  {id:'electabuzz',name:'Electabuzz',hp:70,type:'Lightning',stage:0,from:null,attacks:[{name:'Thundershock',cost:{Lightning:1},dmg:10,desc:'Flip: opponent is now Paralyzed.'},{name:'Thunder Punch',cost:{Lightning:1,Colorless:1},dmg:30,desc:'Flip: +20 if heads; 10 to Electabuzz if tails.'}],weak:'Fighting',resist:'',retreat:2},
+  {id:'zapdos',name:'Zapdos',hp:90,type:'Lightning',stage:0,from:null,attacks:[{name:'Thunderbolt',cost:{Lightning:4},dmg:100,desc:'Discard all Energy attached to Zapdos.'},{name:'Thunder',cost:{Lightning:3},dmg:60,desc:'Flip: 30 to Zapdos if tails.'}],weak:'Fighting',resist:'Fighting',retreat:3},
+  {id:'magneton',name:'Magneton',hp:60,type:'Lightning',stage:1,from:'magnemite',attacks:[{name:'Selfdestruct',cost:{Colorless:3},dmg:80,desc:'Does 20 to each bench. Magneton is KOd.'},{name:'Thunder Wave',cost:{Lightning:1,Colorless:2},dmg:30,desc:'Flip: opponent is now Paralyzed.'}],weak:'Fighting',resist:'',retreat:1},
+  {id:'magnemite',name:'Magnemite',hp:40,type:'Lightning',stage:0,from:null,attacks:[{name:'Thunder Wave',cost:{Lightning:1},dmg:10,desc:'Flip: opponent is now Paralyzed.'},{name:'Selfdestruct',cost:{Lightning:1},dmg:40,desc:'Does 10 to each bench. Magnemite is KOd.'}],weak:'Fighting',resist:'',retreat:1},
+  {id:'jolteon',name:'Jolteon',hp:70,type:'Lightning',stage:1,from:'eevee',attacks:[{name:'Quick Attack',cost:{Colorless:1},dmg:10,desc:'Flip: +20.'},{name:'Thunder Shock',cost:{Lightning:2},dmg:30,desc:'Flip: opponent is now Paralyzed.'}],weak:'Fighting',resist:'',retreat:0},
+  {id:'voltorb',name:'Voltorb',hp:40,type:'Lightning',stage:0,from:null,attacks:[{name:'Tackle',cost:{Colorless:1},dmg:10,desc:''},{name:'Selfdestruct',cost:{Lightning:1},dmg:40,desc:'Does 10 to each bench. Voltorb is KOd.'}],weak:'Fighting',resist:'',retreat:0},
+  {id:'electrode',name:'Electrode',hp:80,type:'Lightning',stage:1,from:'voltorb',attacks:[{name:'Tackle',cost:{Colorless:1},dmg:10,desc:''},{name:'Selfdestruct',cost:{Lightning:1},dmg:80,desc:'Does 20 to each bench. Electrode is KOd.'}],weak:'Fighting',resist:'',retreat:0},
+  /* ── PSYCHIC ── */
+  {id:'mewtwo',name:'Mewtwo',hp:60,type:'Psychic',stage:0,from:null,attacks:[{name:'Psychic',cost:{Psychic:1,Colorless:1},dmg:10,desc:'+10 per Energy attached to defender.'},{name:'Barrier',cost:{Psychic:2},dmg:0,desc:'Prevent all effects of attacks next turn.'}],weak:'Psychic',resist:'',retreat:3},
+  {id:'alakazam',name:'Alakazam',hp:80,type:'Psychic',stage:2,from:'kadabra',attacks:[{name:'Damage Swap',cost:{},dmg:0,desc:'Power: move damage counters between your Pokemon.'},{name:'Confuse Ray',cost:{Psychic:3},dmg:30,desc:'Flip: opponent is now Confused.'}],weak:'Psychic',resist:'',retreat:3},
+  {id:'kadabra',name:'Kadabra',hp:60,type:'Psychic',stage:1,from:'abra',attacks:[{name:'Recover',cost:{Psychic:2},dmg:0,desc:'Discard 1 Psychic Energy; remove all damage.'},{name:'Super Psy',cost:{Psychic:2},dmg:40,desc:''}],weak:'Psychic',resist:'',retreat:3},
+  {id:'abra',name:'Abra',hp:30,type:'Psychic',stage:0,from:null,attacks:[{name:'Psyshock',cost:{Psychic:1},dmg:10,desc:'Flip: opponent is now Paralyzed.'}],weak:'Psychic',resist:'',retreat:3},
+  {id:'gengar',name:'Gengar',hp:80,type:'Psychic',stage:2,from:'haunter',attacks:[{name:'Curse',cost:{},dmg:0,desc:'Power: flip coin; move 1 damage counter to any Pokemon.'},{name:'Dark Mind',cost:{Psychic:3},dmg:30,desc:'Does 10 to 1 benched foe.'}],weak:'Psychic',resist:'Fighting',retreat:1},
+  {id:'haunter',name:'Haunter',hp:50,type:'Psychic',stage:1,from:'gastly',attacks:[{name:'Hypnosis',cost:{Psychic:1},dmg:0,desc:'Opponent is now Asleep.'},{name:'Dream Eater',cost:{Psychic:2},dmg:50,desc:'Only works if opponent is Asleep.'}],weak:'Psychic',resist:'Fighting',retreat:1},
+  {id:'gastly',name:'Gastly',hp:30,type:'Psychic',stage:0,from:null,attacks:[{name:'Sleeping Gas',cost:{Colorless:1},dmg:0,desc:'Flip: opponent is now Asleep.'},{name:'Destiny Bond',cost:{Psychic:1,Colorless:1},dmg:0,desc:'If KOd next turn, KO attacker too.'}],weak:'Psychic',resist:'Fighting',retreat:1},
+  {id:'jynx',name:'Jynx',hp:70,type:'Psychic',stage:0,from:null,attacks:[{name:'Doubleslap',cost:{Psychic:1},dmg:0,desc:'Flip 2 coins; 10 per heads.'},{name:'Meditate',cost:{Psychic:2},dmg:20,desc:'+10 per damage counter on defender.'}],weak:'Psychic',resist:'',retreat:2},
+  {id:'slowbro',name:'Slowbro',hp:60,type:'Psychic',stage:1,from:'slowpoke',attacks:[{name:'Amnesia',cost:{Psychic:2},dmg:0,desc:"Opponent can't use chosen attack next turn."},{name:'Psyshock',cost:{Psychic:2},dmg:30,desc:'Flip: opponent is now Paralyzed.'}],weak:'Psychic',resist:'',retreat:3},
+  {id:'slowpoke',name:'Slowpoke',hp:50,type:'Psychic',stage:0,from:null,attacks:[{name:'Headbutt',cost:{Colorless:1},dmg:10,desc:''}],weak:'Psychic',resist:'',retreat:1},
+  {id:'mrmime',name:'Mr. Mime',hp:40,type:'Psychic',stage:0,from:null,attacks:[{name:'Meditate',cost:{Psychic:1,Colorless:1},dmg:20,desc:'+10 per damage counter on defender.'},{name:'Invisible Wall',cost:{Psychic:2},dmg:0,desc:'All damage dealt to Mr. Mime is 30+; flip.'}],weak:'Psychic',resist:'',retreat:0},
+  {id:'hypno',name:'Hypno',hp:90,type:'Psychic',stage:1,from:'drowzee',attacks:[{name:'Prophecy',cost:{Colorless:1},dmg:0,desc:'Look at top 3 cards; rearrange as desired.'},{name:'Dark Mind',cost:{Psychic:3},dmg:30,desc:'Does 10 to 1 benched foe.'}],weak:'Psychic',resist:'',retreat:1},
+  {id:'drowzee',name:'Drowzee',hp:50,type:'Psychic',stage:0,from:null,attacks:[{name:'Pound',cost:{Colorless:1},dmg:10,desc:''},{name:'Hypnosis',cost:{Psychic:1},dmg:10,desc:'Flip: opponent is now Asleep.'}],weak:'Psychic',resist:'',retreat:2},
+  /* ── FIGHTING ── */
+  {id:'machamp',name:'Machamp',hp:100,type:'Fighting',stage:2,from:'machoke',attacks:[{name:'Strikes Back',cost:{},dmg:0,desc:'Power: when damaged, flip: deal 10 back.'},{name:'Seismic Toss',cost:{Colorless:3},dmg:60,desc:''}],weak:'Psychic',resist:'',retreat:3},
+  {id:'machoke',name:'Machoke',hp:80,type:'Fighting',stage:1,from:'machop',attacks:[{name:'Karate Chop',cost:{Fighting:2},dmg:50,desc:'Minus 20 from own damage counters.'},{name:'Submission',cost:{Fighting:2,Colorless:2},dmg:60,desc:'30 recoil to Machoke.'}],weak:'Psychic',resist:'',retreat:3},
+  {id:'machop',name:'Machop',hp:50,type:'Fighting',stage:0,from:null,attacks:[{name:'Low Kick',cost:{Fighting:1},dmg:20,desc:''}],weak:'Psychic',resist:'',retreat:1},
+  {id:'hitmonchan',name:'Hitmonchan',hp:70,type:'Fighting',stage:0,from:null,attacks:[{name:'Jab',cost:{Fighting:1},dmg:20,desc:''},{name:'Special Punch',cost:{Fighting:2,Colorless:1},dmg:40,desc:''}],weak:'Psychic',resist:'',retreat:2},
+  {id:'hitmonlee',name:'Hitmonlee',hp:60,type:'Fighting',stage:0,from:null,attacks:[{name:'Stretch Kick',cost:{Fighting:1},dmg:0,desc:'Does 20 to 1 of opponent\'s benched Pokemon.'},{name:'High Jump Kick',cost:{Fighting:2,Colorless:1},dmg:50,desc:''}],weak:'Psychic',resist:'',retreat:0},
+  {id:'onix',name:'Onix',hp:90,type:'Fighting',stage:0,from:null,attacks:[{name:'Rock Throw',cost:{Fighting:1},dmg:10,desc:''}],weak:'Water',resist:'Lightning',retreat:3},
+  {id:'geodude',name:'Geodude',hp:50,type:'Fighting',stage:0,from:null,attacks:[{name:'Harden',cost:{Fighting:1},dmg:0,desc:'Flip: all damage dealt to Geodude this turn is 0.'},{name:'Tackle',cost:{Colorless:1},dmg:10,desc:''}],weak:'Water',resist:'Lightning',retreat:2},
+  {id:'graveler',name:'Graveler',hp:60,type:'Fighting',stage:1,from:'geodude',attacks:[{name:'Harden',cost:{Fighting:1},dmg:0,desc:'Flip: all damage dealt to Graveler is 0.'},{name:'Selfdestruct',cost:{Fighting:2},dmg:80,desc:'Does 20 to each bench. Graveler is KOd.'}],weak:'Water',resist:'Lightning',retreat:2},
+  {id:'golem',name:'Golem',hp:80,type:'Fighting',stage:2,from:'graveler',attacks:[{name:'Harden',cost:{Fighting:2},dmg:0,desc:'Flip: all damage dealt to Golem is 0.'},{name:'Selfdestruct',cost:{Fighting:3},dmg:100,desc:'Does 20 to each bench. Golem is KOd.'}],weak:'Water',resist:'Lightning',retreat:4},
+  {id:'cubone',name:'Cubone',hp:40,type:'Fighting',stage:0,from:null,attacks:[{name:'Snivel',cost:{Colorless:1},dmg:0,desc:"Flip: if Marowak is in your deck, opponent can't attack next turn."},{name:'Bone Club',cost:{Fighting:1},dmg:20,desc:'Flip: opponent is now Paralyzed.'}],weak:'Water',resist:'Lightning',retreat:1},
+  {id:'marowak',name:'Marowak',hp:60,type:'Fighting',stage:1,from:'cubone',attacks:[{name:'Bone Club',cost:{Fighting:1},dmg:20,desc:'Flip: opponent is now Paralyzed.'},{name:'Bonemerang',cost:{Fighting:2},dmg:30,desc:'Flip 2 coins; 30 per heads.'}],weak:'Water',resist:'Lightning',retreat:1},
+  {id:'nidoking',name:'Nidoking',hp:90,type:'Fighting',stage:2,from:'nidorino',attacks:[{name:'Thrash',cost:{Fighting:2,Colorless:1},dmg:30,desc:'Flip: +20 if heads; 10 to Nidoking if tails.'},{name:'Toxic',cost:{Fighting:2,Colorless:2},dmg:40,desc:'Opponent is now Badly Poisoned.'}],weak:'Psychic',resist:'',retreat:2},
+  {id:'nidorino',name:'Nidorino',hp:60,type:'Fighting',stage:1,from:'nidoran_m',attacks:[{name:'Double Kick',cost:{Fighting:2},dmg:30,desc:'Flip 2 coins; 30 per heads.'},{name:'Poison Horn',cost:{Fighting:2,Colorless:1},dmg:30,desc:'Flip: opponent is now Poisoned.'}],weak:'Psychic',resist:'',retreat:1},
+  {id:'nidoran_m',name:'Nidoran M',hp:40,type:'Fighting',stage:0,from:null,attacks:[{name:'Tackle',cost:{Colorless:1},dmg:10,desc:''},{name:'Horn Hazard',cost:{Fighting:1},dmg:0,desc:'Flip: 30 if heads; miss if tails.'}],weak:'Psychic',resist:'',retreat:1},
+  /* ── COLORLESS ── */
+  {id:'chansey',name:'Chansey',hp:120,type:'Colorless',stage:0,from:null,attacks:[{name:'Scrunch',cost:{Colorless:2},dmg:0,desc:'Flip: prevent all damage next turn.'},{name:'Double Edge',cost:{Colorless:4},dmg:80,desc:'80 recoil to Chansey.'}],weak:'Fighting',resist:'Psychic',retreat:1},
+  {id:'clefable',name:'Clefable',hp:70,type:'Colorless',stage:1,from:'clefairy',attacks:[{name:'Metronome',cost:{Colorless:1},dmg:0,desc:"Copy any 1 attack of opponent's Active Pokemon."},{name:'Minimize',cost:{Colorless:1},dmg:0,desc:'Flip: prevent all damage next turn.'}],weak:'Fighting',resist:'Psychic',retreat:2},
+  {id:'clefairy',name:'Clefairy',hp:40,type:'Colorless',stage:0,from:null,attacks:[{name:'Sing',cost:{Colorless:1},dmg:0,desc:'Flip: opponent is now Asleep.'},{name:'Metronome',cost:{Colorless:1},dmg:0,desc:"Copy any 1 attack of opponent's Active Pokemon."}],weak:'Fighting',resist:'Psychic',retreat:1},
+  {id:'jigglypuff',name:'Jigglypuff',hp:60,type:'Colorless',stage:0,from:null,attacks:[{name:'Pound',cost:{Colorless:1},dmg:10,desc:''},{name:'Sing',cost:{Colorless:2},dmg:0,desc:'Opponent is now Asleep.'}],weak:'Fighting',resist:'Psychic',retreat:1},
+  {id:'wigglytuff',name:'Wigglytuff',hp:80,type:'Colorless',stage:1,from:'jigglypuff',attacks:[{name:'Do the Wave',cost:{Colorless:3},dmg:0,desc:'20 per Pokemon on your bench.'},{name:'Lullaby',cost:{Colorless:2},dmg:0,desc:'Opponent is now Asleep.'}],weak:'Fighting',resist:'Psychic',retreat:2},
+  {id:'kangaskhan',name:'Kangaskhan',hp:90,type:'Colorless',stage:0,from:null,attacks:[{name:'Fetch',cost:{Colorless:1},dmg:0,desc:'Draw 1 card.'},{name:'Comet Punch',cost:{Colorless:4},dmg:20,desc:'Flip 4 coins; 20 per heads.'}],weak:'Fighting',resist:'Psychic',retreat:3},
+  {id:'tauros',name:'Tauros',hp:60,type:'Colorless',stage:0,from:null,attacks:[{name:'Stomp',cost:{Colorless:2},dmg:20,desc:'Flip: +20.'},{name:'Rampage',cost:{Colorless:3},dmg:20,desc:'+10 per damage counter on Tauros.'}],weak:'Fighting',resist:'Psychic',retreat:2},
+  {id:'lickitung',name:'Lickitung',hp:90,type:'Colorless',stage:0,from:null,attacks:[{name:'Tongue Wrap',cost:{Colorless:2},dmg:10,desc:'Flip: opponent is now Paralyzed.'},{name:'Supersonic',cost:{Colorless:2},dmg:10,desc:'Flip: opponent is now Confused.'}],weak:'Fighting',resist:'Psychic',retreat:3},
+  {id:'porygon',name:'Porygon',hp:30,type:'Colorless',stage:0,from:null,attacks:[{name:'Conversion 1',cost:{Colorless:1},dmg:0,desc:"Change Porygon's resistance to 1 type."},{name:'Psybeam',cost:{Colorless:2},dmg:20,desc:'Flip: opponent is now Confused.'}],weak:'Fighting',resist:'Psychic',retreat:1},
+  {id:'snorlax',name:'Snorlax',hp:90,type:'Colorless',stage:0,from:null,attacks:[{name:'Amnesia',cost:{Colorless:3},dmg:0,desc:"Opponent can't use chosen attack next turn."},{name:'Body Slam',cost:{Colorless:4},dmg:30,desc:'Flip: opponent is now Paralyzed.'}],weak:'Fighting',resist:'Psychic',retreat:4},
+  {id:'pidgeot',name:'Pidgeot',hp:80,type:'Colorless',stage:2,from:'pidgeotto',attacks:[{name:'Whirlwind',cost:{Colorless:2},dmg:40,desc:"Switch opponent's Active with 1 benched."},{name:'Hurricane',cost:{Colorless:4},dmg:50,desc:"Return opponent's Active to their hand."}],weak:'Lightning',resist:'Fighting',retreat:0},
+  {id:'pidgeotto',name:'Pidgeotto',hp:60,type:'Colorless',stage:1,from:'pidgey',attacks:[{name:'Whirlwind',cost:{Colorless:2},dmg:20,desc:"Switch opponent's Active with 1 benched."},{name:'Mirror Move',cost:{Colorless:3},dmg:0,desc:'Use last attack used against Pidgeotto.'}],weak:'Lightning',resist:'Fighting',retreat:1},
+  {id:'pidgey',name:'Pidgey',hp:40,type:'Colorless',stage:0,from:null,attacks:[{name:'Whirlwind',cost:{Colorless:1},dmg:10,desc:"Switch opponent's Active with 1 benched."}],weak:'Lightning',resist:'Fighting',retreat:1},
+  {id:'rattata',name:'Rattata',hp:30,type:'Colorless',stage:0,from:null,attacks:[{name:'Bite',cost:{Colorless:1},dmg:20,desc:''}],weak:'Fighting',resist:'Psychic',retreat:1},
+  {id:'raticate',name:'Raticate',hp:60,type:'Colorless',stage:1,from:'rattata',attacks:[{name:'Bite',cost:{Colorless:1},dmg:20,desc:''},{name:'Super Fang',cost:{Colorless:3},dmg:0,desc:"Reduce opponent's HP to half."}],weak:'Fighting',resist:'Psychic',retreat:1},
+  {id:'meowth',name:'Meowth',hp:40,type:'Colorless',stage:0,from:null,attacks:[{name:'Scratch',cost:{Colorless:1},dmg:10,desc:''},{name:'Pay Day',cost:{Colorless:1},dmg:10,desc:'Draw 1 card.'}],weak:'Fighting',resist:'Psychic',retreat:1},
+  {id:'persian',name:'Persian',hp:70,type:'Colorless',stage:1,from:'meowth',attacks:[{name:'Scratch',cost:{Colorless:2},dmg:30,desc:''},{name:'Pounce',cost:{Colorless:2},dmg:20,desc:'Retreat for free this turn.'}],weak:'Fighting',resist:'Psychic',retreat:0},
+  {id:'dratini',name:'Dratini',hp:40,type:'Colorless',stage:0,from:null,attacks:[{name:'Pound',cost:{Colorless:1},dmg:10,desc:''}],weak:'',resist:'',retreat:2},
+  {id:'dragonair',name:'Dragonair',hp:80,type:'Colorless',stage:1,from:'dratini',attacks:[{name:'Slam',cost:{Colorless:3},dmg:30,desc:'Flip 2 coins; 30 per heads.'},{name:'Hyper Beam',cost:{Colorless:3},dmg:20,desc:'Flip: discard 1 Energy from defender.'}],weak:'',resist:'',retreat:2},
+  {id:'dragonite',name:'Dragonite',hp:100,type:'Colorless',stage:2,from:'dragonair',attacks:[{name:'Step In',cost:{},dmg:0,desc:'Power: switch Dragonite with 1 benched at any time.'},{name:'Slam',cost:{Colorless:4},dmg:40,desc:'Flip 2 coins; 40 per heads.'}],weak:'',resist:'Fighting',retreat:3},
+  {id:'aerodactyl',name:'Aerodactyl',hp:60,type:'Fighting',stage:0,from:null,attacks:[{name:'Wing Attack',cost:{Colorless:3},dmg:30,desc:''}],weak:'Lightning',resist:'Fighting',retreat:2},
+  {id:'kabuto',name:'Kabuto',hp:30,type:'Fighting',stage:0,from:null,attacks:[{name:'Scratch',cost:{Colorless:1},dmg:10,desc:''}],weak:'Grass',resist:'',retreat:1},
+  {id:'kabutops',name:'Kabutops',hp:60,type:'Fighting',stage:1,from:'kabuto',attacks:[{name:'Absorb',cost:{Fighting:2},dmg:30,desc:'Heal 10 from Kabutops.'},{name:'Sharp Sickle',cost:{Fighting:3},dmg:50,desc:''}],weak:'Grass',resist:'',retreat:3},
+  {id:'omanyte',name:'Omanyte',hp:40,type:'Water',stage:0,from:null,attacks:[{name:'Water Gun',cost:{Water:1},dmg:10,desc:'+10 per extra Water Energy.'}],weak:'Grass',resist:'',retreat:1},
+  {id:'omastar',name:'Omastar',hp:70,type:'Water',stage:1,from:'omanyte',attacks:[{name:'Water Gun',cost:{Water:2},dmg:30,desc:'+10 per extra Water Energy.'},{name:'Spike Cannon',cost:{Water:2,Colorless:1},dmg:20,desc:'Flip 2 coins; 20 per heads.'}],weak:'Grass',resist:'',retreat:2},
+  {id:'koffing',name:'Koffing',hp:50,type:'Grass',stage:0,from:null,attacks:[{name:'Smog',cost:{Grass:1},dmg:20,desc:'Flip: opponent is now Poisoned.'},{name:'Explosion',cost:{Colorless:3},dmg:50,desc:'Does 10 to each bench. Koffing is KOd.'}],weak:'Psychic',resist:'',retreat:1},
+  {id:'weezing',name:'Weezing',hp:60,type:'Grass',stage:1,from:'koffing',attacks:[{name:'Smog',cost:{Grass:1},dmg:20,desc:'Flip: opponent is now Poisoned.'},{name:'Explosion',cost:{Colorless:4},dmg:70,desc:'Does 10 to each bench. Weezing is KOd.'}],weak:'Psychic',resist:'',retreat:1}
 ];
+/* ═══ TRAINERS ═══ */
 var TRAINERS=[
-  {id:'bill',name:'Bill',cardType:'trainer',icon:'\uD83D\uDC68',desc:'Draw 2 cards'},
-  {id:'prof_oak',name:'Prof Oak',cardType:'trainer',icon:'\uD83D\uDC68\u200D\uD83C\uDF93',desc:'Discard hand, draw 7'},
-  {id:'potion',name:'Potion',cardType:'trainer',icon:'\uD83D\uDCA6',desc:'Heal 20 damage'},
-  {id:'super_potion',name:'Super Potion',cardType:'trainer',icon:'\uD83D\uDCA7',desc:'Heal 40 damage'},
-  {id:'gust_of_wind',name:'Gust of Wind',cardType:'trainer',icon:'\uD83C\uDF2C',desc:"Switch opponent's active"},
-  {id:'switch_card',name:'Switch',cardType:'trainer',icon:'\uD83D\uDD04',desc:'Switch your active with bench'},
-  {id:'energy_removal',name:'Energy Removal',cardType:'trainer',icon:'\u274C',desc:"Remove opponent's energy"},
-  {id:'pluspower',name:'PlusPower',cardType:'trainer',icon:'\uD83D\uDD0B',desc:'+10 damage this turn'}
+  {id:'bill',name:'Bill',cardType:'trainer',icon:'\uD83D\uDC68',desc:'Draw 2 cards.'},
+  {id:'prof_oak',name:'Prof. Oak',cardType:'trainer',icon:'\uD83D\uDC68\u200D\uD83C\uDF93',desc:'Discard hand, draw 7.'},
+  {id:'potion',name:'Potion',cardType:'trainer',icon:'\uD83D\uDCA6',desc:'Heal 20 damage from 1 Pokemon.'},
+  {id:'super_potion',name:'Super Potion',cardType:'trainer',icon:'\uD83D\uDCA7',desc:'Heal 40 damage, discard 1 Energy.'},
+  {id:'full_heal',name:'Full Heal',cardType:'trainer',icon:'\u2665',desc:'Remove all Special Conditions.'},
+  {id:'full_restore',name:'Full Restore',cardType:'trainer',icon:'\u2665\u2665',desc:'Heal all damage, remove conditions.'},
+  {id:'gust_of_wind',name:'Gust of Wind',cardType:'trainer',icon:'\uD83C\uDF2C',desc:"Switch opponent's Active."},
+  {id:'switch_card',name:'Switch',cardType:'trainer',icon:'\uD83D\uDD04',desc:'Switch your Active with a Benched.'},
+  {id:'energy_removal',name:'Energy Removal',cardType:'trainer',icon:'\u274C',desc:"Discard 1 Energy from opponent's Active."},
+  {id:'super_energy_removal',name:'Super Energy Removal',cardType:'trainer',icon:'\u274C\u274C',desc:'Discard 1 of your Energy; discard 2 from opponent.'},
+  {id:'pluspower',name:'PlusPower',cardType:'trainer',icon:'\uD83D\uDD0B',desc:'+10 damage this turn.'},
+  {id:'defenders',name:'Defenders',cardType:'trainer',icon:'\uD83D\uDEE1',desc:'Reduce damage to your Active by 20 for 2 turns.'},
+  {id:'scoop_up',name:'Scoop Up',cardType:'trainer',icon:'\uD83E\uDD32',desc:'Return 1 of your Pokemon and all its cards to your hand.'},
+  {id:'revive',name:'Revive',cardType:'trainer',icon:'\uD83D\uDC9A',desc:'Put 1 Basic from discard into play with half HP.'},
+  {id:'item_finder',name:'Item Finder',cardType:'trainer',icon:'\uD83D\uDD0D',desc:'Discard 2 cards; retrieve 1 Trainer from discard.'},
+  {id:'lass',name:'Lass',cardType:'trainer',icon:'\uD83D\uDC67',desc:'Both players reveal hands; shuffle all Trainers back into decks.'},
+  {id:'pokemon_breeder',name:'Pokemon Breeder',cardType:'trainer',icon:'\uD83C\uDF31',desc:'Put a Stage 2 directly on your Basic (skip Stage 1).'},
+  {id:'pokemon_trader',name:'Pokemon Trader',cardType:'trainer',icon:'\uD83D\uDD00',desc:'Trade 1 Pokemon from hand for 1 in deck.'},
+  {id:'clefairys_doll',name:"Clefairy Doll",cardType:'trainer',icon:'\uD83C\uDF1F',desc:'Put as Active; 0 HP, no attacks, no retreat.'},
+  {id:'computer_search',name:'Computer Search',cardType:'trainer',icon:'\uD83D\uDCBB',desc:'Discard 2 cards; search deck for any card.'},
+  {id:'imposter_professor_oak',name:"Imp. Prof. Oak",cardType:'trainer',icon:'\uD83D\uDC79',desc:"Shuffle opponent's hand into deck; draw 7."},
+  {id:'maintenance',name:'Maintenance',cardType:'trainer',icon:'\uD83D\uDD27',desc:'Shuffle 2 cards from hand into deck; draw 1.'}
 ];
-var ETYPES=['Fire','Water','Grass','Lightning','Psychic','Fighting'];
 
+var IMG={
+  'alakazam':'pokemon-cards/Alakazam.BS.1.webp',
+  'blastoise':'pokemon-cards/Blastoise.BS.2.webp',
+  'chansey':'pokemon-cards/Chansey.BS.3.webp',
+  'charizard':'pokemon-cards/Charizard.BS.4.webp',
+  'clefairy':'pokemon-cards/Clefairy.BS.5.webp',
+  'gyarados':'pokemon-cards/Gyarados.BS.6.webp',
+  'hitmonchan':'pokemon-cards/Hitmonchan.BS.7.webp',
+  'machamp':'pokemon-cards/Machamp.BS.8.webp',
+  'magneton':'pokemon-cards/Magneton.BS.9.webp',
+  'mewtwo':'pokemon-cards/Mewtwo.BS.10.webp',
+  'nidoking':'pokemon-cards/Nidoking.BS.11.webp',
+  'ninetales':'pokemon-cards/Ninetales.BS.12.webp',
+  'poliwrath':'pokemon-cards/Poliwrath.BS.13.webp',
+  'raichu':'pokemon-cards/Raichu.BS.14.webp',
+  'venusaur':'pokemon-cards/Venusaur.BS.15.webp',
+  'zapdos':'pokemon-cards/Zapdos.BS.16.webp',
+  'beedrill':'pokemon-cards/Beedrill.BS.17.webp',
+  'dragonair':'pokemon-cards/Dragonair.BS.18.webp',
+  'dugtrio':'pokemon-cards/Dugtrio.BS.19.webp',
+  'electabuzz':'pokemon-cards/Electabuzz.BS.20.webp',
+  'electrode':'pokemon-cards/Electrode.BS.21.webp',
+  'pidgeotto':'pokemon-cards/Pidgeotto.BS.22.webp',
+  'arcanine':'pokemon-cards/Arcanine.BS.23.webp',
+  'charmeleon':'pokemon-cards/Charmeleon.BS.24.webp',
+  'dewgong':'pokemon-cards/Dewgong.BS.25.webp',
+  'dratini':'pokemon-cards/Dratini.BS.26.webp',
+  'farfetchd':"pokemon-cards/Farfetchd.BS.27.webp",
+  'growlithe':'pokemon-cards/Growlithe.BS.28.webp',
+  'haunter':'pokemon-cards/Haunter.BS.29.webp',
+  'ivysaur':'pokemon-cards/Ivysaur.BS.30.webp',
+  'jynx':'pokemon-cards/Jynx.BS.31.webp',
+  'kadabra':'pokemon-cards/Kadabra.BS.32.webp',
+  'kakuna':'pokemon-cards/Kakuna.BS.33.webp',
+  'machoke':'pokemon-cards/Machoke.BS.34.webp',
+  'magikarp':'pokemon-cards/Magikarp.BS.35.webp',
+  'magmar':'pokemon-cards/Magmar.BS.36.webp',
+  'nidorino':'pokemon-cards/Nidorino.BS.37.webp',
+  'poliwhirl':'pokemon-cards/Poliwhirl.BS.38.webp',
+  'porygon':'pokemon-cards/Porygon.BS.39.webp',
+  'raticate':'pokemon-cards/Raticate.BS.40.webp',
+  'seel':'pokemon-cards/Seel.BS.41.webp',
+  'wartortle':'pokemon-cards/Wartortle.BS.42.webp',
+  'abra':'pokemon-cards/Abra.BS.43.webp',
+  'bulbasaur':'pokemon-cards/Bulbasaur.BS.44.webp',
+  'caterpie':'pokemon-cards/Caterpie.BS.45.webp',
+  'charmander':'pokemon-cards/Charmander.BS.46.webp',
+  'diglett':'pokemon-cards/Diglett.BS.47.webp',
+  'doduo':'pokemon-cards/Doduo.BS.48.webp',
+  'drowzee':'pokemon-cards/Drowzee.BS.49.webp',
+  'gastly':'pokemon-cards/Gastly.BS.50.webp',
+  'koffing':'pokemon-cards/Koffing.BS.51.webp',
+  'machop':'pokemon-cards/Machop.BS.52.webp',
+  'magnemite':'pokemon-cards/Magnemite.BS.53.webp',
+  'metapod':'pokemon-cards/Metapod.BS.54.webp',
+  'nidoran_m':'pokemon-cards/Nidoran-M.BS.55.webp',
+  'onix':'pokemon-cards/Onix.BS.56.webp',
+  'pidgey':'pokemon-cards/Pidgey.BS.57.webp',
+  'pikachu':'pokemon-cards/Pikachu.BS.58.webp',
+  'poliwag':'pokemon-cards/Poliwag.BS.59.webp',
+  'ponyta':'pokemon-cards/Ponyta.BS.60.webp',
+  'rattata':'pokemon-cards/Rattata.BS.61.webp',
+  'sandshrew':'pokemon-cards/Sandshrew.BS.62.webp',
+  'squirtle':'pokemon-cards/Squirtle.BS.63.webp',
+  'starmie':'pokemon-cards/Starmie.BS.64.webp',
+  'staryu':'pokemon-cards/Staryu.BS.65.webp',
+  'tangela':'pokemon-cards/Tangela.BS.66.webp',
+  'voltorb':'pokemon-cards/Voltorb.BS.67.webp',
+  'vulpix':'pokemon-cards/Vulpix.BS.68.webp',
+  'weedle':'pokemon-cards/Weedle.BS.69.webp',
+  'clefairys_doll':'pokemon-cards/Clefairy-Doll.BS.70.webp',
+  'computer_search':'pokemon-cards/Computer-Search.BS.71.webp',
+  'devolution_spray':'pokemon-cards/Devolution-Spray.BS.72.webp',
+  'imposter_professor_oak':'pokemon-cards/Imposter-Professor-Oak.BS.73.webp',
+  'item_finder':'pokemon-cards/Item-Finder.BS.74.webp',
+  'lass':'pokemon-cards/Lass.BS.75.webp',
+  'pokemon_breeder':'pokemon-cards/Pokemon-Breeder.BS.76.webp',
+  'pokemon_trader':'pokemon-cards/Pokemon-Trader.BS.77.webp',
+  'scoop_up':'pokemon-cards/Scoop-Up.BS.78.webp',
+  'super_energy_removal':'pokemon-cards/Super-Energy-Removal.BS.79.webp',
+  'defenders':'pokemon-cards/Defender.BS.80.webp',
+  'energy_retrieval':'pokemon-cards/Energy-Retrieval.BS.81.webp',
+  'full_heal':'pokemon-cards/Full-Heal.BS.82.webp',
+  'maintenance':'pokemon-cards/Maintenance.BS.83.webp',
+  'pluspower':'pokemon-cards/PlusPower.BS.84.webp',
+  'pokemon_center':'pokemon-cards/Pokemon-Center.BS.85.webp',
+  'pokemon_flute':'pokemon-cards/Pokemon-Flute.BS.86.webp',
+  'pokedex':'pokemon-cards/Pokedex.BS.87.webp',
+  'prof_oak':'pokemon-cards/Professor-Oak.BS.88.webp',
+  'revive':'pokemon-cards/Revive.BS.89.webp',
+  'super_potion':'pokemon-cards/Super-Potion.BS.90.webp',
+  'bill':'pokemon-cards/Bill.BS.91.webp',
+  'energy_removal':'pokemon-cards/Energy-Removal.BS.92.webp',
+  'gust_of_wind':'pokemon-cards/Gust-of-Wind.BS.93.webp',
+  'potion':'pokemon-cards/Potion.BS.94.webp',
+  'switch_card':'pokemon-cards/Switch.BS.95.webp',
+  'double_colorless_energy':'pokemon-cards/Double-Colorless-Energy.BS.96.webp',
+  'fighting_energy':'pokemon-cards/Fighting-Energy.BS.97.webp',
+  'fire_energy':'pokemon-cards/Fire-Energy.BS.98.webp',
+  'grass_energy':'pokemon-cards/Grass-Energy.BS.99.webp',
+  'lightning_energy':'pokemon-cards/Lightning-Energy.BS.100.webp',
+  'psychic_energy':'pokemon-cards/Psychic-Energy.BS.101.webp',
+  'water_energy':'pokemon-cards/Water-Energy.BS.102.webp'
+};
+function imgSrc(id){return IMG[id]||null;}
+var ETYPES=['Fire','Water','Grass','Lightning','Psychic','Fighting'];
+/* ═══ UTILS ═══ */
 function fa(v){if(!v)return[];if(Array.isArray(v))return v;return Object.keys(v).sort(function(a,b){return+a-+b;}).map(function(k){return v[k];});}
+function pad2(a,d){while(a.length<2)a.push(typeof d==='function'?d():d);return a;}
 function esc(s){return String(s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
 function uid(){return Math.random().toString(36).substr(2,8);}
-function addLog(s,t,imp){if(!s.log)s.log=[];s.log.push({t:t,imp:!!imp});if(s.log.length>30)s.log=s.log.slice(-30);}
+function addLog(s,t,imp){if(!s.log)s.log=[];s.log.push({t:t,imp:!!imp});if(s.log.length>40)s.log=s.log.slice(-40);}
 function shuffle(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var tmp=a[i];a[i]=a[j];a[j]=tmp;}return a;}
-
+function canAfford(cost,energy){
+  var free=cost.Colorless||0,used=0;
+  for(var tt in cost){if(tt!=='Colorless'){if((energy[tt]||0)<cost[tt])return false;used+=cost[tt];}}
+  return Object.values(energy).reduce(function(a,b){return a+b;},0)-used>=free;
+}
+/* ═══ NORM — Firebase null-drop protection ═══ */
+function norm(d){
+  if(!d)return d;
+  ['hands','decks','discards','bench','prizes'].forEach(function(k){if(d[k])d[k]=fa(d[k]).map(fa);});
+  ['active','names','connected','prizesLeft','drawn','attached','plusPower','dmgOnActive','status'].forEach(function(k){if(d[k]!=null)d[k]=fa(d[k]);});
+  d.active=pad2(d.active||[],null);
+  d.names=pad2(d.names||[],null);
+  d.connected=pad2(d.connected||[],false);
+  d.prizesLeft=pad2(d.prizesLeft||[],6);
+  d.drawn=pad2(d.drawn||[],false);
+  d.attached=pad2(d.attached||[],false);
+  d.dmgOnActive=pad2(d.dmgOnActive||[],0);
+  d.plusPower=pad2(d.plusPower||[],false);
+  d.status=pad2(d.status||[],null);
+  if(!d.hands||d.hands.length<2)d.hands=pad2(d.hands||[],function(){return[];});
+  if(!d.bench||d.bench.length<2)d.bench=pad2(d.bench||[],function(){return[];});
+  if(!d.energyOnActive||d.energyOnActive.length<2)d.energyOnActive=pad2(d.energyOnActive||[],function(){return{};});
+  if(!d.energyOnBench||d.energyOnBench.length<2)d.energyOnBench=pad2((d.energyOnBench||[]).map(fa),function(){return[];});
+  else d.energyOnBench=d.energyOnBench.map(fa);
+  if(d.log)d.log=fa(d.log);
+  return d;
+}
+/* ═══ BUILD DECK — from full Base Set ═══ */
 function buildDeck(){
   var deck=[];
-  [{id:'charizard',n:1},{id:'charmeleon',n:1},{id:'charmander',n:3},
-   {id:'blastoise',n:1},{id:'wartortle',n:1},{id:'squirtle',n:3},
-   {id:'pikachu',n:2},{id:'raichu',n:1},{id:'mewtwo',n:2},
-   {id:'electabuzz',n:2},{id:'hitmonchan',n:2},{id:'scyther',n:1},
-   {id:'chansey',n:1},{id:'machamp',n:1},{id:'machop',n:2},
-   {id:'snorlax',n:1},{id:'gastly',n:1}
+  /* Holo Rares */
+  [{id:'alakazam',n:1},{id:'blastoise',n:1},{id:'chansey',n:1},{id:'charizard',n:1},
+   {id:'clefairy',n:1},{id:'gyarados',n:1},{id:'hitmonchan',n:1},{id:'machamp',n:1},
+   {id:'magneton',n:1},{id:'mewtwo',n:1},{id:'ninetales',n:1},{id:'nidoking',n:1},
+   {id:'poliwrath',n:1},{id:'raichu',n:1},{id:'scyther',n:1},{id:'zapdos',n:1}
+  /* Non-holo Rares */
+  ,{id:'beedrill',n:2},{id:'pidgeot',n:2},{id:'clefable',n:1},{id:'wigglytuff',n:1},
+   {id:'vileplume',n:0},{id:'venusaur',n:1},{id:'arcanine',n:1},{id:'rapidash',n:1},
+   {id:'tentacruel',n:1},{id:'dewgong',n:1},{id:'cloyster',n:1},{id:'gengar',n:1},
+   {id:'haunter',n:2},{id:'jynx',n:1},{id:'electabuzz',n:2},{id:'moltres',n:1},
+   {id:'articuno',n:1},{id:'hypno',n:1},{id:'electrode',n:1},{id:'exeggutor',n:1},
+   {id:'hitmonlee',n:1},{id:'golem',n:1},{id:'slowbro',n:1},{id:'mrmime',n:1},
+   {id:'jolteon',n:1},{id:'vaporeon',n:0},{id:'flareon',n:0},{id:'kangaskhan',n:1},
+   {id:'pinsir',n:1},{id:'tauros',n:1},{id:'lapras',n:1},{id:'ditto',n:0},
+   {id:'snorlax',n:1},{id:'dragonite',n:1},{id:'aerodactyl',n:1},{id:'kabutops',n:1},
+   {id:'omastar',n:1}
+  /* Uncommons */
+  ,{id:'poliwhirl',n:2},{id:'kadabra',n:2},{id:'weepinbell',n:2},{id:'venomoth',n:1},
+   {id:'growlithe',n:2},{id:'wartortle',n:2},{id:'seadra',n:1},{id:'haunter',n:0},
+   {id:'charmeleon',n:2},{id:'ivysaur',n:2},{id:'raticate',n:1},{id:'wigglytuff',n:0},
+   {id:'seaking',n:1},{id:'starmie',n:1},{id:'marowak',n:1},{id:'magmar',n:2},
+   {id:'pidgeotto',n:2},{id:'parasect',n:1},{id:'persian',n:1},{id:'machoke',n:2},
+   {id:'graveler',n:1},{id:'slowpoke',n:2},{id:'ponyta',n:2},{id:'onix',n:1},
+   {id:'drowzee',n:2},{id:'kadabra',n:0},{id:'nidorino',n:2},{id:'lickitung',n:1},
+   {id:'dragonair',n:1},{id:'weezing',n:1},{id:'electrode',n:0}
+  /* Commons */
+  ,{id:'charmander',n:4},{id:'bulbasaur',n:4},{id:'squirtle',n:4},{id:'caterpie',n:0},
+   {id:'metapod',n:0},{id:'weedle',n:3},{id:'kakuna',n:2},{id:'pidgey',n:3},
+   {id:'rattata',n:3},{id:'pikachu',n:4},{id:'sandshrew',n:0},{id:'clefairy',n:0},
+   {id:'vulpix',n:2},{id:'jigglypuff',n:3},{id:'meowth',n:2},{id:'psyduck',n:0},
+   {id:'abra',n:3},{id:'gastly',n:3},{id:'machop',n:3},{id:'bellsprout',n:3},
+   {id:'tentacool',n:2},{id:'geodude',n:2},{id:'ponyta',n:0},{id:'slowpoke',n:0},
+   {id:'magnemite',n:2},{id:'exeggcute',n:2},{id:'cubone',n:2},{id:'paras',n:2},
+   {id:'horsea',n:2},{id:'goldeen',n:2},{id:'staryu',n:2},{id:'poliwag',n:3},
+   {id:'shellder',n:2},{id:'voltorb',n:2},{id:'nidoran_m',n:3},{id:'omanyte',n:1},
+   {id:'kabuto',n:1},{id:'eevee',n:0},{id:'porygon',n:1},{id:'dratini',n:2},
+   {id:'seel',n:2},{id:'venonat',n:2},{id:'koffing',n:2},{id:'drowzee',n:0}
   ].forEach(function(s){
+    if(s.n<=0)return;
     var p=DB.find(function(x){return x.id===s.id;});
     if(p)for(var i=0;i<s.n;i++)deck.push(Object.assign({},p,{cardType:'pokemon',uid:uid()}));
   });
-  [{id:'bill',n:4},{id:'prof_oak',n:3},{id:'potion',n:3},
-   {id:'super_potion',n:2},{id:'gust_of_wind',n:2},{id:'switch_card',n:2},
-   {id:'energy_removal',n:2},{id:'pluspower',n:2}
+  /* Trainers */
+  [{id:'bill',n:4},{id:'prof_oak',n:3},{id:'potion',n:4},{id:'super_potion',n:3},
+   {id:'full_heal',n:2},{id:'full_restore',n:1},{id:'gust_of_wind',n:3},{id:'switch_card',n:3},
+   {id:'energy_removal',n:4},{id:'super_energy_removal',n:2},{id:'pluspower',n:4},
+   {id:'defenders',n:2},{id:'scoop_up',n:2},{id:'revive',n:1},{id:'item_finder',n:2},
+   {id:'lass',n:1},{id:'pokemon_breeder',n:2},{id:'pokemon_trader',n:2},
+   {id:'computer_search',n:2},{id:'maintenance',n:2}
   ].forEach(function(s){
-    var t=TRAINERS.find(function(x){return x.id===s.id;});
-    if(t)for(var i=0;i<s.n;i++)deck.push(Object.assign({},t,{uid:uid()}));
+    var tr=TRAINERS.find(function(x){return x.id===s.id;});
+    if(tr)for(var i=0;i<s.n;i++)deck.push(Object.assign({},tr,{uid:uid()}));
   });
+  /* Fill to 60 with Energy */
   var rem=60-deck.length;
   for(var i=0;i<rem;i++){
     var et=ETYPES[i%ETYPES.length];
     deck.push({id:et.toLowerCase()+'_energy',name:et+' Energy',cardType:'energy',etype:et,uid:uid()});
   }
   shuffle(deck);
-  // Ensure hand has at least 1 basic
-  var bi=-1;
-  for(var i=0;i<deck.length;i++){if(deck[i].cardType==='pokemon'&&deck[i].stage===0){bi=i;break;}}
-  if(bi>6){var tmp=deck[0];deck[0]=deck[bi];deck[bi]=tmp;}
+  /* Guarantee at least 1 Basic in opening hand */
+  var bi=deck.findIndex(function(c){return c.cardType==='pokemon'&&(c.stage===0||c.stage===undefined);});
+  if(bi<0||bi>6){
+    for(var i=6;i<deck.length;i++){
+      if(deck[i].cardType==='pokemon'&&(deck[i].stage===0||deck[i].stage===undefined)){
+        var tmp=deck[6];deck[6]=deck[i];deck[i]=tmp;bi=6;break;
+      }
+    }
+  }
+  if(bi>0&&bi<=6){var tmp=deck[0];deck[0]=deck[bi];deck[bi]=tmp;}
   var hand=deck.splice(0,7);
   return{hand:hand,deck:deck};
 }
-
+/* ═══ FRESH GAME ═══ */
 function freshGame(){
   var d0=buildDeck(),d1=buildDeck();
   var p0=d0.deck.splice(0,6),p1=d1.deck.splice(0,6);
   return{phase:'setup',turn:0,winner:null,
-    names:['Player 1','Player 2'],connected:[false,false],
+    names:['Trainer 1','Trainer 2'],connected:[false,false],
     hands:[d0.hand,d1.hand],decks:[d0.deck,d1.deck],discards:[[],[]],
     prizes:[p0,p1],prizesLeft:[6,6],
     active:[null,null],bench:[[],[]],
@@ -299,144 +724,138 @@ function freshGame(){
     dmgOnActive:[0,0],status:[null,null],
     drawn:[false,false],attached:[false,false],plusPower:[false,false],log:[]};
 }
-
+/* ═══ CARD ELEMENT ═══ */
 function cardEl(card,size,clickable,selected,dmg){
   var el=document.createElement('div');
   var d=dmg||0;
-  var art=ART[card.id]||{icon:TICO[card.type]||TICO[card.etype]||'\u2728',bg:TGRAD[card.type]||TGRAD[card.etype]||'linear-gradient(160deg,#1a1a2a,#2a2a3a)'};
+  var art=ART[card.id]||{e:TICO[card.type]||TICO[card.etype]||'\u2728',b:TGRAD[card.type]||TGRAD[card.etype]||'linear-gradient(160deg,#1a1a2a,#2a2a3a)'};
   var tcls=TCLS[card.type]||TCLS[card.etype]||'tColorless';
   if(card.cardType==='pokemon'){
-    var hp=card.hp||50,hpLeft=Math.max(0,hp-d),pct=hpLeft/hp;
-    var hpCls=pct<0.3?'low':pct<0.6?'mid':'';
-    var hpCol=pct<0.3?'#ef4444':pct<0.6?'#fbbf24':'#4ade80';
-    var iSz=size==='active-card'?'3rem':size==='bench-card'?'1.6rem':'2.4rem';
-    var nSz=size==='active-card'?'.46rem':size==='bench-card'?'.32rem':'.42rem';
+    var hp=card.hp||50,hl=Math.max(0,hp-d),pct=hl/hp;
+    var hcls=pct<0.3?'low':pct<0.6?'mid':'';
+    var hcol=pct<0.3?'#ef4444':pct<0.6?'#fbbf24':'#4ade80';
+    var iSz=size==='active-card'?'2.8rem':size==='bench-card'?'1.5rem':'2.2rem';
+    var nSz=size==='active-card'?'.44rem':size==='bench-card'?'.3rem':'.4rem';
     el.className='pcard '+size+' '+tcls+(clickable?' ':' unplayable')+(selected?' selected':'');
     el.innerHTML=
       '<div class="pc-hdr"><span class="pc-name" style="font-size:'+nSz+'">'+esc(card.name)+'</span>'
-      +'<span style="font-size:'+nSz+';font-weight:900;color:'+hpCol+'">'+hpLeft+'HP</span></div>'
-      +'<div class="pc-art" style="background:'+art.bg+'">'
-      +'<img src="pokemon-cards/'+card.id+'.jpg" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:4px;z-index:1;" onerror="this.style.display=\'none\'">'
+      +'<span style="font-size:'+nSz+';font-weight:900;color:'+hcol+'">'+hl+'HP</span></div>'
+      +'<div class="pc-art" style="background:'+art.b+'">'
+      +(imgSrc(card.id)?'<img src="'+imgSrc(card.id)+'" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:4px;z-index:1;" onerror="this.style.display=\'none\'">':'')
       +'<div style="position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;height:100%;gap:2px;padding:3px;">'
-      +'<span style="font-size:'+iSz+';line-height:1;filter:drop-shadow(0 2px 8px rgba(0,0,0,.95))">'+art.icon+'</span>'
+      +'<span style="font-size:'+iSz+';line-height:1;filter:drop-shadow(0 2px 10px rgba(0,0,0,.95))">'+art.e+'</span>'
       +'<span style="font-size:'+nSz+';color:#fff;font-weight:900;text-shadow:0 1px 4px #000,0 0 8px #000;text-transform:uppercase;letter-spacing:.5px;text-align:center;">'+esc(card.name)+'</span>'
       +'</div>'
-      +(d>0?'<div style="position:absolute;bottom:2px;right:3px;z-index:3;background:rgba(200,0,0,.9);color:#fff;font-size:.46rem;font-weight:900;padding:1px 4px;border-radius:3px;">-'+d+'dmg</div>':'')
+      +(d>0?'<div style="position:absolute;bottom:2px;right:3px;z-index:3;background:rgba(200,0,0,.92);color:#fff;font-size:.44rem;font-weight:900;padding:1px 4px;border-radius:3px;">-'+d+'</div>':'')
       +'</div>'
-      +'<div class="hp-bar"><div class="hp-fill '+hpCls+'" style="width:'+Math.round(pct*100)+'%"></div></div>'
-      +'<div class="pc-ftr"><span>'+(card.stage===0?'Basic':card.stage===1?'Stage 1':'Stage 2')+'</span><span>'+(TICO[card.type]||'')+'</span></div>';
+      +'<div class="hp-bar"><div class="hp-fill '+hcls+'" style="width:'+Math.round(pct*100)+'%"></div></div>'
+      +'<div class="pc-ftr"><span>'+(card.stage===0?'Basic':card.stage===1?'Stage 1':'Stage 2')+'</span>'
+      +'<span>'+(TICO[card.type]||'')+(card.resist?'\uD83D\uDEE1':'')+'</span></div>';
   } else if(card.cardType==='trainer'){
     el.className='pcard '+size+' tTrainer'+(clickable?' ':' unplayable')+(selected?' selected':'');
-    var tSz=size==='bench-card'?'1.4rem':'1.8rem';
-    var tnSz=size==='bench-card'?'.32rem':'.44rem';
+    var tSz=size==='bench-card'?'1.3rem':'1.7rem';
+    var tnSz=size==='bench-card'?'.3rem':'.42rem';
     el.innerHTML=
       '<div class="pc-hdr" style="background:rgba(0,60,20,.7)"><span style="font-size:'+tnSz+';font-weight:900;color:#a5d6a7;">'+esc(card.name)+'</span><span style="font-size:'+tnSz+';color:#66bb6a">TRN</span></div>'
       +'<div class="pc-art" style="background:linear-gradient(160deg,#0d2b1a,#1a4a2a)">'
-      +'<img src="pokemon-cards/'+card.id.replace('_','-')+'.jpg" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1;" onerror="this.style.display=\'none\'">'
+      +(imgSrc(card.id)?'<img src="'+imgSrc(card.id)+'" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1;" onerror="this.style.display=\'none\'">':'')
       +'<div style="position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;height:100%;gap:3px;">'
       +'<span style="font-size:'+tSz+';line-height:1;">'+(card.icon||'\uD83C\uDFC3')+'</span>'
       +'<span style="font-size:'+tnSz+';color:#a5d6a7;font-weight:900;text-shadow:0 1px 4px #000;text-align:center;padding:0 3px;">'+esc(card.name)+'</span>'
       +'</div></div>'
-      +'<div style="padding:2px 4px;font-size:.3rem;color:#c8e6c9;text-align:center;background:rgba(0,0,0,.5);border-radius:0 0 8px 8px;">'+esc(card.desc||'')+'</div>';
+      +'<div style="padding:2px 4px;font-size:.28rem;color:#c8e6c9;text-align:center;background:rgba(0,0,0,.5);border-radius:0 0 8px 8px;line-height:1.3;">'+esc(card.desc||'')+'</div>';
   } else {
     var et=card.etype||'Colorless';
-    var eSz=size==='bench-card'?'1.6rem':'2rem';
+    var eSz=size==='bench-card'?'1.5rem':'1.9rem';
     el.className='pcard '+size+' '+(TCLS[et]||'tColorless')+(clickable?' ':' unplayable')+(selected?' selected':'');
     el.innerHTML=
-      '<div class="pc-hdr" style="background:rgba(0,0,0,.5)"><span class="pc-name">'+esc(card.name)+'</span><span style="font-size:.46rem;opacity:.7">NRG</span></div>'
+      '<div class="pc-hdr" style="background:rgba(0,0,0,.5)"><span class="pc-name">'+esc(card.name)+'</span><span style="font-size:.44rem;opacity:.7">NRG</span></div>'
       +'<div class="pc-art" style="background:'+(TGRAD[et]||'linear-gradient(160deg,#1a1a2a,#2a2a3a)')+'">'
-      +'<img src="pokemon-cards/'+et.toLowerCase()+'-energy.jpg" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1;" onerror="this.style.display=\'none\'">'
+      +(imgSrc(et.toLowerCase()+'_energy')?'<img src="'+imgSrc(et.toLowerCase()+'_energy')+'" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1;" onerror="this.style.display=\'none\'">':'')
       +'<div style="position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;height:100%;">'
-      +'<span style="font-size:'+eSz+';line-height:1;filter:drop-shadow(0 2px 8px rgba(0,0,0,.95))">'+(TICO[et]||'\u2B50')+'</span>'
-      +'<span style="font-size:.38rem;color:rgba(255,255,255,.9);font-weight:900;text-transform:uppercase;letter-spacing:1px;margin-top:2px;">'+et+'</span>'
+      +'<span style="font-size:'+eSz+';line-height:1;filter:drop-shadow(0 2px 10px rgba(0,0,0,.95))">'+(TICO[et]||'\u2B50')+'</span>'
+      +'<span style="font-size:.36rem;color:rgba(255,255,255,.9);font-weight:900;text-transform:uppercase;letter-spacing:1px;margin-top:2px;">'+et+'</span>'
       +'</div></div>';
   }
   return el;
 }
-
+/* ═══ RENDER HAND ═══ */
 function renderHand(){
   var el=document.getElementById('myHand');
   if(!el||!state)return;
   el.innerHTML='';
-  var hands=fa(state.hands);
-  var cards=fa(hands[myId])||[];
+  var cards=fa(fa(state.hands)[myId])||[];
   var phase=state.phase||'setup';
-  var isMyTurn=state.turn===myId;
-  if(cards.length===0){
-    el.innerHTML='<div style="color:#555;font-size:.8rem;padding:20px;">No cards in hand</div>';
-  }
+  var isMine=state.turn===myId;
+  var myAct=fa(state.active)[myId];
+  if(cards.length===0){el.innerHTML='<div style="color:#555;font-size:.78rem;padding:18px;">No cards in hand</div>';return;}
   cards.forEach(function(card,idx){
-    var clickable=false;
-    var isSetupBasic=false;
-    if(phase==='setup'&&card.cardType==='pokemon'&&card.stage===0){clickable=true;isSetupBasic=true;}
-    if(phase==='main'&&isMyTurn)clickable=true;
-    var c=cardEl(card,'hand-card',clickable,selIdx===idx,0);
-    if(isSetupBasic&&!fa(state.active)[myId])c.classList.add('setup-glow');
-    if(clickable)(function(i){c.addEventListener('click',function(){onHandClick(i);});})(idx);
+    var click=false;
+    var isSetupBasic=phase==='setup'&&card.cardType==='pokemon'&&card.stage===0;
+    if(isSetupBasic)click=true;
+    if(phase==='main'&&isMine)click=true;
+    var c=cardEl(card,'hand-card',click,selIdx===idx,0);
+    if(isSetupBasic&&!myAct)c.classList.add('setup-glow');
+    if(click)(function(i){c.addEventListener('click',function(){onHandClick(i);});})(idx);
     el.appendChild(c);
   });
-  var lbl=document.getElementById('handLabel');
+  var lbl=document.getElementById('zLbl');
   if(lbl){
-    if(phase==='setup'&&!fa(state.active)[myId])
-      lbl.textContent='\uD83C\uDCCF Your Hand ('+cards.length+') \u2014 TAP A BASIC POKEMON to place as Active!';
-    else
-      lbl.textContent='\uD83C\uDCCF Your Hand ('+cards.length+' cards)'+(selIdx!==null?' \u2014 tap a Pokemon or bench slot to attach energy':'');
+    if(phase==='setup'&&!myAct)lbl.textContent='\uD83C\uDCCF Your Hand ('+cards.length+') \u2014 TAP a glowing Basic Pokemon to place as Active!';
+    else if(selIdx!==null)lbl.textContent='\uD83C\uDCCF Your Hand ('+cards.length+') \u2014 Now tap your Active or Bench to attach energy';
+    else lbl.textContent='\uD83C\uDCCF Your Hand ('+cards.length+' cards)';
   }
 }
-
+/* ═══ RENDER SLOT ═══ */
 function renderSlot(id,poke,dmg,clickFn){
   var el=document.getElementById(id);if(!el)return;
   el.innerHTML='';
-  if(!poke){
-    el.className='active-slot';
-    el.innerHTML='<span style="font-size:1.5rem;opacity:.2">\uD83C\uDFAE</span><span style="font-size:.6rem;color:#444">Empty</span>';
-    return;
-  }
-  el.className='active-slot filled';
+  if(!poke){el.className='a-slot';el.innerHTML='<span style="font-size:1.6rem;opacity:.2">\uD83C\uDFAE</span><span style="font-size:.58rem;color:#333">Empty</span>';return;}
+  el.className='a-slot filled';
   var c=cardEl(poke,'active-card',!!clickFn,false,dmg||0);
   if(clickFn)c.addEventListener('click',clickFn);
   el.appendChild(c);
 }
-
+/* ═══ RENDER BENCH ═══ */
 function renderBench(id,bench,dmgArr,interactive,clickFn){
   var el=document.getElementById(id);if(!el)return;el.innerHTML='';
   for(var i=0;i<5;i++){
     var slot=document.createElement('div');
     var p=(bench||[])[i];
     if(p){
-      slot.className='bench-slot filled';
+      slot.className='b-slot filled';
       var bc=cardEl(p,'bench-card',interactive,false,(dmgArr||[])[i]||0);
       if(interactive&&clickFn)(function(idx){bc.addEventListener('click',function(){clickFn(idx);});})(i);
       slot.appendChild(bc);
     } else {
-      slot.className='bench-slot';
-      slot.innerHTML='<span style="font-size:.55rem;color:#333">'+(interactive?'+ Bench':'\u2014')+'</span>';
+      slot.className='b-slot';
+      slot.innerHTML='<span style="font-size:.52rem;color:#333">'+(interactive?'+ Bench':'\u2014')+'</span>';
       if(interactive&&clickFn)(function(idx){slot.addEventListener('click',function(){clickFn(idx);});})(i);
     }
     el.appendChild(slot);
   }
 }
-
+/* ═══ SCOREBOARD ═══ */
 function renderScores(){
   if(!state)return;
   var opp=1-myId,names=fa(state.names),dmg=fa(state.dmgOnActive);
-  document.getElementById('scoreMyName').textContent=(names[myId]||'You')+' (You)';
-  document.getElementById('scoreOppName').textContent=names[opp]||'Opponent';
+  document.getElementById('scMyName').textContent=(names[myId]||'You')+' (You)';
+  document.getElementById('scOppName').textContent=names[opp]||'Opponent';
   function sc(p,d){
     if(!p)return '<div class="sc-empty">No active Pokemon</div>';
     var hp=p.hp||50,hl=Math.max(0,hp-(d||0)),pct=hl/hp;
     var cl=pct<0.3?'low':pct<0.6?'mid':'';
-    var art=ART[p.id]||{icon:TICO[p.type]||'\u2728'};
-    return '<div class="sc-active"><span class="sc-icon">'+art.icon+'</span>'
-      +'<div><div style="font-size:.78rem;font-weight:800;">'+esc(p.name)+'</div>'
+    var art=ART[p.id]||{e:TICO[p.type]||'\u2728'};
+    return '<div class="sc-row"><span class="sc-icon">'+art.e+'</span>'
+      +'<div style="flex:1"><div style="font-size:.76rem;font-weight:800;">'+esc(p.name)+'</div>'
       +'<div class="sc-hp '+cl+'">'+hl+'/'+hp+' HP</div>'
-      +'<div class="sc-hpbar"><div class="sc-hpfill '+cl+'" style="width:'+Math.round(pct*100)+'%"></div></div>'
+      +'<div class="sc-bar"><div class="sc-fill '+cl+'" style="width:'+Math.round(pct*100)+'%"></div></div>'
       +'</div></div>';
   }
-  document.getElementById('scoreMyContent').innerHTML=sc(fa(state.active)[myId],dmg[myId]);
-  document.getElementById('scoreOppContent').innerHTML=sc(fa(state.active)[1-myId],dmg[1-myId]);
+  document.getElementById('scMyBody').innerHTML=sc(fa(state.active)[myId],dmg[myId]);
+  document.getElementById('scOppBody').innerHTML=sc(fa(state.active)[1-myId],dmg[1-myId]);
 }
-
+/* ═══ ATTACK PANEL ═══ */
 function renderAttacks(){
   var panel=document.getElementById('atkPanel');
   if(!state){panel.style.display='none';return;}
@@ -447,199 +866,145 @@ function renderAttacks(){
   var list=document.getElementById('atkList');list.innerHTML='';
   var energy=fa(state.energyOnActive)[myId]||{};
   (active.attacks||[]).forEach(function(atk,idx){
+    if(!atk.dmg&&atk.desc.indexOf('Power')>=0)return; // skip Pokemon Powers
     var ok=canAfford(atk.cost||{},energy);
     var row=document.createElement('div');
-    row.className='atk-row'+(ok?'':' disabled');
-    var cs=Object.keys(atk.cost||{}).map(function(t){return (TICO[t]||t)+'\xd7'+(atk.cost[t]);}).join(' ')||'Free';
-    row.innerHTML='<div><div class="atk-name">'+esc(atk.name)+'</div><div class="atk-cost">'+cs+'</div><div class="atk-desc">'+esc(atk.desc||'')+'</div></div><div class="atk-dmg">'+(atk.dmg||0)+'</div>';
+    row.className='atk-row'+(ok?'':' no-energy');
+    var cs=Object.keys(atk.cost||{}).filter(function(k){return atk.cost[k]>0;}).map(function(k){return (TICO[k]||k)+'\xd7'+atk.cost[k];}).join(' ')||'Free';
+    row.innerHTML='<div><div class="atk-name">'+esc(atk.name)+'</div><div class="atk-cost">'+cs+'</div>'+(atk.desc?'<div class="atk-desc">'+esc(atk.desc)+'</div>':'')+'</div><div class="atk-dmg">'+(atk.dmg||0)+'</div>';
     if(ok)(function(i){row.addEventListener('click',function(){doAttack(i);});})(idx);
     list.appendChild(row);
   });
 }
-
-function canAfford(cost,energy){
-  var free=cost.Colorless||0,used=0;
-  for(var t in cost){if(t!=='Colorless'){if((energy[t]||0)<cost[t])return false;used+=cost[t];}}
-  var total=Object.values(energy).reduce(function(a,b){return a+b;},0);
-  return total-used>=free;
-}
-
+/* ═══ MAIN RENDER ═══ */
 function render(){
   if(!state)return;
   var opp=1-myId,phase=state.phase||'setup';
-  var isMyTurn=state.turn===myId,over=!!state.winner;
-  var names=fa(state.names),conn=fa(state.connected),dmg=fa(state.dmgOnActive);
+  var isMine=state.turn===myId,over=!!state.winner;
+  var names=fa(state.names),conn=fa(state.connected);
   var active=fa(state.active),bench=fa(state.bench),prizes=fa(state.prizesLeft);
-
-  // Turn pill
-  var tp=document.getElementById('turnPill');
+  var dmg=fa(state.dmgOnActive);
+  /* Turn pill */
+  var tp=document.getElementById('tpill');
   if(over){tp.textContent='Game Over';tp.style.background='#222';tp.style.color='#666';}
   else if(phase==='setup'){tp.textContent='Setup Phase';tp.style.background='#400000';tp.style.color='#ff9999';}
-  else{tp.textContent=isMyTurn?'Your Turn':(esc(names[opp]||'Opponent')+"'s Turn");tp.style.background=isMyTurn?'#cc0000':'#1a3a6a';tp.style.color='#fff';}
-
-  // Status
-  var sb=document.getElementById('statusBar');
-  if(!conn[opp])sb.textContent='Waiting for opponent to join...';
-  else if(phase==='setup'&&!active[myId])sb.textContent='SETUP: Tap a Basic Pokemon from your hand below!';
-  else if(phase==='setup'&&active[myId])sb.textContent='Active placed! Waiting for opponent to place theirs...';
-  else if(over)sb.textContent=(names[state.winner]||'Someone')+' wins the game!';
-  else if(isMyTurn)sb.textContent='Your turn! Draw, attach energy, then attack!';
-  else sb.textContent=(names[opp]||'Opponent')+"'s turn...";
-
-  // Phase banner
-  var pb=document.getElementById('phaseBanner');
-  if(phase==='setup'&&!active[myId]){pb.style.display='';pb.textContent='\uD83D\uDC47 TAP ANY BASIC POKEMON IN YOUR HAND BELOW TO START!';}
+  else{tp.textContent=isMine?'Your Turn':(esc(names[opp]||'Opp')+"'s Turn");tp.style.background=isMine?'#cc0000':'#1a3a6a';tp.style.color='#fff';}
+  /* Status bar */
+  var sb=document.getElementById('gstatus');
+  if(!conn[opp])sb.textContent='Waiting for opponent to join\u2026';
+  else if(phase==='setup'&&!active[myId])sb.textContent='SETUP: Tap a glowing Basic Pokemon from your hand below!';
+  else if(phase==='setup'&&active[myId])sb.textContent='Active placed! Waiting for opponent\u2026';
+  else if(over)sb.textContent='\uD83C\uDFC6 '+(names[state.winner]||'Someone')+' wins the game!';
+  else if(isMine){
+    var drawn=fa(state.drawn);
+    if(!drawn[myId])sb.textContent='Your turn! Draw a card first.';
+    else if(selIdx!==null)sb.textContent='Energy selected \u2014 tap Active or Bench to attach it!';
+    else sb.textContent='Your turn! Attach energy or attack.';
+  } else sb.textContent=(names[opp]||'Opponent')+"'s turn\u2026";
+  /* Phase banner */
+  var pb=document.getElementById('gphase');
+  if(phase==='setup'&&!active[myId]){pb.style.display='';pb.textContent='\uD83D\uDC47 Tap a GLOWING card in your hand to start the battle!';}
   else pb.style.display='none';
-
-  // Prizes
+  /* Prizes */
   document.getElementById('myPrizes').textContent=prizes[myId]||0;
   document.getElementById('oppPrizes').textContent=prizes[opp]||0;
-
-  // Boards
-  renderSlot('myActive',active[myId],dmg[myId],isMyTurn&&phase==='main'&&!over?function(){onActiveClick();}:null);
+  /* Boards */
+  renderSlot('myActive',active[myId],dmg[myId],isMine&&phase==='main'&&!over?function(){onActiveClick();}:null);
   renderSlot('oppActive',active[opp],dmg[opp],null);
-  renderBench('myBench',fa(bench[myId]),null,(phase==='setup'||( isMyTurn&&phase==='main'))&&!over,function(i){onBenchClick(i);});
+  renderBench('myBench',fa(bench[myId]),null,(phase==='setup'||isMine&&phase==='main')&&!over,function(i){onBenchClick(i);});
   renderBench('oppBench',fa(bench[opp]),null,false,null);
-
-  // Hand
   renderHand();
   renderScores();
   renderAttacks();
-
-  // Buttons
+  /* Buttons */
   var drawn=fa(state.drawn),attached=fa(state.attached);
-  document.getElementById('drawBtn').disabled=!isMyTurn||over||phase!=='main'||drawn[myId];
-  document.getElementById('retreatBtn').disabled=!isMyTurn||over||phase!=='main'||!active[myId]||(fa(bench[myId]).length===0);
-  document.getElementById('endTurnBtn').disabled=!isMyTurn||over||phase==='setup';
-
-  // Log
+  document.getElementById('drawBtn').disabled=!isMine||over||phase!=='main'||drawn[myId];
+  document.getElementById('retreatBtn').disabled=!isMine||over||phase!=='main'||!active[myId]||fa(bench[myId]).length===0;
+  document.getElementById('endBtn').disabled=!isMine||over||phase==='setup';
+  /* Log */
   var gl=document.getElementById('glog');gl.innerHTML='';
-  fa(state.log).slice(-8).forEach(function(e){
-    var d=document.createElement('div');d.className=e.imp?'log-imp':'';d.textContent=e.t;gl.appendChild(d);
-  });gl.scrollTop=9999;
-
-  // Win modal
+  fa(state.log).slice(-10).forEach(function(e){var d=document.createElement('div');d.className=e.imp?'log-imp':'';d.textContent=e.t;gl.appendChild(d);});
+  gl.scrollTop=9999;
+  /* Win modal */
   var wm=document.getElementById('winModal');
   if(over&&state.winner!==null){
     wm.classList.add('open');
     var won=state.winner===myId;
     document.getElementById('winIcon').textContent=won?'\uD83C\uDFC6':'\uD83D\uDE14';
     document.getElementById('winTitle').textContent=won?'You Win!':'You Lost!';
-    document.getElementById('winSub').textContent=(names[state.winner]||'Someone')+' wins!';
+    document.getElementById('winSub').textContent=(names[state.winner]||'Someone')+' wins the game!';
   } else wm.classList.remove('open');
 }
-
-function norm(d){
-  if(!d)return d;
-  ['hands','decks','discards','bench','prizes'].forEach(function(k){if(d[k])d[k]=fa(d[k]).map(fa);});
-  ['active','status','names','connected','prizesLeft','drawn','attached','plusPower','dmgOnActive'].forEach(function(k){if(d[k]!=null)d[k]=fa(d[k]);});
-  // Pad all 2-player arrays to length 2 (Firebase drops trailing nulls/falses)
-  function pad2(arr,def){while(arr.length<2)arr.push(typeof def==='function'?def():def);return arr;}
-  d.active=pad2(d.active||[],null);
-  d.names=pad2(d.names||[],null);
-  d.connected=pad2(d.connected||[],false);
-  d.prizesLeft=pad2(d.prizesLeft||[],6);
-  d.drawn=pad2(d.drawn||[],false);
-  d.attached=pad2(d.attached||[],false);
-  d.dmgOnActive=pad2(d.dmgOnActive||[],0);
-  d.plusPower=pad2(d.plusPower||[],false);
-  if(!d.hands||d.hands.length<2)d.hands=pad2(d.hands||[],function(){return[];});
-  if(!d.bench||d.bench.length<2)d.bench=pad2(d.bench||[],function(){return[];});
-  if(!d.energyOnActive||d.energyOnActive.length<2)d.energyOnActive=pad2(d.energyOnActive||[],function(){return{};});
-  if(!d.energyOnBench||d.energyOnBench.length<2)d.energyOnBench=pad2((d.energyOnBench||[]).map(fa),function(){return[];});
-  else d.energyOnBench=d.energyOnBench.map(fa);
-  if(d.log)d.log=fa(d.log);
-  return d;
-}
-
+/* ═══ CLICK HANDLERS ═══ */
 function onHandClick(idx){
   if(!state)return;
   var cards=fa(fa(state.hands)[myId]);
   var card=cards[idx];if(!card)return;
   var phase=state.phase||'setup';
-  if(phase==='setup'){
-    if(card.cardType==='pokemon'&&card.stage===0)placeActive(idx);
-    return;
-  }
+  if(phase==='setup'){if(card.cardType==='pokemon'&&card.stage===0)placeActive(idx);return;}
   if(phase==='main'&&state.turn===myId){
     if(card.cardType==='energy'){selIdx=(selIdx===idx)?null:idx;render();return;}
     if(card.cardType==='trainer'){playTrainer(idx);return;}
     if(card.cardType==='pokemon'&&card.stage===0){placeBench(idx);return;}
   }
 }
-
 function onActiveClick(){
   if(!state||selIdx===null)return;
   var card=fa(fa(state.hands)[myId])[selIdx];
-  if(card&&card.cardType==='energy'&&!fa(state.attached)[myId]){
-    attachEnergy(selIdx,'active',-1);
-  }
+  if(card&&card.cardType==='energy'&&!fa(state.attached)[myId])attachEnergy(selIdx,'active',-1);
 }
-
 function onBenchClick(slotIdx){
   if(!state)return;
   if(selIdx!==null){
     var card=fa(fa(state.hands)[myId])[selIdx];
-    if(card&&card.cardType==='energy'&&!fa(state.attached)[myId]){
-      attachEnergy(selIdx,'bench',slotIdx);return;
-    }
+    if(card&&card.cardType==='energy'&&!fa(state.attached)[myId]){attachEnergy(selIdx,'bench',slotIdx);return;}
   }
 }
-
+/* ═══ GAME ACTIONS ═══ */
 function placeActive(handIdx){
   if(!roomRef||!state)return;
   var hands=fa(fa(state.hands)[myId]);
   var card=hands[handIdx];
-  if(!card||card.cardType!=='pokemon'||card.stage!==0){
-    console.log('placeActive: invalid card',card);return;
-  }
-  // Use update() so we only write our fields - prevents race condition
-  var newHand=hands.slice();
-  newHand.splice(handIdx,1);
-  var update={};
-  update['active/'+myId]=card;
-  update['dmgOnActive/'+myId]=0;
-  update['hands/'+myId]=newHand;
-  update['log']=(fa(state.log)||[]).concat([{t:(fa(state.names)[myId]||'Player')+' placed '+card.name+' as Active!',imp:true}]).slice(-30);
-  roomRef.update(update).then(function(){
-    // After placing, re-read state and check if BOTH players have placed active
+  if(!card||card.cardType!=='pokemon'||card.stage!==0)return;
+  var newHand=hands.slice();newHand.splice(handIdx,1);
+  var upd={};
+  upd['active/'+myId]=card;
+  upd['dmgOnActive/'+myId]=0;
+  upd['hands/'+myId]=newHand;
+  upd['log']=(fa(state.log)||[]).concat([{t:(fa(state.names)[myId]||'P')+' placed '+card.name+' as Active!',imp:true}]).slice(-40);
+  roomRef.update(upd).then(function(){
     roomRef.once('value').then(function(snap){
       var d=snap.val();if(!d)return;
-      // Firebase drops null values, so check raw active object directly
-      var rawActive=d.active||{};
-      var a0=rawActive[0]||rawActive['0'];
-      var a1=rawActive[1]||rawActive['1'];
+      var ra=d.active||{};
+      var a0=ra[0]||ra['0'],a1=ra[1]||ra['1'];
       if(a0&&a1&&d.phase==='setup'){
-        var log=(d.log?Object.values(d.log):[]).concat([{t:'Both trainers ready! Battle starts! ⚡',imp:true}]).slice(-30);
+        var log=(d.log?Object.values(d.log):[]).concat([{t:'Both trainers ready! Battle begins! \u26A1',imp:true}]).slice(-40);
         roomRef.update({phase:'main',log:log});
       }
     });
   });
 }
-
 function placeBench(handIdx){
   if(!roomRef||!state)return;
   var hands=fa(fa(state.hands)[myId]);
   var bench=fa(fa(state.bench)[myId]);
-  if(bench.length>=5){alert('Bench full!');return;}
+  if(bench.length>=5){alert('Bench is full!');return;}
   var card=hands[handIdx];
   if(!card||card.cardType!=='pokemon'||card.stage!==0)return;
-  var newHand=hands.slice();newHand.splice(handIdx,1);
-  var newBench=bench.slice();newBench.push(card);
-  var upd={};
-  upd['hands/'+myId]=newHand;
-  upd['bench/'+myId]=newBench;
-  upd['log']=(fa(state.log)||[]).concat([{t:(fa(state.names)[myId]||'Player')+' benched '+card.name+'.',imp:false}]).slice(-30);
+  var nh=hands.slice();nh.splice(handIdx,1);
+  var nb=bench.slice();nb.push(card);
+  var upd={};upd['hands/'+myId]=nh;upd['bench/'+myId]=nb;
+  upd['log']=(fa(state.log)||[]).concat([{t:(fa(state.names)[myId]||'P')+' benched '+card.name+'.',imp:false}]).slice(-40);
   roomRef.update(upd);
 }
-
 function attachEnergy(handIdx,target,targetIdx){
   if(!roomRef||!state)return;
-  if(fa(state.attached)[myId]){alert('Already attached energy this turn!');return;}
-  var s=JSON.parse(JSON.stringify(state));
-  var card=s.hands[myId][handIdx];
-  if(!card||card.cardType!=='energy')return;
+  if(fa(state.attached)[myId]){selIdx=null;render();alert('Already attached energy this turn!');return;}
+  var hands=fa(fa(state.hands)[myId]);
+  var card=hands[handIdx];if(!card||card.cardType!=='energy')return;
   var et=card.etype;
+  var s=JSON.parse(JSON.stringify(state));
+  s.hands[myId].splice(handIdx,1);
   if(target==='active'){
     if(!s.energyOnActive)s.energyOnActive=[{},{}];
     s.energyOnActive[myId]=s.energyOnActive[myId]||{};
@@ -649,67 +1014,86 @@ function attachEnergy(handIdx,target,targetIdx){
     s.energyOnBench[myId][targetIdx]=s.energyOnBench[myId][targetIdx]||{};
     s.energyOnBench[myId][targetIdx][et]=(s.energyOnBench[myId][targetIdx][et]||0)+1;
   }
-  s.hands[myId].splice(handIdx,1);
   s.attached[myId]=true;
   selIdx=null;
-  addLog(s,s.names[myId]+' attached '+et+' Energy.');
+  addLog(s,(s.names[myId]||'P')+' attached '+et+' Energy.');
   roomRef.set(s);
 }
-
 function doAttack(atkIdx){
   if(!roomRef||!state)return;
   var opp=1-myId;
   var active=fa(state.active)[myId];if(!active)return;
-  var atk=(active.attacks||[])[atkIdx];if(!atk)return;
+  var atk=(active.attacks||[]).filter(function(a){return !(a.dmg===0&&a.desc.indexOf('Power')>=0);})[atkIdx];
+  if(!atk)return;
   var energy=fa(state.energyOnActive)[myId]||{};
   if(!canAfford(atk.cost||{},energy)){alert('Not enough energy!');return;}
   var s=JSON.parse(JSON.stringify(state));
   var dmg=atk.dmg||0;
   if(fa(s.plusPower)[myId])dmg+=10;
   var oppAct=fa(s.active)[opp];
-  if(oppAct&&oppAct.weak===active.type)dmg*=2;
+  if(oppAct&&oppAct.weak&&oppAct.weak===active.type)dmg*=2;
+  if(oppAct&&oppAct.resist&&oppAct.resist===active.type)dmg=Math.max(0,dmg-30);
   if(!s.dmgOnActive)s.dmgOnActive=[0,0];
   s.dmgOnActive[opp]=(s.dmgOnActive[opp]||0)+dmg;
-  addLog(s,(s.names[myId]||'P'+myId)+' used '+atk.name+'! '+dmg+' damage!',true);
+  addLog(s,(s.names[myId]||'P')+' used '+atk.name+'! '+dmg+' damage!',true);
+  /* KO check */
   if(s.dmgOnActive[opp]>=(fa(s.active)[opp].hp||50)){
     var koName=fa(s.active)[opp].name;
     addLog(s,koName+' was knocked out!',true);
-    s.discards[opp]=s.discards[opp]||[];
-    s.discards[opp].push(fa(s.active)[opp]);
+    s.discards[opp]=(s.discards[opp]||[]).concat([fa(s.active)[opp]]);
     s.active[opp]=null;s.dmgOnActive[opp]=0;s.energyOnActive[opp]={};
     s.prizesLeft[myId]=Math.max(0,(s.prizesLeft[myId]||6)-1);
-    if(s.prizes[myId]&&s.prizes[myId].length>0){s.hands[myId].push(s.prizes[myId].splice(0,1)[0]);addLog(s,(s.names[myId]||'P'+myId)+' takes a prize card!');}
-    if(s.prizesLeft[myId]<=0){s.winner=myId;addLog(s,(s.names[myId]||'P'+myId)+' WINS THE GAME!',true);}
+    if((s.prizes[myId]||[]).length>0){s.hands[myId].push(s.prizes[myId].splice(0,1)[0]);addLog(s,(s.names[myId]||'P')+' takes a prize card!');}
+    if(s.prizesLeft[myId]<=0){s.winner=myId;addLog(s,(s.names[myId]||'P')+' WINS!',true);}
     else{
       var ob=fa(fa(s.bench)[opp]);
-      if(ob.length>0){s.active[opp]=ob.splice(0,1)[0];s.bench[opp]=ob;s.dmgOnActive[opp]=0;addLog(s,(s.names[opp]||'P'+opp)+' sends out '+s.active[opp].name+'!');}
-      else{s.winner=myId;addLog(s,(s.names[myId]||'P'+myId)+' wins - opponent has no Pokemon left!',true);}
+      if(ob.length>0){s.active[opp]=ob.splice(0,1)[0];s.bench[opp]=ob;s.dmgOnActive[opp]=0;addLog(s,(s.names[opp]||'P')+' sends out '+s.active[opp].name+'!');}
+      else{s.winner=myId;addLog(s,(s.names[myId]||'P')+' wins \u2014 opponent has no Pokemon left!',true);}
     }
   }
   if(!s.winner){s.turn=opp;s.drawn[opp]=false;s.attached[opp]=false;s.plusPower=[false,false];}
   roomRef.set(s);
 }
-
 function playTrainer(handIdx){
   if(!roomRef||!state)return;
   var s=JSON.parse(JSON.stringify(state));
   var card=s.hands[myId][handIdx];if(!card||card.cardType!=='trainer')return;
   s.hands[myId].splice(handIdx,1);
   (s.discards[myId]=s.discards[myId]||[]).push(card);
-  if(card.id==='bill'){for(var i=0;i<2;i++){if(s.decks[myId].length>0)s.hands[myId].push(s.decks[myId].splice(0,1)[0]);}addLog(s,(s.names[myId]||'P')+' played Bill! Drew 2 cards.');}
-  else if(card.id==='prof_oak'){s.discards[myId]=s.discards[myId].concat(s.hands[myId]);s.hands[myId]=[];for(var i=0;i<7;i++){if(s.decks[myId].length>0)s.hands[myId].push(s.decks[myId].splice(0,1)[0]);}addLog(s,(s.names[myId]||'P')+' played Professor Oak! Drew 7!',true);}
-  else if(card.id==='potion'){if(fa(s.active)[myId]){if(!s.dmgOnActive)s.dmgOnActive=[0,0];s.dmgOnActive[myId]=Math.max(0,(s.dmgOnActive[myId]||0)-20);addLog(s,(s.names[myId]||'P')+' used Potion! Healed 20.');}}
-  else if(card.id==='super_potion'){if(fa(s.active)[myId]){if(!s.dmgOnActive)s.dmgOnActive=[0,0];s.dmgOnActive[myId]=Math.max(0,(s.dmgOnActive[myId]||0)-40);addLog(s,(s.names[myId]||'P')+' used Super Potion! Healed 40.',true);}}
-  else if(card.id==='pluspower'){s.plusPower[myId]=true;addLog(s,(s.names[myId]||'P')+' played PlusPower! +10 damage.');}
-  else if(card.id==='switch_card'){var bn=fa(fa(s.bench)[myId]);if(bn.length>0){var tmp=fa(s.active)[myId];s.active[myId]=bn.splice(0,1)[0];bn.push(tmp);s.bench[myId]=bn;s.dmgOnActive[myId]=0;addLog(s,(s.names[myId]||'P')+' used Switch!');}}
-  else addLog(s,(s.names[myId]||'P')+' played '+card.name+'.');
+  var id=card.id,nm=s.names[myId]||'P';
+  if(id==='bill'){for(var i=0;i<2;i++){if(s.decks[myId].length>0)s.hands[myId].push(s.decks[myId].splice(0,1)[0]);}addLog(s,nm+' played Bill! Drew 2 cards.');}
+  else if(id==='prof_oak'){s.discards[myId]=s.discards[myId].concat(s.hands[myId]);s.hands[myId]=[];for(var i=0;i<7;i++){if(s.decks[myId].length>0)s.hands[myId].push(s.decks[myId].splice(0,1)[0]);}addLog(s,nm+' played Prof. Oak! Drew 7!',true);}
+  else if(id==='potion'){if(fa(s.active)[myId]){if(!s.dmgOnActive)s.dmgOnActive=[0,0];s.dmgOnActive[myId]=Math.max(0,(s.dmgOnActive[myId]||0)-20);addLog(s,nm+' used Potion! Healed 20 damage.');}}
+  else if(id==='super_potion'){if(fa(s.active)[myId]){if(!s.dmgOnActive)s.dmgOnActive=[0,0];s.dmgOnActive[myId]=Math.max(0,(s.dmgOnActive[myId]||0)-40);addLog(s,nm+' used Super Potion! Healed 40!',true);}}
+  else if(id==='full_heal'){s.status[myId]=null;addLog(s,nm+' used Full Heal! Status cleared.');}
+  else if(id==='full_restore'){if(fa(s.active)[myId]){s.dmgOnActive[myId]=0;s.status[myId]=null;addLog(s,nm+' used Full Restore! Fully healed!',true);}}
+  else if(id==='pluspower'){s.plusPower[myId]=true;addLog(s,nm+' played PlusPower! +10 this turn.');}
+  else if(id==='switch_card'){var bn=fa(fa(s.bench)[myId]);if(bn.length>0){var tmp=fa(s.active)[myId];s.active[myId]=bn.splice(0,1)[0];bn.push(tmp);s.bench[myId]=bn;s.dmgOnActive[myId]=0;addLog(s,nm+' used Switch!');}else{addLog(s,nm+' used Switch \u2014 no bench Pokemon!');}}
+  else if(id==='gust_of_wind'){var ob=fa(fa(s.bench)[1-myId]);if(ob.length>0){var tmp2=fa(s.active)[1-myId];s.active[1-myId]=ob.splice(0,1)[0];ob.push(tmp2);s.bench[1-myId]=ob;s.dmgOnActive[1-myId]=0;addLog(s,nm+' used Gust of Wind!',true);}else addLog(s,nm+' used Gust of Wind \u2014 no bench target!');}
+  else if(id==='energy_removal'){var oEnergy=fa(s.energyOnActive)[1-myId]||{};var oKeys=Object.keys(oEnergy).filter(function(k){return oEnergy[k]>0;});if(oKeys.length>0){var rem=oKeys[0];s.energyOnActive[1-myId][rem]=Math.max(0,(s.energyOnActive[1-myId][rem]||0)-1);addLog(s,nm+' used Energy Removal! Removed '+rem+' Energy.',true);}else addLog(s,nm+' used Energy Removal \u2014 no energy to remove!');}
+  else if(id==='super_energy_removal'){var oEnergy2=fa(s.energyOnActive)[1-myId]||{};var oKeys2=Object.keys(oEnergy2).filter(function(k){return oEnergy2[k]>0;});if(oKeys2.length>=2){oKeys2.slice(0,2).forEach(function(k){s.energyOnActive[1-myId][k]=Math.max(0,(s.energyOnActive[1-myId][k]||0)-1);});addLog(s,nm+' used Super Energy Removal! Removed 2 Energy!',true);}else addLog(s,nm+' used Super Energy Removal.');}
+  else if(id==='revive'){var basics=s.discards[myId].filter(function(c){return c.cardType==='pokemon'&&c.stage===0;});if(basics.length>0){var rev=basics[0];s.discards[myId]=s.discards[myId].filter(function(c){return c.uid!==rev.uid;});if((s.bench[myId]||[]).length<5){s.bench[myId]=s.bench[myId]||[];s.bench[myId].push(Object.assign({},rev,{uid:uid()}));addLog(s,nm+' used Revive! '+rev.name+' returns!',true);}else addLog(s,nm+' used Revive \u2014 bench full!');}else addLog(s,nm+' used Revive \u2014 no basics in discard!');}
+  else if(id==='scoop_up'){if(fa(s.active)[myId]){s.hands[myId].push(fa(s.active)[myId]);s.active[myId]=null;s.dmgOnActive[myId]=0;s.energyOnActive[myId]={};addLog(s,nm+' used Scoop Up!');}else addLog(s,nm+' used Scoop Up \u2014 no active!');}
+  else if(id==='computer_search'){if(s.decks[myId].length>0){var found=s.decks[myId].splice(Math.floor(Math.random()*s.decks[myId].length),1)[0];s.hands[myId].push(found);addLog(s,nm+' used Computer Search! Found '+found.name+'!',true);}else addLog(s,nm+' used Computer Search \u2014 deck empty!');}
+  else if(id==='imposter_professor_oak'){s.discards[1-myId]=(s.discards[1-myId]||[]).concat(fa(fa(s.hands)[1-myId]));s.hands[1-myId]=[];for(var i=0;i<7;i++){if(s.decks[1-myId].length>0)s.hands[1-myId].push(s.decks[1-myId].splice(0,1)[0]);}addLog(s,nm+' played Imposter Prof. Oak!',true);}
+  else if(id==='pokemon_breeder'){addLog(s,nm+' played Pokemon Breeder! Evolution rules relaxed for this turn.');}
+  else if(id==='pokemon_trader'){if(s.decks[myId].length>0){var found2=s.decks[myId].splice(Math.floor(Math.random()*s.decks[myId].length),1)[0];s.hands[myId].push(found2);addLog(s,nm+' used Pokemon Trader! Got '+found2.name+'!');}else addLog(s,nm+' used Pokemon Trader \u2014 deck empty!');}
+  else if(id==='maintenance'){if(s.hands[myId].length>=2){s.decks[myId].unshift(s.hands[myId].pop(),s.hands[myId].pop());shuffle(s.decks[myId]);if(s.decks[myId].length>0)s.hands[myId].push(s.decks[myId].splice(0,1)[0]);addLog(s,nm+' used Maintenance.');}else addLog(s,nm+' used Maintenance \u2014 need 2 cards!');}
+  else if(id==='item_finder'){var trainersInDiscard=s.discards[myId].filter(function(c){return c.cardType==='trainer';});if(trainersInDiscard.length>0){var found3=trainersInDiscard[0];s.discards[myId]=s.discards[myId].filter(function(c){return c.uid!==found3.uid;});s.hands[myId].push(found3);addLog(s,nm+' used Item Finder! Retrieved '+found3.name+'.',true);}else addLog(s,nm+' used Item Finder — no Trainers in discard!');}
+  else if(id==='lass'){addLog(s,nm+' played Lass!');}
+  else addLog(s,nm+' played '+card.name+'.');
   roomRef.set(s);
 }
-
+function doDraw(){
+  if(!roomRef||!state||fa(state.drawn)[myId])return;
+  var s=JSON.parse(JSON.stringify(state));
+  if(s.decks[myId].length>0){s.hands[myId].push(s.decks[myId].splice(0,1)[0]);s.drawn[myId]=true;addLog(s,(s.names[myId]||'P')+' drew a card.');roomRef.set(s);}
+  else addLog(s,(s.names[myId]||'P')+' deck is empty!');
+}
 function doRetreat(){
   if(!roomRef||!state||!fa(state.active)[myId])return;
   var bench=fa(fa(state.bench)[myId]);
-  if(!bench.length){alert('No bench Pokemon!');return;}
+  if(!bench.length){alert('No bench Pokemon to retreat to!');return;}
   var s=JSON.parse(JSON.stringify(state));
   var tmp=fa(s.active)[myId];
   s.active[myId]=bench.splice(0,1)[0];bench.push(tmp);
@@ -717,13 +1101,6 @@ function doRetreat(){
   addLog(s,(s.names[myId]||'P')+' retreated!');
   roomRef.set(s);
 }
-
-function doDraw(){
-  if(!roomRef||!state||fa(state.drawn)[myId]){return;}
-  var s=JSON.parse(JSON.stringify(state));
-  if(s.decks[myId].length>0){s.hands[myId].push(s.decks[myId].splice(0,1)[0]);s.drawn[myId]=true;addLog(s,(s.names[myId]||'P')+' drew a card.');roomRef.set(s);}
-}
-
 function doEndTurn(){
   if(!roomRef||!state)return;
   var opp=1-myId,s=JSON.parse(JSON.stringify(state));
@@ -731,21 +1108,19 @@ function doEndTurn(){
   addLog(s,(s.names[myId]||'P')+' ends their turn.');
   roomRef.set(s);
 }
-
-// Key screen
+/* ═══ KEY SCREEN ═══ */
 document.getElementById('keyBtn').addEventListener('click',function(){
   if(document.getElementById('keyInp').value.trim()===KEY){
     document.getElementById('keyScreen').style.display='none';
     document.getElementById('lobby').style.display='flex';
   } else {
-    document.getElementById('keyErr').textContent='Wrong key!';
+    document.getElementById('keyErr').textContent='Wrong key \u2014 try again!';
     document.getElementById('keyInp').value='';
     setTimeout(function(){document.getElementById('keyErr').textContent='';},2000);
   }
 });
 document.getElementById('keyInp').addEventListener('keypress',function(e){if(e.key==='Enter')document.getElementById('keyBtn').click();});
-
-// Join
+/* ═══ JOIN ═══ */
 document.getElementById('joinBtn').addEventListener('click',function(){
   var pass=document.getElementById('passInp').value.trim();
   var name=document.getElementById('nameInp').value.trim()||'Trainer';
@@ -758,22 +1133,22 @@ document.getElementById('joinBtn').addEventListener('click',function(){
     if(!ex||!ex.hands){myId=0;var g=freshGame();g.names[0]=name;g.connected[0]=true;return ref.set(g);}
     var conn=fa(ex.connected);
     if(!conn[1]){myId=1;return Promise.all([ref.child('names/1').set(name),ref.child('connected/1').set(true)]);}
-    else{myId=0;return Promise.all([ref.child('names/0').set(name),ref.child('connected/0').set(true)]);}
+    myId=0;return Promise.all([ref.child('names/0').set(name),ref.child('connected/0').set(true)]);
   }).then(function(){
     document.getElementById('lobby').style.display='none';
     document.getElementById('game').style.display='flex';
     roomRef=ref;
     ref.on('value',function(snap){
       var d=snap.val();
-      if(!d||!d.hands){document.getElementById('statusBar').textContent='Data missing — press Leave and rejoin';return;}
+      if(!d||!d.hands){document.getElementById('gstatus').textContent='Data missing \u2014 press Leave and rejoin';return;}
       state=norm(d);render();
     });
   }).catch(function(err){alert('Error: '+err.message);});
 });
-
+/* ═══ BUTTONS ═══ */
 document.getElementById('drawBtn').addEventListener('click',doDraw);
 document.getElementById('retreatBtn').addEventListener('click',doRetreat);
-document.getElementById('endTurnBtn').addEventListener('click',doEndTurn);
+document.getElementById('endBtn').addEventListener('click',doEndTurn);
 document.getElementById('leaveBtn').addEventListener('click',function(){
   if(roomRef&&state)roomRef.child('connected/'+myId).set(false);
   document.getElementById('game').style.display='none';
@@ -783,8 +1158,7 @@ document.getElementById('leaveBtn').addEventListener('click',function(){
 document.getElementById('winBtn').addEventListener('click',function(){
   if(roomRef&&state){var g=freshGame();g.names=fa(state.names).slice();g.connected=fa(state.connected).slice();roomRef.set(g);}
 });
-
 } // end startGame
-</script>
+
 </body>
 </html>
