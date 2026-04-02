@@ -771,7 +771,7 @@ const FB={apiKey:"AIzaSyCQ7QZFblWwB530G2ARVPHvYLAsDf0Mwak",authDomain:"chessgame
   projectId:"chessgame-e4dbb",storageBucket:"chessgame-e4dbb.firebasestorage.app",
   messagingSenderId:"65265732775",appId:"1:65265732775:web:8c9ce7a779e8687bb59f82",
   databaseURL:"https://chessgame-e4dbb-default-rtdb.asia-southeast1.firebasedatabase.app/"};
-firebase.initializeApp(FB);
+try{firebase.initializeApp(FB);}catch(e){if(e.code!=='app/duplicate-app')throw e;}
 const db=firebase.database();
 
 /* ============================================================
@@ -1201,35 +1201,40 @@ let pendingBenchCb=null;   // callback for bench modal pick
    KEY SCREEN — access code: bismAllah
    ============================================================ */
 const SECRET_KEY = 'bismAllah';
-const keyScreen  = document.getElementById('keyScreen');
-const keyInput   = document.getElementById('keyInput');
-const keyBtn     = document.getElementById('keyBtn');
-const keyError   = document.getElementById('keyError');
-const lobbyDiv   = document.getElementById('lobby');
-
-// Hide lobby until unlocked
-lobbyDiv.style.display = 'none';
 
 function unlockApp(){
-  keyScreen.style.display = 'none';
-  lobbyDiv.style.display  = 'flex';
-  lobbyDiv.style.flexDirection = 'column';
+  document.getElementById('keyScreen').style.display = 'none';
+  const ld = document.getElementById('lobby');
+  ld.style.display = 'flex';
+  ld.style.flexDirection = 'column';
 }
 
-keyBtn.onclick = () => {
-  if(keyInput.value.trim() === SECRET_KEY){
-    unlockApp();
-  } else {
-    keyError.textContent = '❌ Wrong key — try again!';
-    keyInput.value = '';
-    keyInput.classList.remove('key-shake');
-    void keyInput.offsetWidth;
-    keyInput.classList.add('key-shake');
-    keyInput.focus();
-    setTimeout(() => keyError.textContent = '', 2500);
-  }
-};
-keyInput.addEventListener('keypress', e => { if(e.key === 'Enter') keyBtn.click(); });
+function initKeyScreen(){
+  const keyScreen = document.getElementById('keyScreen');
+  const keyInput  = document.getElementById('keyInput');
+  const keyBtn    = document.getElementById('keyBtn');
+  const keyError  = document.getElementById('keyError');
+  const lobbyDiv  = document.getElementById('lobby');
+  lobbyDiv.style.display = 'none';
+
+  keyBtn.onclick = () => {
+    if(keyInput.value.trim() === SECRET_KEY){
+      unlockApp();
+    } else {
+      keyError.textContent = '❌ Wrong key — try again!';
+      keyInput.value = '';
+      keyInput.classList.remove('key-shake');
+      void keyInput.offsetWidth;
+      keyInput.classList.add('key-shake');
+      keyInput.focus();
+      setTimeout(() => keyError.textContent = '', 2500);
+    }
+  };
+  keyInput.addEventListener('keypress', e => { if(e.key === 'Enter') keyBtn.click(); });
+}
+
+// Run key screen setup immediately
+initKeyScreen();
 
 document.getElementById('joinBtn').onclick=async()=>{
   const pass=document.getElementById('passIn').value.trim();
