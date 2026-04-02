@@ -193,7 +193,7 @@ body{min-height:100vh;background:radial-gradient(ellipse at top,#0a1628,#050c18)
     </div>
     <div style="display:flex;gap:8px;align-items:center;">
       <div class="pick-waiting" id="pickWaiting">&#8987; Waiting for opponent&hellip;</div>
-      <button class="pick-deal" id="dealBtn" onclick="confirmPicks()">&#9889; Lock In!</button>
+      <button class="pick-deal" id="dealBtn">&#9889; Lock In!</button>
     </div>
   </div>
   <div id="pickGrid"></div>
@@ -292,7 +292,7 @@ var IMG={
   'electrode':'pokemon-cards/Electrode.BS.21.webp','pidgeotto':'pokemon-cards/Pidgeotto.BS.22.webp',
   'arcanine':'pokemon-cards/Arcanine.BS.23.webp','charmeleon':'pokemon-cards/Charmeleon.BS.24.webp',
   'dewgong':'pokemon-cards/Dewgong.BS.25.webp','dratini':'pokemon-cards/Dratini.BS.26.webp',
-  'farfetchd':"pokemon-cards/Farfetch'd.BS.27.webp",'growlithe':'pokemon-cards/Growlithe.BS.28.webp',
+  'farfetchd':'pokemon-cards/Farfetchd.BS.27.webp','growlithe':'pokemon-cards/Growlithe.BS.28.webp',
   'haunter':'pokemon-cards/Haunter.BS.29.webp','ivysaur':'pokemon-cards/Ivysaur.BS.30.webp',
   'jynx':'pokemon-cards/Jynx.BS.31.webp','kadabra':'pokemon-cards/Kadabra.BS.32.webp',
   'kakuna':'pokemon-cards/Kakuna.BS.33.webp','machoke':'pokemon-cards/Machoke.BS.34.webp',
@@ -315,34 +315,21 @@ var IMG={
   'voltorb':'pokemon-cards/Voltorb.BS.67.webp','vulpix':'pokemon-cards/Vulpix.BS.68.webp',
   'weedle':'pokemon-cards/Weedle.BS.69.webp',
   'bill':'pokemon-cards/Bill.BS.91.webp','prof_oak':'pokemon-cards/Professor-Oak.BS.88.webp',
-  'computer_search':'pokemon-cards/Computer-Search.BS.71.webp','gust_of_wind':'pokemon-cards/Gust-of-Wind.BS.93.webp',
-  'energy_removal':'pokemon-cards/Energy-Removal.BS.92.webp','pluspower':'pokemon-cards/PlusPower.BS.84.webp',
-  'potion':'pokemon-cards/Potion.BS.94.webp','super_potion':'pokemon-cards/Super-Potion.BS.90.webp',
-  'switch_card':'pokemon-cards/Switch.BS.95.webp','item_finder':'pokemon-cards/Item-Finder.BS.74.webp',
-  'fire_energy':'pokemon-cards/Fire-Energy.BS.98.webp','water_energy':'pokemon-cards/Water-Energy.BS.102.webp',
-  'grass_energy':'pokemon-cards/Grass-Energy.BS.99.webp','lightning_energy':'pokemon-cards/Lightning-Energy.BS.100.webp',
-  'psychic_energy':'pokemon-cards/Psychic-Energy.BS.101.webp','fighting_energy':'pokemon-cards/Fighting-Energy.BS.97.webp',
-  'colorless_energy':'pokemon-cards/Double-Colorless-Energy.BS.96.webp',
-  'rapidash':'pokemon-cards/Rapidash.BS.72.webp','moltres':'pokemon-cards/Moltres.BS.12.webp',
-  'lapras':'pokemon-cards/Lapras.BS.10.webp','cloyster':'pokemon-cards/Cloyster.BS.91.webp',
-  'shellder':'pokemon-cards/Shellder.BS.69.webp','tentacruel':'pokemon-cards/Tentacruel.BS.84.webp',
-  'tentacool':'pokemon-cards/Tentacool.BS.71.webp','articuno':'pokemon-cards/Articuno.BS.17.webp',
-  'parasect':'pokemon-cards/Parasect.BS.41.webp','paras':'pokemon-cards/Paras.BS.53.webp',
-  'venomoth':'pokemon-cards/Venomoth.BS.13.webp','venonat':'pokemon-cards/Venonat.BS.63.webp',
-  'victreebel':'pokemon-cards/Victreebel.BS.14.webp','weepinbell':'pokemon-cards/Weepinbell.BS.45.webp',
-  'bellsprout':'pokemon-cards/Bellsprout.BS.49.webp','exeggutor':'pokemon-cards/Exeggutor.BS.35.webp',
-  'exeggcute':'pokemon-cards/Exeggcute.BS.52.webp','scyther':'pokemon-cards/Scyther.BS.26.webp',
-  'pinsir':'pokemon-cards/Pinsir.BS.42.webp','gengar':'pokemon-cards/Gengar.BS.5.webp',
-  'hypno':'pokemon-cards/Hypno.BS.23.webp','slowbro':'pokemon-cards/Slowbro.BS.43.webp',
-  'slowpoke':'pokemon-cards/Slowpoke.BS.55.webp','golem':'pokemon-cards/Golem.BS.36.webp',
-  'graveler':'pokemon-cards/Graveler.BS.38.webp','geodude':'pokemon-cards/Geodude.BS.36.webp',
-  'marowak':'pokemon-cards/Marowak.BS.39.webp','cubone':'pokemon-cards/Cubone.BS.50.webp',
-  'hitmonlee':'pokemon-cards/Hitmonlee.BS.22.webp','clefable':'pokemon-cards/Clefable.BS.1.webp',
-  'wigglytuff':'pokemon-cards/Wigglytuff.BS.16.webp','jigglypuff':'pokemon-cards/Jigglypuff.BS.54.webp',
-  'persian':'pokemon-cards/Persian.BS.42.webp','meowth':'pokemon-cards/Meowth.BS.56.webp',
-  'pidgeot':'pokemon-cards/Pidgeot.BS.24.webp','kangaskhan':'pokemon-cards/Kangaskhan.BS.5.webp',
-  'snorlax':'pokemon-cards/Snorlax.BS.11.webp','dragonite':'pokemon-cards/Dragonite.BS.4.webp',
-  'lickitung':'pokemon-cards/Lickitung.BS.58.webp','tauros':'pokemon-cards/Tauros.BS.47.webp'
+  'computer_search':'pokemon-cards/Computer-Search.BS.71.webp',
+  'gust_of_wind':'pokemon-cards/Gust-of-Wind.BS.93.webp',
+  'energy_removal':'pokemon-cards/Energy-Removal.BS.92.webp',
+  'pluspower':'pokemon-cards/PlusPower.BS.84.webp',
+  'potion':'pokemon-cards/Potion.BS.94.webp',
+  'super_potion':'pokemon-cards/Super-Potion.BS.90.webp',
+  'switch_card':'pokemon-cards/Switch.BS.95.7933.webp',
+  'item_finder':'pokemon-cards/Item-Finder.BS.74.webp',
+  'fire_energy':'pokemon-cards/Fire-Energy.BS.98.webp',
+  'water_energy':'pokemon-cards/Water-Energy.BS.102.webp',
+  'grass_energy':'pokemon-cards/Grass-Energy.BS.99.webp',
+  'lightning_energy':'pokemon-cards/Lightning-Energy.BS.100.webp',
+  'psychic_energy':'pokemon-cards/Psychic-Energy.BS.101.webp',
+  'fighting_energy':'pokemon-cards/Fighting-Energy.BS.97.webp',
+  'colorless_energy':'pokemon-cards/Double-Colorless-Energy.BS.96.webp'
 };
 function imgSrc(id){return IMG[id]||null;}
 
@@ -739,9 +726,12 @@ function onTilePick(line){
 }
 function confirmPicks(){
   var used=budgetUsed();
-  if(used<4){alert('Pick at least a few Pokemon lines first!');return;}
-  if(!roomRef||myId===null)return;
-  // Write my deck to Firebase
+  if(used<1){alert('Pick at least one Pokemon line first!');return;}
+  if(!roomRef||myId===null){alert('Not connected to a room yet!');return;}
+  // Disable button to prevent double-clicks
+  var btn=document.getElementById('dealBtn');
+  if(btn){btn.disabled=true;btn.textContent='Locking in...';}
+  // Build the 60-card deck
   var myDeck=buildDeckFromPicks(picks);
   var hand=myDeck.splice(0,7);
   var prizes=myDeck.splice(0,6);
@@ -752,17 +742,29 @@ function confirmPicks(){
   upd['prizes/'+myId]=prizes;
   upd['prizesLeft/'+myId]=6;
   roomRef.update(upd).then(function(){
-    // Show wait screen
+    // Show wait screen immediately
     show('waitScreen');
-    // Check if both ready → start game
+    // Update wait screen with our own name right away
     roomRef.once('value').then(function(snap){
       var d=snap.val();if(!d)return;
-      var dr=d.deckReady||{};
-      var r0=dr[0]||dr['0'];var r1=dr[1]||dr['1'];
-      if(r0&&r1&&d.phase==='picking'){
-        roomRef.update({phase:'setup',log:[{t:'Both trainers ready! Battle begins!',imp:true}]});
+      var ns=fa(d.names||[]);
+      var dr=fa(d.deckReady||[]);
+      var dot0=document.getElementById('dot0');
+      var dot1=document.getElementById('dot1');
+      var wc0=document.getElementById('wcName0');
+      var wc1=document.getElementById('wcName1');
+      if(dot0)dot0.className='wc-dot'+(dr[0]?' done':'');
+      if(dot1)dot1.className='wc-dot'+(dr[1]?' done':'');
+      if(wc0)wc0.textContent=(ns[0]||'Player 1')+(dr[0]?' ✓ Ready':'');
+      if(wc1)wc1.textContent=(ns[1]||'Player 2')+(dr[1]?' ✓ Ready':'');
+      // If both already ready, kick off the game
+      if(dr[0]&&dr[1]&&d.phase==='picking'){
+        roomRef.update({phase:'setup',log:[{t:'Both trainers ready! Battle begins! ⚡',imp:true}]});
       }
     });
+  }).catch(function(err){
+    alert('Lock in failed: '+err.message);
+    if(btn){btn.disabled=false;btn.textContent='⚡ Lock In!';}
   });
 }
 
@@ -1111,28 +1113,35 @@ document.getElementById('joinBtn').addEventListener('click',function(){
     roomRef=ref;picks={};
     renderPickGrid();
     show('pickScreen');
-    // Listen for opponent locking in (update wait screen dots)
-    ref.child('deckReady').on('value',function(snap){
-      var dr=snap.val();if(!dr)return;
-      var r0=dr[0]||dr['0'];var r1=dr[1]||dr['1'];
-      if(document.getElementById('waitScreen').style.display!=='none'){
-        ref.once('value').then(function(s2){var d2=s2.val();if(d2){var n=fa(d2.names);document.getElementById('wcName0').textContent=(n[0]||'Player 1')+(r0?' \u2713 Ready':'');document.getElementById('wcName1').textContent=(n[1]||'Player 2')+(r1?' \u2713 Ready':'');}});
-      }
-      if(r0&&r1){
-        ref.once('value').then(function(s2){var d2=s2.val();if(d2&&d2.phase==='picking'){ref.update({phase:'setup',log:[{t:'Both trainers ready! Battle begins!',imp:true}]});}});
-      }
-    });
+    // Wire Lock In button here so confirmPicks is in scope
+    document.getElementById('dealBtn').onclick=function(){confirmPicks();};
+    // Single Firebase listener handles ALL phase transitions
     ref.on('value',function(snap){
       var d=snap.val();if(!d)return;
       state=norm(d);
-      if(d.phase==='setup'||d.phase==='main'){
-        if(document.getElementById('waitScreen').style.display!=='none'||document.getElementById('pickScreen').style.display!=='none'){show('game');}
+      var phase=d.phase||'picking';
+      if(phase==='setup'||phase==='main'){
+        // Move to game screen from any pre-game screen
+        var ws=document.getElementById('waitScreen');
+        var ps=document.getElementById('pickScreen');
+        if((ws&&ws.style.display!=='none')||(ps&&ps.style.display!=='none')){show('game');}
         render();
-      } else if(d.phase==='picking'){
+      } else if(phase==='picking'){
+        // Update wait screen readiness dots if we are waiting
+        var dr=fa(d.deckReady||[]);
+        var ns=fa(d.names||[]);
+        var dot0=document.getElementById('dot0');
+        var dot1=document.getElementById('dot1');
+        var wc0=document.getElementById('wcName0');
+        var wc1=document.getElementById('wcName1');
+        if(dot0)dot0.className='wc-dot'+(dr[0]?' done':'');
+        if(dot1)dot1.className='wc-dot'+(dr[1]?' done':'');
+        if(wc0)wc0.textContent=(ns[0]||'Player 1')+(dr[0]?' \u2713 Ready':'');
+        if(wc1)wc1.textContent=(ns[1]||'Player 2')+(dr[1]?' \u2713 Ready':'');
         render();
       }
     });
-  }).catch(function(err){alert('Error: '+err.message);});
+  }).catch(function(err){alert('Error joining: '+err.message);});
 });
 
 /* ═══ BUTTONS ═══ */
