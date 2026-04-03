@@ -4,7 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>Pokemon TCG — 1999 Base Set</title>
+<title>Pokemon Buraq</title>
+<!-- pb-v1 -->
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 body{min-height:100vh;background:radial-gradient(ellipse at top,#0a1628,#050c18);font-family:"Segoe UI",system-ui,sans-serif;color:#f0e8d0;overflow-x:hidden;}
@@ -162,7 +163,7 @@ body{min-height:100vh;background:radial-gradient(ellipse at top,#0a1628,#050c18)
 
 <!-- KEY -->
 <div id="keyScreen">
-  <div class="k-title">&#9889; Pokemon TCG</div>
+  <div class="k-title">&#9889; Pokemon Buraq</div>
   <div class="k-sub">1999 Base Set &mdash; All 102 Cards</div>
   <div class="k-box">
     <div style="text-align:center;font-size:.88rem;color:#f5d76e;font-weight:700;">&#128272; Private Family Game</div>
@@ -174,7 +175,7 @@ body{min-height:100vh;background:radial-gradient(ellipse at top,#0a1628,#050c18)
 
 <!-- LOBBY -->
 <div id="lobby">
-  <div class="l-title">&#9889; Pokemon TCG</div>
+  <div class="l-title">&#9889; Pokemon Buraq</div>
   <div class="l-box">
     <div style="text-align:center;font-size:.88rem;color:#f5d76e;font-weight:700;">&#127919; Join a Room</div>
     <input id="passInp" class="l-inp" placeholder="Room password (share with friend)" maxlength="40">
@@ -217,7 +218,7 @@ body{min-height:100vh;background:radial-gradient(ellipse at top,#0a1628,#050c18)
 <!-- GAME -->
 <div id="game">
   <div class="g-top">
-    <div class="g-title">&#9889; Pokemon TCG</div>
+    <div class="g-title">&#9889; Pokemon Buraq</div>
     <div class="t-pill" id="tpill">&mdash;</div>
   </div>
   <div class="g-status" id="gstatus">Connecting&hellip;</div>
@@ -965,8 +966,7 @@ function onHandClick(idx){
     if(state.turn!==myId){showMsg("It’s not your turn!");return;}
     if(card.cardType==='energy'){selIdx=(selIdx===idx)?null:idx;render();return;}
     if(card.cardType==='trainer'){
-      if(!fa(state.drawn)[myId]){showMsg('Draw your card first, then play trainers!');return;}
-      playTrainer(idx);return;
+      playTrainer(idx);return;  // TCG: trainers playable any time during your turn
     }
     if(card.cardType==='pokemon'&&card.stage===0){placeBench(idx);return;}
     if(card.cardType==='pokemon'&&card.stage>0){showMsg('Evolve by placing on a matching Active or Bench Pokemon (coming soon)');return;}
@@ -979,6 +979,17 @@ function showMsg(txt){
   sb.style.background='rgba(180,0,0,0.7)';
   sb.textContent='⚠️ '+txt;
   setTimeout(function(){sb.style.background='';sb.textContent=old;},2200);
+}
+function showToast(txt){
+  var existing=document.getElementById('trainerToast');
+  if(existing)existing.remove();
+  var toast=document.createElement('div');
+  toast.id='trainerToast';
+  toast.style.cssText='position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(0.7);z-index:9000;background:linear-gradient(135deg,#1a0a3a,#0a1a4a);border:2px solid #f5d76e;border-radius:18px;padding:18px 28px;color:#f5d76e;font-size:1.1rem;font-weight:900;text-align:center;pointer-events:none;opacity:0;transition:all 0.2s cubic-bezier(0.34,1.56,0.64,1);max-width:85vw;box-shadow:0 8px 32px rgba(0,0,0,0.7);';
+  toast.textContent=txt;
+  document.body.appendChild(toast);
+  setTimeout(function(){toast.style.opacity='1';toast.style.transform='translate(-50%,-50%) scale(1)';},10);
+  setTimeout(function(){toast.style.opacity='0';toast.style.transform='translate(-50%,-60%) scale(0.9)';setTimeout(function(){toast.remove();},300);},1800);
 }
 function onActiveClick(){
   if(!state||selIdx===null)return;
@@ -1064,67 +1075,135 @@ function doAttack(atkIdx){
 function playTrainer(handIdx){
   if(!roomRef||!state)return;
   var s=JSON.parse(JSON.stringify(state));
-  var card=s.hands[myId][handIdx];if(!card||card.cardType!=='trainer')return;
-  s.hands[myId].splice(handIdx,1);
-  s.discards[myId]=s.discards[myId]||[];s.discards[myId].push(card);
-  var id=card.id,nm=s.names[myId]||'P',opp=1-myId;
+  var myI=myId, oppI=1-myId;
+  // Always normalise via fa() — Firebase can return arrays as objects
+  s.hands[myI]=fa(s.hands[myI]||[]);
+  s.hands[oppI]=fa(s.hands[oppI]||[]);
+  var card=s.hands[myI][handIdx];
+  if(!card||card.cardType!=='trainer'){showMsg('Card not found in hand!');return;}
+  s.hands[myI].splice(handIdx,1);
+  s.discards[myI]=fa(s.discards[myI]||[]);s.discards[myI].push(card);
+  s.decks[myI]=fa(s.decks[myI]||[]);
+  s.bench[myI]=fa(s.bench[myI]||[]);s.bench[oppI]=fa(s.bench[oppI]||[]);
+  s.energyOnActive[myI]=s.energyOnActive[myI]||{};
+  s.energyOnActive[oppI]=s.energyOnActive[oppI]||{};
+  s.dmgOnActive=s.dmgOnActive||[0,0];
+  s.plusPower=s.plusPower||[false,false];
+  var id=card.id,nm=s.names[myI]||'Trainer',opp=oppI;
+  var toastMsg='';
   if(id==='bill'){
-    var drew=0;for(var i=0;i<2;i++){if(s.decks[myId].length>0){s.hands[myId].push(s.decks[myId].splice(0,1)[0]);drew++;}}
+    var drew=0;
+    for(var i=0;i<2;i++){if(s.decks[myI].length>0){s.hands[myI].push(s.decks[myI].splice(0,1)[0]);drew++;}}
+    toastMsg='📋 Bill: Drew '+drew+' card'+(drew!==1?'s':'')+'!';
     addLog(s,nm+' played Bill! Drew '+drew+' card'+(drew!==1?'s':'')+'.');
   }
   else if(id==='prof_oak'){
-    s.discards[myId]=s.discards[myId].concat(s.hands[myId]);s.hands[myId]=[];
-    var drew=0;for(var i=0;i<7;i++){if(s.decks[myId].length>0){s.hands[myId].push(s.decks[myId].splice(0,1)[0]);drew++;}}
-    addLog(s,nm+' played Prof. Oak! Discarded hand, drew '+drew+' fresh cards!',true);
+    var rest=s.hands[myI].slice();
+    s.discards[myI]=s.discards[myI].concat(rest);s.hands[myI]=[];
+    var drew=0;
+    for(var i=0;i<7;i++){if(s.decks[myI].length>0){s.hands[myI].push(s.decks[myI].splice(0,1)[0]);drew++;}}
+    toastMsg='🎓 Prof. Oak: Discarded '+rest.length+' cards, drew '+drew+' fresh!';
+    addLog(s,nm+' played Prof. Oak! Drew '+drew+' fresh cards!',true);
   }
   else if(id==='computer_search'){
-    if(s.decks[myId].length>0){var found=s.decks[myId].splice(Math.floor(Math.random()*s.decks[myId].length),1)[0];s.hands[myId].push(found);addLog(s,nm+' used Computer Search! Found '+found.name+'!',true);}
-    else addLog(s,nm+' used Computer Search — deck empty!');
+    if(s.decks[myI].length>0){
+      var found=s.decks[myI].splice(Math.floor(Math.random()*s.decks[myI].length),1)[0];
+      s.hands[myI].push(found);
+      toastMsg='💻 Computer Search: Found '+found.name+'!';
+      addLog(s,nm+' used Computer Search! Got '+found.name+'!',true);
+    }else{toastMsg='💻 Computer Search: Deck empty!';addLog(s,nm+' used Computer Search — deck is empty!');}
+  }
+  else if(id==='item_finder'){
+    // Retrieve any trainer from your discard pile
+    var trainersInDiscard=s.discards[myI].filter(function(c){return c.cardType==='trainer';});
+    if(trainersInDiscard.length>0){
+      var pick=trainersInDiscard[Math.floor(Math.random()*trainersInDiscard.length)];
+      var dIdx=s.discards[myI].findIndex(function(c){return c.uid===pick.uid;});
+      if(dIdx>=0)s.discards[myI].splice(dIdx,1);
+      s.hands[myI].push(pick);
+      toastMsg='🔍 Item Finder: Retrieved '+pick.name+' from discard!';
+      addLog(s,nm+' used Item Finder! Got '+pick.name+' from discard!',true);
+    }else{toastMsg='🔍 Item Finder: No trainers in discard!';addLog(s,nm+' used Item Finder — no trainers in discard!');}
   }
   else if(id==='gust_of_wind'){
-    var ob=fa(fa(s.bench)[opp]);
-    if(ob.length>0){var tmp=fa(s.active)[opp];s.active[opp]=ob.splice(0,1)[0];ob.push(tmp);s.bench[opp]=ob;s.dmgOnActive[opp]=0;addLog(s,nm+' used Gust of Wind! Forced out '+s.active[opp].name+'!',true);}
-    else addLog(s,nm+' used Gust of Wind — no bench Pokemon to force out!');
+    if(s.bench[opp].length>0){
+      var gustTmp=s.active[opp];
+      s.active[opp]=s.bench[opp].splice(0,1)[0];
+      s.bench[opp].push(gustTmp);
+      s.dmgOnActive[opp]=0;
+      toastMsg='🌪️ Gust of Wind: Forced out '+s.active[opp].name+'!';
+      addLog(s,nm+' used Gust of Wind! Forced out '+s.active[opp].name+'!',true);
+    }else{toastMsg='🌪️ Gust of Wind: Opponent has no bench!';addLog(s,nm+' used Gust of Wind — no bench Pokemon to force out!');}
   }
   else if(id==='energy_removal'){
-    var oE=fa(s.energyOnActive)[opp]||{};var ok2=Object.keys(oE).filter(function(k){return oE[k]>0;});
-    if(ok2.length>0){var rem=ok2[0];s.energyOnActive[opp][rem]=Math.max(0,(s.energyOnActive[opp][rem]||0)-1);addLog(s,nm+' used Energy Removal! Removed 1 '+rem+' Energy from opponent.',true);}
-    else addLog(s,nm+' used Energy Removal — opponent has no energy!');
+    var oE=s.energyOnActive[opp];
+    var eKeys=Object.keys(oE).filter(function(k){return oE[k]>0;});
+    if(eKeys.length>0){
+      var rem=eKeys[0];
+      s.energyOnActive[opp][rem]=Math.max(0,(s.energyOnActive[opp][rem]||0)-1);
+      toastMsg='❌ Energy Removal: Removed 1 '+rem+' Energy!';
+      addLog(s,nm+' used Energy Removal! Removed 1 '+rem+' Energy from opponent.',true);
+    }else{toastMsg='❌ Energy Removal: Opponent has no energy!';addLog(s,nm+' used Energy Removal — opponent has no energy!');}
   }
-  else if(id==='pluspower'){s.plusPower[myId]=true;addLog(s,nm+' played PlusPower! Next attack +10 damage!');}
+  else if(id==='pluspower'){
+    s.plusPower[myI]=true;
+    toastMsg='🔋 PlusPower: Next attack +10 damage!';
+    addLog(s,nm+' played PlusPower! Next attack deals +10 damage!');
+  }
   else if(id==='potion'){
-    var dmgNow=fa(s.dmgOnActive)[myId]||0;
-    if(dmgNow>0){s.dmgOnActive[myId]=Math.max(0,dmgNow-20);addLog(s,nm+' used Potion! Healed 20 damage.');}
-    else addLog(s,nm+' used Potion — your Active has no damage to heal!');
+    var dmgP=s.dmgOnActive[myI]||0;
+    if(dmgP>0){s.dmgOnActive[myI]=Math.max(0,dmgP-20);toastMsg='💊 Potion: Healed 20 damage!';addLog(s,nm+' used Potion! Healed 20 damage.');}
+    else{toastMsg='💊 Potion: No damage to heal!';addLog(s,nm+' used Potion — Active has no damage to heal!');}
   }
   else if(id==='super_potion'){
-    var dmgNow=fa(s.dmgOnActive)[myId]||0;
-    if(dmgNow>0){s.dmgOnActive[myId]=Math.max(0,dmgNow-40);addLog(s,nm+' used Super Potion! Healed 40 damage.');}
-    else addLog(s,nm+' used Super Potion — your Active has no damage!');
+    var dmgSP=s.dmgOnActive[myI]||0;
+    if(dmgSP>0){s.dmgOnActive[myI]=Math.max(0,dmgSP-40);toastMsg='💊💊 Super Potion: Healed 40 damage!';addLog(s,nm+' used Super Potion! Healed 40 damage.');}
+    else{toastMsg='💊💊 Super Potion: No damage to heal!';addLog(s,nm+' used Super Potion — Active has no damage!');}
   }
   else if(id==='switch_card'){
-    var bn=fa(fa(s.bench)[myId]);
-    if(bn.length>0){var tmp2=fa(s.active)[myId];s.active[myId]=bn.splice(0,1)[0];bn.push(tmp2);s.bench[myId]=bn;s.dmgOnActive[myId]=0;addLog(s,nm+' used Switch! '+s.active[myId].name+' is now Active!');}
-    else addLog(s,nm+' used Switch — no bench Pokemon!');
+    if(s.bench[myI].length>0){
+      var swTmp=s.active[myI];
+      s.active[myI]=s.bench[myI].splice(0,1)[0];
+      s.bench[myI].push(swTmp);
+      s.dmgOnActive[myI]=0;
+      toastMsg='🔄 Switch: '+s.active[myI].name+' is now your Active!';
+      addLog(s,nm+' used Switch! '+s.active[myI].name+' is now Active!');
+    }else{toastMsg='🔄 Switch: No bench Pokemon to switch with!';addLog(s,nm+' used Switch — no bench Pokemon!');}
   }
-  else addLog(s,nm+' played '+card.name+'.');
-  // Use update() not set() to avoid wiping opponent data
+  else{
+    toastMsg='🃏 Played '+card.name+'!';
+    addLog(s,nm+' played '+card.name+'.');
+  }
+  // Show prominent toast so player sees what happened
+  if(toastMsg)showToast(toastMsg);
+  // Atomic update — never overwrite opponent data
   var upd={};
-  upd['hands/'+myId]=s.hands[myId];
-  upd['decks/'+myId]=s.decks[myId];
-  upd['discards/'+myId]=s.discards[myId];
+  upd['hands/'+myI]=s.hands[myI];
+  upd['decks/'+myI]=s.decks[myI];
+  upd['discards/'+myI]=s.discards[myI];
   upd['active/0']=s.active[0];upd['active/1']=s.active[1];
   upd['bench/0']=s.bench[0];upd['bench/1']=s.bench[1];
-  upd['energyOnActive/0']=s.energyOnActive[0]||{};upd['energyOnActive/1']=s.energyOnActive[1]||{};
-  upd['dmgOnActive/0']=s.dmgOnActive[0]||0;upd['dmgOnActive/1']=s.dmgOnActive[1]||0;
-  upd['plusPower']=(s.plusPower||[false,false]);
-  upd['log']=(fa(s.log)||[]).slice(-40);
+  upd['energyOnActive/0']=s.energyOnActive[0]||{};
+  upd['energyOnActive/1']=s.energyOnActive[1]||{};
+  upd['dmgOnActive/0']=s.dmgOnActive[0]||0;
+  upd['dmgOnActive/1']=s.dmgOnActive[1]||0;
+  upd['plusPower']=s.plusPower;
+  upd['log']=fa(s.log).slice(-40);
   roomRef.update(upd);
 }
 function doDraw(){
   if(!roomRef||!state||fa(state.drawn)[myId])return;
-  var s=JSON.parse(JSON.stringify(state));
-  if(s.decks[myId].length>0){s.hands[myId].push(s.decks[myId].splice(0,1)[0]);s.drawn[myId]=true;addLog(s,(s.names[myId]||'P')+' drew a card.');roomRef.set(s);}
+  var deck=fa(fa(state.decks)[myId]);
+  if(deck.length===0){showMsg('Deck is empty — cannot draw!');return;}
+  var card=deck.splice(0,1)[0];
+  var newHand=fa(fa(state.hands)[myId]).concat([card]);
+  var log=fa(state.log).concat([{t:(fa(state.names)[myId]||'P')+' drew a card.',imp:false}]).slice(-40);
+  var upd={};
+  upd['decks/'+myId]=deck;
+  upd['hands/'+myId]=newHand;
+  upd['drawn/'+myId]=true;
+  upd['log']=log;
+  roomRef.update(upd);
 }
 function doRetreat(){
   if(!roomRef||!state||!fa(state.active)[myId])return;
@@ -1245,5 +1324,105 @@ ldApp(CDNS[0]);
 })();
 </script>
 
+
+<!-- ── POKEMON BURAQ MUSIC SYSTEM ── -->
+<audio id="bgMusic" loop preload="auto" style="display:none">
+  <source src="pokemon.mp3" type="audio/mpeg">
+</audio>
+
+<style>
+#musicBtn{position:fixed;bottom:16px;right:16px;z-index:8000;
+  background:rgba(10,20,50,0.85);border:1.5px solid rgba(245,215,110,0.4);
+  border-radius:50%;width:42px;height:42px;display:flex;align-items:center;
+  justify-content:center;cursor:pointer;font-size:1.2rem;
+  backdrop-filter:blur(8px);transition:all .2s;box-shadow:0 2px 12px rgba(0,0,0,0.5);}
+#musicBtn:hover{border-color:#f5d76e;transform:scale(1.1);}
+#musicBtn.muted{opacity:0.45;}
+</style>
+
+<button id="musicBtn" title="Toggle music">🎵</button>
+
+<script>
+(function(){
+  var aud=document.getElementById('bgMusic');
+  var btn=document.getElementById('musicBtn');
+  var muted=false;
+  var started=false;
+  var targetVol=0.55; // comfortable background volume
+
+  function startMusic(){
+    if(started)return;
+    aud.volume=0;
+    aud.play().then(function(){
+      started=true;
+      fadeIn();
+    }).catch(function(){
+      // Autoplay blocked — will start on next interaction
+    });
+  }
+
+  function fadeIn(){
+    var t=setInterval(function(){
+      if(aud.volume<targetVol){aud.volume=Math.min(targetVol,aud.volume+0.03);}
+      else clearInterval(t);
+    },80);
+  }
+
+  function fadeOut(cb){
+    var t=setInterval(function(){
+      if(aud.volume>0.01){aud.volume=Math.max(0,aud.volume-0.05);}
+      else{clearInterval(t);aud.pause();if(cb)cb();}
+    },60);
+  }
+
+  // Start on very first user touch/click anywhere
+  function onFirstInteraction(){
+    startMusic();
+    document.removeEventListener('click',onFirstInteraction);
+    document.removeEventListener('touchstart',onFirstInteraction);
+    document.removeEventListener('keydown',onFirstInteraction);
+  }
+  document.addEventListener('click',onFirstInteraction);
+  document.addEventListener('touchstart',onFirstInteraction);
+  document.addEventListener('keydown',onFirstInteraction);
+
+  // Mute/unmute toggle button
+  btn.addEventListener('click',function(e){
+    e.stopPropagation(); // don't trigger onFirstInteraction twice
+    if(!started){startMusic();return;}
+    muted=!muted;
+    if(muted){
+      aud.volume=0;
+      btn.textContent='🔇';
+      btn.classList.add('muted');
+    }else{
+      aud.volume=targetVol;
+      btn.textContent='🎵';
+      btn.classList.remove('muted');
+    }
+  });
+
+  // Hook into game phase changes for music moments
+  // Win → slow fade out then stop
+  var _origShowWin=window.showWin;
+  var checkWinInterval=setInterval(function(){
+    var wm=document.getElementById('winModal');
+    if(wm&&wm.classList.contains('open')&&!muted){
+      clearInterval(checkWinInterval);
+      // Fade to silence on win
+      fadeOut(null);
+      setTimeout(function(){
+        // Short fanfare pause then restart
+        setTimeout(function(){
+          if(!muted){aud.play();aud.volume=0;fadeIn();}
+        },2500);
+      },500);
+    }
+  },1000);
+
+  // Expose for game hooks
+  window._buraqMusic={start:startMusic,fadeOut:fadeOut,fadeIn:fadeIn};
+})();
+</script>
 </body>
 </html>
