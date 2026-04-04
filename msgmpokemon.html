@@ -612,6 +612,17 @@ function uid(){return Math.random().toString(36).substr(2,8);}
 function addLog(s,t,imp){if(!s.log)s.log=[];s.log.push({t:t,imp:!!imp});if(s.log.length>40)s.log=s.log.slice(-40);}
 function shuffle(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var tmp=a[i];a[i]=a[j];a[j]=tmp;}return a;}
 function canAfford(cost,energy){var free=cost.Colorless||0,used=0;for(var tt in cost){if(tt!=='Colorless'){if((energy[tt]||0)<cost[tt])return false;used+=cost[tt];}}return Object.values(energy).reduce(function(a,b){return a+b;},0)-used>=free;}
+function normPoke(p){
+  // Normalize a single Pokemon card — convert attacks/cost from Firebase objects to arrays/objects
+  if(!p||typeof p!=='object')return p;
+  if(p.attacks&&!Array.isArray(p.attacks))p.attacks=fa(p.attacks);
+  if(p.attacks)p.attacks=p.attacks.map(function(a){
+    if(!a||typeof a!=='object')return a;
+    if(a.cost&&!Array.isArray(a.cost)&&typeof a.cost!=='object')a.cost={};
+    return a;
+  });
+  return p;
+}
 function norm(d){
   if(!d)return d;
   ['hands','decks','discards','bench','prizes'].forEach(function(k){if(d[k])d[k]=fa(d[k]).map(fa);});
@@ -625,6 +636,13 @@ function norm(d){
   var _eoa=fa(d.energyOnActive||[]);if(_eoa.length<2)_eoa=pad2(_eoa,function(){return{};});d.energyOnActive=_eoa;
   var _eob=fa(d.energyOnBench||[]);if(_eob.length<2)_eob=pad2(_eob.map(fa),function(){return[];});else _eob=_eob.map(fa);d.energyOnBench=_eob;
   if(d.log)d.log=fa(d.log);
+  // CRITICAL: normalize attacks arrays inside active + bench Pokemon
+  // Firebase returns arrays as objects — attacks:[{...}] becomes {0:{...}}
+  d.active=d.active.map(normPoke);
+  d.bench=d.bench.map(function(slot){return fa(slot).map(normPoke);});
+  // Also normalize attacks in hands/decks
+  d.hands=d.hands.map(function(h){return fa(h).map(normPoke);});
+  d.decks=d.decks.map(function(dk){return fa(dk).map(normPoke);});
   return d;
 }
 
@@ -946,7 +964,8 @@ function renderAttacks(){
   panel.style.display='';document.getElementById('atkName').textContent=active.name;
   var list=document.getElementById('atkList');list.innerHTML='';
   var energy=fa(state.energyOnActive)[myId]||{};
-  (active.attacks||[]).forEach(function(atk,idx){
+  var atkList2=Array.isArray(active.attacks)?active.attacks:fa(active.attacks||[]);
+  atkList2.forEach(function(atk,idx){
     if(atk.dmg===0&&atk.desc.indexOf('Power')>=0)return;
     var ok=canAfford(atk.cost||{},energy);
     var row=document.createElement('div');row.className='atk-row'+(ok?'':' no-energy');
@@ -1146,7 +1165,7 @@ function placeActive(handIdx){
 function placeBench(handIdx){
   if(!roomRef||!state)return;
   var hands=fa(fa(state.hands)[myId]);var bench=fa(fa(state.bench)[myId]);
-  if(bench.length>=5){alert('Bench is full!');return;}
+  if(bench.length>=5){showMsg('Bench is full (max 5)!');return;}
   var card=hands[handIdx];if(!card||card.cardType!=='pokemon'||card.stage!==0)return;
   var nh=hands.slice();nh.splice(handIdx,1);var nb=bench.slice();nb.push(card);
   var upd={};upd['hands/'+myId]=nh;upd['bench/'+myId]=nb;
@@ -1155,7 +1174,7 @@ function placeBench(handIdx){
 }
 function attachEnergy(handIdx,target,targetIdx){
   if(!roomRef||!state)return;
-  if(fa(state.attached)[myId]){selIdx=null;render();alert('Already attached energy this turn!');return;}
+  if(fa(state.attached)[myId]){selIdx=null;render();showMsg('Already attached energy this turn!');return;}
   var hands=fa(fa(state.hands)[myId]);var card=hands[handIdx];if(!card||card.cardType!=='energy')return;
   var et=card.etype;var s=JSON.parse(JSON.stringify(state));
   s.hands[myId].splice(handIdx,1);
@@ -1169,10 +1188,11 @@ function attachEnergy(handIdx,target,targetIdx){
 function doAttack(atkIdx){
   if(!roomRef||!state)return;
   var opp=1-myId;var active=fa(state.active)[myId];if(!active)return;
-  var filteredAtks=(active.attacks||[]).filter(function(a){return!(a.dmg===0&&a.desc.indexOf('Power')>=0);});
+  var _atks=Array.isArray(active.attacks)?active.attacks:fa(active.attacks||[]);
+  var filteredAtks=_atks.filter(function(a){return!(a.dmg===0&&a.desc&&a.desc.indexOf('Power')>=0);});
   var atk=filteredAtks[atkIdx];if(!atk)return;
   var energy=fa(state.energyOnActive)[myId]||{};
-  if(!canAfford(atk.cost||{},energy)){alert('Not enough energy!');return;}
+  if(!canAfford(atk.cost||{},energy)){showMsg('Not enough energy to attack!');return;}
   var s=JSON.parse(JSON.stringify(state));
   var dmg=atk.dmg||0;
   if(fa(s.plusPower)[myId])dmg+=10;
@@ -1496,7 +1516,7 @@ function doDraw(){
 }
 function doRetreat(){
   if(!roomRef||!state||!fa(state.active)[myId])return;
-  var bench=fa(fa(state.bench)[myId]);if(!bench.length){alert('No bench Pokemon!');return;}
+  var bench=fa(fa(state.bench)[myId]);if(!bench.length){showMsg('No bench Pokemon to retreat to!');return;}
   var s=JSON.parse(JSON.stringify(state));var tmp=fa(s.active)[myId];
   s.active[myId]=bench.splice(0,1)[0];bench.push(tmp);s.bench[myId]=bench;s.dmgOnActive[myId]=0;
   addLog(s,(s.names[myId]||'P')+' retreated!');
