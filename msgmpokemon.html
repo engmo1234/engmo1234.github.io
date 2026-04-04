@@ -145,10 +145,25 @@ body{min-height:100vh;background:radial-gradient(ellipse at top,#0a1628,#050c18)
 .atk-row.no-energy{opacity:.32;cursor:not-allowed;}
 .atk-name{font-size:.78rem;font-weight:700;}.atk-dmg{font-size:1rem;font-weight:900;color:#f5d76e;}
 .atk-cost{font-size:.6rem;color:#a09060;}.atk-desc{font-size:.58rem;color:#a09060;margin-top:1px;}
-.g-log{background:rgba(0,0,0,.32);border-radius:10px;padding:7px 11px;max-height:76px;overflow-y:auto;font-size:.7rem;color:#a09060;}
-.g-log::-webkit-scrollbar{width:3px;}.g-log::-webkit-scrollbar-thumb{background:#334;border-radius:2px;}
+.g-log{background:rgba(0,0,0,.55);border:1px solid rgba(245,215,110,.18);border-radius:12px;padding:10px 14px;max-height:160px;overflow-y:auto;font-size:.75rem;color:#d4c090;line-height:1.6;}
+.g-log::-webkit-scrollbar{width:3px;}.g-log::-webkit-scrollbar-thumb{background:#554;border-radius:2px;}
+.log-imp{color:#f5d76e;font-weight:800;font-size:.78rem;}
+.log-entry{padding:1px 0;border-bottom:1px solid rgba(255,255,255,.04);}
+.log-entry:last-child{border-bottom:none;}
 .log-imp{color:#f5d76e;font-weight:700;}
 #winModal{position:fixed;inset:0;background:rgba(0,0,0,.92);display:none;align-items:center;justify-content:center;z-index:2000;padding:20px;}
+#choiceModal{position:fixed;inset:0;background:rgba(0,0,0,.88);display:none;align-items:center;justify-content:center;z-index:3000;padding:16px;flex-direction:column;}
+#choiceModal.open{display:flex;}
+.ch-box{background:linear-gradient(135deg,#0a1628,#0d1f3c);border:2px solid #f5d76e;border-radius:20px;padding:20px 18px;width:min(380px,96vw);max-height:78vh;overflow-y:auto;}
+.ch-title{font-size:1rem;font-weight:900;color:#f5d76e;text-align:center;margin-bottom:6px;}
+.ch-sub{font-size:.73rem;color:#a09060;text-align:center;margin-bottom:12px;line-height:1.5;}
+.ch-item{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.12);border-radius:12px;padding:10px 14px;margin-bottom:8px;cursor:pointer;transition:.15s;}
+.ch-item:hover{border-color:#f5d76e;background:rgba(245,215,110,.1);}
+.ch-icon{font-size:1.4rem;flex-shrink:0;}
+.ch-name{font-size:.85rem;font-weight:700;color:#f0e8d0;}
+.ch-detail{font-size:.7rem;color:#a09060;margin-top:2px;}
+.ch-cancel{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.15);border-radius:30px;padding:10px;color:#888;font-size:.85rem;cursor:pointer;width:100%;font-family:inherit;margin-top:4px;}
+.ch-cancel:hover{background:rgba(255,255,255,.12);}
 #winModal.open{display:flex;}
 @keyframes winpop{0%{transform:scale(.5);opacity:0}70%{transform:scale(1.06)}100%{transform:scale(1);opacity:1}}
 .win-box{background:linear-gradient(135deg,#1a0a3a,#0a1a3a);border:2px solid #f5d76e;border-radius:24px;padding:32px 40px;text-align:center;max-width:340px;width:100%;animation:winpop .5s cubic-bezier(.34,1.56,.64,1) both;}
@@ -251,7 +266,20 @@ body{min-height:100vh;background:radial-gradient(ellipse at top,#0a1628,#050c18)
     <div class="z-lbl" id="zLbl">&#129354; Your Hand</div>
     <div class="hand-scroll" id="myHand"></div>
   </div>
-  <div class="g-log" id="glog"></div>
+  <div style="margin-top:6px;">
+    <div style="font-size:.62rem;font-weight:700;color:#f5d76e;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;padding:0 2px;">⚡ Battle Log</div>
+    <div class="g-log" id="glog"><div class="log-entry" style="color:#555;font-style:italic;">Battle log will appear here…</div></div>
+  </div>
+</div>
+
+<!-- CHOICE MODAL -->
+<div id="choiceModal">
+  <div class="ch-box">
+    <div class="ch-title" id="chTitle">Choose</div>
+    <div class="ch-sub" id="chSub"></div>
+    <div id="chList"></div>
+    <button class="ch-cancel" id="chCancel">Cancel</button>
+  </div>
 </div>
 
 <!-- WIN MODAL -->
@@ -943,7 +971,15 @@ function render(){
   document.getElementById('endBtn').disabled=!isMine||over||phase==='setup';
   // Log
   var gl=document.getElementById('glog');gl.innerHTML='';
-  fa(state.log).slice(-10).forEach(function(e){var d=document.createElement('div');d.className=e.imp?'log-imp':'';d.textContent=e.t;gl.appendChild(d);});gl.scrollTop=9999;
+  var logEntries=fa(state.log);
+  if(logEntries.length===0){gl.innerHTML='<div class="log-entry" style="color:#555;font-style:italic;">Battle log will appear here…</div>';return;}
+  logEntries.slice(-20).forEach(function(e){
+    var d=document.createElement('div');
+    d.className='log-entry'+(e.imp?' log-imp':'');
+    d.textContent=e.t;
+    gl.appendChild(d);
+  });
+  gl.scrollTop=9999;
   // Win modal
   var wm=document.getElementById('winModal');var names2=fa(state.names);
   if(over&&state.winner!==null){wm.classList.add('open');var won=state.winner===myId;
@@ -972,6 +1008,21 @@ function onHandClick(idx){
     if(card.cardType==='pokemon'&&card.stage>0){showMsg('Evolve by placing on a matching Active or Bench Pokemon (coming soon)');return;}
   }
 }
+function showChoice(title,sub,items,onPick,onCancel){
+  var modal=document.getElementById('choiceModal');
+  var list=document.getElementById('chList');
+  document.getElementById('chTitle').textContent=title;
+  document.getElementById('chSub').textContent=sub||'';
+  list.innerHTML='';
+  items.forEach(function(item){
+    var div=document.createElement('div');div.className='ch-item';
+    div.innerHTML='<span class="ch-icon">'+esc(item.icon||'✨')+'</span><div><div class="ch-name">'+esc(item.name)+'</div>'+(item.detail?'<div class="ch-detail">'+esc(item.detail)+'</div>':'')+'</div>';
+    div.addEventListener('click',function(){modal.classList.remove('open');onPick(item.value);});
+    list.appendChild(div);
+  });
+  document.getElementById('chCancel').onclick=function(){modal.classList.remove('open');if(onCancel)onCancel();};
+  modal.classList.add('open');
+}
 function showMsg(txt){
   var sb=document.getElementById('gstatus');
   if(!sb)return;
@@ -985,11 +1036,12 @@ function showToast(txt){
   if(existing)existing.remove();
   var toast=document.createElement('div');
   toast.id='trainerToast';
-  toast.style.cssText='position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(0.7);z-index:9000;background:linear-gradient(135deg,#1a0a3a,#0a1a4a);border:2px solid #f5d76e;border-radius:18px;padding:18px 28px;color:#f5d76e;font-size:1.1rem;font-weight:900;text-align:center;pointer-events:none;opacity:0;transition:all 0.2s cubic-bezier(0.34,1.56,0.64,1);max-width:85vw;box-shadow:0 8px 32px rgba(0,0,0,0.7);';
-  toast.textContent=txt;
+  toast.style.cssText='position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(0.7);z-index:9000;background:linear-gradient(135deg,#1a0a3a,#0a1a4a);border:2.5px solid #f5d76e;border-radius:20px;padding:22px 32px;color:#f5d76e;font-size:1.15rem;font-weight:900;text-align:center;pointer-events:none;opacity:0;transition:all 0.25s cubic-bezier(0.34,1.56,0.64,1);max-width:88vw;box-shadow:0 12px 40px rgba(0,0,0,0.8),0 0 0 1px rgba(245,215,110,0.2);';
+  // Support \n line breaks in toast messages
+  txt.split('\n').forEach(function(line,i){if(i>0){toast.appendChild(document.createElement('br'));}toast.appendChild(document.createTextNode(line));});
   document.body.appendChild(toast);
   setTimeout(function(){toast.style.opacity='1';toast.style.transform='translate(-50%,-50%) scale(1)';},10);
-  setTimeout(function(){toast.style.opacity='0';toast.style.transform='translate(-50%,-60%) scale(0.9)';setTimeout(function(){toast.remove();},300);},1800);
+  setTimeout(function(){toast.style.opacity='0';toast.style.transform='translate(-50%,-60%) scale(0.9)';setTimeout(function(){toast.remove();},300);},2800);
 }
 function onActiveClick(){
   if(!state||selIdx===null)return;
@@ -1075,12 +1127,11 @@ function doAttack(atkIdx){
 function playTrainer(handIdx){
   if(!roomRef||!state)return;
   var s=JSON.parse(JSON.stringify(state));
-  var myI=myId, oppI=1-myId;
-  // Always normalise via fa() — Firebase can return arrays as objects
+  var myI=myId,oppI=1-myId;
   s.hands[myI]=fa(s.hands[myI]||[]);
   s.hands[oppI]=fa(s.hands[oppI]||[]);
   var card=s.hands[myI][handIdx];
-  if(!card||card.cardType!=='trainer'){showMsg('Card not found in hand!');return;}
+  if(!card||card.cardType!=='trainer'){showMsg('Card not found!');return;}
   s.hands[myI].splice(handIdx,1);
   s.discards[myI]=fa(s.discards[myI]||[]);s.discards[myI].push(card);
   s.decks[myI]=fa(s.decks[myI]||[]);
@@ -1089,108 +1140,255 @@ function playTrainer(handIdx){
   s.energyOnActive[oppI]=s.energyOnActive[oppI]||{};
   s.dmgOnActive=s.dmgOnActive||[0,0];
   s.plusPower=s.plusPower||[false,false];
-  var id=card.id,nm=s.names[myI]||'Trainer',opp=oppI;
-  var toastMsg='';
+  var id=card.id,nm=fa(s.names)[myI]||'Trainer',opp=oppI;
+  var TI={Fire:'🔥',Water:'💧',Grass:'🌿',Lightning:'⚡',Psychic:'🔮',Fighting:'👊',Colorless:'⭐'};
+
+  // ── BILL: Draw 2 cards ──
   if(id==='bill'){
     var drew=0;
     for(var i=0;i<2;i++){if(s.decks[myI].length>0){s.hands[myI].push(s.decks[myI].splice(0,1)[0]);drew++;}}
-    toastMsg='📋 Bill: Drew '+drew+' card'+(drew!==1?'s':'')+'!';
+    showToast('📋 Bill: Drew '+drew+' card'+(drew!==1?'s':'')+'!');
     addLog(s,nm+' played Bill! Drew '+drew+' card'+(drew!==1?'s':'')+'.');
+    doUpdate(s,myI);
   }
+
+  // ── PROF OAK: Discard hand, draw 7 ──
   else if(id==='prof_oak'){
     var rest=s.hands[myI].slice();
     s.discards[myI]=s.discards[myI].concat(rest);s.hands[myI]=[];
     var drew=0;
     for(var i=0;i<7;i++){if(s.decks[myI].length>0){s.hands[myI].push(s.decks[myI].splice(0,1)[0]);drew++;}}
-    toastMsg='🎓 Prof. Oak: Discarded '+rest.length+' cards, drew '+drew+' fresh!';
+    showToast('🎓 Prof. Oak! Discarded '+rest.length+', drew '+drew+' fresh cards!');
     addLog(s,nm+' played Prof. Oak! Drew '+drew+' fresh cards!',true);
+    doUpdate(s,myI);
   }
+
+  // ── COMPUTER SEARCH: Discard 2, fetch any card from deck ──
   else if(id==='computer_search'){
-    if(s.decks[myI].length>0){
+    if(s.hands[myI].length<2){
+      showToast('💻 Computer Search: Need 2 cards to discard!');
+      addLog(s,nm+' tried Computer Search - need 2 cards to discard!');
+      s.hands[myI].push(card);s.discards[myI].pop();
+      doUpdate(s,myI);
+    }else if(s.decks[myI].length===0){
+      showToast('💻 Computer Search: Deck is empty!');
+      addLog(s,nm+' tried Computer Search - deck empty!');
+      s.hands[myI].push(card);s.discards[myI].pop();
+      doUpdate(s,myI);
+    }else{
+      // Auto-discard 2 least valuable cards (energy first, then non-trainers)
+      var discard2=s.hands[myI].filter(function(c){return c.cardType==='energy';}).slice(0,2);
+      if(discard2.length<2)discard2=discard2.concat(s.hands[myI].filter(function(c){return c.cardType!=='trainer'&&discard2.indexOf(c)<0;}).slice(0,2-discard2.length));
+      if(discard2.length<2)discard2=discard2.concat(s.hands[myI].slice(0,2-discard2.length));
+      var discNames=[];
+      discard2.forEach(function(c){var i=s.hands[myI].indexOf(c);if(i>=0){s.hands[myI].splice(i,1);s.discards[myI].push(c);discNames.push(c.name);}});
       var found=s.decks[myI].splice(Math.floor(Math.random()*s.decks[myI].length),1)[0];
       s.hands[myI].push(found);
-      toastMsg='💻 Computer Search: Found '+found.name+'!';
-      addLog(s,nm+' used Computer Search! Got '+found.name+'!',true);
-    }else{toastMsg='💻 Computer Search: Deck empty!';addLog(s,nm+' used Computer Search — deck is empty!');}
+      showToast('💻 Computer Search! Discarded: '+discNames.join(', ')+'. Got: '+found.name+'!');
+      addLog(s,nm+' used Computer Search! Discarded '+discNames.join('+')+' → Got '+found.name+'!',true);
+      doUpdate(s,myI);
+    }
   }
+
+  // ── ITEM FINDER: Discard 2, retrieve a Trainer from discard ──
   else if(id==='item_finder'){
-    // Retrieve any trainer from your discard pile
-    var trainersInDiscard=s.discards[myI].filter(function(c){return c.cardType==='trainer';});
-    if(trainersInDiscard.length>0){
-      var pick=trainersInDiscard[Math.floor(Math.random()*trainersInDiscard.length)];
-      var dIdx=s.discards[myI].findIndex(function(c){return c.uid===pick.uid;});
-      if(dIdx>=0)s.discards[myI].splice(dIdx,1);
-      s.hands[myI].push(pick);
-      toastMsg='🔍 Item Finder: Retrieved '+pick.name+' from discard!';
-      addLog(s,nm+' used Item Finder! Got '+pick.name+' from discard!',true);
-    }else{toastMsg='🔍 Item Finder: No trainers in discard!';addLog(s,nm+' used Item Finder — no trainers in discard!');}
+    var trainersInDisc=s.discards[myI].filter(function(c){return c.cardType==='trainer';});
+    if(s.hands[myI].length<2){
+      showToast('🔍 Item Finder: Need 2 cards to discard!');
+      s.hands[myI].push(card);s.discards[myI].pop();doUpdate(s,myI);
+    }else if(trainersInDisc.length===0){
+      showToast('🔍 Item Finder: No Trainers in discard!');
+      s.hands[myI].push(card);s.discards[myI].pop();doUpdate(s,myI);
+    }else{
+      var disc2=s.hands[myI].filter(function(c){return c.cardType==='energy';}).slice(0,2);
+      if(disc2.length<2)disc2=disc2.concat(s.hands[myI].filter(function(c){return c.cardType!=='trainer'&&disc2.indexOf(c)<0;}).slice(0,2-disc2.length));
+      if(disc2.length<2)disc2=disc2.concat(s.hands[myI].slice(0,2-disc2.length));
+      var dNames2=[];
+      disc2.forEach(function(c){var i=s.hands[myI].indexOf(c);if(i>=0){s.hands[myI].splice(i,1);s.discards[myI].push(c);dNames2.push(c.name);}});
+      var ifSnap=JSON.parse(JSON.stringify(s));
+      showChoice(
+        '🔍 Item Finder',
+        'Discarded: '+dNames2.join(', ')+'. Choose a Trainer to retrieve:',
+        trainersInDisc.map(function(t){return{icon:t.icon||'🃏',name:t.name,detail:t.desc||'',value:t.uid};}),
+        function(uid){
+          var di=ifSnap.discards[myI].findIndex(function(c){return c.uid===uid;});
+          if(di>=0){var got=ifSnap.discards[myI].splice(di,1)[0];ifSnap.hands[myI].push(got);
+            showToast('🔍 Item Finder! Retrieved '+got.name+'!');
+            addLog(ifSnap,nm+' used Item Finder! Got '+got.name+' from discard!',true);}
+          doUpdate(ifSnap,myI);
+        },
+        function(){showToast('Item Finder cancelled.');}
+      );
+      return;
+    }
   }
+
+  // ── GUST OF WIND: Player chooses which bench Pokemon to force active ──
   else if(id==='gust_of_wind'){
-    if(s.bench[opp].length>0){
-      var gustTmp=s.active[opp];
-      s.active[opp]=s.bench[opp].splice(0,1)[0];
-      s.bench[opp].push(gustTmp);
-      s.dmgOnActive[opp]=0;
-      toastMsg='🌪️ Gust of Wind: Forced out '+s.active[opp].name+'!';
-      addLog(s,nm+' used Gust of Wind! Forced out '+s.active[opp].name+'!',true);
-    }else{toastMsg='🌪️ Gust of Wind: Opponent has no bench!';addLog(s,nm+' used Gust of Wind — no bench Pokemon to force out!');}
+    if(s.bench[opp].length===0){
+      showToast('🌪 Gust of Wind: Opponent has no bench!');
+      addLog(s,nm+' used Gust of Wind — opponent has no bench!');
+      doUpdate(s,myI);
+    }else{
+      var gustSnap=JSON.parse(JSON.stringify(s));
+      showChoice(
+        '🌪 Gust of Wind',
+        'Force one of '+fa(gustSnap.names)[opp]+'’s Bench Pokemon into battle:',
+        fa(gustSnap.bench[opp]).map(function(p,i){return{icon:TI[p.type]||'✨',name:p.name,detail:'HP: '+p.hp+' • '+p.type,value:i};}),
+        function(bIdx){
+          var oldAct=gustSnap.active[opp];
+          var pulled=gustSnap.bench[opp][bIdx];
+          gustSnap.bench[opp].splice(bIdx,1);
+          gustSnap.bench[opp].push(oldAct);
+          gustSnap.active[opp]=pulled;
+          gustSnap.dmgOnActive[opp]=0;
+          showToast('🌪 Gust of Wind! '+pulled.name+' forced into battle!');
+          addLog(gustSnap,nm+' used Gust of Wind! Forced '+pulled.name+' into battle!',true);
+          doUpdate(gustSnap,myI);
+        },
+        function(){showToast('Gust of Wind cancelled.');}
+      );
+      return;
+    }
   }
+
+  // ── ENERGY REMOVAL: Choose 1 Energy from any opponent Pokemon ──
   else if(id==='energy_removal'){
-    var oE=s.energyOnActive[opp];
-    var eKeys=Object.keys(oE).filter(function(k){return oE[k]>0;});
-    if(eKeys.length>0){
-      var rem=eKeys[0];
-      s.energyOnActive[opp][rem]=Math.max(0,(s.energyOnActive[opp][rem]||0)-1);
-      toastMsg='❌ Energy Removal: Removed 1 '+rem+' Energy!';
-      addLog(s,nm+' used Energy Removal! Removed 1 '+rem+' Energy from opponent.',true);
-    }else{toastMsg='❌ Energy Removal: Opponent has no energy!';addLog(s,nm+' used Energy Removal — opponent has no energy!');}
+    var allEng=[];
+    var oEA=s.energyOnActive[opp]||{};
+    Object.keys(oEA).forEach(function(t){for(var n=0;n<(oEA[t]||0);n++){allEng.push({src:'active',type:t,pokemon:fa(s.active)[opp]?fa(s.active)[opp].name:'Active'});}});
+    fa(s.bench[opp]).forEach(function(bp,bi){
+      var bE=(fa(fa(s.energyOnBench||[[],[]])[opp])[bi])||{};
+      Object.keys(bE).forEach(function(t){for(var n=0;n<(bE[t]||0);n++){allEng.push({src:'bench',bi:bi,type:t,pokemon:bp.name});}});
+    });
+    if(allEng.length===0){
+      showToast('❌ Energy Removal: Opponent has no Energy!');
+      addLog(s,nm+' used Energy Removal — no energy to remove!');
+      doUpdate(s,myI);
+    }else{
+      var erSnap=JSON.parse(JSON.stringify(s));
+      showChoice(
+        '❌ Energy Removal',
+        'Choose 1 Energy to discard from '+fa(erSnap.names)[opp]+'’s Pokemon:',
+        allEng.map(function(e,i){return{icon:TI[e.type]||'⭐',name:e.type+' Energy',detail:'On: '+e.pokemon,value:i};}),
+        function(idx){
+          var picked=allEng[idx];
+          if(picked.src==='active'){erSnap.energyOnActive[opp][picked.type]=Math.max(0,(erSnap.energyOnActive[opp][picked.type]||0)-1);}
+          else{
+            if(!erSnap.energyOnBench)erSnap.energyOnBench=[[],[]];
+            if(!erSnap.energyOnBench[opp])erSnap.energyOnBench[opp]=[];
+            if(!erSnap.energyOnBench[opp][picked.bi])erSnap.energyOnBench[opp][picked.bi]={};
+            erSnap.energyOnBench[opp][picked.bi][picked.type]=Math.max(0,(erSnap.energyOnBench[opp][picked.bi][picked.type]||0)-1);
+          }
+          showToast('❌ Energy Removal! Removed 1 '+picked.type+' Energy from '+picked.pokemon+'!');
+          addLog(erSnap,nm+' used Energy Removal! Removed '+picked.type+' Energy from '+picked.pokemon+'!',true);
+          doUpdate(erSnap,myI);
+        },
+        function(){showToast('Energy Removal cancelled.');}
+      );
+      return;
+    }
   }
+
+  // ── PLUSPOWER: +10 damage this turn ──
   else if(id==='pluspower'){
     s.plusPower[myI]=true;
-    toastMsg='🔋 PlusPower: Next attack +10 damage!';
-    addLog(s,nm+' played PlusPower! Next attack deals +10 damage!');
+    showToast('🔋 PlusPower! Next attack +10 damage!');
+    addLog(s,nm+' played PlusPower! Next attack +10 damage!');
+    doUpdate(s,myI);
   }
+
+  // ── POTION: Heal 20 from any of your Pokemon ──
   else if(id==='potion'){
-    var dmgP=s.dmgOnActive[myI]||0;
-    if(dmgP>0){s.dmgOnActive[myI]=Math.max(0,dmgP-20);toastMsg='💊 Potion: Healed 20 damage!';addLog(s,nm+' used Potion! Healed 20 damage.');}
-    else{toastMsg='💊 Potion: No damage to heal!';addLog(s,nm+' used Potion — Active has no damage to heal!');}
+    var potTargets=[];
+    var actDmg=fa(s.dmgOnActive)[myI]||0;
+    if(actDmg>0){var ap=fa(s.active)[myI];if(ap)potTargets.push({icon:TI[ap.type]||'✨',name:ap.name+' (Active)',detail:'Damage: '+actDmg+' HP',value:'active'});}
+    if(potTargets.length===0){
+      showToast('💊 Potion: No damaged Pokemon to heal!');
+      addLog(s,nm+' used Potion — no damaged Pokemon!');
+      doUpdate(s,myI);
+    }else if(potTargets.length===1){
+      s.dmgOnActive[myI]=Math.max(0,actDmg-20);
+      showToast('💊 Potion: Healed 20 HP from '+fa(s.active)[myI].name+'!');
+      addLog(s,nm+' used Potion! Healed 20 HP.');
+      doUpdate(s,myI);
+    }else{
+      var potSnap=JSON.parse(JSON.stringify(s));
+      showChoice('💊 Potion','Choose a Pokemon to heal 20 damage:',potTargets,
+        function(val){potSnap.dmgOnActive[myI]=Math.max(0,(potSnap.dmgOnActive[myI]||0)-20);showToast('💊 Potion: Healed 20 HP!');addLog(potSnap,nm+' used Potion! Healed 20 HP.');doUpdate(potSnap,myI);},
+        function(){showToast('Potion cancelled.');}
+      );return;
+    }
   }
+
+  // ── SUPER POTION: Heal 40, MUST discard 1 Energy from healed Pokemon ──
   else if(id==='super_potion'){
-    var dmgSP=s.dmgOnActive[myI]||0;
-    if(dmgSP>0){s.dmgOnActive[myI]=Math.max(0,dmgSP-40);toastMsg='💊💊 Super Potion: Healed 40 damage!';addLog(s,nm+' used Super Potion! Healed 40 damage.');}
-    else{toastMsg='💊💊 Super Potion: No damage to heal!';addLog(s,nm+' used Super Potion — Active has no damage!');}
+    var spDmg=fa(s.dmgOnActive)[myI]||0;
+    var spAct=fa(s.active)[myI];
+    var spE=s.energyOnActive[myI]||{};
+    var spEK=Object.keys(spE).filter(function(k){return spE[k]>0;});
+    if(spDmg===0){
+      showToast('💊💊 Super Potion: Active has no damage!');
+      addLog(s,nm+' tried Super Potion — no damage to heal!');doUpdate(s,myI);
+    }else if(spEK.length===0){
+      showToast('💊💊 Super Potion: No Energy on Active to discard!');
+      addLog(s,nm+' tried Super Potion — no energy to discard as cost!');doUpdate(s,myI);
+    }else{
+      var spSnap=JSON.parse(JSON.stringify(s));
+      showChoice(
+        '💊💊 Super Potion',
+        'Heal 40 HP from '+spAct.name+'. Discard 1 Energy as cost:',
+        spEK.map(function(t){return{icon:TI[t]||'⭐',name:t+' Energy',detail:'Will be discarded',value:t};}),
+        function(type){
+          spSnap.dmgOnActive[myI]=Math.max(0,(spSnap.dmgOnActive[myI]||0)-40);
+          spSnap.energyOnActive[myI][type]=Math.max(0,(spSnap.energyOnActive[myI][type]||0)-1);
+          showToast('💊💊 Super Potion! Healed 40 HP, discarded 1 '+type+' Energy!');
+          addLog(spSnap,nm+' used Super Potion! Healed 40 HP, discarded 1 '+type+' Energy.',true);
+          doUpdate(spSnap,myI);
+        },
+        function(){showToast('Super Potion cancelled.');}
+      );return;
+    }
   }
+
+  // ── SWITCH: Swap Active with Bench ──
   else if(id==='switch_card'){
-    if(s.bench[myI].length>0){
+    if(s.bench[myI].length===0){
+      showToast('🔄 Switch: No bench Pokemon to switch with!');
+      addLog(s,nm+' tried Switch — no bench Pokemon!');doUpdate(s,myI);
+    }else{
       var swTmp=s.active[myI];
       s.active[myI]=s.bench[myI].splice(0,1)[0];
       s.bench[myI].push(swTmp);
       s.dmgOnActive[myI]=0;
-      toastMsg='🔄 Switch: '+s.active[myI].name+' is now your Active!';
+      showToast('🔄 Switch! '+s.active[myI].name+' is now Active!');
       addLog(s,nm+' used Switch! '+s.active[myI].name+' is now Active!');
-    }else{toastMsg='🔄 Switch: No bench Pokemon to switch with!';addLog(s,nm+' used Switch — no bench Pokemon!');}
+      doUpdate(s,myI);
+    }
   }
+
   else{
-    toastMsg='🃏 Played '+card.name+'!';
+    showToast('🃏 Played '+card.name+'!');
     addLog(s,nm+' played '+card.name+'.');
+    doUpdate(s,myI);
   }
-  // Show prominent toast so player sees what happened
-  if(toastMsg)showToast(toastMsg);
-  // Atomic update — never overwrite opponent data
+}
+
+// Shared update helper for trainer cards
+function doUpdate(s,myI){
+  var opp=1-myI;
   var upd={};
-  upd['hands/'+myI]=s.hands[myI];
-  upd['decks/'+myI]=s.decks[myI];
+  upd['hands/'+myI]=s.hands[myI];upd['decks/'+myI]=s.decks[myI];
   upd['discards/'+myI]=s.discards[myI];
   upd['active/0']=s.active[0];upd['active/1']=s.active[1];
   upd['bench/0']=s.bench[0];upd['bench/1']=s.bench[1];
-  upd['energyOnActive/0']=s.energyOnActive[0]||{};
-  upd['energyOnActive/1']=s.energyOnActive[1]||{};
-  upd['dmgOnActive/0']=s.dmgOnActive[0]||0;
-  upd['dmgOnActive/1']=s.dmgOnActive[1]||0;
-  upd['plusPower']=s.plusPower;
-  upd['log']=fa(s.log).slice(-40);
+  upd['energyOnActive/0']=s.energyOnActive[0]||{};upd['energyOnActive/1']=s.energyOnActive[1]||{};
+  upd['dmgOnActive/0']=s.dmgOnActive[0]||0;upd['dmgOnActive/1']=s.dmgOnActive[1]||0;
+  if(s.energyOnBench){upd['energyOnBench/0']=s.energyOnBench[0]||[];upd['energyOnBench/1']=s.energyOnBench[1]||[];}
+  upd['plusPower']=s.plusPower;upd['log']=fa(s.log).slice(-40);
   roomRef.update(upd);
 }
+
 function doDraw(){
   if(!roomRef||!state||fa(state.drawn)[myId])return;
   var deck=fa(fa(state.decks)[myId]);
