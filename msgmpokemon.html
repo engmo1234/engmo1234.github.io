@@ -635,22 +635,51 @@ function normPoke(p){
 }
 function norm(d){
   if(!d)return d;
-  ['hands','decks','discards','bench','prizes'].forEach(function(k){if(d[k])d[k]=fa(d[k]).map(fa);});
-  ['active','names','connected','prizesLeft','drawn','attached','plusPower','dmgOnActive','status','deckReady'].forEach(function(k){if(d[k]!=null)d[k]=fa(d[k]);});
-  d.active=pad2(d.active||[],null);d.names=pad2(d.names||[],null);d.connected=pad2(d.connected||[],false);
-  d.prizesLeft=pad2(d.prizesLeft||[],6);d.drawn=pad2(d.drawn||[],false);d.attached=pad2(d.attached||[],false);
-  d.dmgOnActive=pad2(d.dmgOnActive||[],0);d.plusPower=pad2(d.plusPower||[],false);d.status=pad2(d.status||[],null);
-  d.deckReady=pad2(d.deckReady||[],false);
-  if(!d.hands||d.hands.length<2)d.hands=pad2(d.hands||[],function(){return[];});
-  if(!d.bench||d.bench.length<2)d.bench=pad2(d.bench||[],function(){return[];});
-  var _eoa=fa(d.energyOnActive||[]);if(_eoa.length<2)_eoa=pad2(_eoa,function(){return{};});d.energyOnActive=_eoa;
-  var _eob=fa(d.energyOnBench||[]);if(_eob.length<2)_eob=pad2(_eob.map(fa),function(){return[];});else _eob=_eob.map(fa);d.energyOnBench=_eob;
+  // ── SAFE INDEX LOOKUP ──────────────────────────────────────────────
+  // Firebase omits zero/false/null values from snapshots.
+  // fa() on a sparse object like {1:10} gives [10] not [0,10].
+  // We MUST use explicit index lookup for all 2-player arrays.
+  function idx(obj,i,def){
+    if(!obj)return def;
+    if(Array.isArray(obj))return obj[i]!==undefined?obj[i]:def;
+    // Firebase object with string keys
+    return obj[i]!==undefined?obj[i]:(obj[String(i)]!==undefined?obj[String(i)]:def);
+  }
+  function twoPlayer(obj,def){
+    return [idx(obj,0,typeof def==='function'?def():def),
+            idx(obj,1,typeof def==='function'?def():def)];
+  }
+  // ── 2-PLAYER SCALAR ARRAYS (use explicit index lookup) ────────────
+  d.active     = twoPlayer(d.active,    null);
+  d.names      = twoPlayer(d.names,     null);
+  d.connected  = twoPlayer(d.connected, false);
+  d.prizesLeft = twoPlayer(d.prizesLeft,6);
+  d.drawn      = twoPlayer(d.drawn,     false);
+  d.attached   = twoPlayer(d.attached,  false);
+  d.plusPower  = twoPlayer(d.plusPower, false);
+  d.dmgOnActive= twoPlayer(d.dmgOnActive,0);  // THE KEY FIX
+  d.status     = twoPlayer(d.status,    null);
+  d.deckReady  = twoPlayer(d.deckReady, false);
+  // ── ENERGY ON ACTIVE (objects, not arrays) ────────────────────────
+  d.energyOnActive=[idx(d.energyOnActive,0,{})||{},idx(d.energyOnActive,1,{})||{}];
+  // ── 2-PLAYER ARRAY-OF-ARRAYS (hands, decks, bench, etc.) ─────────
+  function twoPlayerArr(obj){
+    var r0=idx(obj,0,null);var r1=idx(obj,1,null);
+    return [r0?fa(r0):[],r1?fa(r1):[]];
+  }
+  d.hands    = twoPlayerArr(d.hands);
+  d.decks    = twoPlayerArr(d.decks);
+  d.discards = twoPlayerArr(d.discards);
+  d.bench    = twoPlayerArr(d.bench);
+  d.prizes   = twoPlayerArr(d.prizes);
+  // ── ENERGY ON BENCH ───────────────────────────────────────────────
+  var eob0=idx(d.energyOnBench,0,null);var eob1=idx(d.energyOnBench,1,null);
+  d.energyOnBench=[eob0?fa(eob0):[],eob1?fa(eob1):[]];
+  // ── LOG ───────────────────────────────────────────────────────────
   if(d.log)d.log=fa(d.log);
-  // CRITICAL: normalize attacks arrays inside active + bench Pokemon
-  // Firebase returns arrays as objects — attacks:[{...}] becomes {0:{...}}
+  // ── NORMALIZE POKEMON ATTACKS (Firebase turns arrays into objects) ─
   d.active=d.active.map(normPoke);
   d.bench=d.bench.map(function(slot){return fa(slot).map(normPoke);});
-  // Also normalize attacks in hands/decks
   d.hands=d.hands.map(function(h){return fa(h).map(normPoke);});
   d.decks=d.decks.map(function(dk){return fa(dk).map(normPoke);});
   return d;
