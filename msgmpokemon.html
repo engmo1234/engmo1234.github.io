@@ -1295,8 +1295,8 @@ function doAttack(atkIdx){
   atkUpd['plusPower']=s.plusPower;
   atkUpd['turn']=s.turn;
   if(s.winner!==null&&s.winner!==undefined)atkUpd['winner']=s.winner;
-  atkUpd['log']=fa(s.log).slice(-40);
-  roomRef.update(atkUpd);
+  atkUpd['log']=fa(s.log).slice(-40);atkUpd['ts']=Date.now();
+  safeUpdate(atkUpd,'attack');
 }
 function playTrainer(handIdx){
   if(!roomRef||!state){showMsg('Game not connected!');return;}
@@ -1557,6 +1557,26 @@ function playTrainer(handIdx){
 }
 
 // Shared update helper for trainer cards
+function safeUpdate(upd,label){
+  // Wraps every Firebase write with error handling
+  // If Firebase rules block the write, player sees a clear message
+  return roomRef.update(upd).catch(function(err){
+    console.error('Firebase write failed ('+(label||'')+'): '+err.message);
+    if(err.code==='PERMISSION_DENIED'){
+      showMsg('\u26a0\ufe0f Firebase rules blocking writes! Ask admin to update rules.');
+      // Show the fix instructions
+      var div=document.getElementById('fbRulesErr');
+      if(!div){
+        div=document.createElement('div');
+        div.id='fbRulesErr';
+        div.style.cssText='position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:99999;background:#1a0000;border:2px solid #ff4444;border-radius:16px;padding:20px 24px;color:#ffaaaa;font-size:.85rem;max-width:88vw;text-align:center;';
+        div.innerHTML='<b style="color:#ff6666;font-size:1rem;">\u26a0\ufe0f Firebase Rules Need Updating</b><br><br>Go to:<br><span style="color:#f5d76e;font-size:.75rem;">console.firebase.google.com/project/chessgame-e4dbb/database</span><br><br>Add to Rules:<br><pre style="background:#000;padding:8px;border-radius:6px;font-size:.7rem;text-align:left;color:#90ee90;">"ptcgRooms":{"$r":{".read":true,".write":true}}</pre><button onclick="this.parentElement.remove()" style="margin-top:12px;background:#cc0000;border:none;border-radius:20px;padding:8px 20px;color:#fff;font-weight:700;cursor:pointer;">Close</button>';
+        document.body.appendChild(div);
+      }
+    }
+  });
+}
+
 function doUpdate(s,myI){
   var opp=1-myI;
   var upd={};
@@ -1568,7 +1588,8 @@ function doUpdate(s,myI){
   upd['dmgOnActive/0']=s.dmgOnActive[0]||0;upd['dmgOnActive/1']=s.dmgOnActive[1]||0;
   if(s.energyOnBench){upd['energyOnBench/0']=s.energyOnBench[0]||[];upd['energyOnBench/1']=s.energyOnBench[1]||[];}
   upd['plusPower']=s.plusPower;upd['log']=fa(s.log).slice(-40);
-  roomRef.update(upd);
+  upd['ts']=Date.now(); // timestamp forces listener to always fire
+  return safeUpdate(upd,'trainer/action');
 }
 
 function doDraw(){
@@ -1583,7 +1604,7 @@ function doDraw(){
   upd['hands/'+myId]=newHand;
   upd['drawn/'+myId]=true;
   upd['log']=log;
-  roomRef.update(upd);
+  safeUpdate(upd);
 }
 function doRetreat(){
   if(!roomRef||!state||!fa(state.active)[myId])return;
@@ -1591,14 +1612,14 @@ function doRetreat(){
   var s=JSON.parse(JSON.stringify(state));var tmp=fa(s.active)[myId];
   s.active[myId]=bench.splice(0,1)[0];bench.push(tmp);s.bench[myId]=bench;s.dmgOnActive[myId]=0;
   addLog(s,(s.names[myId]||'P')+' retreated!');
-  var rUpd={};rUpd['active/0']=s.active[0];rUpd['active/1']=s.active[1];rUpd['bench/'+myId]=s.bench[myId];rUpd['dmgOnActive/0']=s.dmgOnActive[0]||0;rUpd['dmgOnActive/1']=s.dmgOnActive[1]||0;rUpd['attached/'+myId]=false;rUpd['log']=fa(s.log).slice(-40);roomRef.update(rUpd);
+  var rUpd={};rUpd['active/0']=s.active[0];rUpd['active/1']=s.active[1];rUpd['bench/'+myId]=s.bench[myId];rUpd['dmgOnActive/0']=s.dmgOnActive[0]||0;rUpd['dmgOnActive/1']=s.dmgOnActive[1]||0;rUpd['attached/'+myId]=false;rUpd['log']=fa(s.log).slice(-40);rUpd['ts']=Date.now();safeUpdate(rUpd,'retreat');
 }
 function doEndTurn(){
   if(!roomRef||!state)return;var opp=1-myId;var s=JSON.parse(JSON.stringify(state));
   s.turn=opp;s.drawn[opp]=false;s.attached[opp]=false;
   s.attached[myId]=false;  // reset so you can attach next turn
   addLog(s,(s.names[myId]||'P')+' ends their turn.');
-  var eUpd={};eUpd['turn']=s.turn;eUpd['drawn/0']=s.drawn[0];eUpd['drawn/1']=s.drawn[1];eUpd['attached/0']=s.attached[0];eUpd['attached/1']=s.attached[1];eUpd['dmgOnActive/0']=fa(state.dmgOnActive)[0]||0;eUpd['dmgOnActive/1']=fa(state.dmgOnActive)[1]||0;eUpd['log']=fa(s.log).slice(-40);roomRef.update(eUpd);
+  var eUpd={};eUpd['turn']=s.turn;eUpd['drawn/0']=s.drawn[0];eUpd['drawn/1']=s.drawn[1];eUpd['attached/0']=s.attached[0];eUpd['attached/1']=s.attached[1];eUpd['dmgOnActive/0']=fa(state.dmgOnActive)[0]||0;eUpd['dmgOnActive/1']=fa(state.dmgOnActive)[1]||0;eUpd['log']=fa(s.log).slice(-40);safeUpdate(eUpd);
 }
 
 /* ═══ SCREEN UTILITY ═══ */
@@ -1645,7 +1666,17 @@ document.getElementById('joinBtn').addEventListener('click',function(){
     if(!ex||!ex.names){myId=0;window.myId_exposed=0;var g=freshRoom();g.names[0]=name;g.connected[0]=true;return ref.set(g);}
     var conn=fa(ex.connected);
     if(!conn[1]){myId=1;return Promise.all([ref.child('names/1').set(name),ref.child('connected/1').set(true)]);}
-    myId=0;return Promise.all([ref.child('names/0').set(name),ref.child('connected/0').set(true)]);
+    myId=0;
+        // Test write permission before proceeding
+        return ref.child('_writeTest').set(1).then(function(){
+          ref.child('_writeTest').remove();
+          return Promise.all([ref.child('names/0').set(name),ref.child('connected/0').set(true)]);
+        }).catch(function(err){
+          if(err.code==='PERMISSION_DENIED'){
+            alert('\u26a0\ufe0f Firebase write access denied.\n\nGo to Firebase Console > Database > Rules and add:\n\n"ptcgRooms": {"$r": {".read":true,".write":true}}\n\nThen try again.');
+          }
+          return Promise.all([ref.child('names/0').set(name),ref.child('connected/0').set(true)]);
+        });
   }).then(function(){
     roomRef=ref;window.roomRef=ref;window.myId_exposed=myId;picks={};
     renderPickGrid();
@@ -1685,6 +1716,8 @@ document.getElementById('joinBtn').addEventListener('click',function(){
         var ps=document.getElementById('pickScreen');
         if((ws&&ws.style.display!=='none')||(ps&&ps.style.display!=='none')){show('game');}
         render();
+        // Force second render after short delay to catch race conditions
+        setTimeout(render,300);
       } else if(phase==='picking'){
         // Update wait screen readiness dots if we are waiting
         var dr=fa(d.deckReady||[]);
