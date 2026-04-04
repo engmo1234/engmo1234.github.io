@@ -1009,7 +1009,7 @@ function render(){
   var tp=document.getElementById('tpill');
   if(over){tp.textContent='Game Over';tp.style.background='#222';tp.style.color='#666';}
   else if(phase==='setup'){tp.textContent='Setup Phase';tp.style.background='#400000';tp.style.color='#ff9999';}
-  else{tp.textContent=isMine?'Your Turn':(esc(names[opp]||'Opp')+"'s Turn");tp.style.background=isMine?'#cc0000':'#1a3a6a';tp.style.color='#fff';}
+  else{tp.textContent=isMine?'🟢 Your Turn':(esc(names[opp]||'Opp')+"'s Turn 🔴");tp.style.background=isMine?'linear-gradient(90deg,#0a3a0a,#1a6a1a)':'linear-gradient(90deg,#3a0a0a,#6a1a1a)';tp.style.color=isMine?'#90ee90':'#ff9090';}
   // Status
   var sb=document.getElementById('gstatus');
   if(!conn[opp])sb.textContent='Waiting for opponent\u2026';
@@ -1021,8 +1021,17 @@ function render(){
   // Phase banner
   var _gs=document.getElementById('gstatus');
   if(_gs&&phase==='main'&&!over){
-    if(!isMine){_gs.style.background='rgba(80,0,0,0.5)';_gs.style.color='#ffaaaa';_gs.textContent='⏳ Waiting for '+esc(names[1-myId]||'Opponent')+'...';}
-    else{_gs.style.background='';_gs.style.color='';}
+    if(!isMine){
+      _gs.style.background='rgba(120,0,0,0.7)';
+      _gs.style.color='#ffcccc';
+      _gs.style.fontWeight='900';
+      _gs.textContent='🔴 '+esc(names[1-myId]||'Opponent')+"'s turn — press ⏭ End Turn when ready";
+    }else{
+      _gs.style.background='rgba(0,80,0,0.3)';
+      _gs.style.color='#90ee90';
+      _gs.style.fontWeight='700';
+      _gs.textContent='🟢 YOUR TURN — Draw, play cards, attack!';
+    }
   }
   var pb=document.getElementById('gphase');
   if(phase==='setup'&&!active[myId]){pb.style.display='';pb.textContent='\uD83D\uDC47 Tap a GLOWING card in your hand!';}else pb.style.display='none';
@@ -1084,7 +1093,10 @@ function onHandClick(idx){
     return;
   }
   if(phase==='main'){
-    if(state.turn!==myId){showMsg("⏳ "+fa(state.names)[1-myId]+"'s turn! Wait your go.");return;}
+    if(state.turn!==myId){
+    showMsg('🔴 NOT YOUR TURN! Press ⏭ End Turn to give opponent their go, then your turn starts.');
+    return;
+  }
     if(card.cardType==='energy'){selIdx=(selIdx===idx)?null:idx;render();return;}
     if(card.cardType==='trainer'){
       playTrainer(idx);return;  // TCG: trainers playable any time during your turn
