@@ -89,9 +89,9 @@ body{min-height:100vh;background:radial-gradient(ellipse at top,#0a1628,#050c18)
 .sc-name{font-size:.72rem;font-weight:800;color:#f5d76e;margin-bottom:4px;}
 .sc-row{display:flex;align-items:center;gap:8px;}
 .sc-icon{font-size:1.4rem;}
-.sc-hp{font-size:.68rem;font-weight:700;color:#4ade80;}
+.sc-hp{font-size:.82rem;font-weight:900;color:#4ade80;}
 .sc-hp.mid{color:#fbbf24;}.sc-hp.low{color:#ef4444;}
-.sc-bar{height:5px;background:rgba(255,255,255,.1);border-radius:3px;margin-top:3px;flex:1;}
+.sc-bar{height:9px;background:rgba(255,255,255,.1);border-radius:3px;margin-top:3px;flex:1;}
 .sc-fill{height:100%;border-radius:3px;background:#4ade80;transition:width .4s;}
 .sc-fill.mid{background:#fbbf24;}.sc-fill.low{background:#ef4444;}
 .sc-empty{font-size:.7rem;color:#444;font-style:italic;}
@@ -875,7 +875,7 @@ function cardEl(card,size,clickable,selected,dmg){
     el.className='pcard '+size+' '+tcls+(clickable?' ':' unplayable')+(selected?' selected':'');
     el.innerHTML=
       '<div class="pc-hdr"><span class="pc-name" style="font-size:'+nSz+'">'+esc(card.name)+'</span>'
-      +'<span style="font-size:'+nSz+';font-weight:900;color:'+hcol+'">'+hl+'HP</span></div>'
+      +'<span style="font-size:'+(size==="active-card"?".52rem":nSz)+';font-weight:900;color:'+hcol+'">'+hl+'/'+(size==="active-card"?hp:'')+'</span></div>'
       +'<div class="pc-art" style="background:'+(art.b||TGRAD[card.type]||'linear-gradient(160deg,#1a1a2a,#2a2a3a)')+'">'
       +(imgSrc(card.id)?'<img src="'+imgSrc(card.id)+'" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:4px;z-index:1;" onerror="this.style.display=\'none\'">':"")
       +'<div style="position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;height:100%;gap:2px;padding:3px;">'
@@ -965,7 +965,7 @@ function renderScores(){
   function sc(p,d){if(!p)return '<div class="sc-empty">No active Pokemon</div>';
     var hp=p.hp||50,hl=Math.max(0,hp-(d||0)),pct=hl/hp;var cl=pct<0.3?'low':pct<0.6?'mid':'';
     var art=ART[p.id]||{e:TICO[p.type]||'\u2728'};
-    return '<div class="sc-row"><span class="sc-icon">'+art.e+'</span><div style="flex:1"><div style="font-size:.76rem;font-weight:800;">'+esc(p.name)+'</div><div class="sc-hp '+cl+'">'+hl+'/'+hp+' HP</div><div class="sc-bar"><div class="sc-fill '+cl+'" style="width:'+Math.round(pct*100)+'%"></div></div></div></div>';}
+    return '<div class="sc-row"><span class="sc-icon">'+art.e+'</span><div style="flex:1"><div style="font-size:.76rem;font-weight:800;">'+esc(p.name)+'</div><div class="sc-hp '+cl+'">'+hl+'/'+hp+' HP'+(d>0?' (\u2193'+d+')':'')+' </div><div class="sc-bar"><div class="sc-fill '+cl+'" style="width:'+Math.round(pct*100)+'%"></div></div></div></div>';}
   document.getElementById('scMyBody').innerHTML=sc(fa(state.active)[myId],dmg[myId]);
   document.getElementById('scOppBody').innerHTML=sc(fa(state.active)[1-myId],dmg[1-myId]);
 }
@@ -1019,6 +1019,11 @@ function render(){
   else if(isMine)sb.textContent=fa(state.drawn)[myId]?'Your turn! Attach energy or attack.':'Your turn! Draw a card first.';
   else sb.textContent=(names[opp]||'Opponent')+"'s turn\u2026";
   // Phase banner
+  var _gs=document.getElementById('gstatus');
+  if(_gs&&phase==='main'&&!over){
+    if(!isMine){_gs.style.background='rgba(80,0,0,0.5)';_gs.style.color='#ffaaaa';_gs.textContent='⏳ Waiting for '+esc(names[1-myId]||'Opponent')+'...';}
+    else{_gs.style.background='';_gs.style.color='';}
+  }
   var pb=document.getElementById('gphase');
   if(phase==='setup'&&!active[myId]){pb.style.display='';pb.textContent='\uD83D\uDC47 Tap a GLOWING card in your hand!';}else pb.style.display='none';
   // Prizes
@@ -1237,6 +1242,17 @@ function doAttack(atkIdx){
   // Shake the opponent active slot
   var oppSlot=document.getElementById("oppActive");
   if(oppSlot){oppSlot.classList.add("taking-hit");setTimeout(function(){oppSlot.classList.remove("taking-hit");},500);}
+  // Instantly update score panel HP so damage is visible before Firebase confirms
+  (function(od,oh,on_){
+    var scb=document.getElementById('scOppBody');
+    if(!scb||!od)return;
+    var newHl=Math.max(0,oh-on_);
+    var pct2=newHl/oh;
+    var c2=pct2<0.3?'low':pct2<0.6?'mid':'';
+    var col2=pct2<0.3?'#ef4444':pct2<0.6?'#fbbf24':'#4ade80';
+    var art2=ART[od.id]||{e:TICO[od.type]||'\u2728'};
+    scb.innerHTML='<div class="sc-row"><span class="sc-icon">'+art2.e+'</span><div style="flex:1"><div style="font-size:.76rem;font-weight:800;">'+esc(od.name)+'</div><div class="sc-hp '+c2+'" style="font-size:.88rem;font-weight:900;color:'+col2+'">'+newHl+'/'+oh+' HP <span style="color:#ff4444;font-size:.7rem;">(\u2193'+on_+')</span></div><div class="sc-bar"><div class="sc-fill '+c2+'" style="width:'+Math.round(pct2*100)+'%"></div></div></div></div>';
+  })(oppAct, oppAct.hp||50, s.dmgOnActive[opp]||0);
   if(s.dmgOnActive[opp]>=(fa(s.active)[opp].hp||50)){
     var koName=fa(s.active)[opp].name;addLog(s,koName+' was knocked out!',true);
     s.discards[opp]=(s.discards[opp]||[]).concat([fa(s.active)[opp]]);
