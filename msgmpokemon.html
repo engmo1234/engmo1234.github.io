@@ -1287,13 +1287,20 @@ function doAttack(atkIdx){
   roomRef.update(atkUpd);
 }
 function playTrainer(handIdx){
-  if(!roomRef||!state)return;
+  if(!roomRef||!state){showMsg('Game not connected!');return;}
   var s=JSON.parse(JSON.stringify(state));
   var myI=myId,oppI=1-myId;
+  // Safety: make sure hands are arrays
   s.hands[myI]=fa(s.hands[myI]||[]);
   s.hands[oppI]=fa(s.hands[oppI]||[]);
+  // Safety: if handIdx is out of range, show error
+  if(handIdx<0||handIdx>=s.hands[myI].length){
+    showMsg('Card index out of range (hand has '+s.hands[myI].length+' cards, index '+handIdx+')');
+    return;
+  }
   var card=s.hands[myI][handIdx];
-  if(!card||card.cardType!=='trainer'){showMsg('Card not found!');return;}
+  if(!card){showMsg('Card is null at index '+handIdx);return;}
+  if(card.cardType!=='trainer'){showMsg('Not a trainer: '+card.name+' (type:'+card.cardType+')');return;}
   s.hands[myI].splice(handIdx,1);
   s.discards[myI]=fa(s.discards[myI]||[]);s.discards[myI].push(card);
   s.decks[myI]=fa(s.decks[myI]||[]);
@@ -1309,7 +1316,8 @@ function playTrainer(handIdx){
   if(id==='bill'){
     var drew=0;
     for(var i=0;i<2;i++){if(s.decks[myI].length>0){s.hands[myI].push(s.decks[myI].splice(0,1)[0]);drew++;}}
-    showToast('📋 Bill: Drew '+drew+' card'+(drew!==1?'s':'')+'!');
+    showToast('📋 Bill! Drew '+drew+' card'+(drew!==1?'s':'')+'!');
+    showMsg('Bill played! Drew '+drew+' cards. Hand: '+s.hands[myI].length);
     addLog(s,nm+' played Bill! Drew '+drew+' card'+(drew!==1?'s':'')+'.');
     doUpdate(s,myI);
   }
@@ -1571,14 +1579,14 @@ function doRetreat(){
   var s=JSON.parse(JSON.stringify(state));var tmp=fa(s.active)[myId];
   s.active[myId]=bench.splice(0,1)[0];bench.push(tmp);s.bench[myId]=bench;s.dmgOnActive[myId]=0;
   addLog(s,(s.names[myId]||'P')+' retreated!');
-  var rUpd={};rUpd['active/0']=s.active[0];rUpd['active/1']=s.active[1];rUpd['bench/'+myId]=s.bench[myId];rUpd['dmgOnActive/'+myId]=0;rUpd['attached/'+myId]=false;rUpd['log']=fa(s.log).slice(-40);roomRef.update(rUpd);
+  var rUpd={};rUpd['active/0']=s.active[0];rUpd['active/1']=s.active[1];rUpd['bench/'+myId]=s.bench[myId];rUpd['dmgOnActive/0']=s.dmgOnActive[0]||0;rUpd['dmgOnActive/1']=s.dmgOnActive[1]||0;rUpd['attached/'+myId]=false;rUpd['log']=fa(s.log).slice(-40);roomRef.update(rUpd);
 }
 function doEndTurn(){
   if(!roomRef||!state)return;var opp=1-myId;var s=JSON.parse(JSON.stringify(state));
   s.turn=opp;s.drawn[opp]=false;s.attached[opp]=false;
   s.attached[myId]=false;  // reset so you can attach next turn
   addLog(s,(s.names[myId]||'P')+' ends their turn.');
-  var eUpd={};eUpd['turn']=s.turn;eUpd['drawn/0']=s.drawn[0];eUpd['drawn/1']=s.drawn[1];eUpd['attached/0']=s.attached[0];eUpd['attached/1']=s.attached[1];eUpd['log']=fa(s.log).slice(-40);roomRef.update(eUpd);
+  var eUpd={};eUpd['turn']=s.turn;eUpd['drawn/0']=s.drawn[0];eUpd['drawn/1']=s.drawn[1];eUpd['attached/0']=s.attached[0];eUpd['attached/1']=s.attached[1];eUpd['dmgOnActive/0']=fa(state.dmgOnActive)[0]||0;eUpd['dmgOnActive/1']=fa(state.dmgOnActive)[1]||0;eUpd['log']=fa(s.log).slice(-40);roomRef.update(eUpd);
 }
 
 /* ═══ SCREEN UTILITY ═══ */
