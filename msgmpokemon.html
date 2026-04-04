@@ -990,7 +990,7 @@ function renderAttacks(){
 function render(){
   if(!state)return;
   var opp=1-myId,phase=state.phase||'picking';
-  var isMine=state.turn===myId,over=!!state.winner;
+  var isMine=state.turn===myId,over=(state.winner!==null&&state.winner!==undefined);
   var names=fa(state.names),conn=fa(state.connected),active=fa(state.active),bench=fa(state.bench),prizes=fa(state.prizesLeft),dmg=fa(state.dmgOnActive);
   // Wait screen updates
   if(phase==='picking'){
@@ -1054,7 +1054,7 @@ function render(){
   }
   // Win modal
   var wm=document.getElementById('winModal');var names2=fa(state.names);
-  if(over&&state.winner!==null){wm.classList.add('open');var won=state.winner===myId;
+  if(over){wm.classList.add('open');var won=state.winner===myId;
     document.getElementById('winIcon').textContent=won?'\uD83C\uDFC6':'\uD83D\uDE14';
     document.getElementById('winTitle').textContent=won?'You Win!':'You Lost!';
     document.getElementById('winSub').textContent=(names2[state.winner]||'Someone')+' wins!';
