@@ -319,6 +319,59 @@ body::before{
 #particles{position:fixed;inset:0;pointer-events:none;z-index:0;}
 
 @media(max-width:400px){.bwrap{width:99vw;}#diceBtn{width:62px;height:62px;font-size:2rem;}}
+/* ─── CINEMATIC TOAST ─── */
+#toast-wrap{
+  position:fixed;inset:0;z-index:5000;pointer-events:none;
+  display:flex;align-items:center;justify-content:center;
+}
+#toast{
+  display:none;
+  flex-direction:column;align-items:center;justify-content:center;gap:6px;
+  padding:22px 38px;
+  background:linear-gradient(135deg,rgba(10,4,18,0.97),rgba(26,14,48,0.97));
+  border:1px solid rgba(245,215,110,0.35);
+  border-radius:22px;
+  box-shadow:0 0 60px rgba(120,60,200,0.35), 0 0 0 1px rgba(245,215,110,0.1), inset 0 1px 0 rgba(255,255,255,0.07);
+  backdrop-filter:blur(20px);
+  max-width:85vw;
+  text-align:center;
+}
+#toast.show{display:flex;}
+#toast-icon{font-size:2.6rem;line-height:1;filter:drop-shadow(0 0 12px rgba(245,215,110,0.6));}
+#toast-text{
+  font-family:'Cinzel',serif;
+  font-size:clamp(1.1rem,5vw,1.5rem);
+  font-weight:700;
+  color:#fff;
+  letter-spacing:1px;
+  line-height:1.3;
+  text-shadow:0 0 20px rgba(245,215,110,0.4);
+}
+#toast-text.gold{color:var(--gold);text-shadow:0 0 25px rgba(245,215,110,0.7);}
+#toast-sub{
+  font-family:'Rajdhani',sans-serif;
+  font-size:clamp(.75rem,3vw,.95rem);
+  color:var(--text3);
+  letter-spacing:2px;
+}
+@keyframes toastIn{
+  0%{opacity:0;transform:scale(0.6) translateY(30px);}
+  60%{opacity:1;transform:scale(1.05) translateY(-4px);}
+  100%{opacity:1;transform:scale(1) translateY(0);}
+}
+@keyframes toastOut{
+  0%{opacity:1;transform:scale(1);}
+  100%{opacity:0;transform:scale(0.85) translateY(-20px);}
+}
+.toast-in{animation:toastIn .35s cubic-bezier(0.175,0.885,0.32,1.275) both;}
+.toast-out{animation:toastOut .3s ease-in both;}
+/* shimmer line on toast */
+#toast::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(245,215,110,0.6),transparent);
+  border-radius:22px 22px 0 0;
+}
+
 @media(orientation:landscape) and (max-height:600px){
   #game{flex-direction:row;flex-wrap:wrap;align-items:flex-start;justify-content:center;padding:6px;}
   .bwrap{width:min(52vh,50vw);}
@@ -400,6 +453,15 @@ body::before{
     <h1 id="wtitle">Victory!</h1>
     <p id="wsub">Congratulations!</p>
     <button id="winResetBtn">⚔ Play Again</button>
+  </div>
+</div>
+
+<!-- CINEMATIC TOAST -->
+<div id="toast-wrap">
+  <div id="toast">
+    <div id="toast-icon">🎲</div>
+    <div id="toast-text"></div>
+    <div id="toast-sub"></div>
   </div>
 </div>
 
@@ -489,7 +551,44 @@ var YARD={red:[[1.5,1.5],[3.5,1.5],[1.5,3.5],[3.5,3.5]],blue:[[10.5,1.5],[12.5,1
 var SAFE=[0,8,13,21,26,34,39,47];
 var DFACE=['','⚀','⚁','⚂','⚃','⚄','⚅'];
 
-var myId=null,myName='Warrior',roomRef=null,chatRef=null,state=null,selCount=2,rolling=false;
+var myId=null,myName='Warrior',roomRef=null,chatRef=null,state=null,selCount=2,rolling=false,lastLogLen=0;
+
+// ─── CINEMATIC TOAST ───
+var toastTimer=null;
+function showToast(text,important){
+  var el=document.getElementById('toast');
+  var ic=document.getElementById('toast-icon');
+  var tx=document.getElementById('toast-text');
+  var sb2=document.getElementById('toast-sub');
+  if(toastTimer){clearTimeout(toastTimer);el.className='';void el.offsetWidth;}
+
+  // Pick icon and color based on content
+  var icon='🎲',sub='',gold=false;
+  if(text.indexOf('rolled 6')>=0||text.indexOf('bonus turn')>=0){icon='✨';gold=true;sub='BONUS TURN!';}
+  else if(text.indexOf('rolled')>=0){
+    var m=text.match(/rolled a (\d)/);
+    icon=m?['','⚀','⚁','⚂','⚃','⚄','⚅'][+m[1]]:'🎲';sub='DICE ROLL';
+  }
+  else if(text.indexOf('dungeon')>=0||text.indexOf('captured')>=0){icon='💀';sub='CAPTURED!';gold=true;}
+  else if(text.indexOf('home')>=0&&text.indexOf('reaches')>=0){icon='🏆';gold=true;sub='WARRIOR HOME!';}
+  else if(text.indexOf('deploys')>=0){icon='⚔';gold=true;sub='TO THE BATTLEFIELD!';}
+  else if(text.indexOf('conquers')>=0){icon='👑';gold=true;sub='GAME OVER!';}
+  else if(text.indexOf('passes')>=0||text.indexOf('No moves')>=0){icon='⏭';sub='TURN PASSES';}
+  else if(text.indexOf('glory')>=0||text.indexOf('home stretch')>=0){icon='🌟';gold=true;sub='HOME STRETCH!';}
+  else{icon='⚔';sub='BATTLE UPDATE';}
+
+  ic.textContent=icon;
+  tx.textContent=text;
+  tx.className=gold?'gold':'';
+  sb2.textContent=sub;
+
+  el.className='show toast-in';
+  var dur=important?2600:1800;
+  toastTimer=setTimeout(function(){
+    el.className='show toast-out';
+    setTimeout(function(){el.className='';},300);
+  },dur);
+}
 
 function fa(v){if(!v)return[];if(Array.isArray(v))return v;return Object.keys(v).sort(function(a,b){return+a-+b;}).map(function(k){return v[k];});}
 function norm(d){if(!d)return d;d.tokens=fa(d.tokens).map(fa);d.finished=fa(d.finished).map(fa);d.names=fa(d.names);d.connected=fa(d.connected);d.log=fa(d.log);return d;}
@@ -648,6 +747,8 @@ function renderTokens(){
   for(var ci=0;ci<state.playerCount;ci++){
     var color=COLS[ci];
     for(var ti=0;ti<4;ti++){
+      // Skip the token currently being animated (ghost handles it)
+      if(state._animating&&state._animating.ci===ci&&state._animating.ti===ti)continue;
       var pos=state.tokens[ci][ti];
       var done=state.finished[ci]&&state.finished[ci][ti];
       var p=gpos(ci,ti,pos,done);
@@ -763,40 +864,345 @@ function doRoll(){
 }
 
 // ─── MOVE ───
+// ─── ANIMATION ENGINE ───
+var animating=false;
+var SVG_SIZE=750; // viewBox size
+
+function getBoardRect(){
+  var svg=document.getElementById('bsvg');
+  return svg.getBoundingClientRect();
+}
+
+// Convert SVG viewBox coords → screen pixels
+function svgToScreen(svgX,svgY){
+  var r=getBoardRect();
+  var scale=r.width/SVG_SIZE;
+  return{x:r.left+svgX*scale, y:r.top+svgY*scale, scale:scale};
+}
+
+// Build the list of intermediate positions a token visits
+function buildSteps(ci,ti,fromPos,dice){
+  var steps=[];
+  if(fromPos===-1){
+    // Coming out of yard → position 0
+    steps.push({pos:0,phase:'main'});
+    return steps;
+  }
+  if(fromPos>=52){
+    // Home stretch
+    for(var i=1;i<=dice;i++){
+      var np2=fromPos+i;if(np2>57)np2=57;
+      steps.push({pos:np2,phase:'home'});
+    }
+    return steps;
+  }
+  // Main board – step one cell at a time
+  for(var s2=1;s2<=dice;s2++){
+    var p=fromPos+s2;
+    var phase='main';
+    if(p>=52){p=52+(p-52);phase='home';}
+    steps.push({pos:p,phase:phase});
+  }
+  return steps;
+}
+
+// Easing
+function easeInOut(t){return t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;}
+function easeOut(t){return 1-Math.pow(1-t,3);}
+function bounceOut(t){var n=7.5625,d=2.75;if(t<1/d)return n*t*t;else if(t<2/d){t-=1.5/d;return n*t*t+.75;}else if(t<2.5/d){t-=2.25/d;return n*t*t+.9375;}else{t-=2.625/d;return n*t*t+.984375;}}
+
+// Animate a single token element from (x1,y1) to (x2,y2)
+function animateTokenElement(el,x1,y1,x2,y2,duration,easeFn,onDone){
+  var start=null;
+  var dx=x2-x1,dy=y2-y1;
+  function step(ts){
+    if(!start)start=ts;
+    var elapsed=ts-start;
+    var t=Math.min(elapsed/duration,1);
+    var e=easeFn(t);
+    // Arc upward in mid-flight
+    var arc=Math.sin(t*Math.PI)*18;
+    var curX=x1+dx*e;
+    var curY=y1+dy*e-arc;
+    el.setAttribute('transform','translate('+(curX-x1)+','+(curY-y1)+')');
+    if(t<1)requestAnimationFrame(step);
+    else{el.setAttribute('transform','translate('+(x2-x1)+','+(y2-y1)+')');if(onDone)onDone();}
+  }
+  requestAnimationFrame(step);
+}
+
+// Spawn particle burst at SVG coords
+function spawnParticles(svgX,svgY,color,count){
+  var layer=document.getElementById('tlayer');
+  var ns='http://www.w3.org/2000/svg';
+  for(var i=0;i<count;i++){
+    (function(){
+      var angle=Math.random()*Math.PI*2;
+      var speed=18+Math.random()*28;
+      var vx=Math.cos(angle)*speed,vy=Math.sin(angle)*speed;
+      var r=2+Math.random()*4;
+      var p=document.createElementNS(ns,'circle');
+      p.setAttribute('cx',svgX);p.setAttribute('cy',svgY);
+      p.setAttribute('r',r);p.setAttribute('fill',color);
+      p.setAttribute('opacity','0.9');
+      layer.appendChild(p);
+      var start2=null,dur=350+Math.random()*250;
+      function step(ts){
+        if(!start2)start2=ts;
+        var t=Math.min((ts-start2)/dur,1);
+        p.setAttribute('cx',svgX+vx*t);
+        p.setAttribute('cy',svgY+vy*t+30*t*t);
+        p.setAttribute('opacity',''+(0.9*(1-t)));
+        p.setAttribute('r',''+(r*(1-t*.6)));
+        if(t<1)requestAnimationFrame(step);
+        else p.remove();
+      }
+      requestAnimationFrame(step);
+    })();
+  }
+}
+
+// Spawn landing shockwave ring
+function spawnRing(svgX,svgY,color){
+  var layer=document.getElementById('tlayer');
+  var ns='http://www.w3.org/2000/svg';
+  var ring=document.createElementNS(ns,'circle');
+  ring.setAttribute('cx',svgX);ring.setAttribute('cy',svgY);
+  ring.setAttribute('r','10');ring.setAttribute('fill','none');
+  ring.setAttribute('stroke',color);ring.setAttribute('stroke-width','3');
+  ring.setAttribute('opacity','0.8');
+  layer.appendChild(ring);
+  var start=null,dur=400;
+  function step(ts){
+    if(!start)start=ts;
+    var t=Math.min((ts-start)/dur,1);
+    ring.setAttribute('r',''+(10+30*t));
+    ring.setAttribute('opacity',''+(0.8*(1-t)));
+    ring.setAttribute('stroke-width',''+(3*(1-t*.7)));
+    if(t<1)requestAnimationFrame(step);
+    else ring.remove();
+  }
+  requestAnimationFrame(step);
+}
+
+// Spawn capture explosion
+function spawnCaptureBurst(svgX,svgY){
+  spawnParticles(svgX,svgY,'#ff4444',18);
+  spawnParticles(svgX,svgY,'#ffaa00',12);
+  spawnRing(svgX,svgY,'#ff4444');
+  spawnRing(svgX,svgY,'#ffdd00');
+}
+
+// Spawn home arrival celebration
+function spawnHomeBurst(svgX,svgY,color){
+  spawnParticles(svgX,svgY,color,20);
+  spawnParticles(svgX,svgY,'#ffd700',15);
+  spawnRing(svgX,svgY,color);
+}
+
+// Main animated move function
 function doMove(ci,ti){
   if(!roomRef||!state)return;
   if(state.turn!==myId||ci!==myId)return;
   if(!state.diceRolled||state.dice===null)return;
+  if(animating)return;
   var dice=state.dice;
   if(!canMove(ci,ti,dice))return;
+
+  animating=true;
   var s=JSON.parse(JSON.stringify(state));
-  var pos=s.tokens[ci][ti],np;
-  if(pos===-1){np=0;addLog(s,'⚔ '+s.names[ci]+' deploys warrior '+(ti+1)+'!',true);}
-  else if(pos>=52){np=pos+dice;if(np>57)np=57;addLog(s,s.names[ci]+' advances warrior '+(ti+1)+' to glory!');}
-  else{
-    np=pos+dice;
-    if(np>=52){np=52+(np-52);}
-    addLog(s,s.names[ci]+' moves warrior '+(ti+1)+' '+dice+' steps.');
-  }
-  s.tokens[ci][ti]=np;
-  if(np>=57){s.finished[ci][ti]=true;s.tokens[ci][ti]=58;addLog(s,'🏆 '+s.names[ci]+' warrior '+(ti+1)+' reaches home!',true);}
-  // Captures
-  if(np>=0&&np<52){
-    var myP=gpath(ci),mySq=myP[np];
-    for(var p=0;p<s.playerCount;p++){
-      if(p===ci)continue;
-      for(var t=0;t<4;t++){
-        var op=s.tokens[p][t];if(op<0||op>=52)continue;
-        var oppSq=gpath(p)[op];
-        if(mySq&&oppSq&&mySq[0]===oppSq[0]&&mySq[1]===oppSq[1]&&SAFE.indexOf(np)<0){
-          s.tokens[p][t]=-1;addLog(s,'💀 '+s.names[ci]+' sends '+s.names[p]+' warrior '+(t+1)+' back to the dungeon!',true);
+  var fromPos=s.tokens[ci][ti];
+  var np;
+
+  if(fromPos===-1){np=0;addLog(s,'⚔ '+s.names[ci]+' deploys warrior '+(ti+1)+'!',true);}
+  else if(fromPos>=52){np=fromPos+dice;if(np>57)np=57;addLog(s,s.names[ci]+' advances warrior '+(ti+1)+' to glory!');}
+  else{np=fromPos+dice;if(np>=52){np=52+(np-52);}addLog(s,s.names[ci]+' moves warrior '+(ti+1)+' '+dice+' steps.');}
+
+  var steps=buildSteps(ci,ti,fromPos,dice);
+  var color=COLS[ci];
+
+  // Build intermediate state snapshots for rendering each step
+  // We animate by temporarily drawing a "ghost" token that moves
+  var ns='http://www.w3.org/2000/svg';
+  var layer=document.getElementById('tlayer');
+
+  // Get start position
+  var startP=gpos(ci,ti,fromPos,false);
+
+  // Build ghost token group
+  var ghost=document.createElementNS(ns,'g');
+  ghost.setAttribute('id','ghost_'+ci+'_'+ti);
+
+  var r=CELL*.28;
+  var lighter=color==='red'?'#ff7070':color==='blue'?'#60a0ff':color==='green'?'#70c870':'#fff080';
+
+  // Ghost defs gradient
+  var defsEl=layer.querySelector('defs')||document.createElementNS(ns,'defs');
+  if(!layer.querySelector('defs'))layer.insertBefore(defsEl,layer.firstChild);
+  var grad=document.createElementNS(ns,'radialGradient');
+  grad.setAttribute('id','ghost_grad_'+ci);grad.setAttribute('cx','35%');grad.setAttribute('cy','30%');grad.setAttribute('r','65%');
+  var gs1=document.createElementNS(ns,'stop');gs1.setAttribute('offset','0%');gs1.setAttribute('stop-color',lighter);
+  var gs2=document.createElementNS(ns,'stop');gs2.setAttribute('offset','100%');gs2.setAttribute('stop-color',CHex[color]);
+  grad.appendChild(gs1);grad.appendChild(gs2);defsEl.appendChild(grad);
+
+  var shadow=document.createElementNS(ns,'ellipse');
+  shadow.setAttribute('cx','2');shadow.setAttribute('cy','4');
+  shadow.setAttribute('rx',r*.9+'');shadow.setAttribute('ry',r*.4+'');
+  shadow.setAttribute('fill','rgba(0,0,0,0.35)');
+
+  var body=document.createElementNS(ns,'circle');
+  body.setAttribute('cx','0');body.setAttribute('cy','0');body.setAttribute('r',''+r);
+  body.setAttribute('fill','url(#ghost_grad_'+ci+')');
+  body.setAttribute('stroke','#ffd700');body.setAttribute('stroke-width','2.5');
+
+  var shine1=document.createElementNS(ns,'circle');
+  shine1.setAttribute('cx',''+(r*-.25));shine1.setAttribute('cy',''+(r*-.3));
+  shine1.setAttribute('r',''+(r*.3));shine1.setAttribute('fill','rgba(255,255,255,0.55)');
+
+  var shine2=document.createElementNS(ns,'circle');
+  shine2.setAttribute('cx',''+(r*-.1));shine2.setAttribute('cy',''+(r*-.15));
+  shine2.setAttribute('r',''+(r*.12));shine2.setAttribute('fill','rgba(255,255,255,0.8)');
+
+  var lbl=document.createElementNS(ns,'text');
+  lbl.setAttribute('x','0');lbl.setAttribute('y','0');
+  lbl.setAttribute('font-size',''+(r*.85));lbl.setAttribute('fill','rgba(0,0,0,0.7)');
+  lbl.setAttribute('text-anchor','middle');lbl.setAttribute('dominant-baseline','central');
+  lbl.setAttribute('font-weight','900');lbl.setAttribute('pointer-events','none');
+  lbl.setAttribute('font-family','Rajdhani, sans-serif');
+  lbl.textContent=''+(ti+1);
+
+  ghost.appendChild(shadow);ghost.appendChild(body);ghost.appendChild(shine1);ghost.appendChild(shine2);ghost.appendChild(lbl);
+  ghost.setAttribute('transform','translate('+startP.x+','+startP.y+')');
+
+  // Trail element
+  var trail=document.createElementNS(ns,'circle');
+  trail.setAttribute('r',''+(r*.5));trail.setAttribute('fill',CHex[color]);trail.setAttribute('opacity','0');
+  layer.insertBefore(trail,layer.firstChild);
+  layer.appendChild(ghost);
+
+  // Hide the real token during animation by marking it
+  state._animating={ci:ci,ti:ti};
+  renderTokens(); // re-render without the moving piece visible (handled below)
+  layer.appendChild(ghost); // re-append ghost on top after renderTokens clears
+
+  // Step-by-step animation
+  var stepIdx=0;
+  var curX=startP.x,curY=startP.y;
+  var msPerStep=fromPos===-1?220:150; // deploy is slower for drama
+
+  function animateNextStep(){
+    if(stepIdx>=steps.length){
+      // Animation complete
+      ghost.remove();trail.remove();
+      delete state._animating;
+      // Now commit final state
+      s.tokens[ci][ti]=np;
+      if(np>=57){s.finished[ci][ti]=true;s.tokens[ci][ti]=58;}
+
+      // Check captures
+      if(np>=0&&np<52){
+        var myP=gpath(ci),mySq=myP[np];
+        var capturePos=null;
+        for(var pp=0;pp<s.playerCount;pp++){
+          if(pp===ci)continue;
+          for(var tt=0;tt<4;tt++){
+            var op=s.tokens[pp][tt];if(op<0||op>=52)continue;
+            var oppSq=gpath(pp)[op];
+            if(mySq&&oppSq&&mySq[0]===oppSq[0]&&mySq[1]===oppSq[1]&&SAFE.indexOf(np)<0){
+              s.tokens[pp][tt]=-1;
+              addLog(s,'💀 '+s.names[ci]+' sends '+s.names[pp]+' warrior '+(tt+1)+' back to the dungeon!',true);
+              if(!capturePos)capturePos={x:curX,y:curY};
+            }
+          }
+        }
+        if(capturePos)spawnCaptureBurst(capturePos.x,capturePos.y);
+      }
+
+      // Home arrival
+      if(s.finished[ci][ti]){
+        addLog(s,'🏆 '+s.names[ci]+' warrior '+(ti+1)+' reaches home!',true);
+        spawnHomeBurst(curX,curY,CHex[color]);
+      }
+
+      animating=false;
+      if(s.finished[ci].every(Boolean)){s.winner=ci;s.phase='done';addLog(s,'👑 '+s.names[ci]+' conquers the realm!',true);roomRef.set(s);return;}
+      if(dice===6){s.diceRolled=false;s.dice=null;addLog(s,'✨ '+s.names[ci]+' rolled 6 – bonus turn!',true);roomRef.set(s);return;}
+      doPass(s);
+      return;
+    }
+
+    var step=steps[stepIdx];
+    var isDeploy=fromPos===-1&&stepIdx===0;
+    var isLast=stepIdx===steps.length-1;
+    var targetP=gpos(ci,ti,step.pos,false);
+    var tx=targetP.x,ty=targetP.y;
+    var dur=isDeploy?320:isLast?180:130;
+    var easeFn=isLast?bounceOut:easeInOut;
+
+    // Trail ghost at current position
+    (function(px,py){
+      var t2=document.createElementNS(ns,'circle');
+      t2.setAttribute('cx',''+px);t2.setAttribute('cy',''+py);
+      t2.setAttribute('r',''+(r*.45));t2.setAttribute('fill',CHex[color]);t2.setAttribute('opacity','0.5');
+      layer.insertBefore(t2,ghost);
+      var ts3=null,tdur=280;
+      function fadeTrail(tts){
+        if(!ts3)ts3=tts;
+        var tp=Math.min((tts-ts3)/tdur,1);
+        t2.setAttribute('opacity',''+(0.5*(1-tp)));
+        t2.setAttribute('r',''+(r*.45*(1-tp*.5)));
+        if(tp<1)requestAnimationFrame(fadeTrail);
+        else t2.remove();
+      }
+      requestAnimationFrame(fadeTrail);
+    })(curX,curY);
+
+    // Particle trail
+    if(stepIdx%2===0)spawnParticles(curX,curY,CHex[color],3);
+
+    // Scale pulse on each step
+    var scaleStart=null,scaleDur=dur*.4;
+    (function(gEl){
+      function scalePulse(ts2){
+        if(!scaleStart)scaleStart=ts2;
+        var t=Math.min((ts2-scaleStart)/scaleDur,1);
+        var sc=1+0.25*Math.sin(t*Math.PI);
+        var cur=gEl.getAttribute('transform')||'translate('+curX+','+curY+')';
+        var m=cur.match(/translate\(([^,]+),([^)]+)\)/);
+        if(m)gEl.setAttribute('transform','translate('+m[1]+','+m[2]+') scale('+sc+')');
+        if(t<1)requestAnimationFrame(scalePulse);
+      }
+      requestAnimationFrame(scalePulse);
+    })(ghost);
+
+    var startX=curX,startY=curY;
+    var moveStart=null;
+    (function(fromX,fromY,toX,toY,duration,ease){
+      function moveStep(ts){
+        if(!moveStart)moveStart=ts;
+        var t=Math.min((ts-moveStart)/duration,1);
+        var e=ease(t);
+        var arc=Math.sin(t*Math.PI)*(isDeploy?35:22);
+        var nx=fromX+(toX-fromX)*e;
+        var ny=fromY+(toY-fromY)*e-arc;
+        ghost.setAttribute('transform','translate('+nx+','+ny+')');
+        curX=nx;curY=ny;
+        if(t<1){requestAnimationFrame(moveStep);}
+        else{
+          curX=toX;curY=toY;
+          ghost.setAttribute('transform','translate('+toX+','+toY+')');
+          // Landing ring
+          spawnRing(toX,toY,CHex[color]);
+          stepIdx++;
+          setTimeout(animateNextStep,isLast?60:30);
         }
       }
-    }
+      requestAnimationFrame(moveStep);
+    })(startX,startY,tx,ty,dur,easeFn);
   }
-  if(s.finished[ci].every(Boolean)){s.winner=ci;s.phase='done';addLog(s,'👑 '+s.names[ci]+' conquers the realm!',true);roomRef.set(s);return;}
-  if(dice===6){s.diceRolled=false;s.dice=null;addLog(s,'✨ '+s.names[ci]+' rolled 6 – bonus turn!',true);roomRef.set(s);return;}
-  doPass(s);
+
+  // Small delay before starting to let player see what's happening
+  setTimeout(animateNextStep,80);
 }
 
 function doPass(s){s.diceRolled=false;s.dice=null;var n=(s.turn+1)%s.playerCount;for(var i=0;i<s.playerCount;i++){if(!s.finished[n]||!s.finished[n].every(Boolean))break;n=(n+1)%s.playerCount;}s.turn=n;roomRef.set(s);}
@@ -865,8 +1271,16 @@ function render(){
   renderTokens();
 
   var gl=document.getElementById('glog');gl.innerHTML='';
-  fa(state.log).slice(-8).forEach(function(e){var d=document.createElement('div');d.className='le'+(e.imp?' imp':'');d.textContent=e.text;gl.appendChild(d);});
+  var logArr=fa(state.log);
+  logArr.slice(-8).forEach(function(e){var d=document.createElement('div');d.className='le'+(e.imp?' imp':'');d.textContent=e.text;gl.appendChild(d);});
   gl.scrollTop=9999;
+
+  // Show toast for newest log entry when it changes
+  if(logArr.length>lastLogLen&&logArr.length>0){
+    var newest=logArr[logArr.length-1];
+    showToast(newest.text,newest.imp);
+  }
+  lastLogLen=logArr.length;
 
   var wm=document.getElementById('winModal');
   if(over&&state.winner!=null){
