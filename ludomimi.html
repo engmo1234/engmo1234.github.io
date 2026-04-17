@@ -326,33 +326,40 @@ body::before{
 }
 #toast{
   display:none;
-  flex-direction:column;align-items:center;justify-content:center;gap:6px;
-  padding:22px 38px;
-  background:linear-gradient(135deg,rgba(10,4,18,0.97),rgba(26,14,48,0.97));
-  border:1px solid rgba(245,215,110,0.35);
-  border-radius:22px;
-  box-shadow:0 0 60px rgba(120,60,200,0.35), 0 0 0 1px rgba(245,215,110,0.1), inset 0 1px 0 rgba(255,255,255,0.07);
+  flex-direction:column;align-items:center;justify-content:center;gap:10px;
+  padding:30px 48px;
+  background:linear-gradient(135deg,rgba(5,2,12,0.98),rgba(18,8,38,0.98));
+  border:3px solid rgba(245,215,110,0.7);
+  border-radius:28px;
+  box-shadow:0 0 80px rgba(245,215,110,0.3), 0 0 0 1px rgba(245,215,110,0.15), inset 0 1px 0 rgba(255,255,255,0.1);
   backdrop-filter:blur(20px);
-  max-width:85vw;
+  max-width:90vw;
+  min-width:72vw;
   text-align:center;
 }
 #toast.show{display:flex;}
-#toast-icon{font-size:2.6rem;line-height:1;filter:drop-shadow(0 0 12px rgba(245,215,110,0.6));}
+#toast-icon{font-size:clamp(3.5rem,12vw,5.5rem);line-height:1;filter:drop-shadow(0 0 16px rgba(245,215,110,0.8));}
 #toast-text{
   font-family:'Cinzel',serif;
-  font-size:clamp(1.1rem,5vw,1.5rem);
+  font-size:clamp(2rem,8vw,3rem);
   font-weight:700;
-  color:#fff;
+  color:#ffffff;
   letter-spacing:1px;
   line-height:1.3;
-  text-shadow:0 0 20px rgba(245,215,110,0.4);
+  text-shadow:0 0 30px rgba(245,215,110,0.5);
+  word-break:break-word;
 }
-#toast-text.gold{color:var(--gold);text-shadow:0 0 25px rgba(245,215,110,0.7);}
+#toast-text.gold{
+  color:var(--gold);
+  text-shadow:0 0 30px rgba(245,215,110,0.9);
+}
 #toast-sub{
-  font-family:'Rajdhani',sans-serif;
-  font-size:clamp(.75rem,3vw,.95rem);
-  color:var(--text3);
-  letter-spacing:2px;
+  font-family:'Cinzel',serif;
+  font-size:clamp(1.2rem,5vw,1.8rem);
+  font-weight:700;
+  color:var(--gold2);
+  letter-spacing:3px;
+  text-shadow:0 0 15px rgba(245,215,110,0.4);
 }
 @keyframes toastIn{
   0%{opacity:0;transform:scale(0.6) translateY(30px);}
@@ -542,7 +549,7 @@ var KEY='bismAllah';
 var COLS=['red','blue','green','yellow'];
 var CHex={red:'#e53935',blue:'#1e88e5',green:'#43a047',yellow:'#fdd835'};
 var CDark={red:'#7f0000',blue:'#0d2b6e',green:'#1b5e20',yellow:'#5c4a00'};
-var CLite={red:'#ffcdd2',blue:'#bbdefb',green:'#c8e6c9',yellow:'#fff9c4'};
+var CLite={red:'#ff8a80',blue:'#82b1ff',green:'#69f0ae',yellow:'#ffff8d'};
 var CGlow={red:'rgba(229,57,53,0.5)',blue:'rgba(30,136,229,0.5)',green:'rgba(67,160,71,0.5)',yellow:'rgba(253,216,53,0.5)'};
 var CELL=50;
 var PATH=[[6,13],[6,12],[6,11],[6,10],[6,9],[5,8],[4,8],[3,8],[2,8],[1,8],[0,8],[0,7],[0,6],[1,6],[2,6],[3,6],[4,6],[5,6],[6,5],[6,4],[6,3],[6,2],[6,1],[6,0],[7,0],[8,0],[8,1],[8,2],[8,3],[8,4],[8,5],[9,6],[10,6],[11,6],[12,6],[13,6],[14,6],[14,7],[14,8],[13,8],[12,8],[11,8],[10,8],[9,8],[8,9],[8,10],[8,11],[8,12],[8,13],[8,14],[7,14],[6,14]];
@@ -583,7 +590,7 @@ function showToast(text,important){
   sb2.textContent=sub;
 
   el.className='show toast-in';
-  var dur=important?2600:1800;
+  var dur=important?4000:2800;
   toastTimer=setTimeout(function(){
     el.className='show toast-out';
     setTimeout(function(){el.className='';},300);
@@ -612,16 +619,16 @@ function drawBoard(){
 
   // Board gradient background
   var bg=mk('linearGradient',{id:'bggrad',x1:'0%',y1:'0%',x2:'100%',y2:'100%'});
-  var bs1=mk('stop',{'offset':'0%','stop-color':'#f8f0dc'});
-  var bs2=mk('stop',{'offset':'100%','stop-color':'#f0e4c0'});
+  var bs1=mk('stop',{'offset':'0%','stop-color':'#ffffff'});
+  var bs2=mk('stop',{'offset':'100%','stop-color':'#f8f4ee'});
   bg.appendChild(bs1);bg.appendChild(bs2);defs.appendChild(bg);
 
   // Yard gradients for each color
   ['red','blue','green','yellow'].forEach(function(c){
     var g=mk('radialGradient',{id:'yard_'+c,cx:'50%',cy:'40%',r:'60%'});
-    var lighter=c==='red'?'#ff8a80':c==='blue'?'#82b1ff':c==='green'?'#b9f6ca':'#ffff8d';
-    g.appendChild(mk('stop',{'offset':'0%','stop-color':lighter,'stop-opacity':'0.6'}));
-    g.appendChild(mk('stop',{'offset':'100%','stop-color':CHex[c],'stop-opacity':'0.25'}));
+    var lighter=c==='red'?'#ff5252':c==='blue'?'#448aff':c==='green'?'#00e676':'#ffff00';
+    g.appendChild(mk('stop',{'offset':'0%','stop-color':lighter,'stop-opacity':'1'}));
+    g.appendChild(mk('stop',{'offset':'100%','stop-color':CHex[c],'stop-opacity':'0.85'}));
     defs.appendChild(g);
   });
 
@@ -653,23 +660,23 @@ function drawBoard(){
     // Inner colored area
     svg.appendChild(mk('rect',{x:z.x+10,y:z.y+10,width:280,height:280,fill:'url(#yard_'+z.c+')',rx:8}));
     // Decorative border
-    svg.appendChild(mk('rect',{x:z.x+2,y:z.y+2,width:296,height:296,fill:'none',stroke:CHex[z.c],'stroke-width':3,rx:4,opacity:.3}));
+    svg.appendChild(mk('rect',{x:z.x+2,y:z.y+2,width:296,height:296,fill:'none',stroke:CHex[z.c],'stroke-width':5,rx:4,opacity:1}));
     // Corner ornament circles
     [[z.x+20,z.y+20],[z.x+280,z.y+20],[z.x+20,z.y+280],[z.x+280,z.y+280]].forEach(function(pt){
-      svg.appendChild(mk('circle',{cx:pt[0],cy:pt[1],r:8,fill:CHex[z.c],opacity:.2}));
+      svg.appendChild(mk('circle',{cx:pt[0],cy:pt[1],r:10,fill:CHex[z.c],opacity:1}));
     });
     // Inner white circle (home base)
     var cx2=z.x+150,cy2=z.y+150;
-    svg.appendChild(mk('circle',{cx:cx2,cy:cy2,r:100,fill:'rgba(255,255,255,0.6)',stroke:CHex[z.c],'stroke-width':2,opacity:.5}));
-    svg.appendChild(mk('circle',{cx:cx2,cy:cy2,r:70,fill:'rgba(255,255,255,0.4)',stroke:CHex[z.c],'stroke-width':1,opacity:.4}));
+    svg.appendChild(mk('circle',{cx:cx2,cy:cy2,r:100,fill:'rgba(255,255,255,0.75)',stroke:CHex[z.c],'stroke-width':4,opacity:1}));
+    svg.appendChild(mk('circle',{cx:cx2,cy:cy2,r:70,fill:'rgba(255,255,255,0.5)',stroke:CHex[z.c],'stroke-width':2,opacity:1}));
   });
 
   // Token slots in yards
   COLS.forEach(function(c,ci){
     YARD[c].forEach(function(pos,ti){
       var cx2=pos[0]*CELL,cy2=pos[1]*CELL;
-      svg.appendChild(mk('circle',{cx:cx2,cy:cy2,r:32,fill:'rgba(255,255,255,0.5)',stroke:CHex[c],'stroke-width':2.5}));
-      svg.appendChild(mk('circle',{cx:cx2,cy:cy2,r:24,fill:'rgba(255,255,255,0.3)',stroke:CHex[c],'stroke-width':1,opacity:.5}));
+      svg.appendChild(mk('circle',{cx:cx2,cy:cy2,r:32,fill:'rgba(255,255,255,0.85)',stroke:CHex[c],'stroke-width':4}));
+      svg.appendChild(mk('circle',{cx:cx2,cy:cy2,r:24,fill:'rgba(255,255,255,0.6)',stroke:CHex[c],'stroke-width':2}));
     });
   });
 
@@ -701,9 +708,9 @@ function drawBoard(){
   // Home column cells
   COLS.forEach(function(c){
     HCOL[c].forEach(function(sq,i){
-      var op=0.4+i*0.08;
+      var op=0.75+i*0.04;
       svg.appendChild(mk('rect',{x:sq[0]*CELL+1,y:sq[1]*CELL+1,width:CELL-2,height:CELL-2,fill:CHex[c],rx:4,opacity:op}));
-      svg.appendChild(mk('rect',{x:sq[0]*CELL+1,y:sq[1]*CELL+1,width:CELL-2,height:CELL-2,fill:'none',stroke:'rgba(255,255,255,0.2)','stroke-width':0.5,rx:4}));
+      svg.appendChild(mk('rect',{x:sq[0]*CELL+1,y:sq[1]*CELL+1,width:CELL-2,height:CELL-2,fill:'none',stroke:'rgba(255,255,255,0.5)','stroke-width':1.5,rx:4}));
     });
   });
 
@@ -716,13 +723,13 @@ function drawBoard(){
     {pts:cx3+','+cy3+' '+cx3+','+(cy3+h)+' '+(cx3-h)+','+cy3,fill:'#fdd835'}
   ];
   tris.forEach(function(t){
-    svg.appendChild(mk('polygon',{points:t.pts,fill:t.fill,opacity:.85}));
-    svg.appendChild(mk('polygon',{points:t.pts,fill:'none',stroke:'rgba(255,255,255,0.15)','stroke-width':1}));
+    svg.appendChild(mk('polygon',{points:t.pts,fill:t.fill,opacity:1}));
+    svg.appendChild(mk('polygon',{points:t.pts,fill:'none',stroke:'rgba(255,255,255,0.4)','stroke-width':2}));
   });
-  // Center circle
-  svg.appendChild(mk('circle',{cx:cx3,cy:cy3,r:52,fill:'#fff',stroke:'rgba(200,170,80,0.4)','stroke-width':3}));
-  svg.appendChild(mk('circle',{cx:cx3,cy:cy3,r:44,fill:'#fdf6e3',stroke:'rgba(200,170,80,0.2)','stroke-width':1}));
-  var wt=mk('text',{x:cx3,y:cy3,'font-size':14,fill:'#b8860b','text-anchor':'middle','dominant-baseline':'central','font-weight':'900','font-family':'Cinzel Decorative, serif','letter-spacing':'1'});
+  // Center circle - bright and clear
+  svg.appendChild(mk('circle',{cx:cx3,cy:cy3,r:52,fill:'#ffffff',stroke:'#f5d76e','stroke-width':4}));
+  svg.appendChild(mk('circle',{cx:cx3,cy:cy3,r:44,fill:'#fffde7',stroke:'#f5d76e','stroke-width':2}));
+  var wt=mk('text',{x:cx3,y:cx3,'font-size':18,fill:'#b8860b','text-anchor':'middle','dominant-baseline':'central','font-weight':'900','font-family':'Cinzel Decorative, serif','letter-spacing':'1'});
   wt.textContent='WIN';svg.appendChild(wt);
 
   // Grid lines overlay for polish
