@@ -553,7 +553,7 @@ var YARD={red:[[1.5,1.5],[3.5,1.5],[1.5,3.5],[3.5,3.5]],blue:[[10.5,1.5],[12.5,1
 var SAFE=[0,8,13,21,26,34,39,47];
 var DFACE=['','⚀','⚁','⚂','⚃','⚄','⚅'];
 
-var myId=null,myName='Warrior',roomRef=null,chatRef=null,state=null,selCount=2,rolling=false,lastLogLen=0;
+var myId=null,myName='Warrior',roomRef=null,chatRef=null,state=null,selCount=2,rolling=false,lastLogTs=0;
 
 // ─── CINEMATIC TOAST ───
 var toastTimer=null;
@@ -595,7 +595,7 @@ function showToast(text,important){
 function fa(v){if(!v)return[];if(Array.isArray(v))return v;return Object.keys(v).sort(function(a,b){return+a-+b;}).map(function(k){return v[k];});}
 function norm(d){if(!d)return d;d.tokens=fa(d.tokens).map(fa);d.finished=fa(d.finished).map(fa);d.names=fa(d.names);d.connected=fa(d.connected);d.log=fa(d.log);return d;}
 function esc(s){return String(s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
-function addLog(s,t,i){if(!s.log)s.log=[];s.log.push({text:t,imp:!!i,ts:Date.now()});if(s.log.length>30)s.log=s.log.slice(-30);}
+function addLog(s,t,i){if(!s.log)s.log=[];s.log.push({text:t,imp:!!i,ts:Date.now()});if(s.log.length>80)s.log=s.log.slice(-80);}
 function freshGame(n){return{playerCount:n,tokens:Array.from({length:n},function(){return[-1,-1,-1,-1];}),finished:Array.from({length:n},function(){return[false,false,false,false];}),names:Array.from({length:n},function(_,i){return'Warrior '+(i+1);}),connected:Array.from({length:n},function(){return false;}),turn:0,dice:null,diceRolled:false,phase:'waiting',winner:null,log:[]};}
 function gpath(ci){var off=ci*13;return Array.from({length:52},function(_,i){return PATH[(i+off)%52];});}
 function gpos(ci,ti,pos,done){if(done){var a=ci*(Math.PI/2)+ti*0.4;return{x:375+Math.cos(a)*20,y:375+Math.sin(a)*20};}if(pos===-1){var y=YARD[COLS[ci]][ti];return{x:y[0]*CELL,y:y[1]*CELL};}if(pos>=52){var h=HCOL[COLS[ci]][pos-52];if(h)return{x:(h[0]+.5)*CELL,y:(h[1]+.5)*CELL};return{x:375,y:375};}var sq=gpath(ci)[pos];return{x:(sq[0]+.5)*CELL,y:(sq[1]+.5)*CELL};}
@@ -1276,13 +1276,11 @@ function render(){
   var logArr=fa(state.log);
   logArr.slice(-8).forEach(function(e){var d=document.createElement('div');d.className='le'+(e.imp?' imp':'');d.textContent=e.text;gl.appendChild(d);});
   gl.scrollTop=9999;
-
-  // Show toast for newest log entry when it changes
-  if(logArr.length>lastLogLen&&logArr.length>0){
-    var newest=logArr[logArr.length-1];
+  var newest=logArr.length>0?logArr[logArr.length-1]:null;
+  if(newest&&newest.ts!==lastLogTs){
+    lastLogTs=newest.ts;
     showToast(newest.text,newest.imp);
   }
-  lastLogLen=logArr.length;
 
   var wm=document.getElementById('winModal');
   if(over&&state.winner!=null){
