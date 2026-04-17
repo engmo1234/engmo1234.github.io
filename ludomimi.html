@@ -585,7 +585,7 @@ function showToast(text,important){
   sb2.textContent=sub;
 
   el.className='show toast-in';
-  var dur=important?4000:2800;
+  var dur=important?6000:4500;
   toastTimer=setTimeout(function(){
     el.className='show toast-out';
     setTimeout(function(){el.className='';},300);
