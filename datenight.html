@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#ffd6ec">
+<title>A Little Question for You 💕</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --sky-top:#ffd6ec;
+    --sky-bot:#c9e7ff;
+    --ink:#5b4a63;
+    --rose:#ff7eb0;
+    --rose-deep:#ff5a99;
+    --mint:#7ed9c3;
+    --cream:#fff7fb;
+    --yellow:#ffe27a;
+    --shadow:rgba(124,77,120,.22);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    font-family:'Quicksand',sans-serif;
+    color:var(--ink);
+    background:linear-gradient(170deg,var(--sky-top),var(--sky-bot));
+    overflow-x:hidden;
+    overflow-y:auto;
+    position:relative;
+    min-height:100vh;
+    min-height:100dvh;
+    -webkit-tap-highlight-color:transparent;
+    -webkit-text-size-adjust:100%;
+    text-size-adjust:100%;
+    -webkit-font-smoothing:antialiased;
+  }
+  /* While the "No" button is loose, lock scrolling so it can't spawn bars */
+  body.lock-scroll{overflow:hidden;height:100vh;height:100dvh}
+
+  /* floating background characters & decor */
+  .bg{position:fixed;inset:0;overflow:hidden;z-index:0;pointer-events:none}
+  .floaty{position:absolute;animation:float 9s ease-in-out infinite}
+  @keyframes float{
+    0%,100%{transform:translateY(0) rotate(var(--r,0deg))}
+    50%{transform:translateY(-26px) rotate(calc(var(--r,0deg) + 6deg))}
+  }
+  .cloud{
+    position:absolute;background:rgba(255,255,255,.75);border-radius:60px;
+    filter:blur(.3px);animation:drift linear infinite;
+  }
+  .cloud::before,.cloud::after{content:"";position:absolute;background:inherit;border-radius:50%}
+  @keyframes drift{from{transform:translateX(-220px)}to{transform:translateX(110vw)}}
+
+  /* main card */
+  .wrap{position:relative;z-index:2;min-height:100vh;min-height:100dvh;display:flex;align-items:center;justify-content:center;padding:24px}
+  .card{
+    background:var(--cream);
+    border:5px solid #fff;
+    border-radius:34px;
+    box-shadow:0 26px 60px var(--shadow), inset 0 0 0 3px #ffe6f1;
+    padding:46px 40px 40px;
+    max-width:560px;width:100%;text-align:center;
+    position:relative;animation:pop .6s cubic-bezier(.18,1.3,.4,1) both;
+  }
+  @keyframes pop{from{opacity:0;transform:scale(.85) translateY(20px)}to{opacity:1;transform:none}}
+  .card::before{
+    content:"💗";position:absolute;top:-26px;left:50%;transform:translateX(-50%);
+    font-size:42px;filter:drop-shadow(0 4px 6px var(--shadow));animation:beat 1.4s ease-in-out infinite}
+  @keyframes beat{0%,100%{transform:translateX(-50%) scale(1)}45%{transform:translateX(-50%) scale(1.2)}}
+
+  h1{font-family:'Baloo 2',cursive;font-weight:800;line-height:1.15;font-size:clamp(26px,5.4vw,40px);color:var(--rose-deep);margin-bottom:10px}
+  .sub{font-size:clamp(15px,3vw,18px);font-weight:600;color:var(--ink);opacity:.85;margin-bottom:26px}
+
+  /* mascot */
+  .mascot{font-size:74px;display:inline-block;animation:bob 2.4s ease-in-out infinite;margin-bottom:6px}
+  @keyframes bob{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-10px) rotate(3deg)}}
+
+  /* buttons */
+  .btn-row{display:flex;gap:16px;justify-content:center;align-items:center;flex-wrap:wrap;margin-top:6px;min-height:64px;position:relative}
+  button{font-family:'Baloo 2',cursive;font-weight:700;cursor:pointer;border:none;border-radius:50px;transition:transform .15s ease, box-shadow .15s ease;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;touch-action:manipulation}
+  .yes{
+    background:linear-gradient(135deg,var(--rose),var(--rose-deep));
+    color:#fff;font-size:clamp(18px,4vw,24px);padding:16px 42px;
+    box-shadow:0 10px 0 #d63f80, 0 16px 24px var(--shadow);
+  }
+  .yes:hover{transform:translateY(-3px);box-shadow:0 13px 0 #d63f80,0 20px 28px var(--shadow)}
+  .yes:active{transform:translateY(4px);box-shadow:0 4px 0 #d63f80,0 8px 14px var(--shadow)}
+  .no{
+    background:#fff;color:var(--ink);font-size:clamp(15px,3.4vw,18px);
+    padding:14px 30px;box-shadow:0 6px 0 #e9d4e4,0 10px 18px var(--shadow);
+    position:relative;will-change:transform;
+  }
+
+  /* form */
+  .step{display:none;animation:fade .5s ease both}
+  .step.active{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+  .field{text-align:left;margin:18px 0}
+  .field label{display:block;font-family:'Baloo 2',cursive;font-weight:700;font-size:16px;margin-bottom:10px;color:var(--rose-deep)}
+  .chips{display:flex;flex-wrap:wrap;gap:10px}
+  .chip{
+    background:#fff;border:2px solid #ffd9ea;border-radius:40px;padding:10px 16px;font-weight:700;
+    font-size:14px;cursor:pointer;user-select:none;transition:.15s;display:flex;align-items:center;gap:6px}
+  .chip:hover{border-color:var(--rose)}
+  .chip.sel{background:linear-gradient(135deg,var(--rose),var(--rose-deep));color:#fff;border-color:transparent;transform:scale(1.04)}
+  input[type=date],input[type=time],input.txt{
+    width:100%;font-family:'Quicksand',sans-serif;font-weight:600;font-size:16px;color:var(--ink);
+    padding:14px 16px;border:2px solid #ffd9ea;border-radius:16px;background:#fff;outline:none;transition:.15s}
+  input:focus{border-color:var(--rose);box-shadow:0 0 0 4px #ffe6f1}
+  .send{
+    background:linear-gradient(135deg,var(--mint),#56c4a8);color:#fff;font-size:20px;padding:15px 40px;margin-top:8px;
+    box-shadow:0 9px 0 #3fa78c,0 14px 22px var(--shadow)}
+  .send:hover{transform:translateY(-3px)}
+  .send:active{transform:translateY(4px);box-shadow:0 4px 0 #3fa78c}
+  .hint{font-size:13px;font-weight:600;opacity:.7;margin-top:6px;min-height:18px}
+
+  /* confetti hearts */
+  .heart-fall{position:fixed;top:-40px;font-size:24px;z-index:5;pointer-events:none;animation:fall linear forwards}
+  @keyframes fall{to{transform:translateY(105dvh) rotate(360deg);opacity:0}}
+
+  .summary{text-align:left;background:#fff;border:2px dashed #ffd9ea;border-radius:18px;padding:18px 20px;margin-top:10px;font-weight:600}
+  .summary strong{color:var(--rose-deep)}
+  @media(max-width:480px){.card{padding:40px 22px 30px}}
+</style>
+</head>
+<body>
+<div class="bg" id="bg"></div>
+
+<div class="wrap">
+  <div class="card">
+
+    <!-- STEP 1: THE ASK -->
+    <section class="step active" id="step-ask">
+      <div class="mascot">🐰</div>
+      <h1>Hi will you go on a date with me? 💖</h1>
+      <p class="sub">It's me, your forever person. I've got something fun planned — just say yes 🥺</p>
+      <div class="btn-row" id="askRow">
+        <button class="yes" id="yesBtn">Yes! 💕</button>
+        <button class="no" id="noBtn">No</button>
+      </div>
+      <p class="hint" id="noHint"></p>
+    </section>
+
+    <!-- STEP 2: DETAILS -->
+    <section class="step" id="step-form">
+      <div class="mascot">🥳</div>
+      <h1>Yay!! Best answer ever 🎉</h1>
+      <p class="sub">Now help me make it perfect — what sounds nice to you?</p>
+
+      <div class="field">
+        <label>💑 What kind of date sounds good?</label>
+        <div class="chips" id="dateTypeChips">
+          <div class="chip" data-v="Picnic 🧺">Picnic 🧺</div>
+          <div class="chip" data-v="Motorbike ride 🏍️">Motorbike ride 🏍️</div>
+          <div class="chip" data-v="Lunch 🍴">Lunch 🍴</div>
+          <div class="chip" data-v="Just coffee ☕">Just coffee ☕</div>
+          <div class="chip" data-v="Surprise me ✨">Surprise me ✨</div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>🍽️ What kind of food sounds good?</label>
+        <div class="chips" id="foodChips">
+          <div class="chip" data-v="Italian 🍝">Italian 🍝</div>
+          <div class="chip" data-v="Sushi 🍣">Sushi 🍣</div>
+          <div class="chip" data-v="Burgers 🍔">Burgers 🍔</div>
+          <div class="chip" data-v="Mexican 🌮">Mexican 🌮</div>
+          <div class="chip" data-v="Indian 🍛">Indian 🍛</div>
+          <div class="chip" data-v="Thai 🍜">Thai 🍜</div>
+          <div class="chip" data-v="Dessert 🍰">Dessert 🍰</div>
+          <div class="chip" data-v="Surprise me ✨">Surprise me ✨</div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>📅 When are you free?</label>
+        <input type="date" id="dateIn">
+      </div>
+
+      <div class="field">
+        <label>⏰ What time works best?</label>
+        <input type="time" id="timeIn" value="19:00">
+      </div>
+
+      <div class="field">
+        <label>💌 Anything you want to add? (optional)</label>
+        <input type="text" class="txt" id="noteIn" placeholder="A little message for me…">
+      </div>
+
+      <button class="send" id="sendBtn">Send it to my heart 💌</button>
+      <p class="hint" id="formHint"></p>
+    </section>
+
+    <!-- STEP 3: DONE -->
+    <section class="step" id="step-done">
+      <div class="mascot">🥰</div>
+      <h1>It's a date! 💞</h1>
+      <p class="sub">I can't wait. You just made my whole week.</p>
+      <div class="summary" id="summary"></div>
+    </section>
+
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---------- Background scenery ---------- */
+  function buildBackground(){
+    var bg = document.getElementById('bg');
+    var chars = ['🐰','🐻','🐱','🐶','🦊','🐥','🌸','⭐','🎈','🧸','🍓','🌈'];
+    for(var i=0;i<14;i++){
+      var s = document.createElement('div');
+      s.className='floaty';
+      s.textContent = chars[Math.floor(Math.random()*chars.length)];
+      s.style.left = Math.random()*92+'%';
+      s.style.top = Math.random()*88+'%';
+      s.style.fontSize = (26 + Math.random()*30)+'px';
+      s.style.setProperty('--r',(Math.random()*30-15)+'deg');
+      s.style.animationDelay = (Math.random()*6)+'s';
+      s.style.animationDuration = (7+Math.random()*6)+'s';
+      s.style.opacity = .85;
+      bg.appendChild(s);
+    }
+    for(var c=0;c<5;c++){
+      var cl = document.createElement('div');
+      cl.className='cloud';
+      var w = 70+Math.random()*90;
+      cl.style.width = w+'px';
+      cl.style.height = (w*0.5)+'px';
+      cl.style.top = (Math.random()*70)+'%';
+      cl.style.animationDuration = (26+Math.random()*24)+'s';
+      cl.style.animationDelay = (-Math.random()*20)+'s';
+      cl.style.setProperty('--bw',w);
+      bg.appendChild(cl);
+    }
+  }
+
+  /* ---------- Runaway No button ---------- */
+  var noBtn = document.getElementById('noBtn');
+  var noHint = document.getElementById('noHint');
+  var dodgeCount = 0;
+  var taunts = [
+    "Catch me first! 🏃‍♀️",
+    "Are you suuure? 🥺",
+    "Try again 💨",
+    "Nope, that one's broken 😋",
+    "The 'No' is shy today 🙈",
+    "Yes is right there ➡️💕",
+    "You can't escape destiny ✨",
+    "Okay now you're just teasing me 😆"
+  ];
+
+  function isTouch(){
+    return ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
+  }
+
+  function dodge(){
+    dodgeCount++;
+    // ensure absolute positioning relative to viewport so it can roam freely
+    var bw = noBtn.offsetWidth || 90;
+    var bh = noBtn.offsetHeight || 50;
+    var vw = (window.visualViewport && window.visualViewport.width)  || window.innerWidth;
+    var vh = (window.visualViewport && window.visualViewport.height) || window.innerHeight;
+    var pad = 16;
+    var maxX = Math.max(pad, vw - bw - pad);
+    var maxY = Math.max(pad, vh - bh - pad);
+    var x = pad + Math.random()*(maxX - pad);
+    var y = pad + Math.random()*(maxY - pad);
+
+    noBtn.style.position = 'fixed';
+    noBtn.style.left = x + 'px';
+    noBtn.style.top  = y + 'px';
+    noBtn.style.zIndex = 50;
+    // shrink slowly the more it's chased, then give up and basically hide
+    var scale = Math.max(0.45, 1 - dodgeCount*0.06);
+    noBtn.style.transform = 'scale('+scale+') rotate('+(Math.random()*30-15)+'deg)';
+
+    noHint.textContent = taunts[Math.min(dodgeCount-1, taunts.length-1)];
+
+    // grow the Yes button for gentle encouragement
+    var yes = document.getElementById('yesBtn');
+    var ys = Math.min(1.6, 1 + dodgeCount*0.07);
+    yes.style.transform = 'scale('+ys+')';
+  }
+
+  noBtn.addEventListener('mouseover', dodge);
+  noBtn.addEventListener('mousedown', function(e){ e.preventDefault(); dodge(); });
+  noBtn.addEventListener('focus', dodge);
+  // touch / click fallback so it can never actually be pressed
+  noBtn.addEventListener('touchstart', function(e){ e.preventDefault(); dodge(); }, {passive:false});
+  noBtn.addEventListener('click', function(e){ e.preventDefault(); dodge(); });
+
+  // On touch devices, flee when a finger comes near, and nudge once on load
+  // so the button is never sitting still under a thumb.
+  function fingerNear(e){
+    if(!e.touches || !e.touches.length) return;
+    var t = e.touches[0];
+    var r = noBtn.getBoundingClientRect();
+    var cx = r.left + r.width/2, cy = r.top + r.height/2;
+    var dist = Math.hypot(t.clientX - cx, t.clientY - cy);
+    if(dist < 90){ dodge(); }
+  }
+  if(isTouch()){
+    document.addEventListener('touchmove', fingerNear, {passive:true});
+    document.addEventListener('touchstart', fingerNear, {passive:true});
+    // small initial reposition after layout settles
+    window.addEventListener('load', function(){ setTimeout(dodge, 400); });
+  }
+
+  /* ---------- Step navigation ---------- */
+  function show(id){
+    var steps = document.querySelectorAll('.step');
+    for(var i=0;i<steps.length;i++) steps[i].classList.remove('active');
+    document.getElementById(id).classList.add('active');
+  }
+
+  function rainHearts(n){
+    var emojis = ['💖','💕','💗','🌸','✨','💞','🥰'];
+    for(var i=0;i<n;i++){
+      (function(){
+        var h = document.createElement('div');
+        h.className='heart-fall';
+        h.textContent = emojis[Math.floor(Math.random()*emojis.length)];
+        h.style.left = Math.random()*100+'vw';
+        h.style.fontSize = (18+Math.random()*26)+'px';
+        h.style.animationDuration = (2.5+Math.random()*2.5)+'s';
+        h.style.animationDelay = (Math.random()*0.6)+'s';
+        document.body.appendChild(h);
+        setTimeout(function(){ if(h.parentNode) h.parentNode.removeChild(h); }, 5500);
+      })();
+    }
+  }
+
+  document.getElementById('yesBtn').addEventListener('click', function(){
+    rainHearts(40);
+    show('step-form');
+    // chase is over: stop the No button fleeing and let the form scroll
+    noBtn.style.position='';
+    noBtn.style.transform='';
+    document.body.classList.remove('lock-scroll');
+    if(isTouch()){
+      document.removeEventListener('touchmove', fingerNear);
+      document.removeEventListener('touchstart', fingerNear);
+    }
+    window.scrollTo(0,0);
+  });
+
+  /* ---------- Chip pickers (single select) ---------- */
+  function setupChips(containerId, onSelect){
+    var chips = document.querySelectorAll('#'+containerId+' .chip');
+    for(var i=0;i<chips.length;i++){
+      chips[i].addEventListener('click', function(){
+        for(var j=0;j<chips.length;j++) chips[j].classList.remove('sel');
+        this.classList.add('sel');
+        onSelect(this.getAttribute('data-v'));
+        document.getElementById('formHint').textContent='';
+      });
+    }
+  }
+
+  var selectedDateType = '';
+  var selectedFood = '';
+  setupChips('dateTypeChips', function(v){ selectedDateType = v; });
+  setupChips('foodChips', function(v){ selectedFood = v; });
+
+  /* ---------- Set min date to today ---------- */
+  (function(){
+    var d = new Date();
+    var iso = d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+    var di = document.getElementById('dateIn');
+    di.min = iso; di.value = iso;
+  })();
+
+  /* ---------- Submit ---------- */
+  document.getElementById('sendBtn').addEventListener('click', function(){
+    var hint = document.getElementById('formHint');
+    var dateVal = document.getElementById('dateIn').value;
+    var timeVal = document.getElementById('timeIn').value;
+    var note = document.getElementById('noteIn').value.trim();
+
+    if(!selectedDateType){ hint.textContent='Pick a date idea first! 💑'; return; }
+    if(!selectedFood){ hint.textContent='Pick a food first, please! 🍽️'; return; }
+    if(!dateVal){ hint.textContent='Pick a date so I can plan it! 📅'; return; }
+    if(!timeVal){ hint.textContent='What time works for you? ⏰'; return; }
+
+    // format date nicely
+    var parts = dateVal.split('-');
+    var dObj = new Date(parts[0], parts[1]-1, parts[2]);
+    var niceDate = dObj.toLocaleDateString(undefined,{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+
+    // format time to 12h
+    var t = timeVal.split(':');
+    var hh = parseInt(t[0],10); var mm = t[1];
+    var ap = hh>=12 ? 'PM':'AM';
+    var h12 = hh%12; if(h12===0) h12=12;
+    var niceTime = h12+':'+mm+' '+ap;
+
+    var html = '💑 <strong>Date idea:</strong> '+selectedDateType+'<br>'+
+               '🍽️ <strong>Food:</strong> '+selectedFood+'<br>'+
+               '📅 <strong>Date:</strong> '+niceDate+'<br>'+
+               '⏰ <strong>Time:</strong> '+niceTime;
+    if(note) html += '<br>💌 <strong>Your note:</strong> '+note.replace(/</g,'&lt;');
+    html += '<br><br>See you then, cuty pie I\'ll handle the rest. ';
+
+    // ===== SEND TO GOOGLE SHEET =====
+    // PASTE YOUR APPS SCRIPT WEB APP URL BETWEEN THE QUOTES BELOW:
+    var SHEET_URL = "https://script.google.com/macros/s/AKfycbyXgkeu5-IbWqBNl7QDbi77ldUfgV1XHT0aYgUoE8BHYAHt5MmHTxMIhBTfQ8eRcLytcQ/exec";
+
+    if(SHEET_URL && SHEET_URL.indexOf("script.google.com") !== -1){
+      fetch(SHEET_URL, {
+        method: "POST",
+        mode: "no-cors",               // required for Apps Script from a static page
+        headers: {"Content-Type":"text/plain;charset=utf-8"},
+        body: JSON.stringify({
+          dateType: selectedDateType,
+          food: selectedFood,
+          date: niceDate,
+          time: niceTime,
+          note: note
+        })
+      }).catch(function(err){ console.warn("Send failed:", err); });
+    }
+    // =================================
+
+    document.getElementById('summary').innerHTML = html;
+    rainHearts(60);
+    show('step-done');
+  });
+
+  /* ---------- Keep No button on-screen if viewport changes ---------- */
+  function clampNo(){
+    if(noBtn.style.position==='fixed'){
+      var bw=noBtn.offsetWidth, bh=noBtn.offsetHeight;
+      var vw=(window.visualViewport&&window.visualViewport.width)||window.innerWidth;
+      var vh=(window.visualViewport&&window.visualViewport.height)||window.innerHeight;
+      var L=parseFloat(noBtn.style.left)||0, T=parseFloat(noBtn.style.top)||0;
+      noBtn.style.left=Math.max(16, Math.min(L, vw-bw-16))+'px';
+      noBtn.style.top =Math.max(16, Math.min(T, vh-bh-16))+'px';
+    }
+  }
+  window.addEventListener('resize', clampNo);
+  window.addEventListener('orientationchange', clampNo);
+  if(window.visualViewport){ window.visualViewport.addEventListener('resize', clampNo); }
+
+  // Lock scrolling during the ask screen so the runaway button can't make bars.
+  document.body.classList.add('lock-scroll');
+
+  buildBackground();
+})();
+</script>
+</body>
+</html>
