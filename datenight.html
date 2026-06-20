@@ -7,7 +7,7 @@
 <title>A Little Question for You 💕</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Quicksand:wght@500;600;700&family=Baloo+Bhaijaan+2:wght@500;600;700;800&family=Tajawal:wght@500;700;800&display=swap" rel="stylesheet">
 <style>
   :root{
     --sky-top:#ffd6ec;
@@ -123,10 +123,34 @@
   .summary{text-align:left;background:#fff;border:2px dashed #ffd9ea;border-radius:18px;padding:18px 20px;margin-top:10px;font-weight:600}
   .summary strong{color:var(--rose-deep)}
   @media(max-width:480px){.card{padding:40px 22px 30px}}
+
+  /* ===== Language toggle ===== */
+  .lang-toggle{
+    position:fixed;top:16px;right:16px;z-index:60;
+    background:#fff;border:2px solid #ffd9ea;border-radius:40px;
+    padding:9px 16px;font-family:'Baloo 2',cursive;font-weight:700;font-size:14px;
+    color:var(--rose-deep);cursor:pointer;box-shadow:0 6px 14px var(--shadow);
+    display:flex;align-items:center;gap:6px;-webkit-user-select:none;user-select:none;
+    transition:transform .15s ease;
+  }
+  .lang-toggle:hover{transform:scale(1.05)}
+  html[dir="rtl"] .lang-toggle{right:auto;left:16px}
+
+  /* RTL layout flips */
+  html[dir="rtl"] .field{text-align:right}
+  html[dir="rtl"] .summary{text-align:right}
+
+  /* Arabic font swap (applied via body class) */
+  body.lang-ar{font-family:'Tajawal','Quicksand',sans-serif}
+  body.lang-ar h1,
+  body.lang-ar button,
+  body.lang-ar .field label{font-family:'Baloo Bhaijaan 2','Baloo 2',cursive}
+  body.lang-ar .lang-toggle{font-family:'Baloo Bhaijaan 2','Baloo 2',cursive}
 </style>
 </head>
 <body>
 <div class="bg" id="bg"></div>
+<button type="button" class="lang-toggle" id="langToggle">🇸🇦 العربية</button>
 
 <div class="wrap">
   <div class="card">
@@ -134,8 +158,8 @@
     <!-- STEP 1: THE ASK -->
     <section class="step active" id="step-ask">
       <div class="mascot">🐰</div>
-      <h1>Hi will you go on a date with me? 💖</h1>
-      <p class="sub">It's me, your forever person. I've got something fun planned — just say yes 🥺</p>
+      <h1 id="askHeading">Hey you… would you like to go on a date with me? 💖</h1>
+      <p class="sub" id="askSub">I'd love to take you out — just say yes 🥺</p>
       <div class="btn-row" id="askRow">
         <button class="yes" id="yesBtn">Yes! 💕</button>
         <button class="no" id="noBtn">No</button>
@@ -146,11 +170,11 @@
     <!-- STEP 2: DETAILS -->
     <section class="step" id="step-form">
       <div class="mascot">🥳</div>
-      <h1>Yay!! Best answer ever 🎉</h1>
-      <p class="sub">Now help me make it perfect — what sounds nice to you?</p>
+      <h1 id="formHeading">Yay!! Great answer 🎉</h1>
+      <p class="sub" id="formSub">Now help me plan it — what sounds good to you?</p>
 
       <div class="field">
-        <label>💑 What kind of date sounds good?</label>
+        <label id="dateTypeLabel">💑 What kind of date sounds good?</label>
         <div class="chips" id="dateTypeChips">
           <div class="chip" data-v="Picnic 🧺">Picnic 🧺</div>
           <div class="chip" data-v="Motorbike ride 🏍️">Motorbike ride 🏍️</div>
@@ -161,45 +185,55 @@
       </div>
 
       <div class="field">
-        <label>🍽️ What kind of food sounds good?</label>
+        <label id="placeLabel">📍 Where in Downtown Dubai sounds good?</label>
         <div class="chips" id="foodChips">
-          <div class="chip" data-v="Italian 🍝">Italian 🍝</div>
-          <div class="chip" data-v="Sushi 🍣">Sushi 🍣</div>
-          <div class="chip" data-v="Burgers 🍔">Burgers 🍔</div>
-          <div class="chip" data-v="Mexican 🌮">Mexican 🌮</div>
-          <div class="chip" data-v="Indian 🍛">Indian 🍛</div>
-          <div class="chip" data-v="Thai 🍜">Thai 🍜</div>
-          <div class="chip" data-v="Dessert 🍰">Dessert 🍰</div>
+          <div class="chip" data-v="Social House, Dubai Mall 🍽️">Social House 🍽️</div>
+          <div class="chip" data-v="Table Otto, Dubai Mall 🍳">Table Otto 🍳</div>
+          <div class="chip" data-v="BohoX, Downtown 🥞">BohoX 🥞</div>
+          <div class="chip" data-v="Othmans Lounge, Downtown 🌙">Othmans Lounge 🌙</div>
+          <div class="chip" data-v="Karam Beirut, Dubai Mall 🥙">Karam Beirut 🥙</div>
+          <div class="chip" data-v="Lebanushi, Dubai Mall 🧆">Lebanushi 🧆</div>
+          <div class="chip" data-v="Swiss Butter, Sofitel Downtown 🥩">Swiss Butter 🥩</div>
+          <div class="chip" data-v="Rang, Dubai Mall 🍛">Rang 🍛</div>
+          <div class="chip" data-v="New Shanghai, Downtown 🥟">New Shanghai 🥟</div>
+          <div class="chip" data-v="Eataly, Dubai Mall 🧀">Eataly 🧀</div>
+          <div class="chip" data-v="Carluccio's, Dubai Mall 🍝">Carluccio's 🍝</div>
+          <div class="chip" data-v="High Joint, Dubai Mall 🍔">High Joint 🍔</div>
+          <div class="chip" data-v="Zheng Dong Noodle, Dubai Mall 🍜">Zheng Dong Noodle 🍜</div>
+          <div class="chip" data-v="Roasters Coffee House, Boulevard ☕">Roasters Coffee ☕</div>
+          <div class="chip" data-v="Caju Coffee House, Downtown ☕">Caju Coffee ☕</div>
+          <div class="chip" data-v="TEN 11, Dubai Mall 🍰">TEN 11 🍰</div>
           <div class="chip" data-v="Surprise me ✨">Surprise me ✨</div>
         </div>
       </div>
 
       <div class="field">
-        <label>📅 When are you free?</label>
+        <label id="dateLabel">📅 When are you free?</label>
         <input type="date" id="dateIn">
       </div>
 
       <div class="field">
-        <label>⏰ What time works best?</label>
+        <label id="timeLabel">⏰ What time works best?</label>
         <input type="time" id="timeIn" value="19:00">
       </div>
 
       <div class="field">
-        <label>💌 Anything you want to add? (optional)</label>
-        <input type="text" class="txt" id="noteIn" placeholder="A little message for me…">
+        <label id="noteLabel">💌 Anything you want to add? (optional)</label>
+        <input type="text" class="txt" id="noteIn" placeholder="A little message…">
       </div>
 
-      <button class="send" id="sendBtn">Send it to my heart 💌</button>
+      <button class="send" id="sendBtn">Send it over 💌</button>
       <p class="hint" id="formHint"></p>
     </section>
 
     <!-- STEP 3: DONE -->
     <section class="step" id="step-done">
       <div class="mascot">🥰</div>
-      <h1>It's a date! 💞</h1>
-      <p class="sub">I can't wait. You just made my whole week.</p>
+      <h1 id="doneHeading">It's a date! 💞</h1>
+      <p class="sub" id="doneSub">Can't wait to see you there.</p>
       <div class="summary" id="summary"></div>
     </section>
+
 
   </div>
 </div>
@@ -207,6 +241,105 @@
 <script>
 (function(){
   "use strict";
+
+  /* ---------- i18n ---------- */
+  var I18N = {
+    en: {
+      askHeading: "Hey you… would you like to go on a date with me? 💖",
+      askSub: "I'd love to take you out — just say yes 🥺",
+      yesBtn: "Yes! 💕",
+      noBtn: "No",
+      formHeading: "Yay!! Great answer 🎉",
+      formSub: "Now help me plan it — what sounds good to you?",
+      dateTypeLabel: "💑 What kind of date sounds good?",
+      placeLabel: "📍 Where in Downtown Dubai sounds good?",
+      dateLabel: "📅 When are you free?",
+      timeLabel: "⏰ What time works best?",
+      noteLabel: "💌 Anything you want to add? (optional)",
+      notePlaceholder: "A little message…",
+      sendBtn: "Send it over 💌",
+      doneHeading: "It's a date! 💞",
+      doneSub: "Can't wait to see you there.",
+      toggleLabel: "🇸🇦 العربية",
+      taunts: [
+        "Catch me first! 🏃‍♀️",
+        "Are you suuure? 🥺",
+        "Try again, quick! 💨",
+        "Nope, that one's broken 😋",
+        "The 'No' is shy today 🙈",
+        "Yes is right there ➡️💕",
+        "You can't escape destiny ✨",
+        "Okay now you're just teasing me 😆"
+      ],
+      dateTypes: [
+        {v:"Picnic 🧺", t:"Picnic 🧺"},
+        {v:"Motorbike ride 🏍️", t:"Motorbike ride 🏍️"},
+        {v:"Lunch 🍴", t:"Lunch 🍴"},
+        {v:"Just coffee ☕", t:"Just coffee ☕"},
+        {v:"Surprise me ✨", t:"Surprise me ✨"}
+      ],
+      surpriseFood: "Surprise me ✨",
+      validDateType: "Pick a date idea first! 💑",
+      validFood: "Pick a spot first, please! 📍",
+      validDate: "Pick a date so I can plan it! 📅",
+      validTime: "What time works for you? ⏰",
+      sumDateType: "Date idea:",
+      sumPlace: "Place:",
+      sumDate: "Date:",
+      sumTime: "Time:",
+      sumNote: "Your note:",
+      closing: "Looking forward to it! 😊",
+      amPm: {am:"AM", pm:"PM"}
+    },
+    ar: {
+      askHeading: "هلا… هل تحبين الخروج معي في موعد؟ 💖",
+      askSub: "أحب أن أخرج معكِ — فقط قولي نعم 🥺",
+      yesBtn: "نعم! 💕",
+      noBtn: "لا",
+      formHeading: "يااي!! إجابة رائعة 🎉",
+      formSub: "الآن ساعديني في التخطيط — ما الذي يحلو لكِ؟",
+      dateTypeLabel: "💑 أي نوع من المواعيد يعجبك؟",
+      placeLabel: "📍 أين في وسط مدينة دبي يعجبك؟",
+      dateLabel: "📅 متى تكونين متفرغة؟",
+      timeLabel: "⏰ أي وقت يناسبك؟",
+      noteLabel: "💌 هل تريدين إضافة شيء؟ (اختياري)",
+      notePlaceholder: "رسالة صغيرة…",
+      sendBtn: "أرسليها 💌",
+      doneHeading: "إنه موعد! 💞",
+      doneSub: "لا أطيق الانتظار لرؤيتك هناك.",
+      toggleLabel: "🇬🇧 English",
+      taunts: [
+        "أمسكيني أولًا! 🏃‍♀️",
+        "هل أنتِ متأكدة؟ 🥺",
+        "حاولي مرة أخرى! 💨",
+        "لا، هذا الزر معطّل 😋",
+        "زر «لا» خجول اليوم 🙈",
+        "زر «نعم» هناك تمامًا ⬅️💕",
+        "لا يمكنكِ الهروب من القدر ✨",
+        "حسنًا، أنتِ تمازحينني الآن 😆"
+      ],
+      dateTypes: [
+        {v:"نزهة 🧺", t:"نزهة 🧺"},
+        {v:"جولة بالدراجة النارية 🏍️", t:"جولة بالدراجة النارية 🏍️"},
+        {v:"غداء 🍴", t:"غداء 🍴"},
+        {v:"قهوة فقط ☕", t:"قهوة فقط ☕"},
+        {v:"فاجئيني ✨", t:"فاجئيني ✨"}
+      ],
+      surpriseFood: "فاجئيني ✨",
+      validDateType: "اختاري فكرة الموعد أولًا! 💑",
+      validFood: "اختاري مكانًا أولًا، من فضلك! 📍",
+      validDate: "اختاري يومًا حتى أرتّب له! 📅",
+      validTime: "أي وقت يناسبك؟ ⏰",
+      sumDateType: "فكرة الموعد:",
+      sumPlace: "المكان:",
+      sumDate: "اليوم:",
+      sumTime: "الوقت:",
+      sumNote: "رسالتك:",
+      closing: "أتطلع لرؤيتك! 😊",
+      amPm: {am:"صباحًا", pm:"مساءً"}
+    }
+  };
+  var currentLang = 'en';
 
   /* ---------- Background scenery ---------- */
   function buildBackground(){
@@ -243,16 +376,6 @@
   var noBtn = document.getElementById('noBtn');
   var noHint = document.getElementById('noHint');
   var dodgeCount = 0;
-  var taunts = [
-    "Catch me first! 🏃‍♀️",
-    "Are you suuure? 🥺",
-    "Try again 💨",
-    "Nope, that one's broken 😋",
-    "The 'No' is shy today 🙈",
-    "Yes is right there ➡️💕",
-    "You can't escape destiny ✨",
-    "Okay now you're just teasing me 😆"
-  ];
 
   function isTouch(){
     return ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
@@ -279,6 +402,7 @@
     var scale = Math.max(0.45, 1 - dodgeCount*0.06);
     noBtn.style.transform = 'scale('+scale+') rotate('+(Math.random()*30-15)+'deg)';
 
+    var taunts = I18N[currentLang].taunts;
     noHint.textContent = taunts[Math.min(dodgeCount-1, taunts.length-1)];
 
     // grow the Yes button for gentle encouragement
@@ -364,8 +488,82 @@
 
   var selectedDateType = '';
   var selectedFood = '';
-  setupChips('dateTypeChips', function(v){ selectedDateType = v; });
+
+  function renderDateTypeChips(){
+    var wrap = document.getElementById('dateTypeChips');
+    var items = I18N[currentLang].dateTypes;
+    var html = '';
+    for(var i=0;i<items.length;i++){
+      html += '<div class="chip" data-v="'+items[i].v.replace(/"/g,'&quot;')+'">'+items[i].t+'</div>';
+    }
+    wrap.innerHTML = html;
+    selectedDateType = ''; // reset: previous selection's value no longer matches new-language chips
+    setupChips('dateTypeChips', function(v){ selectedDateType = v; });
+  }
+
   setupChips('foodChips', function(v){ selectedFood = v; });
+
+  /* ---------- Language toggle ---------- */
+  function setLang(lang){
+    currentLang = lang;
+    paintLang(lang);
+  }
+
+  function paintLang(lang){
+    var L = I18N[lang];
+    document.documentElement.setAttribute('dir', lang==='ar' ? 'rtl' : 'ltr');
+    document.documentElement.setAttribute('lang', lang);
+    document.body.classList.toggle('lang-ar', lang==='ar');
+
+    document.getElementById('askHeading').textContent = L.askHeading;
+    document.getElementById('askSub').textContent = L.askSub;
+    document.getElementById('yesBtn').textContent = L.yesBtn;
+    document.getElementById('noBtn').textContent = L.noBtn;
+    document.getElementById('formHeading').textContent = L.formHeading;
+    document.getElementById('formSub').textContent = L.formSub;
+    document.getElementById('dateTypeLabel').textContent = L.dateTypeLabel;
+    document.getElementById('placeLabel').textContent = L.placeLabel;
+    document.getElementById('dateLabel').textContent = L.dateLabel;
+    document.getElementById('timeLabel').textContent = L.timeLabel;
+    document.getElementById('noteLabel').textContent = L.noteLabel;
+    document.getElementById('noteIn').placeholder = L.notePlaceholder;
+    document.getElementById('sendBtn').textContent = L.sendBtn;
+    document.getElementById('doneHeading').textContent = L.doneHeading;
+    document.getElementById('doneSub').textContent = L.doneSub;
+    document.getElementById('langToggle').textContent = L.toggleLabel;
+    document.getElementById('noHint').textContent = '';
+    document.getElementById('formHint').textContent = '';
+
+    renderDateTypeChips();
+  }
+
+  (function(){
+    var toggleBtn = document.getElementById('langToggle');
+    var cardEl = document.querySelector('.card');
+    toggleBtn.addEventListener('click', function(){
+      // Commit the logical language switch INSTANTLY and synchronously on every
+      // single click — this is what guarantees correct alternation no matter how
+      // fast or how many times the button is pressed in a row. The button can
+      // never get "stuck" because nothing here waits on the animation to decide
+      // which language comes next.
+      currentLang = (currentLang === 'en') ? 'ar' : 'en';
+
+      if(cardEl){
+        cardEl.style.transition = 'opacity .12s ease';
+        cardEl.style.opacity = '0.35';
+      }
+      // The visual repaint is only what's deferred, and it always paints
+      // whichever language is CURRENT at the moment it fires (not a value
+      // captured back at click-time). So even if several clicks queue up
+      // faster than the 120ms fade, every queued repaint converges safely
+      // on the same correct final state — at worst a harmless repeat paint,
+      // never a stale or mismatched one.
+      setTimeout(function(){
+        paintLang(currentLang);
+        if(cardEl){ cardEl.style.opacity = '1'; }
+      }, 120);
+    });
+  })();
 
   /* ---------- Set min date to today ---------- */
   (function(){
@@ -382,29 +580,31 @@
     var timeVal = document.getElementById('timeIn').value;
     var note = document.getElementById('noteIn').value.trim();
 
-    if(!selectedDateType){ hint.textContent='Pick a date idea first! 💑'; return; }
-    if(!selectedFood){ hint.textContent='Pick a food first, please! 🍽️'; return; }
-    if(!dateVal){ hint.textContent='Pick a date so I can plan it! 📅'; return; }
-    if(!timeVal){ hint.textContent='What time works for you? ⏰'; return; }
+    if(!selectedDateType){ hint.textContent=I18N[currentLang].validDateType; return; }
+    if(!selectedFood){ hint.textContent=I18N[currentLang].validFood; return; }
+    if(!dateVal){ hint.textContent=I18N[currentLang].validDate; return; }
+    if(!timeVal){ hint.textContent=I18N[currentLang].validTime; return; }
 
-    // format date nicely
+    // format date nicely (locale-aware)
     var parts = dateVal.split('-');
     var dObj = new Date(parts[0], parts[1]-1, parts[2]);
-    var niceDate = dObj.toLocaleDateString(undefined,{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+    var localeTag = currentLang==='ar' ? 'ar' : undefined;
+    var niceDate = dObj.toLocaleDateString(localeTag,{weekday:'long',year:'numeric',month:'long',day:'numeric'});
 
-    // format time to 12h
+    // format time to 12h (locale-aware AM/PM)
     var t = timeVal.split(':');
     var hh = parseInt(t[0],10); var mm = t[1];
-    var ap = hh>=12 ? 'PM':'AM';
+    var ap = hh>=12 ? I18N[currentLang].amPm.pm : I18N[currentLang].amPm.am;
     var h12 = hh%12; if(h12===0) h12=12;
     var niceTime = h12+':'+mm+' '+ap;
 
-    var html = '💑 <strong>Date idea:</strong> '+selectedDateType+'<br>'+
-               '🍽️ <strong>Food:</strong> '+selectedFood+'<br>'+
-               '📅 <strong>Date:</strong> '+niceDate+'<br>'+
-               '⏰ <strong>Time:</strong> '+niceTime;
-    if(note) html += '<br>💌 <strong>Your note:</strong> '+note.replace(/</g,'&lt;');
-    html += '<br><br>See you then, cuty pie I\'ll handle the rest. ';
+    var L = I18N[currentLang];
+    var html = '💑 <strong>'+L.sumDateType+'</strong> '+selectedDateType+'<br>'+
+               '📍 <strong>'+L.sumPlace+'</strong> '+selectedFood+'<br>'+
+               '📅 <strong>'+L.sumDate+'</strong> '+niceDate+'<br>'+
+               '⏰ <strong>'+L.sumTime+'</strong> '+niceTime;
+    if(note) html += '<br>💌 <strong>'+L.sumNote+'</strong> '+note.replace(/</g,'&lt;');
+    html += '<br><br>'+L.closing;
 
     // ===== SEND TO GOOGLE SHEET =====
     // PASTE YOUR APPS SCRIPT WEB APP URL BETWEEN THE QUOTES BELOW:
@@ -449,6 +649,7 @@
   // Lock scrolling during the ask screen so the runaway button can't make bars.
   document.body.classList.add('lock-scroll');
 
+  setLang('en');   // initialize text via the same single source of truth as the toggle
   buildBackground();
 })();
 </script>
