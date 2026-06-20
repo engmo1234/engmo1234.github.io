@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#ffd6ec">
-<title>سؤال صغير من أجلك 💕</title>
+<title>A Little Question for You 💕</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Quicksand:wght@500;600;700&family=Baloo+Bhaijaan+2:wght@500;600;700;800&family=Tajawal:wght@500;700;800&display=swap" rel="stylesheet">
@@ -23,7 +23,7 @@
   *{box-sizing:border-box;margin:0;padding:0}
   html,body{height:100%}
   body{
-    font-family:'Tajawal','Quicksand',sans-serif;
+    font-family:'Quicksand',sans-serif;
     color:var(--ink);
     background:linear-gradient(170deg,var(--sky-top),var(--sky-bot));
     overflow-x:hidden;
@@ -36,10 +36,8 @@
     text-size-adjust:100%;
     -webkit-font-smoothing:antialiased;
   }
-  /* While the "No" button is loose, lock scrolling so it can't spawn bars */
   body.lock-scroll{overflow:hidden;height:100vh;height:100dvh}
 
-  /* floating background characters & decor */
   .bg{position:fixed;inset:0;overflow:hidden;z-index:0;pointer-events:none}
   .floaty{position:absolute;animation:float 9s ease-in-out infinite}
   @keyframes float{
@@ -53,7 +51,6 @@
   .cloud::before,.cloud::after{content:"";position:absolute;background:inherit;border-radius:50%}
   @keyframes drift{from{transform:translateX(-220px)}to{transform:translateX(110vw)}}
 
-  /* main card */
   .wrap{position:relative;z-index:2;min-height:100vh;min-height:100dvh;display:flex;align-items:center;justify-content:center;padding:24px}
   .card{
     background:var(--cream);
@@ -70,16 +67,14 @@
     font-size:42px;filter:drop-shadow(0 4px 6px var(--shadow));animation:beat 1.4s ease-in-out infinite}
   @keyframes beat{0%,100%{transform:translateX(-50%) scale(1)}45%{transform:translateX(-50%) scale(1.2)}}
 
-  h1{font-family:'Baloo Bhaijaan 2','Baloo 2',cursive;font-weight:800;line-height:1.15;font-size:clamp(26px,5.4vw,40px);color:var(--rose-deep);margin-bottom:10px}
+  h1{font-family:'Baloo 2',cursive;font-weight:800;line-height:1.15;font-size:clamp(26px,5.4vw,40px);color:var(--rose-deep);margin-bottom:10px}
   .sub{font-size:clamp(15px,3vw,18px);font-weight:600;color:var(--ink);opacity:.85;margin-bottom:26px}
 
-  /* mascot */
   .mascot{font-size:74px;display:inline-block;animation:bob 2.4s ease-in-out infinite;margin-bottom:6px}
   @keyframes bob{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-10px) rotate(3deg)}}
 
-  /* buttons */
   .btn-row{display:flex;gap:16px;justify-content:center;align-items:center;flex-wrap:wrap;margin-top:6px;min-height:64px;position:relative}
-  button{font-family:'Baloo Bhaijaan 2','Baloo 2',cursive;font-weight:700;cursor:pointer;border:none;border-radius:50px;transition:transform .15s ease, box-shadow .15s ease;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;touch-action:manipulation}
+  button{font-family:'Baloo 2',cursive;font-weight:700;cursor:pointer;border:none;border-radius:50px;transition:transform .15s ease, box-shadow .15s ease;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;touch-action:manipulation}
   .yes{
     background:linear-gradient(135deg,var(--rose),var(--rose-deep));
     color:#fff;font-size:clamp(18px,4vw,24px);padding:16px 42px;
@@ -93,12 +88,11 @@
     position:relative;will-change:transform;
   }
 
-  /* form */
   .step{display:none;animation:fade .5s ease both}
   .step.active{display:block}
   @keyframes fade{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
-  .field{text-align:right;margin:18px 0}
-  .field label{display:block;font-family:'Baloo Bhaijaan 2','Baloo 2',cursive;font-weight:700;font-size:16px;margin-bottom:10px;color:var(--rose-deep)}
+  .field{text-align:left;margin:18px 0}
+  .field label{display:block;font-family:'Baloo 2',cursive;font-weight:700;font-size:16px;margin-bottom:10px;color:var(--rose-deep)}
   .chips{display:flex;flex-wrap:wrap;gap:10px}
   .chip{
     background:#fff;border:2px solid #ffd9ea;border-radius:40px;padding:10px 16px;font-weight:700;
@@ -116,17 +110,37 @@
   .send:active{transform:translateY(4px);box-shadow:0 4px 0 #3fa78c}
   .hint{font-size:13px;font-weight:600;opacity:.7;margin-top:6px;min-height:18px}
 
-  /* confetti hearts */
   .heart-fall{position:fixed;top:-40px;font-size:24px;z-index:5;pointer-events:none;animation:fall linear forwards}
   @keyframes fall{to{transform:translateY(105dvh) rotate(360deg);opacity:0}}
 
-  .summary{text-align:right;background:#fff;border:2px dashed #ffd9ea;border-radius:18px;padding:18px 20px;margin-top:10px;font-weight:600}
+  .summary{text-align:left;background:#fff;border:2px dashed #ffd9ea;border-radius:18px;padding:18px 20px;margin-top:10px;font-weight:600}
   .summary strong{color:var(--rose-deep)}
   @media(max-width:480px){.card{padding:40px 22px 30px}}
+
+  .lang-toggle{
+    position:fixed;top:16px;right:16px;z-index:60;
+    background:#fff;border:2px solid #ffd9ea;border-radius:40px;
+    padding:9px 16px;font-family:'Baloo 2',cursive;font-weight:700;font-size:14px;
+    color:var(--rose-deep);cursor:pointer;box-shadow:0 6px 14px var(--shadow);
+    display:flex;align-items:center;gap:6px;-webkit-user-select:none;user-select:none;
+    transition:transform .15s ease;
+  }
+  .lang-toggle:hover{transform:scale(1.05)}
+  html[dir="rtl"] .lang-toggle{right:auto;left:16px}
+
+  html[dir="rtl"] .field{text-align:right}
+  html[dir="rtl"] .summary{text-align:right}
+
+  body.lang-ar{font-family:'Tajawal','Quicksand',sans-serif}
+  body.lang-ar h1,
+  body.lang-ar button,
+  body.lang-ar .field label{font-family:'Baloo Bhaijaan 2','Baloo 2',cursive}
+  body.lang-ar .lang-toggle{font-family:'Baloo Bhaijaan 2','Baloo 2',cursive}
 </style>
 </head>
 <body>
 <div class="bg" id="bg"></div>
+<button type="button" class="lang-toggle" id="langToggle">🇸🇦 العربية</button>
 
 <div class="wrap">
   <div class="card">
@@ -134,11 +148,11 @@
     <!-- STEP 1: THE ASK -->
     <section class="step active" id="step-ask">
       <div class="mascot">🐰</div>
-      <h1>سلام هل تخرجين معي في موعد؟ 💖</h1>
-      <p class="sub"> حضّرت شيئًا جميلًا — فقط قولي نعم 🥺</p>
+      <h1 id="askHeading">Hey you… would you like to go on a date with me? 💖</h1>
+      <p class="sub" id="askSub">I'd love to take you out — just say yes 🥺</p>
       <div class="btn-row" id="askRow">
-        <button class="yes" id="yesBtn">نعم! 💕</button>
-        <button class="no" id="noBtn">لا</button>
+        <button class="yes" id="yesBtn">Yes! 💕</button>
+        <button class="no" id="noBtn">No</button>
       </div>
       <p class="hint" id="noHint"></p>
     </section>
@@ -146,58 +160,62 @@
     <!-- STEP 2: DETAILS -->
     <section class="step" id="step-form">
       <div class="mascot">🥳</div>
-      <h1>يااي!! أجمل إجابة 🎉</h1>
-      <p class="sub">الآن ساعديني أجعله مثاليًا — ما الذي يحلو لكِ؟</p>
+      <h1 id="formHeading">Yay!! Great answer 🎉</h1>
+      <p class="sub" id="formSub">Now help me plan it — what sounds good to you?</p>
 
       <div class="field">
-        <label>💑 أي نوع من المواعيد يعجبك؟</label>
+        <label id="dateTypeLabel">💑 What kind of date sounds good?</label>
         <div class="chips" id="dateTypeChips">
-          <div class="chip" data-v="نزهة 🧺">نزهة 🧺</div>
-          <div class="chip" data-v="جولة بالدراجة النارية 🏍️">جولة بالدراجة النارية 🏍️</div>
-          <div class="chip" data-v="غداء 🍴">غداء 🍴</div>
-          <div class="chip" data-v="قهوة فقط ☕">قهوة فقط ☕</div>
-          <div class="chip" data-v="فاجئني ✨">فاجئني ✨</div>
+          <div class="chip" data-v="Picnic 🧺">Picnic 🧺</div>
+          <div class="chip" data-v="Motorbike ride 🏍️">Motorbike ride 🏍️</div>
+          <div class="chip" data-v="Lunch 🍴">Lunch 🍴</div>
+          <div class="chip" data-v="Just coffee ☕">Just coffee ☕</div>
+          <div class="chip" data-v="Surprise me ✨">Surprise me ✨</div>
         </div>
       </div>
 
       <div class="field">
-        <label>🍽️ أي نوع من الطعام يحلو لكِ؟</label>
+        <label id="placeLabel">📍 Where in Ajman sounds good?</label>
         <div class="chips" id="foodChips">
-          <div class="chip" data-v="إيطالي 🍝">إيطالي 🍝</div>
-          <div class="chip" data-v="سوشي 🍣">سوشي 🍣</div>
-          <div class="chip" data-v="برغر 🍔">برغر 🍔</div>
-          <div class="chip" data-v="مكسيكي 🌮">مكسيكي 🌮</div>
-          <div class="chip" data-v="هندي 🍛">هندي 🍛</div>
-          <div class="chip" data-v="تايلندي 🍜">تايلندي 🍜</div>
-          <div class="chip" data-v="حلويات 🍰">حلويات 🍰</div>
-          <div class="chip" data-v="فاجئني ✨">فاجئني ✨</div>
+          <!-- ✅ ALL LOCATIONS CHANGED TO AJMAN -->
+          <div class="chip" data-v="Al Shaheen Restaurant, Ajman 🍽️">Al Shaheen 🍽️</div>
+          <div class="chip" data-v="Sultan Saray, Ajman 🥘">Sultan Saray 🥘</div>
+          <div class="chip" data-v="Bait Al Mandi, Ajman 🍖">Bait Al Mandi 🍖</div>
+          <div class="chip" data-v="Shababeek Restaurant, Ajman 🥙">Shababeek 🥙</div>
+          <div class="chip" data-v="Café Vienna, Ajman ☕">Café Vienna ☕</div>
+          <div class="chip" data-v="Mövenpick Café, Ajman 🧁">Mövenpick Café 🧁</div>
+          <div class="chip" data-v="The Coffee Lab, Ajman ☕">The Coffee Lab ☕</div>
+          <div class="chip" data-v="Brew & Bites, Ajman 🍰">Brew & Bites 🍰</div>
+          <div class="chip" data-v="Rumba Restaurant, Ajman 🍝">Rumba 🍝</div>
+          <div class="chip" data-v="Burj Al Hamam, Ajman 🥩">Burj Al Hamam 🥩</div>
+          <div class="chip" data-v="Surprise me ✨">Surprise me ✨</div>
         </div>
       </div>
 
       <div class="field">
-        <label>📅 متى تكونين متفرغة؟</label>
+        <label id="dateLabel">📅 When are you free?</label>
         <input type="date" id="dateIn">
       </div>
 
       <div class="field">
-        <label>⏰ أي وقت يناسبك؟</label>
+        <label id="timeLabel">⏰ What time works best?</label>
         <input type="time" id="timeIn" value="19:00">
       </div>
 
       <div class="field">
-        <label>💌 هل تريدين إضافة شيء؟ (اختياري)</label>
-        <input type="text" class="txt" id="noteIn" placeholder="رسالة صغيرة لي…">
+        <label id="noteLabel">💌 Anything you want to add? (optional)</label>
+        <input type="text" class="txt" id="noteIn" placeholder="A little message…">
       </div>
 
-      <button class="send" id="sendBtn">أرسل إلى قلبي 💌</button>
+      <button class="send" id="sendBtn">Send it over 💌</button>
       <p class="hint" id="formHint"></p>
     </section>
 
     <!-- STEP 3: DONE -->
     <section class="step" id="step-done">
       <div class="mascot">🥰</div>
-      <h1>إنه موعد! 💞</h1>
-      <p class="sub">لا أطيق الانتظار. لقد أسعدتِ أسبوعي كله.</p>
+      <h1 id="doneHeading">It's a date! 💞</h1>
+      <p class="sub" id="doneSub">Can't wait to see you there.</p>
       <div class="summary" id="summary"></div>
     </section>
 
@@ -207,6 +225,105 @@
 <script>
 (function(){
   "use strict";
+
+  /* ---------- i18n ---------- */
+  var I18N = {
+    en: {
+      askHeading: "Hey you… would you like to go on a date with me? 💖",
+      askSub: "I'd love to take you out — just say yes 🥺",
+      yesBtn: "Yes! 💕",
+      noBtn: "No",
+      formHeading: "Yay!! Great answer 🎉",
+      formSub: "Now help me plan it — what sounds good to you?",
+      dateTypeLabel: "💑 What kind of date sounds good?",
+      placeLabel: "📍 Where in Ajman sounds good?",
+      dateLabel: "📅 When are you free?",
+      timeLabel: "⏰ What time works best?",
+      noteLabel: "💌 Anything you want to add? (optional)",
+      notePlaceholder: "A little message…",
+      sendBtn: "Send it over 💌",
+      doneHeading: "It's a date! 💞",
+      doneSub: "Can't wait to see you there.",
+      toggleLabel: "🇸🇦 العربية",
+      taunts: [
+        "Catch me first! 🏃‍♀️",
+        "Are you suuure? 🥺",
+        "Try again, quick! 💨",
+        "Nope, that one's broken 😋",
+        "The 'No' is shy today 🙈",
+        "Yes is right there ➡️💕",
+        "You can't escape destiny ✨",
+        "Okay now you're just teasing me 😆"
+      ],
+      dateTypes: [
+        {v:"Picnic 🧺", t:"Picnic 🧺"},
+        {v:"Motorbike ride 🏍️", t:"Motorbike ride 🏍️"},
+        {v:"Lunch 🍴", t:"Lunch 🍴"},
+        {v:"Just coffee ☕", t:"Just coffee ☕"},
+        {v:"Surprise me ✨", t:"Surprise me ✨"}
+      ],
+      surpriseFood: "Surprise me ✨",
+      validDateType: "Pick a date idea first! 💑",
+      validFood: "Pick a spot first, please! 📍",
+      validDate: "Pick a date so I can plan it! 📅",
+      validTime: "What time works for you? ⏰",
+      sumDateType: "Date idea:",
+      sumPlace: "Place:",
+      sumDate: "Date:",
+      sumTime: "Time:",
+      sumNote: "Your note:",
+      closing: "Looking forward to it! 😊",
+      amPm: {am:"AM", pm:"PM"}
+    },
+    ar: {
+      askHeading: "هلا… هل تحبين الخروج معي في موعد؟ 💖",
+      askSub: "أحب أن أخرج معكِ — فقط قولي نعم 🥺",
+      yesBtn: "نعم! 💕",
+      noBtn: "لا",
+      formHeading: "يااي!! إجابة رائعة 🎉",
+      formSub: "الآن ساعديني في التخطيط — ما الذي يحلو لكِ؟",
+      dateTypeLabel: "💑 أي نوع من المواعيد يعجبك؟",
+      placeLabel: "📍 أين في عجمان يعجبك؟",
+      dateLabel: "📅 متى تكونين متفرغة؟",
+      timeLabel: "⏰ أي وقت يناسبك؟",
+      noteLabel: "💌 هل تريدين إضافة شيء؟ (اختياري)",
+      notePlaceholder: "رسالة صغيرة…",
+      sendBtn: "أرسليها 💌",
+      doneHeading: "إنه موعد! 💞",
+      doneSub: "لا أطيق الانتظار لرؤيتك هناك.",
+      toggleLabel: "🇬🇧 English",
+      taunts: [
+        "أمسكيني أولًا! 🏃‍♀️",
+        "هل أنتِ متأكدة؟ 🥺",
+        "حاولي مرة أخرى! 💨",
+        "لا، هذا الزر معطّل 😋",
+        "زر «لا» خجول اليوم 🙈",
+        "زر «نعم» هناك تمامًا ⬅️💕",
+        "لا يمكنكِ الهروب من القدر ✨",
+        "حسنًا، أنتِ تمازحينني الآن 😆"
+      ],
+      dateTypes: [
+        {v:"نزهة 🧺", t:"نزهة 🧺"},
+        {v:"جولة بالدراجة النارية 🏍️", t:"جولة بالدراجة النارية 🏍️"},
+        {v:"غداء 🍴", t:"غداء 🍴"},
+        {v:"قهوة فقط ☕", t:"قهوة فقط ☕"},
+        {v:"فاجئيني ✨", t:"فاجئيني ✨"}
+      ],
+      surpriseFood: "فاجئيني ✨",
+      validDateType: "اختاري فكرة الموعد أولًا! 💑",
+      validFood: "اختاري مكانًا أولًا، من فضلك! 📍",
+      validDate: "اختاري يومًا حتى أرتّب له! 📅",
+      validTime: "أي وقت يناسبك؟ ⏰",
+      sumDateType: "فكرة الموعد:",
+      sumPlace: "المكان:",
+      sumDate: "اليوم:",
+      sumTime: "الوقت:",
+      sumNote: "رسالتك:",
+      closing: "أتطلع لرؤيتك! 😊",
+      amPm: {am:"صباحًا", pm:"مساءً"}
+    }
+  };
+  var currentLang = 'en';
 
   /* ---------- Background scenery ---------- */
   function buildBackground(){
@@ -243,16 +360,6 @@
   var noBtn = document.getElementById('noBtn');
   var noHint = document.getElementById('noHint');
   var dodgeCount = 0;
-  var taunts = [
-    "أمسكيني أولًا! 🏃‍♀️",
-    "هل أنتِ متأكدة؟ 🥺",
-    "حاولي مرة أخرى  💨",
-    "لا، هذا الزر معطّل 😋",
-    "زر «لا» خجول اليوم 🙈",
-    "زر «نعم» هناك تمامًا ⬅️💕",
-    "لا يمكنكِ الهروب من القدر ✨",
-    "حسنًا، أنتِ تمازحينني الآن 😆"
-  ];
 
   function isTouch(){
     return ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
@@ -260,7 +367,6 @@
 
   function dodge(){
     dodgeCount++;
-    // ensure absolute positioning relative to viewport so it can roam freely
     var bw = noBtn.offsetWidth || 90;
     var bh = noBtn.offsetHeight || 50;
     var vw = (window.visualViewport && window.visualViewport.width)  || window.innerWidth;
@@ -275,13 +381,12 @@
     noBtn.style.left = x + 'px';
     noBtn.style.top  = y + 'px';
     noBtn.style.zIndex = 50;
-    // shrink slowly the more it's chased, then give up and basically hide
     var scale = Math.max(0.45, 1 - dodgeCount*0.06);
     noBtn.style.transform = 'scale('+scale+') rotate('+(Math.random()*30-15)+'deg)';
 
+    var taunts = I18N[currentLang].taunts;
     noHint.textContent = taunts[Math.min(dodgeCount-1, taunts.length-1)];
 
-    // grow the Yes button for gentle encouragement
     var yes = document.getElementById('yesBtn');
     var ys = Math.min(1.6, 1 + dodgeCount*0.07);
     yes.style.transform = 'scale('+ys+')';
@@ -290,12 +395,9 @@
   noBtn.addEventListener('mouseover', dodge);
   noBtn.addEventListener('mousedown', function(e){ e.preventDefault(); dodge(); });
   noBtn.addEventListener('focus', dodge);
-  // touch / click fallback so it can never actually be pressed
   noBtn.addEventListener('touchstart', function(e){ e.preventDefault(); dodge(); }, {passive:false});
   noBtn.addEventListener('click', function(e){ e.preventDefault(); dodge(); });
 
-  // On touch devices, flee when a finger comes near, and nudge once on load
-  // so the button is never sitting still under a thumb.
   function fingerNear(e){
     if(!e.touches || !e.touches.length) return;
     var t = e.touches[0];
@@ -307,7 +409,6 @@
   if(isTouch()){
     document.addEventListener('touchmove', fingerNear, {passive:true});
     document.addEventListener('touchstart', fingerNear, {passive:true});
-    // small initial reposition after layout settles
     window.addEventListener('load', function(){ setTimeout(dodge, 400); });
   }
 
@@ -338,7 +439,6 @@
   document.getElementById('yesBtn').addEventListener('click', function(){
     rainHearts(40);
     show('step-form');
-    // chase is over: stop the No button fleeing and let the form scroll
     noBtn.style.position='';
     noBtn.style.transform='';
     document.body.classList.remove('lock-scroll');
@@ -364,8 +464,70 @@
 
   var selectedDateType = '';
   var selectedFood = '';
-  setupChips('dateTypeChips', function(v){ selectedDateType = v; });
+
+  function renderDateTypeChips(){
+    var wrap = document.getElementById('dateTypeChips');
+    var items = I18N[currentLang].dateTypes;
+    var html = '';
+    for(var i=0;i<items.length;i++){
+      html += '<div class="chip" data-v="'+items[i].v.replace(/"/g,'&quot;')+'">'+items[i].t+'</div>';
+    }
+    wrap.innerHTML = html;
+    selectedDateType = '';
+    setupChips('dateTypeChips', function(v){ selectedDateType = v; });
+  }
+
   setupChips('foodChips', function(v){ selectedFood = v; });
+
+  /* ---------- Language toggle ---------- */
+  function setLang(lang){
+    currentLang = lang;
+    paintLang(lang);
+  }
+
+  function paintLang(lang){
+    var L = I18N[lang];
+    document.documentElement.setAttribute('dir', lang==='ar' ? 'rtl' : 'ltr');
+    document.documentElement.setAttribute('lang', lang);
+    document.body.classList.toggle('lang-ar', lang==='ar');
+
+    document.getElementById('askHeading').textContent = L.askHeading;
+    document.getElementById('askSub').textContent = L.askSub;
+    document.getElementById('yesBtn').textContent = L.yesBtn;
+    document.getElementById('noBtn').textContent = L.noBtn;
+    document.getElementById('formHeading').textContent = L.formHeading;
+    document.getElementById('formSub').textContent = L.formSub;
+    document.getElementById('dateTypeLabel').textContent = L.dateTypeLabel;
+    document.getElementById('placeLabel').textContent = L.placeLabel;
+    document.getElementById('dateLabel').textContent = L.dateLabel;
+    document.getElementById('timeLabel').textContent = L.timeLabel;
+    document.getElementById('noteLabel').textContent = L.noteLabel;
+    document.getElementById('noteIn').placeholder = L.notePlaceholder;
+    document.getElementById('sendBtn').textContent = L.sendBtn;
+    document.getElementById('doneHeading').textContent = L.doneHeading;
+    document.getElementById('doneSub').textContent = L.doneSub;
+    document.getElementById('langToggle').textContent = L.toggleLabel;
+    document.getElementById('noHint').textContent = '';
+    document.getElementById('formHint').textContent = '';
+
+    renderDateTypeChips();
+  }
+
+  (function(){
+    var toggleBtn = document.getElementById('langToggle');
+    var cardEl = document.querySelector('.card');
+    toggleBtn.addEventListener('click', function(){
+      currentLang = (currentLang === 'en') ? 'ar' : 'en';
+      if(cardEl){
+        cardEl.style.transition = 'opacity .12s ease';
+        cardEl.style.opacity = '0.35';
+      }
+      setTimeout(function(){
+        paintLang(currentLang);
+        if(cardEl){ cardEl.style.opacity = '1'; }
+      }, 120);
+    });
+  })();
 
   /* ---------- Set min date to today ---------- */
   (function(){
@@ -382,40 +544,40 @@
     var timeVal = document.getElementById('timeIn').value;
     var note = document.getElementById('noteIn').value.trim();
 
-    if(!selectedDateType){ hint.textContent='اختاري فكرة الموعد أولًا! 💑'; return; }
-    if(!selectedFood){ hint.textContent='اختاري الطعام أولًا، من فضلك! 🍽️'; return; }
-    if(!dateVal){ hint.textContent='اختاري يومًا حتى أرتّب له! 📅'; return; }
-    if(!timeVal){ hint.textContent='أي وقت يناسبك؟ ⏰'; return; }
+    if(!selectedDateType){ hint.textContent=I18N[currentLang].validDateType; return; }
+    if(!selectedFood){ hint.textContent=I18N[currentLang].validFood; return; }
+    if(!dateVal){ hint.textContent=I18N[currentLang].validDate; return; }
+    if(!timeVal){ hint.textContent=I18N[currentLang].validTime; return; }
 
-    // format date nicely (Arabic locale)
     var parts = dateVal.split('-');
     var dObj = new Date(parts[0], parts[1]-1, parts[2]);
-    var niceDate = dObj.toLocaleDateString('ar',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+    var localeTag = currentLang==='ar' ? 'ar' : undefined;
+    var niceDate = dObj.toLocaleDateString(localeTag,{weekday:'long',year:'numeric',month:'long',day:'numeric'});
 
-    // format time to 12h (Arabic AM/PM)
     var t = timeVal.split(':');
     var hh = parseInt(t[0],10); var mm = t[1];
-    var ap = hh>=12 ? 'مساءً':'صباحًا';
+    var ap = hh>=12 ? I18N[currentLang].amPm.pm : I18N[currentLang].amPm.am;
     var h12 = hh%12; if(h12===0) h12=12;
     var niceTime = h12+':'+mm+' '+ap;
 
-    var html = '💑 <strong>فكرة الموعد:</strong> '+selectedDateType+'<br>'+
-               '🍽️ <strong>الطعام:</strong> '+selectedFood+'<br>'+
-               '📅 <strong>اليوم:</strong> '+niceDate+'<br>'+
-               '⏰ <strong>الوقت:</strong> '+niceTime;
-    if(note) html += '<br>💌 <strong>رسالتك:</strong> '+note.replace(/</g,'&lt;');
-    html += '<br><br>أراكِ حينها يا 💌. سأتولى الباقي. 💍';
+    var L = I18N[currentLang];
+    var html = '💑 <strong>'+L.sumDateType+'</strong> '+selectedDateType+'<br>'+
+               '📍 <strong>'+L.sumPlace+'</strong> '+selectedFood+'<br>'+
+               '📅 <strong>'+L.sumDate+'</strong> '+niceDate+'<br>'+
+               '⏰ <strong>'+L.sumTime+'</strong> '+niceTime;
+    if(note) html += '<br>💌 <strong>'+L.sumNote+'</strong> '+note.replace(/</g,'&lt;');
+    html += '<br><br>'+L.closing;
 
     // ===== SEND TO GOOGLE SHEET =====
-    // PASTE YOUR APPS SCRIPT WEB APP URL BETWEEN THE QUOTES BELOW:
     var SHEET_URL = "https://script.google.com/macros/s/AKfycbyXgkeu5-IbWqBNl7QDbi77ldUfgV1XHT0aYgUoE8BHYAHt5MmHTxMIhBTfQ8eRcLytcQ/exec";
 
     if(SHEET_URL && SHEET_URL.indexOf("script.google.com") !== -1){
       fetch(SHEET_URL, {
         method: "POST",
-        mode: "no-cors",               // required for Apps Script from a static page
+        mode: "no-cors",
         headers: {"Content-Type":"text/plain;charset=utf-8"},
         body: JSON.stringify({
+          location: "Ajman",
           dateType: selectedDateType,
           food: selectedFood,
           date: niceDate,
@@ -446,9 +608,9 @@
   window.addEventListener('orientationchange', clampNo);
   if(window.visualViewport){ window.visualViewport.addEventListener('resize', clampNo); }
 
-  // Lock scrolling during the ask screen so the runaway button can't make bars.
   document.body.classList.add('lock-scroll');
 
+  setLang('en');
   buildBackground();
 })();
 </script>
