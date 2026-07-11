@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>حبيبتي ميمو</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:ital@0;1&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,400&family=Klee+One:wght@600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0a0a0a;
+    --moon:#f5f5f0;
+    --silver:#9a9a94;
+    --pearl:#d8d6d0;
+    --line: rgba(245,245,240,0.16);
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  html, body{ width:100%; max-width:100%; }
+  body{
+    background:var(--ink);
+    color:var(--moon);
+    overflow-x:hidden;
+    font-family:'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+    min-height:100vh;
+    min-height:100dvh;
+    -webkit-text-size-adjust:100%;
+    touch-action:pan-y;
+    padding-left:env(safe-area-inset-left);
+    padding-right:env(safe-area-inset-right);
+  }
+  img, svg{ max-width:100%; }
+
+  /* ---------- floating petals ---------- */
+  .petal-field{position:fixed; inset:0; pointer-events:none; z-index:1;}
+  .petal{
+    position:absolute; top:-5%;
+    width:9px; height:13px;
+    background:linear-gradient(160deg, var(--moon), var(--pearl));
+    opacity:.3;
+    border-radius:0 100% 0 100%;
+    animation:fall linear infinite;
+    filter: blur(.2px);
+  }
+  @keyframes fall{
+    0%{ transform:translateY(-10vh) translateX(0) rotate(0deg); }
+    100%{ transform:translateY(110vh) translateX(30px) rotate(340deg); }
+  }
+
+  /* ---------- hero ---------- */
+  .hero{
+    position:relative;
+    min-height:100vh;
+    min-height:100dvh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    padding:calc(5vh + env(safe-area-inset-top)) 6vw calc(5vh + env(safe-area-inset-bottom));
+    z-index:2;
+  }
+
+  .stage{
+    width:min(48vw, 300px);
+    margin-bottom:2rem;
+    transform-origin: 50% 98%;
+    animation: sway 7s ease-in-out infinite;
+  }
+  /* fallback for browsers without aspect-ratio support (older Android WebViews) */
+  .stage{ position:relative; height:0; padding-bottom: 162%; } /* 324/200 = 1.62 */
+  .stage > .flower-svg{ position:absolute; inset:0; }
+  @supports (aspect-ratio: 1 / 1){
+    .stage{ height:auto; padding-bottom:0; aspect-ratio: 200 / 324; }
+    .stage > .flower-svg{ position:static; inset:auto; }
+  }
+  .flower-svg{
+    width:100%; height:100%; overflow:visible;
+    filter: drop-shadow(0 0 22px rgba(245,245,240,0.07));
+  }
+  @keyframes sway{
+    0%, 100%{ transform: rotate(-1.6deg); }
+    50%{ transform: rotate(1.6deg); }
+  }
+  .bloom-group{
+    animation: open 2.4s cubic-bezier(.2,.8,.2,1) both;
+    transform-origin: 100px 108px;
+  }
+  @keyframes open{
+    0%{ transform: scale(.55); opacity:0; }
+    100%{ transform: scale(1); opacity:1; }
+  }
+
+  .eyebrow{
+    font-family:'Klee One', 'Hiragino Sans', sans-serif;
+    letter-spacing:.35em;
+    font-size:.7rem;
+    color:var(--silver);
+    text-transform:uppercase;
+    margin-bottom:1.1rem;
+  }
+  h1.arabic{
+    font-family:'Amiri', 'Traditional Arabic', 'Geeza Pro', serif;
+    font-size:clamp(2.6rem, 7vw, 5rem);
+    font-weight:400;
+    line-height:1.25;
+    letter-spacing:.01em;
+    color:#efefe9;
+  }
+  @supports (background-clip: text) or (-webkit-background-clip: text){
+    h1.arabic{
+      background:linear-gradient(180deg, #ffffff, #b9b9b3);
+      -webkit-background-clip:text;
+      background-clip:text;
+      color:transparent;
+    }
+  }
+  h2.english{
+    direction:ltr;
+    font-family:'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+    font-style:italic;
+    font-weight:300;
+    font-size:clamp(1rem, 2.2vw, 1.4rem);
+    letter-spacing:.12em;
+    color:var(--pearl);
+    margin-top:1rem;
+  }
+  .scroll-hint{
+    margin-top:3.5rem;
+    font-size:.7rem;
+    letter-spacing:.3em;
+    color:var(--silver);
+    text-transform:uppercase;
+    opacity:.6;
+  }
+
+  /* ---------- message section ---------- */
+  .message{
+    position:relative;
+    z-index:2;
+    min-height:80vh;
+    display:flex; flex-direction:column;
+    align-items:center; justify-content:center;
+    text-align:center;
+    padding:10vh 8vw;
+    border-top:1px solid var(--line);
+  }
+  .message.fade-ready{
+    opacity:0;
+    transform:translateY(30px);
+    transition:opacity 1.2s ease, transform 1.2s ease;
+  }
+  .message.visible{ opacity:1; transform:translateY(0); }
+
+  .message p.ar{
+    direction:rtl;
+    font-family:'Amiri', 'Traditional Arabic', 'Geeza Pro', serif;
+    font-size:clamp(1.6rem, 3.6vw, 2.4rem);
+    line-height:2.1;
+    max-width:760px;
+    color:var(--moon);
+  }
+  .message p.en{
+    direction:ltr;
+    font-family:'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+    font-style:italic;
+    font-weight:300;
+    font-size:clamp(1rem, 1.8vw, 1.25rem);
+    color:var(--silver);
+    max-width:520px;
+    margin-top:2rem;
+    line-height:1.9;
+  }
+  .message p.note{
+    direction:ltr;
+    font-family:'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+    font-weight:300;
+    font-size:.85rem;
+    letter-spacing:.04em;
+    color:var(--silver);
+    opacity:.65;
+    max-width:480px;
+    margin-top:2.5rem;
+    line-height:1.8;
+  }
+
+  .divider{
+    width:1px; height:60px;
+    background:linear-gradient(var(--silver), transparent);
+    margin:3rem 0;
+  }
+
+  footer{
+    text-align:center;
+    padding:5vh 0 6vh;
+    font-family:'Klee One', 'Hiragino Sans', sans-serif;
+    font-size:.65rem;
+    letter-spacing:.3em;
+    color:var(--silver);
+    text-transform:uppercase;
+    opacity:.5;
+  }
+
+  @media (max-width: 420px){
+    .stage{ width:min(62vw, 240px); }
+    .message{ padding:8vh 7vw; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .stage{ animation:none; }
+    .bloom-group{ animation:none; }
+    .petal{ animation:none; display:none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="petal-field" id="petalField"></div>
+
+<section class="hero">
+  <div class="stage">
+    <svg class="flower-svg" id="flowerSvg" viewBox="0 0 200 324"></svg>
+  </div>
+  <noscript>
+    <style>#flowerSvg{display:none;}</style>
+    <div style="font-size:3.5rem; margin-bottom:1.5rem; opacity:.85;">✿</div>
+  </noscript>
+
+  <div class="eyebrow">a flower, painted in ink and moonlight</div>
+  <h1 class="arabic">حبيبتي</h1>
+  <h2 class="english">my love — my darling</h2>
+  <div class="scroll-hint">scroll ↓</div>
+</section>
+
+<section class="message" id="message">
+  <p class="ar">
+    من بين كل الأزهار، اخترت أن أرسم هذه لك وحدك، لأن جمالك لا يشبهه جمال، ولأن قلبي لم يعرف بيتاً غير قلبك.
+  </p>
+  <div class="divider"></div>
+  <p class="en">
+    Of every flower in the world, I painted this one only for you —
+    black and white, because nothing needs color when it already
+    holds all the light I have.
+  </p>
+  <p class="note">
+    drawn after the proportion woven through every real petal and stem —
+    a trace of a design far beyond what any hand can fully render.
+  </p>
+</section>
+
+<footer>painted for you, always</footer>
+
+<script>
+  // ---------- flower geometry, built on the golden ratio ----------
+  const PHI = (1 + Math.sqrt(5)) / 2;         // 1.6180339887...
+  const GOLDEN_ANGLE = 360 / (PHI * PHI);     // 137.50776..., true phyllotaxis angle
+
+  const NS = 'http://www.w3.org/2000/svg';
+  function el(tag, attrs){
+    const n = document.createElementNS(NS, tag);
+    for(const k in attrs) n.setAttribute(k, attrs[k]);
+    return n;
+  }
+
+  // a petal template drawn pointing straight up from (cx,cy), then
+  // placed at its real angle with a single SVG rotate() around that same point —
+  // this is what actually distributes petals around the center instead of stacking them.
+  function petalPath(cx, cy, length, tone, opacity, strokeWidth){
+    const width = length / PHI;                 // length:width == phi
+    const hw = width / 2;
+    const outerY = cy - length / PHI;            // first golden section
+    const tipY   = cy - length;
+    const d = `M${cx},${cy} `
+      + `C${cx-hw},${outerY} ${cx-hw*0.9},${cy-length*0.85} ${cx},${tipY} `
+      + `C${cx+hw*0.9},${cy-length*0.85} ${cx+hw},${outerY} ${cx},${cy} Z`;
+    const veinL = `M${cx},${cy} C${cx-hw*0.45},${cy-length*0.4} ${cx-hw*0.35},${outerY} ${cx},${tipY}`;
+    const veinR = `M${cx},${cy} C${cx+hw*0.45},${cy-length*0.4} ${cx+hw*0.35},${outerY} ${cx},${tipY}`;
+    const g = el('g', { fill:'none', stroke: tone, 'stroke-width': strokeWidth, opacity });
+    g.appendChild(el('path', { d }));
+    g.appendChild(el('path', { d: veinL }));
+    g.appendChild(el('path', { d: veinR }));
+    return g;
+  }
+
+  function petalRing(cx, cy, count, length, angleOffset, tone, opacity, strokeWidth){
+    const ring = el('g');
+    for(let i = 0; i < count; i++){
+      const angle = angleOffset + i * (360 / count);
+      const petal = petalPath(cx, cy, length, tone, opacity, strokeWidth);
+      petal.setAttribute('transform', `rotate(${angle.toFixed(3)} ${cx} ${cy})`);
+      ring.appendChild(petal);
+    }
+    return ring;
+  }
+
+  // a leaf, same golden proportions as a petal, hung off a point on the stem
+  function leaf(x, y, length, angleDeg, tone){
+    const width = length / PHI;
+    const hw = width / 2;
+    const tipY = y - length;
+    const outerY = y - length / PHI;
+    const d = `M${x},${y} C${x-hw},${outerY} ${x-hw*0.85},${y-length*0.8} ${x},${tipY} `
+      + `C${x+hw*0.85},${y-length*0.8} ${x+hw},${outerY} ${x},${y} Z`;
+    const spine = `M${x},${y} L${x},${tipY}`;
+    const g = el('g', { fill:'none', stroke: tone, 'stroke-width': 1, opacity: 0.75,
+      transform:`rotate(${angleDeg} ${x} ${y})` });
+    g.appendChild(el('path', { d }));
+    g.appendChild(el('path', { d: spine, 'stroke-width': 0.6 }));
+    return g;
+  }
+
+  function buildFlower(){
+    const svg = document.getElementById('flowerSvg');
+    if(!svg) return;
+
+    const headX = 100, headY = 108;   // center of the bloom
+    const stemTopY = 122;
+    const stemBaseY = 320;
+    const stemLen = stemBaseY - stemTopY;
+
+    // ---- stem: a single gently curving line, like a real stalk ----
+    const stemD = `M${headX},${stemTopY} `
+      + `C${headX-9},${stemTopY+stemLen*0.28} ${headX+7},${stemTopY+stemLen*0.5} ${headX-4},${stemTopY+stemLen*0.72} `
+      + `S${headX+3},${stemBaseY-14} ${headX},${stemBaseY}`;
+    const stem = el('path', { d: stemD, fill:'none', stroke:'var(--pearl)', 'stroke-width':1.4, opacity:0.75 });
+    svg.appendChild(stem);
+
+    // ---- two leaves, set at the golden sections of the stem's length ----
+    const leafY1 = stemTopY + stemLen * (1 - 1/PHI);   // upper leaf
+    const leafY2 = stemTopY + stemLen * (1/PHI);        // lower leaf
+    svg.appendChild(leaf(headX - 3, leafY1, 42, -128, '#d8d6d0'));
+    svg.appendChild(leaf(headX - 1, leafY2, 50,  118, '#cfcfc8'));
+
+    // ---- the bloom: outer + inner petal rings, evenly spaced (true Fibonacci counts) ----
+    const bloom = el('g', { class:'bloom-group' });
+    bloom.setAttribute('class', 'bloom-group');
+
+    bloom.appendChild(petalRing(headX, headY, 8, 62, 0,  '#e7e5df', 0.85, 1));
+    bloom.appendChild(petalRing(headX, headY, 5, 62/PHI, 36, '#f5f5f0', 0.95, 1.1));
+
+    // ---- disc florets at the center, the one place true phyllotaxis belongs ----
+    const discCount = 34; // Fibonacci
+    const discR = 15;
+    for(let k = 0; k < discCount; k++){
+      const r = discR * Math.sqrt(k / discCount);
+      const a = (k * GOLDEN_ANGLE) * Math.PI / 180;
+      const x = headX + r * Math.sin(a);
+      const y = headY - r * Math.cos(a);
+      const dotR = 0.55 + (1 - r / discR) * 0.5;
+      bloom.appendChild(el('circle', { cx:x, cy:y, r:dotR, fill:'var(--moon)', opacity:0.8 }));
+    }
+    bloom.appendChild(el('circle', { cx:headX, cy:headY, r:2.5, fill:'none', stroke:'var(--moon)', 'stroke-width':0.6, opacity:0.6 }));
+
+    svg.appendChild(bloom);
+  }
+  try { buildFlower(); } catch(e) { console.warn('flower build failed', e); }
+
+  // gentle falling petals
+  try {
+    const field = document.getElementById('petalField');
+    const count = 22;
+    for(let i=0;i<count;i++){
+      const p = document.createElement('div');
+      p.className = 'petal';
+      const left = Math.random()*100;
+      const dur = 10 + Math.random()*14;
+      const delay = Math.random()*-20;
+      const scale = 0.6 + Math.random()*0.9;
+      p.style.left = left+'vw';
+      p.style.animationDuration = dur+'s';
+      p.style.animationDelay = delay+'s';
+      p.style.transform = `scale(${scale})`;
+      field.appendChild(p);
+    }
+  } catch(e) { console.warn('petal field failed', e); }
+
+  // scroll-fade for the message, only switched on if IntersectionObserver actually works;
+  // otherwise the message just stays visible (see .message default styles)
+  try {
+    if ('IntersectionObserver' in window) {
+      const msg = document.getElementById('message');
+      msg.classList.add('fade-ready');
+      const io = new IntersectionObserver((entries)=>{
+        entries.forEach(e=>{
+          if(e.isIntersecting) msg.classList.add('visible');
+        });
+      }, {threshold:0.2});
+      io.observe(msg);
+    }
+  } catch(e) { console.warn('scroll reveal failed', e); }
+</script>
+
+</body>
+</html>
